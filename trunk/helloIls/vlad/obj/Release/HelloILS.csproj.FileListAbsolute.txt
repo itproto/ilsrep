@@ -1,0 +1,5 @@
+C:\Users\vladykx\Documents\Visual Studio 2008\Projects\Learning\HelloILS\bin\Release\HelloILS.exe
+C:\Users\vladykx\Documents\Visual Studio 2008\Projects\Learning\HelloILS\bin\Release\HelloILS.pdb
+C:\Users\vladykx\Documents\Visual Studio 2008\Projects\Learning\HelloILS\obj\Release\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2008\Projects\Learning\HelloILS\obj\Release\HelloILS.exe
+C:\Users\vladykx\Documents\Visual Studio 2008\Projects\Learning\HelloILS\obj\Release\HelloILS.pdb
