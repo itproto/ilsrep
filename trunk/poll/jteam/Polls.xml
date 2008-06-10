@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<polls>
+  <poll id="1" name ="Repository choice">
+    <description>Please choice repository:</description>
+    <choices>
+      <choice id="1" name="svn" />
+      <choice id="2"  name="cvs" />
+      <choice id="3"  name="vss" />
+    </choices>
+  </poll>
+  <poll id="2" name ="Favorite IM">
+    <description>Please choice repository:</description>
+    <choices>
+      <choice id="1" name="gtalk" />
+      <choice id="2"  name="msn" />
+      <choice id="3"  name="icq" />
+    </choices>
+  </poll>
+</polls>
