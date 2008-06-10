@@ -9,6 +9,9 @@ import javax.xml.bind.Unmarshaller;
 import ua.com.interlogic.ils.task7.model.ChoiceElement;
 import ua.com.interlogic.ils.task7.model.PollElement;
 import ua.com.interlogic.ils.task7.model.PollsElement;
+import ua.com.interlogic.ils.task7.model.LogSaver;
+
+
 
 /**
  * @author Taras Kostiak
@@ -17,23 +20,24 @@ import ua.com.interlogic.ils.task7.model.PollsElement;
 public class Poll {
 
     public static void main(String[] args) throws JAXBException {
-        // TODO: написати poll-програму :)
+       
 
         JAXBContext cont = JAXBContext.newInstance(PollsElement.class);
         Unmarshaller um = cont.createUnmarshaller();
         File f = new File("Polls.xml");
         PollsElement pls = (PollsElement) um.unmarshal(f);
-
-        for (PollElement e : pls.getPolls()) {
-            System.out.println("Id: " + e.getId());
-            System.out.println("Name: " + e.getName());
-            System.out.println("Desription: " + e.getDescription().getValue());
-            for (ChoiceElement el : e.getChoices()) {
-                System.out.println("Choice(id = " + el.getId() + "): "
-                        + el.getName());
-            }
-            System.out.println();
-        }
+LogSaver plog = new LogSaver();
+       for (PollElement e : pls.getPolls()) {
+	        
+	        e.QueryUser();
+	        plog.PushMe(e.getName(),e.Selection);
+	         
+    }                       
+                        
+            
+           
+           plog.PopMe();
+       
     }
 
 }
