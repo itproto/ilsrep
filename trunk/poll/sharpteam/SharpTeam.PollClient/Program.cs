@@ -40,10 +40,10 @@ namespace SharpTeam.PollClient
             {
                 XmlAttributeCollection xmlAttr = xmlPoll[i].Attributes;
                 myDoc[i].name = xmlAttr[1].Value;
-                Console.WriteLine(xmlAttr[1].Value); //name of poll
+                //Console.WriteLine(xmlAttr[1].Value); //name of poll
 
                 myDoc[i].description = xmlPoll[i].FirstChild.InnerText;
-                Console.WriteLine(xmlPoll[i].FirstChild.InnerText); //description
+                //Console.WriteLine(xmlPoll[i].FirstChild.InnerText); //description
 
                 XmlNodeList xmlChoices = xmlPoll[i].ChildNodes;
                 XmlNodeList xmlChoice = xmlChoices[1].ChildNodes;
@@ -51,11 +51,20 @@ namespace SharpTeam.PollClient
                 {
                     XmlAttributeCollection xmlAttrCh = xmlChoice[j].Attributes;
                     myDoc[i].choice[j] = xmlAttrCh[1].Value;
-                    Console.WriteLine(xmlAttrCh[1].Value); //choise
+                    //Console.WriteLine(xmlAttrCh[1].Value); //choise
                 }
-                
-                Console.ReadKey(true);
             }
+
+            for (int i = 0; i < 2; i++)
+            {
+                Console.WriteLine(myDoc[i].name + " (" + myDoc[i].description + ")");
+                for (int j = 0; j < 3; j++)
+                {
+                    Console.WriteLine(j+1 +" -> " + myDoc[i].choice[j]);
+                }
+                Console.WriteLine();
+            }
+            Console.ReadKey(true);
         }
     }
 }
