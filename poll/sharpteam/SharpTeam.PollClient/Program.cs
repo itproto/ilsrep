@@ -6,28 +6,43 @@ using System.Xml;
 
 namespace SharpTeam.PollClient
 {
-    class Poll
+    public class Poll
     {
+        public Poll()
+        {
+            name = "";
+            description = "";
+            for (int i = 0; i < 3; i++)
+            {
+                choice[i] = "";
+            }
+        }
+
         public string name;
         public string description;
-        public string[] choise = new string[3];
+        public string[] choice = new string[3];
     }
 
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Poll myDoc = new Poll();
             XmlDocument xmldoc = new XmlDocument();
             xmldoc.Load("Polls.xml");
             XmlNodeList xmlPoll = xmldoc.GetElementsByTagName("poll");
+
+            Poll[] myDoc;
+            myDoc = new Poll[xmlPoll.Count];
+            for (int i = 0; i < xmlPoll.Count; i++)
+                myDoc[i] = new Poll();
+
             for (int i = 0; i < xmlPoll.Count; i++)
             {
                 XmlAttributeCollection xmlAttr = xmlPoll[i].Attributes;
-                myDoc.name = Convert.ToString(xmlAttr[1].Value);
+                myDoc[i].name = xmlAttr[1].Value;
                 Console.WriteLine(xmlAttr[1].Value); //name of poll
 
-                myDoc.description = xmlPoll[i].FirstChild.InnerText;
+                myDoc[i].description = xmlPoll[i].FirstChild.InnerText;
                 Console.WriteLine(xmlPoll[i].FirstChild.InnerText); //description
 
                 XmlNodeList xmlChoices = xmlPoll[i].ChildNodes;
@@ -35,10 +50,10 @@ namespace SharpTeam.PollClient
                 for (int j = 0; j < xmlChoice.Count; j++)
                 {
                     XmlAttributeCollection xmlAttrCh = xmlChoice[j].Attributes;
-                    myDoc.choise[j] = xmlAttrCh[1].Value;
+                    myDoc[i].choice[j] = xmlAttrCh[1].Value;
                     Console.WriteLine(xmlAttrCh[1].Value); //choise
                 }
-
+                
                 Console.ReadKey(true);
             }
         }
