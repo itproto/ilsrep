@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ua.com.interlogic.ils.task7.Poll;
+
 /**
  * The "poll" element.
  * 
@@ -111,13 +113,14 @@ public class PollElement {
      *             When I/O exception occurs.
      */
     public String queryUser() throws IOException {
+        Poll.consoleClearScreen();
         System.out.println("Name: " + this.getName());
         System.out.println("Desription: " + this.getDescription().getValue());
         for (ChoiceElement el : this.getChoices()) {
-            System.out.println("| " + el.getId() + "| " + el.getName());
+            System.out.println("( " + el.getId() + " ) " + el.getName());
         }
         if (checkCustomChoiceEnabled())
-            System.out.println("| 0| your choice");
+            System.out.println("( 0 ) for your choice");
 
         String selection = null;
         int sid = -1;
@@ -130,7 +133,7 @@ public class PollElement {
         }
 
         if (checkCustomChoiceEnabled() && sid == 0) {
-            System.out.println("Please enter your choice:");
+            System.out.print("Please enter your choice: ");
             selection = in.readLine();
         }
         else

@@ -61,7 +61,7 @@ public class LogSaver {
     public void popMe() {
         while (!(lhelp.size() == 0)) {
             LogHelper i = lhelp.removeFirst();
-            System.out.println(i.name + "=>" + i.selection + "\n");
+            System.out.println(i.name + " => " + i.selection + "\n");
         }
     }
 
