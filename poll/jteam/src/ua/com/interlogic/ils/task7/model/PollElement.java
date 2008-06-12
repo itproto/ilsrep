@@ -10,8 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * The "poll" element.
  * 
- * @author Taras Kostiak
- * edited by drax
+ * @author TKOST
+ * @author DCR
  */
 @XmlRootElement(name = "poll")
 public class PollElement {
@@ -23,29 +23,28 @@ public class PollElement {
     protected DescriptionElement description = null;
 
     protected List<ChoiceElement> choices = null;
-    
-  
-   public String Selection;
- 
-   
-public void setsid(){
-	int sid;
-	try {InputStreamReader converter = new InputStreamReader(System.in);
-         BufferedReader in = new BufferedReader(converter);
-	sid = Integer.parseInt(in.readLine());;
-	
-	 for (ChoiceElement el : this.getChoices()) {
-      if (sid==Integer.parseInt(el.getId())) this.Selection=el.getName();
-                       
-                        
-	}
-	} catch(Exception ex){};
-	}
+
+    public String selection;
+
+    public void setsid() {
+        int sid;
+        try {
+            InputStreamReader converter = new InputStreamReader(System.in);
+            BufferedReader in = new BufferedReader(converter);
+            sid = Integer.parseInt(in.readLine());
+
+            for (ChoiceElement el : this.getChoices()) {
+                if (sid == Integer.parseInt(el.getId()))
+                    this.selection = el.getName();
+            }
+        }
+        catch (Exception ex) {
+        }
+    }
+
     /**
      * @see #description
      */
-      
-     
     public DescriptionElement getDescription() {
         return description;
     }
@@ -102,20 +101,28 @@ public void setsid(){
     public void setName(String name) {
         this.name = name;
     }
-// started editing
 
-public void QueryUser(){
-	try{ for (int i=0; i<40; i++) System.out.println();;} catch ( Exception ex){};
-	System.out.println("Name: " + this.getName());
-            System.out.println("Desription: " + this.getDescription().getValue());
-            for (ChoiceElement el : this.getChoices()) {
-                System.out.println("| " + el.getId() + "| "
-                        + el.getName());
-                       
-                        
-	}
-	 this.setsid();
-	 try{
-for (int i=0; i<40; i++) System.out.println();;} catch ( Exception ex){};
-}
+    // started editing
+
+    public void queryUser() {
+        try {
+            for (int i = 0; i < 40; i++)
+                System.out.println();
+        }
+        catch (Exception ex) {
+        }
+        System.out.println("Name: " + this.getName());
+        System.out.println("Desription: " + this.getDescription().getValue());
+        for (ChoiceElement el : this.getChoices()) {
+            System.out.println("| " + el.getId() + "| " + el.getName());
+
+        }
+        this.setsid();
+        try {
+            for (int i = 0; i < 40; i++)
+                System.out.println();
+        }
+        catch (Exception ex) {
+        }
+    }
 }
