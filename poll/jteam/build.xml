@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 
-<!-- $Id: build.xml,v 1.2 2007/05/01 21:41:17 taraskostiak Exp $ -->
-
 <project name="task7" default="jar">
 
 	<property name="basedir" value="." />
@@ -37,6 +35,10 @@
 	<target name="clean">
 		<delete quiet="true" dir="${distr.dir}" />
 		<delete quiet="true" file="${jar.file}" />
+	</target>
+
+	<target name="commitclean" depends="jar">
+		<delete quiet="true" dir="${distr.dir}" />
 	</target>
 
 </project>
