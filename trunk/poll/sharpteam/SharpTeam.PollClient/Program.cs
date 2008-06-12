@@ -6,63 +6,78 @@ using System.Xml;
 
 namespace SharpTeam.PollClient
 {
-    public class Poll
+    public class Poll : ICloneable
     {
-        public Poll()
-        {
-            name = "";
-            description = "";
-            for (int i = 0; i < 3; i++)
-            {
-                choice[i] = "";
+            public object Clone() 
+            {        
+                Poll mc = this.MemberwiseClone() as Poll;        
+                mc.id = this.id;
+                mc.name = this.name.Clone() as string;
+                mc.description = this.description.Clone() as string;
+                mc.choice = this.choice.Clone() as ArrayList;
+                return mc;    
             }
-        }
 
+        public int id;
         public string name;
         public string description;
-        public string[] choice = new string[3];
+        public ArrayList choice = new ArrayList();
+    }
+
+    public class Choice : ICloneable
+    {
+        public object Clone()
+        {
+            Choice mc = this.MemberwiseClone() as Choice;
+            mc.id = this.id;
+            mc.choice = this.choice.Clone() as string;
+            return mc;
+        }
+
+        public int id;
+        public string choice;
     }
 
     public class Program
     {
         static void Main(string[] args)
         {
+            int i, j;
+            Choice tempChoice = new Choice();
+            Poll tempPoll = new Poll();
+            ArrayList pollDoc = new ArrayList();
             XmlDocument xmldoc = new XmlDocument();
             xmldoc.Load("Polls.xml");
             XmlNodeList xmlPoll = xmldoc.GetElementsByTagName("poll");
-
-            Poll[] myDoc;
-            myDoc = new Poll[xmlPoll.Count];
-            for (int i = 0; i < xmlPoll.Count; i++)
-                myDoc[i] = new Poll();
-
-            for (int i = 0; i < xmlPoll.Count; i++)
+            
+            for (i = 0; i < xmlPoll.Count; i++)
             {
+                tempPoll.id = i;
                 XmlAttributeCollection xmlAttr = xmlPoll[i].Attributes;
-                myDoc[i].name = xmlAttr[1].Value;
-                //Console.WriteLine(xmlAttr[1].Value); //name of poll
-
-                myDoc[i].description = xmlPoll[i].FirstChild.InnerText;
-                //Console.WriteLine(xmlPoll[i].FirstChild.InnerText); //description
+                tempPoll.name = xmlAttr[1].Value;
+                tempPoll.description = xmlPoll[i].FirstChild.InnerText;
 
                 XmlNodeList xmlChoices = xmlPoll[i].ChildNodes;
                 XmlNodeList xmlChoice = xmlChoices[1].ChildNodes;
-                for (int j = 0; j < xmlChoice.Count; j++)
+                for (j = 0; j < xmlChoice.Count; j++)
                 {
                     XmlAttributeCollection xmlAttrCh = xmlChoice[j].Attributes;
-                    myDoc[i].choice[j] = xmlAttrCh[1].Value;
-                    //Console.WriteLine(xmlAttrCh[1].Value); //choise
+                    tempChoice.id = j+1;
+                    tempChoice.choice = xmlAttrCh[1].Value;
+                    tempPoll.choice.Add(tempChoice.Clone());
                 }
+                pollDoc.Add(tempPoll.Clone());
+                tempPoll.choice.Clear();
             }
 
-            for (int i = 0; i < 2; i++)
+            foreach(Poll myPoll in pollDoc)
             {
-                Console.WriteLine(myDoc[i].name + " (" + myDoc[i].description + ")");
-                for (int j = 0; j < 3; j++)
+                Console.WriteLine(myPoll.id+1 + ") Name: " + myPoll.name);
+                Console.WriteLine("   Description:" + myPoll.description);
+                foreach (Choice myChoice in myPoll.choice)
                 {
-                    Console.WriteLine(j+1 +" -> " + myDoc[i].choice[j]);
+                    Console.WriteLine("      " + myChoice.id + ". " + myChoice.choice);
                 }
-                Console.WriteLine();
             }
             Console.ReadKey(true);
         }
