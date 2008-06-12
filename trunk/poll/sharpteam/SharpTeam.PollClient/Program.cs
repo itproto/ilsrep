@@ -14,6 +14,7 @@ namespace SharpTeam.PollClient
                 mc.id = this.id;
                 mc.name = this.name.Clone() as string;
                 mc.description = this.description.Clone() as string;
+                mc.customChoice = this.customChoice;
                 mc.choice = this.choice.Clone() as ArrayList;
                 return mc;    
             }
@@ -21,6 +22,7 @@ namespace SharpTeam.PollClient
         public int id;
         public string name;
         public string description;
+        public bool customChoice;
         public ArrayList choice = new ArrayList();
     }
 
@@ -42,7 +44,7 @@ namespace SharpTeam.PollClient
     {
         static void Main(string[] args)
         {
-            int i, j;
+            int i, j, k;
             Choice tempChoice = new Choice();
             Poll tempPoll = new Poll();
             ArrayList pollDoc = new ArrayList();
@@ -52,9 +54,22 @@ namespace SharpTeam.PollClient
             
             for (i = 0; i < xmlPoll.Count; i++)
             {
-                tempPoll.id = i;
                 XmlAttributeCollection xmlAttr = xmlPoll[i].Attributes;
-                tempPoll.name = xmlAttr[1].Value;
+                for (k = 0; k < xmlAttr.Count; k++)
+                {
+                    switch (k)
+                    {
+                    case 0:
+                        tempPoll.id = Convert.ToInt32(xmlAttr[k].Value);
+                        break;
+                    case 1:
+                        tempPoll.name = xmlAttr[k].Value;
+                        break;
+                    case 2:
+                        tempPoll.customChoice = Convert.ToBoolean(xmlAttr[k].Value);
+                        break;
+                    }
+                }
                 tempPoll.description = xmlPoll[i].FirstChild.InnerText;
 
                 XmlNodeList xmlChoices = xmlPoll[i].ChildNodes;
@@ -62,8 +77,18 @@ namespace SharpTeam.PollClient
                 for (j = 0; j < xmlChoice.Count; j++)
                 {
                     XmlAttributeCollection xmlAttrCh = xmlChoice[j].Attributes;
-                    tempChoice.id = j+1;
-                    tempChoice.choice = xmlAttrCh[1].Value;
+                    for (k = 0; k < xmlAttr.Count; k++)
+                    {
+                        switch (k)
+                        {
+                            case 0:
+                                tempChoice.id = Convert.ToInt32(xmlAttrCh[k].Value);
+                                break;
+                            case 1:
+                                tempChoice.choice = xmlAttrCh[k].Value;
+                                break;
+                        }
+                    }
                     tempPoll.choice.Add(tempChoice.Clone());
                 }
                 pollDoc.Add(tempPoll.Clone());
@@ -72,8 +97,9 @@ namespace SharpTeam.PollClient
 
             foreach(Poll myPoll in pollDoc)
             {
-                Console.WriteLine(myPoll.id+1 + ") Name: " + myPoll.name);
-                Console.WriteLine("   Description:" + myPoll.description);
+                Console.WriteLine(myPoll.id + ") Name: " + myPoll.name);
+                Console.WriteLine("   Description: " + myPoll.description);
+                Console.WriteLine("   CustomChoiceEnabled: " + myPoll.customChoice);
                 foreach (Choice myChoice in myPoll.choice)
                 {
                     Console.WriteLine("      " + myChoice.id + ". " + myChoice.choice);
