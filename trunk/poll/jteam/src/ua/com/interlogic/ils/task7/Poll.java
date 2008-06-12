@@ -1,7 +1,9 @@
 package ua.com.interlogic.ils.task7;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -46,11 +48,13 @@ public class Poll {
                 choice = e.queryUser();
             plog.pushMe(e.getName(), choice);
             choice = null;
-//            System.out.println(e.getCustomChoiceEnabled());
         }
 
         // Showing poll results.
         plog.popMe();
+
+        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        r.readLine();
     }
 
 }
