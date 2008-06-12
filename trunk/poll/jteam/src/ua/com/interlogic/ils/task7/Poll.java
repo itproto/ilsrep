@@ -37,9 +37,12 @@ public class Poll {
         // Processing polls.
         LogSaver plog = new LogSaver();
 
+        String choice = null;
         for (PollElement e : pls.getPolls()) {
-            e.queryUser();
-            plog.pushMe(e.getName(), e.selection);
+            while (choice == null)
+                choice = e.queryUser();
+            plog.pushMe(e.getName(), choice);
+            choice = null;
         }
 
         // Showing poll results.

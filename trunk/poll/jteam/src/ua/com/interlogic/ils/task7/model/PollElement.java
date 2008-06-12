@@ -1,7 +1,9 @@
 package ua.com.interlogic.ils.task7.model;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
-import java.io.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -16,31 +18,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "poll")
 public class PollElement {
 
+    /**
+     * Poll's ID.
+     */
     protected String id = null;
 
+    /**
+     * Poll's name.
+     */
     protected String name = null;
 
+    /**
+     * Poll's description, aka question.
+     */
     protected DescriptionElement description = null;
 
+    /**
+     * List of choices.
+     */
     protected List<ChoiceElement> choices = null;
-
-    public String selection;
-
-    public void setsid() {
-        int sid;
-        try {
-            InputStreamReader converter = new InputStreamReader(System.in);
-            BufferedReader in = new BufferedReader(converter);
-            sid = Integer.parseInt(in.readLine());
-
-            for (ChoiceElement el : this.getChoices()) {
-                if (sid == Integer.parseInt(el.getId()))
-                    this.selection = el.getName();
-            }
-        }
-        catch (Exception ex) {
-        }
-    }
 
     /**
      * @see #description
@@ -102,27 +98,39 @@ public class PollElement {
         this.name = name;
     }
 
-    // started editing
-
-    public void queryUser() {
-        try {
-            for (int i = 0; i < 40; i++)
-                System.out.println();
-        }
-        catch (Exception ex) {
-        }
+    /**
+     * Polls user in console for selection.
+     * 
+     * @return Choice, or null if user entered wrong choice.
+     */
+    public String queryUser() {
         System.out.println("Name: " + this.getName());
         System.out.println("Desription: " + this.getDescription().getValue());
         for (ChoiceElement el : this.getChoices()) {
             System.out.println("| " + el.getId() + "| " + el.getName());
 
         }
-        this.setsid();
+
+        String selection = null;
+        int sid = -1;
+        InputStreamReader converter = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(converter);
         try {
-            for (int i = 0; i < 40; i++)
-                System.out.println();
+            sid = Integer.parseInt(in.readLine());
         }
-        catch (Exception ex) {
+        catch (NumberFormatException e) {
         }
+        catch (IOException e) {
+        }
+
+        for (ChoiceElement el : this.getChoices()) {
+            if (sid == Integer.parseInt(el.getId()))
+                selection = el.getName();
+        }
+
+        System.out.println();
+
+        return selection;
     }
+
 }
