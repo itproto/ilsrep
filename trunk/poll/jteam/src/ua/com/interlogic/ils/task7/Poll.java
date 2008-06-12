@@ -1,6 +1,7 @@
 package ua.com.interlogic.ils.task7;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,12 +27,14 @@ public class Poll {
      *            Command line arguments.
      * @throws JAXBException
      *             When xml document had failed to parse by JAXB.
+     * @throws IOException
+     *             When I/O exception occurs.
      */
-    public static void main(String[] args) throws JAXBException {
+    public static void main(String[] args) throws JAXBException, IOException {
         // Serialising xml file into memory.
         JAXBContext cont = JAXBContext.newInstance(PollsElement.class);
         Unmarshaller um = cont.createUnmarshaller();
-        File f = new File("Polls.xml");
+        File f = new File("Polls2.xml");
         PollsElement pls = (PollsElement) um.unmarshal(f);
 
         // Processing polls.
@@ -43,6 +46,7 @@ public class Poll {
                 choice = e.queryUser();
             plog.pushMe(e.getName(), choice);
             choice = null;
+//            System.out.println(e.getCustomChoiceEnabled());
         }
 
         // Showing poll results.

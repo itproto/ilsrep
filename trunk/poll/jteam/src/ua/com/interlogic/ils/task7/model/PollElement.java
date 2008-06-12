@@ -39,6 +39,11 @@ public class PollElement {
     protected List<ChoiceElement> choices = null;
 
     /**
+     * Shows if custom choice is enabled("true" if enbled).
+     */
+    protected String customChoiceEnabled = null;
+
+    /**
      * @see #description
      */
     public DescriptionElement getDescription() {
@@ -102,14 +107,17 @@ public class PollElement {
      * Polls user in console for selection.
      * 
      * @return Choice, or null if user entered wrong choice.
+     * @throws IOException
+     *             When I/O exception occurs.
      */
-    public String queryUser() {
+    public String queryUser() throws IOException {
         System.out.println("Name: " + this.getName());
         System.out.println("Desription: " + this.getDescription().getValue());
         for (ChoiceElement el : this.getChoices()) {
             System.out.println("| " + el.getId() + "| " + el.getName());
-
         }
+        if (checkCustomChoiceEnabled())
+            System.out.println("| 0| your choice");
 
         String selection = null;
         int sid = -1;
@@ -120,17 +128,45 @@ public class PollElement {
         }
         catch (NumberFormatException e) {
         }
-        catch (IOException e) {
-        }
 
-        for (ChoiceElement el : this.getChoices()) {
-            if (sid == Integer.parseInt(el.getId()))
-                selection = el.getName();
+        if (checkCustomChoiceEnabled() && sid == 0) {
+            System.out.println("Please enter your choice:");
+            selection = in.readLine();
         }
+        else
+            for (ChoiceElement el : this.getChoices()) {
+                if (sid == Integer.parseInt(el.getId()))
+                    selection = el.getName();
+            }
 
         System.out.println();
 
         return selection;
+    }
+
+    /**
+     * @see #customChoiceEnabled
+     */
+    @XmlAttribute(name = "customChoiceEnabled")
+    public String getCustomChoiceEnabled() {
+        return customChoiceEnabled;
+    }
+
+    /**
+     * @see #customChoiceEnabled
+     */
+    public void setCustomChoiceEnabled(String customChoiceEnabled) {
+        this.customChoiceEnabled = customChoiceEnabled;
+    }
+
+    /**
+     * Shows if custom choice is enabled.
+     * 
+     * @return True, if custom choice is enabled.
+     */
+    public boolean checkCustomChoiceEnabled() {
+        return (customChoiceEnabled != null)
+                && (customChoiceEnabled.compareTo("true") == 0);
     }
 
 }
