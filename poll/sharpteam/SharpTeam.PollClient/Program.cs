@@ -5,70 +5,69 @@ using System.Text;
 using System.Xml;
 
 /*
- 130608 Initial codereview by okl
- */
+ 140608 Fixed all bugs by ksi
+*/
+
 namespace SharpTeam.PollClient
 {
     public class Program
     {
-        //try always to split complexity, use more smaller functions instead of big one. Split tasks to smallers
-        static void Main(string[] args)
+
+        public static List<Poll> ParseXml(string PATH_TO_POLLS)
         {
             //---------------Init---------------
-            int i, j;
+            bool customChoiceExists;
             List<Poll> pollDoc = new List<Poll>();
-            XmlDocument xmldoc = new XmlDocument();
-            xmldoc.Load("Polls.xml"); //NO string literals, numbers in functions. use private const PATH_TO_POLLS = ""; 
-            XmlNodeList xmlPoll = xmldoc.GetElementsByTagName("poll");
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(PATH_TO_POLLS);
+            XmlNodeList xmlPollList = xmlDoc.GetElementsByTagName("poll");
 
             //---------------Fill pollDoc---------------
-            /*
-              don't be boring use )
-                  foreach(XmlNode pollNode in pollNodeList){
-                    ...
-                    currentPoll.name = pollNode.Attributes[""].Value..
-                  }
-             instead of 
-             
-             "for (i = 0; i < xmlPoll.Count; i++)"
-             as we discussed
-             */
-
-            for (i = 0; i < xmlPoll.Count; i++)
+            foreach (XmlNode xmlPoll in xmlPollList)
             {
                 Poll currentPoll = new Poll();
-                XmlAttributeCollection xmlAttr = xmlPoll[i].Attributes;
-                currentPoll.id = Convert.ToInt32(xmlAttr["id"].Value); //okl: xmlAttr["id"] looks better then long xmlAttr.GetNamedItem("id")
-                currentPoll.name = xmlAttr.GetNamedItem("name").Value;
-                bool customChoiceExists = (xmlAttr["customChoiceEnabled"] != null); //looks simple? yes it is
-                //if (xmlAttr.GetNamedItem("customChoiceEnabled"))
-                    //currentPoll.customChoice = Convert.ToBoolean(xmlAttr.GetNamedItem("customChoiceEnabled").Value);
-                currentPoll.description = xmlPoll[i].FirstChild.InnerText;
+                XmlAttributeCollection xmlAttr = xmlPoll.Attributes;
+                currentPoll.id = Convert.ToInt32(xmlAttr["id"].Value);
+                currentPoll.name = xmlAttr["name"].Value;
+                customChoiceExists = (xmlAttr["customChoiceEnabled"] != null);
+                if (customChoiceExists)
+                    currentPoll.customChoice = Convert.ToBoolean(xmlAttr["customChoiceEnabled"].Value);
+                currentPoll.description = xmlPoll.FirstChild.InnerText;
 
-                XmlNodeList xmlChoices = xmlPoll[i].ChildNodes;
-                XmlNodeList xmlChoice = xmlChoices[1].ChildNodes;
-                for (j = 0; j < xmlChoice.Count; j++)
+                XmlNodeList xmlChoices = xmlPoll.ChildNodes;
+                XmlNodeList xmlChoicesList = xmlChoices[1].ChildNodes;
+                foreach (XmlNode xmlChoice in xmlChoicesList)
                 {
                     Choice currentChoice = new Choice();
-                    XmlAttributeCollection xmlAttrChoice = xmlChoice[j].Attributes;
-                    currentChoice.id = Convert.ToInt32(xmlAttrChoice.GetNamedItem("id").Value);
-                    currentChoice.choice = xmlAttrChoice.GetNamedItem("name").Value;
+                    XmlAttributeCollection xmlAttrChoice = xmlChoice.Attributes;
+                    currentChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
+                    currentChoice.choice = xmlAttrChoice["name"].Value;
                     currentPoll.choice.Add(currentChoice);
                 }
                 pollDoc.Add(currentPoll);
             }
+            return pollDoc;
+        }
 
-            //---------------Display contains of pollDoc---------------
-            foreach(Poll tempPoll in pollDoc) //nothing temporary, better curPoll or currentPoll
+        public static void DisplayPollDoc(List<Poll> pollDoc)
+        {
+            foreach (Poll curPoll in pollDoc)
             {
-                Console.WriteLine(tempPoll.id + ") Name: " + tempPoll.name);
-                Console.WriteLine("   Description: " + tempPoll.description);
-                Console.WriteLine("   CustomChoiceEnabled: " + tempPoll.customChoice);
-                foreach (Choice tempChoice in tempPoll.choice)
+                Console.WriteLine(curPoll.id + ") Name: " + curPoll.name);
+                Console.WriteLine("   Description: " + curPoll.description);
+                Console.WriteLine("   CustomChoiceEnabled: " + curPoll.customChoice);
+                foreach (Choice curChoice in curPoll.choice)
                 {
-                    Console.WriteLine("      " + tempChoice.id + ". " + tempChoice.choice);
+                    Console.WriteLine("      " + curChoice.id + ". " + curChoice.choice);
                 }
             }
+        }
+
+        public static void Main()
+        {
+            const string PATH_TO_POLLS = "Polls.xml";
+            List<Poll> pollDoc = ParseXml(PATH_TO_POLLS);
+            DisplayPollDoc(pollDoc);
             Console.ReadKey(true);
         }
     }
