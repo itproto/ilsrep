@@ -14,7 +14,8 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartWorkingDirectory>C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Debug\</StartWorkingDirectory>
+    <StartWorkingDirectory>
+    </StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartWorkingDirectory>C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Release\</StartWorkingDirectory>
