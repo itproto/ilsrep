@@ -8,7 +8,7 @@ using System.Xml;
  140608 Fixed all bugs by ksi
 */
 
-namespace SharpTeam.PollClient
+namespace Ilsrep.Poll.Client
 {
     public class Program
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpTeam.PollClient
+namespace Ilsrep.Poll.Client
 {
     public class Choice
     {
