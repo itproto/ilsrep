@@ -8,6 +8,7 @@ namespace SharpTeam.PollClient
     {
         public int id;
         public string choice;
+        public Poll parent;
     }
 
     public class Poll

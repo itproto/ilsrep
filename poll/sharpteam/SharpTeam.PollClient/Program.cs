@@ -50,6 +50,7 @@ namespace SharpTeam.PollClient
                     XmlAttributeCollection xmlAttrChoice = xmlChoice.Attributes;
                     currentChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
                     currentChoice.choice = xmlAttrChoice["name"].Value;
+                    currentChoice.parent = currentPoll;
                     currentPoll.choice.Add(currentChoice);
                 }
                 pollDoc.Add(currentPoll);
@@ -57,7 +58,7 @@ namespace SharpTeam.PollClient
             return pollDoc;
         }
 
-        public static void DisplayPollDoc(List<Poll> pollDoc)
+        public static void UserDialog(List<Poll> pollDoc)
         {
             List<Choice> userChoices = new List<Choice>();
 
@@ -97,11 +98,10 @@ namespace SharpTeam.PollClient
                         continue;
                     }
                     
-                    if ( index > 0 && index <= curPoll.choice.Count - ( curPoll.customChoice ? 0 : 1 ) )
-                    {
-                        // show user choice
+                    // check if input correct
+                    if ( index >= 0 && index <= curPoll.choice.Count - ( curPoll.customChoice ? 0 : 1 ) )
                         break;
-                    } 
+                        
                 }
 
                 // check if custom choice
@@ -113,6 +113,7 @@ namespace SharpTeam.PollClient
                     Choice userChoice = new Choice();
                     userChoice.choice = Console.ReadLine();
                     userChoice.id = 0;
+                    userChoice.parent = curPoll;
 
                     // add custom choice to list
                     userChoices.Add(userChoice);
@@ -130,10 +131,10 @@ namespace SharpTeam.PollClient
             Console.Clear();
             Console.WriteLine("Your choices:");
 
-            // don't know how to do this with foreach... ((
-            for (int i = 0; i < pollDoc.Count; ++ i )
+            // go through choices and display them
+            foreach(Choice choice in userChoices)
             {
-                Console.WriteLine(pollDoc[i].name + ": " + (userChoices[i].id == 0 ? "Custom Choice: " : userChoices[i].id + ". ") + userChoices[i].choice);
+                Console.WriteLine(choice.parent.name + ": " + (choice.id == 0 ? "Custom Choice: " : choice.id + ". ") + choice.choice);
             }
         }
 
@@ -141,7 +142,7 @@ namespace SharpTeam.PollClient
         {
             const string PATH_TO_POLLS = "Polls.xml";
             List<Poll> pollDoc = ParseXml(PATH_TO_POLLS);
-            DisplayPollDoc(pollDoc);
+            UserDialog(pollDoc);
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);

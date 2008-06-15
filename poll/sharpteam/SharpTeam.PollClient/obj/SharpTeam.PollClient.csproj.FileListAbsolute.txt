@@ -3,3 +3,8 @@ C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollC
 C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Debug\SharpTeam.PollClient.exe
 C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Debug\SharpTeam.PollClient.pdb
 C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Release\SharpTeam.PollClient.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Release\SharpTeam.PollClient.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\obj\Release\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\obj\Release\SharpTeam.PollClient.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\obj\Release\SharpTeam.PollClient.pdb
