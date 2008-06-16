@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Ilsrep.PollApplication.Model;
 
 /*
  ParseXml author: ksi
@@ -10,7 +11,7 @@ using System.Xml;
  PollSession author: vlad
 */
 
-namespace Ilsrep.Poll.Client
+namespace Ilsrep.PollApplication.Client
 {
     public class Program
     {

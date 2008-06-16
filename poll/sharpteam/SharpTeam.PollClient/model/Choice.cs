@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ilsrep.Poll.Client
+namespace Ilsrep.PollApplication.Model
 {
     public class Choice
     {
