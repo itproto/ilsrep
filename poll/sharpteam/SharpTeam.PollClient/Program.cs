@@ -6,7 +6,7 @@ using System.Xml;
 
 /*
  ParseXml author: ksi
- UserDialog author: vlad
+ PollSession author: vlad
 */
 
 namespace Ilsrep.Poll.Client
@@ -15,11 +15,12 @@ namespace Ilsrep.Poll.Client
     {
         private const string PATH_TO_POLLS = "Polls.xml";
         private const string POLL_ELEMENT = "poll";
+        static string userName = "";
 
         public static List<Poll> ParseXml()
         {
             //---------------Init---------------
-            bool customChoiceExists;
+            bool customChoiceExists; 
             List<Poll> pollDoc = new List<Poll>();
             XmlDocument xmlDoc = new XmlDocument();
             try
@@ -71,8 +72,41 @@ namespace Ilsrep.Poll.Client
             }
             return pollDoc;
         }
+        
+        public static void UserDialog()
+        {
+            // Read user name
+            Console.WriteLine("Welcome to polls client program.");
+            while (true)
+            { 
+                Console.Write("Please enter your name:");
+                userName = Console.ReadLine();
+                if (userName != "")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("You didn't enter your name.");
+                }
+            }
 
-        public static void UserDialog(List<Poll> pollDoc)
+            Console.Clear();
+            Console.WriteLine("Glad to meet you, " + userName);
+            Console.WriteLine(userName + ", let's start the poll session?[y/n]");
+
+            // Ask user if he want to start the poll session
+            while (true)
+            {
+                string userInput = Console.ReadLine();
+                if (userInput == "y") break;
+                if (userInput == "n") Environment.Exit(0);
+                Console.WriteLine("Wrong choice, please, choose [y/n]:");
+            }
+        }
+
+        public static void PollSession(List<Poll> pollDoc)
         {
             List<Choice> userChoices = new List<Choice>();
 
@@ -138,15 +172,11 @@ namespace Ilsrep.Poll.Client
                     // add one of the choices that already exist to list
                     userChoices.Add(curPoll.choice[index]);
                 }
-
-            // end of loop of polls
             }
 
-            // list choices
-            Console.Clear();
-            Console.WriteLine("Your choices:");
-
             // go through choices and display them
+            Console.Clear();
+            Console.WriteLine(userName + ", here is your PollSession results:");
             foreach(Choice choice in userChoices)
             {
                 Console.WriteLine(choice.parent.name + ": " + (choice.id == 0 ? "Custom Choice: " : choice.id + ". ") + choice.choice);
@@ -156,7 +186,8 @@ namespace Ilsrep.Poll.Client
         public static void Main()
         {
             List<Poll> pollDoc = ParseXml();
-            UserDialog(pollDoc);
+            UserDialog();
+            PollSession(pollDoc);
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
