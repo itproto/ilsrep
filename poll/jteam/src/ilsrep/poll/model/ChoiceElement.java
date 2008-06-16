@@ -1,4 +1,4 @@
-package ua.com.interlogic.ils.task7.model;
+package ilsrep.poll.model;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;

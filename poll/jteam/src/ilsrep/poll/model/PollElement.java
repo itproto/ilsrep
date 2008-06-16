@@ -1,4 +1,6 @@
-package ua.com.interlogic.ils.task7.model;
+package ilsrep.poll.model;
+
+import ilsrep.poll.client.Poll;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +11,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ua.com.interlogic.ils.task7.Poll;
 
 /**
  * The "poll" element.
