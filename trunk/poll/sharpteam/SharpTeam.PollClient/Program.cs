@@ -6,6 +6,7 @@ using System.Xml;
 
 /*
  ParseXml author: ksi
+ *Usr dialog author: ksi
  PollSession author: vlad
 */
 
