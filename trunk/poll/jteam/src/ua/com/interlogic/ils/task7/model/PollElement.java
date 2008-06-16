@@ -33,7 +33,7 @@ public class PollElement {
     /**
      * Poll's description, aka question.
      */
-    protected DescriptionElement description = null;
+    protected DescElement description = null;
 
     /**
      * List of choices.
@@ -43,19 +43,19 @@ public class PollElement {
     /**
      * Shows if custom choice is enabled("true" if enbled).
      */
-    protected String customChoiceEnabled = null;
+    protected String customEnabled = null;
 
     /**
      * @see #description
      */
-    public DescriptionElement getDescription() {
+    public DescElement getDescription() {
         return description;
     }
 
     /**
      * @see #description
      */
-    public void setDescription(DescriptionElement description) {
+    public void setDescription(DescElement description) {
         this.description = description;
     }
 
@@ -116,50 +116,54 @@ public class PollElement {
         Poll.consoleClearScreen();
         System.out.println("Name: " + this.getName());
         System.out.println("Desription: " + this.getDescription().getValue());
-        for (ChoiceElement el : this.getChoices()) {
-            System.out.println("( " + el.getId() + " ) " + el.getName());
+        for (ChoiceElement cur : this.getChoices()) {
+            System.out.println("( " + cur.getId() + " ) " + cur.getName());
         }
-        if (checkCustomChoiceEnabled())
+        if (checkCustomEnabled())
             System.out.println("( 0 ) for your choice");
 
         String selection = null;
-        int sid = -1;
+        int selectionId = -1;
+        //reading input data
         InputStreamReader converter = new InputStreamReader(System.in);
-        BufferedReader in = new BufferedReader(converter);
+        BufferedReader input = new BufferedReader(converter);
         try {
-            sid = Integer.parseInt(in.readLine());
+            selectionId = Integer.parseInt(input.readLine());
         }
         catch (NumberFormatException e) {
         }
-
-        if (checkCustomChoiceEnabled() && sid == 0) {
+         //checking whether to output custom choice line
+                if (checkCustomEnabled() && selectionId == 0) {
+	        
             System.out.print("Please enter your choice: ");
-            selection = in.readLine();
+            selection = input.readLine();
         }
         else
-            for (ChoiceElement el : this.getChoices()) {
-                if (sid == Integer.parseInt(el.getId()))
-                    selection = el.getName();
+            for (ChoiceElement cur : this.getChoices()) {
+	      // converting selection number to what it represents      
+	      
+                if (selectionId == Integer.parseInt(cur.getId()))
+                    selection = cur.getName();
             }
 
         System.out.println();
-
+//return the selected element
         return selection;
     }
 
     /**
-     * @see #customChoiceEnabled
+     * @see #customEnabled
      */
     @XmlAttribute(name = "customChoiceEnabled")
-    public String getCustomChoiceEnabled() {
-        return customChoiceEnabled;
+    public String getCustomEnabled() {
+        return customEnabled;
     }
 
     /**
-     * @see #customChoiceEnabled
+     * @see #customEnabled
      */
-    public void setCustomChoiceEnabled(String customChoiceEnabled) {
-        this.customChoiceEnabled = customChoiceEnabled;
+    public void setCustomEnabled(String customEnabled) {
+        this.customEnabled = customEnabled;
     }
 
     /**
@@ -167,9 +171,9 @@ public class PollElement {
      * 
      * @return True, if custom choice is enabled.
      */
-    public boolean checkCustomChoiceEnabled() {
-        return (customChoiceEnabled != null)
-                && (customChoiceEnabled.compareTo("true") == 0);
+    public boolean checkCustomEnabled() {
+        return (customEnabled != null)
+                && (customEnabled.compareTo("true") == 0);
     }
 
 }
