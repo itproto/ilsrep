@@ -7,12 +7,12 @@ import java.util.LinkedList;
  * 
  * @author DCR
  */
-public class LogSaver {
+public class AnsSaver {
 
     /**
      * This class represents name and choice selection pair.
      */
-    protected class LogHelper {
+    protected class AnsHelper {
 
         /**
          * Name
@@ -28,13 +28,13 @@ public class LogSaver {
     /**
      * This list stores name and choice selection pairs.
      */
-    protected LinkedList<LogHelper> lhelp = null;
+    protected LinkedList<AnsHelper> ansList = null;
 
     /**
      * Default constructor.
      */
-    public LogSaver() {
-        lhelp = new LinkedList<LogHelper>();
+    public AnsSaver() {
+        ansList = new LinkedList<AnsHelper>();
     }
 
     /**
@@ -45,11 +45,11 @@ public class LogSaver {
      * @param sid
      *            Choice selection.
      */
-    public void pushMe(String desc, String sid) {
-        LogHelper lh = new LogHelper();
-        lh.name = desc;
-        lh.selection = sid;
-        lhelp.add(lh);
+    public void pushAns(String poll, String answer) {
+        AnsHelper listElement = new AnsHelper();
+        listElement.name = poll;
+        listElement.selection = answer;
+        ansList.add(listElement);
 
     }
 
@@ -57,11 +57,12 @@ public class LogSaver {
      * Prints all saved name and choice selection pairs.<br>
      * 
      * TODO: (BUG) This removes list from memory, which could be used later.
+     * DRC: you propose i should just read the list instead of clearing it?
      */
-    public void popMe() {
-        while (!(lhelp.size() == 0)) {
-            LogHelper i = lhelp.removeFirst();
-            System.out.println(i.name + " => " + i.selection + "\n");
+    public void popAns() {
+        while (!(ansList.size() == 0)) {
+            AnsHelper cur = ansList.removeFirst();
+            System.out.println(cur.name + " => " + cur.selection + "\n");
         }
     }
 
