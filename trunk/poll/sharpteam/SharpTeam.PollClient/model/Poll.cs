@@ -10,6 +10,7 @@ namespace Ilsrep.Poll.Client
         public string name;
         public string description;
         public bool customChoice;
+        public int correctChoice;
         public List<Choice> choice = new List<Choice>();
     }
 }
