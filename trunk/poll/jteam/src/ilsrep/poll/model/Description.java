@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlValue;
  *
  */
 @XmlRootElement(name = "description")
-public class DescElement {
+public class Description {
 
     /**
      * Value of element.

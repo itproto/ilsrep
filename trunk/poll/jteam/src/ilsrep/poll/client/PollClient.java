@@ -1,8 +1,7 @@
 package ilsrep.poll.client;
 
-import ilsrep.poll.model.AnswerSaver;
-import ilsrep.poll.model.PollElement;
-import ilsrep.poll.model.PollsElement;
+import ilsrep.poll.model.Poll;
+import ilsrep.poll.model.Pollsession;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,7 +21,7 @@ import javax.xml.bind.Unmarshaller;
  * @author DCR
  * 
  */
-public class Poll {
+public class PollClient {
 
     /**
      * Main method for task 7.
@@ -47,10 +46,10 @@ public class Poll {
             fileName = "Polls.xml";
 
         // Serialising xml file into object model.
-        JAXBContext cont = JAXBContext.newInstance(PollsElement.class);
+        JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller um = cont.createUnmarshaller();
         File pollFile = new File(fileName);
-        PollsElement polls = (PollsElement) um.unmarshal(pollFile);
+        Pollsession polls = (Pollsession) um.unmarshal(pollFile);
 
         // Showing xml, generated from already read object model.
         Marshaller mr = cont.createMarshaller();
@@ -68,7 +67,7 @@ saveElement.testMode=polls.getTestMode();
             return;
 
         String choice = null;
-        for (PollElement cur : polls.getPolls()) {
+        for (Poll cur : polls.getPolls()) {
             while (choice == null)
                 choice = cur.queryUser();
             saveElement.pushAnswer(cur.getName(), choice, cur.pass);

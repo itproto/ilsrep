@@ -14,12 +14,12 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 @XmlRootElement(name = "pollsession")
 
-public class PollsElement {
+public class Pollsession {
 private String minScore="-1", name,id,testMode="false";
     /**
      * "poll" elements.
      */
-    protected List<PollElement> polls = null;
+    protected List<Poll> polls = null;
 
     /**
      * @see #polls
@@ -54,14 +54,14 @@ private String minScore="-1", name,id,testMode="false";
     }
 
     @XmlElementRef
-    public List<PollElement> getPolls() {
+    public List<Poll> getPolls() {
         return polls;
     }
 
     /**
      * @see #polls
      */
-    public void setPolls(List<PollElement> polls) {
+    public void setPolls(List<Poll> polls) {
         this.polls = polls;
     }
 

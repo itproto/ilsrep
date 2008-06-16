@@ -27,7 +27,7 @@
 			<fileset dir="${distr.dir}">
 			</fileset>
 			<manifest>
-				<attribute name="Main-Class" value="ilsrep.poll.client.Poll" />
+				<attribute name="Main-Class" value="ilsrep.poll.client.PollClient" />
 			</manifest>
 		</jar>
 	</target>

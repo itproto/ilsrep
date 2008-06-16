@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "choice")
-public class ChoiceElement {
+public class Choice {
 
     /**
      * Choice identifier.
