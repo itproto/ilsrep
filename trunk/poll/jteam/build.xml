@@ -27,7 +27,7 @@
 			<fileset dir="${distr.dir}">
 			</fileset>
 			<manifest>
-				<attribute name="Main-Class" value="ua.com.interlogic.ils.task7.Poll" />
+				<attribute name="Main-Class" value="ilsrep.poll.client.Poll" />
 			</manifest>
 		</jar>
 	</target>
