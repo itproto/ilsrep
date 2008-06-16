@@ -19,6 +19,7 @@
     </StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <StartWorkingDirectory>C:\Users\vladykx\Documents\Visual Studio 2005\Projects\sharpteam\SharpTeam.PollClient\bin\Release\</StartWorkingDirectory>
+    <StartWorkingDirectory>
+    </StartWorkingDirectory>
   </PropertyGroup>
 </Project>

@@ -83,26 +83,28 @@ namespace Ilsrep.Poll.Client
                     Console.WriteLine("\t" + index + ". Custom Choice");
                 }
 
-                Console.Write("Pick your choice: [1-" + (curPoll.customChoice ? curPoll.choice.Count + 1 : curPoll.choice.Count) + "]:");
-                
                 // accept only correct choices
                 while ( true )
                 {
+                    Console.Write("Pick your choice: [1-" + (curPoll.customChoice ? curPoll.choice.Count + 1 : curPoll.choice.Count) + "]:");
+
                     // Get user choice but don't show ( not sure if it's correct )
                     try
                     {
                         index = int.Parse(Console.ReadKey(true).KeyChar.ToString());
                         --index;
+
+                        // check if input correct
+                        if (index >= 0 && index <= curPoll.choice.Count - (curPoll.customChoice ? 0 : 1))
+                            break;
+
                     }
                     catch( Exception )
                     {
-                        continue;
+                        //continue;
                     }
-                    
-                    // check if input correct
-                    if ( index >= 0 && index <= curPoll.choice.Count - ( curPoll.customChoice ? 0 : 1 ) )
-                        break;
-                        
+
+                    Console.WriteLine("Invalid choice!");
                 }
 
                 // check if custom choice
