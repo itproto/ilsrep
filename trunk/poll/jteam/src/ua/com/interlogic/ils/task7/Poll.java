@@ -12,7 +12,7 @@ import javax.xml.bind.Unmarshaller;
 
 import ua.com.interlogic.ils.task7.model.PollElement;
 import ua.com.interlogic.ils.task7.model.PollsElement;
-import ua.com.interlogic.ils.task7.model.AnsSaver;
+import ua.com.interlogic.ils.task7.model.AnswerSaver;
 
 /**
  * Main class for task 7 - Poll.
@@ -35,13 +35,13 @@ public class Poll {
      */
     public static void main(String[] args) throws JAXBException, IOException {
         // Greeting user and asking his name and filename of poll xml file.
-        BufferedReader Input = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader consoleInputReader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Welcome to polls client program!\n");
         System.out.print("Please enter your name: ");
-        String name = Input.readLine();
+        String name = consoleInputReader.readLine();
         System.out.print("Please enter filename to read poll xml "
                 + "from\n[press enter for default \"Polls.xml\"]: ");
-        String fileName = Input.readLine();
+        String fileName = consoleInputReader.readLine();
         if (fileName.compareTo("") == 0)
             fileName = "Polls.xml";
 
@@ -58,26 +58,27 @@ public class Poll {
         mr.marshal(polls, System.out);
 
         // Processing polls.
-        AnsSaver saveElement = new AnsSaver();
-
+        AnswerSaver saveElement = new AnswerSaver();
+saveElement.minScore=Float.parseFloat(polls.getMinScore());
+saveElement.testMode=polls.getTestMode();
         System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]");
-        String yNChoice = Input.readLine();
-        if (!(yNChoice.compareTo("y") == 0))
+        String yesNoChoice = consoleInputReader.readLine();
+        if (!(yesNoChoice.compareTo("y") == 0))
             return;
 
         String choice = null;
         for (PollElement cur : polls.getPolls()) {
             while (choice == null)
                 choice = cur.queryUser();
-            saveElement.pushAns(cur.getName(), choice);
+            saveElement.pushAnswer(cur.getName(), choice, cur.pass);
             choice = null;
         }
 
         // Showing poll results.
         consoleClearScreen();
-        saveElement.popAns();
+        saveElement.popAnswer();
 
-        Input.readLine();
+        consoleInputReader.readLine();
     }
 
     /**

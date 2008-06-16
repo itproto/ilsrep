@@ -24,7 +24,8 @@ public class PollElement {
      * Poll's ID.
      */
     protected String id = null;
-
+    
+public String pass="FAIL";
     /**
      * Poll's name.
      */
@@ -65,7 +66,10 @@ public class PollElement {
     public List<ChoiceElement> getChoices() {
         return choices;
     }
-
+/**
+*@see #correct choice
+*/
+protected String correctChoice="-1";
     /**
      * @see #choices
      */
@@ -144,10 +148,14 @@ public class PollElement {
 	      
                 if (selectionId == Integer.parseInt(cur.getId()))
                     selection = cur.getName();
+                   
             }
+             if (selectionId == Integer.parseInt(this.getCorrectChoice())) this.pass="PASS";
 
+           
         System.out.println();
 //return the selected element
+
         return selection;
     }
 
@@ -158,7 +166,6 @@ public class PollElement {
     public String getCustomEnabled() {
         return customEnabled;
     }
-
     /**
      * @see #customEnabled
      */
@@ -176,4 +183,13 @@ public class PollElement {
                 && (customEnabled.compareTo("true") == 0);
     }
 
+    @XmlAttribute(name = "correctChoice")
+    public String getCorrectChoice() {
+        return correctChoice;
+    }
+    public void setCorrectChoice(String correctChoice) {
+        this.correctChoice = correctChoice;
+    }
+
+   
 }
