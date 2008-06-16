@@ -25,6 +25,7 @@ namespace Ilsrep.Poll.Client
             catch(Exception)
             {
                 System.Console.WriteLine("Couldn't find xml file: " + PATH_TO_POLLS);
+                Console.ReadKey(true);
                 Environment.Exit(-1);
             }
             
