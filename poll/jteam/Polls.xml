@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<polls>
+<pollsession>
   <poll id="1" name ="Repository choice">
     <description>Please choice repository:</description>
     <choices>
@@ -32,4 +32,4 @@
       <choice id="2"  name="Python" />
     </choices>
   </poll>
-</polls>
+</pollsession>
