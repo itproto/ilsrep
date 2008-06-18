@@ -16,15 +16,18 @@ namespace Ilsrep.PollApplication.Client
     public class Program
     {
         private const string PATH_TO_POLLS = "Polls.xml";
+        private const string POLL_SESSION_ELEMENT = "pollsession";
         private const string POLL_ELEMENT = "poll";
         private const string CONSOLE_YES = "y";
         private const string CONSOLE_NO = "n";
         static string userName = "";
 
-        public static List<Poll> ParseXml()
+        static PollSession pollSession = new PollSession();
+        static List<Choice> userChoices = new List<Choice>();
+
+        public static void ParseXml()
         {
             //---------------Init---------------
-            bool customChoiceExists; 
             List<Poll> pollDoc = new List<Poll>();
             XmlDocument xmlDoc = new XmlDocument();
             try
@@ -38,43 +41,63 @@ namespace Ilsrep.PollApplication.Client
                 Environment.Exit(-1);
             }
 
-            XmlNodeList xmlPollList = xmlDoc.GetElementsByTagName(POLL_ELEMENT);
-            //---------------Fill pollDoc---------------
-            foreach (XmlNode xmlPoll in xmlPollList)
-            {
-                Poll currentPoll = new Poll();
-                XmlAttributeCollection xmlAttr = xmlPoll.Attributes;
-                // Get current Poll id
-                currentPoll.id = Convert.ToInt32(xmlAttr["id"].Value);
-                // Get current Poll name
-                currentPoll.name = xmlAttr["name"].Value;
-                // Get current Poll customChoiceEnabled option
-                customChoiceExists = (xmlAttr["customChoiceEnabled"] != null);
-                if (customChoiceExists)
-                    currentPoll.customChoice = Convert.ToBoolean(xmlAttr["customChoiceEnabled"].Value);
-                // Get current Poll description
-                currentPoll.description = xmlPoll.FirstChild.InnerText;
-                // Get correct choice in current Poll
-                currentPoll.correctChoice = Convert.ToInt32(xmlAttr["correctChoice"].Value);
+            System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
+            cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
 
-                // Get list of chioces of current Poll
-                XmlNodeList xmlChoices = xmlPoll.ChildNodes;
-                XmlNodeList xmlChoicesList = xmlChoices[1].ChildNodes;
-                foreach (XmlNode xmlChoice in xmlChoicesList)
+            XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
+
+            foreach (XmlNode xmlPollSession in xmlPollSessionList)
+            {
+                //XmlNodeList xmlPollList = ; /* xmlDoc.GetElementsByTagName(POLL_ELEMENT); */
+                //---------------Fill pollDoc---------------
+                pollSession.id = Convert.ToInt32(xmlPollSession.Attributes["id"].Value);
+                pollSession.name = xmlPollSession.Attributes["name"].Value;
+                pollSession.testMode = Convert.ToBoolean(xmlPollSession.Attributes["testMode"].Value);
+                pollSession.minScore = Convert.ToDouble(xmlPollSession.Attributes["minScore"].Value, cultureInfo);
+
+                foreach (XmlNode xmlPoll in xmlPollSession.ChildNodes)
                 {
-                    Choice currentChoice = new Choice();
-                    XmlAttributeCollection xmlAttrChoice = xmlChoice.Attributes;
-                    // Get current choice id
-                    currentChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
-                    // Get current choice name
-                    currentChoice.choice = xmlAttrChoice["name"].Value;
-                    // Save current poll in current choice for future convenience
-                    currentChoice.parent = currentPoll;
-                    currentPoll.choice.Add(currentChoice);
+                    Poll newPoll = new Poll();
+                    XmlAttributeCollection xmlAttr = xmlPoll.Attributes;
+                    // Get current Poll id
+                    newPoll.id = Convert.ToInt32(xmlAttr["id"].Value);
+                    // Get current Poll name
+                    newPoll.name = xmlAttr["name"].Value;
+                    // Get current Poll customChoiceEnabled option
+                    if (xmlAttr["customChoiceEnabled"] != null)
+                        newPoll.customChoice = Convert.ToBoolean(xmlAttr["customChoiceEnabled"].Value);
+                    // Get current Poll description
+                    //newPoll.description = xmlPoll.FirstChild.InnerText;
+                    // Get correct choice in current Poll
+                    newPoll.correctChoiceId = Convert.ToInt32(xmlAttr["correctChoice"].Value);
+
+                    foreach( XmlNode node in xmlPoll.ChildNodes )
+                    {
+                        if (node.Name == "choices")
+                        {
+                            // Get list of choices of current Poll
+                            foreach (XmlNode xmlChoice in node.ChildNodes)
+                            {
+                                Choice newChoice = new Choice();
+                                XmlAttributeCollection xmlAttrChoice = xmlChoice.Attributes;
+                                // Get current choice id
+                                newChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
+                                // Get current choice name
+                                newChoice.choice = xmlAttrChoice["name"].Value;
+                                // Save current poll in current choice for future convenience
+                                newChoice.parent = newPoll;
+                                newPoll.choice.Add(newChoice);
+                            }
+                        }
+                        else if (node.Name == "description")
+                        {
+                            newPoll.description = node.InnerText;
+                        }
+                    }
+
+                    pollSession.polls.Add(newPoll);
                 }
-                pollDoc.Add(currentPoll);
             }
-            return pollDoc;
         }
 
         public static void DoUserDialog()
@@ -110,26 +133,24 @@ namespace Ilsrep.PollApplication.Client
             }
         }
 
-        public static void RunUserPoll(List<Poll> pollDoc)
+        public static void RunUserPoll()
         {
-            List<Choice> userChoices = new List<Choice>();
-
-            foreach (Poll curPoll in pollDoc)
+            foreach (Poll curentPoll in pollSession.polls)
             {
                 // Clear screen and write this poll's question
                 Console.Clear();
-                Console.WriteLine(curPoll.name + "\n" + curPoll.description);
+                Console.WriteLine(curentPoll.name + "\n" + curentPoll.description);
                 
                 // List choices for this poll
                 int index = 1;
-                foreach (Choice curChoice in curPoll.choice)
+                foreach (Choice currentChoice in curentPoll.choice)
                 {
-                    Console.WriteLine("\t" + index + ". " + curChoice.choice);
+                    Console.WriteLine("\t" + index + ". " + currentChoice.choice);
                     ++ index;
                 }
 
                 // add option for customer choice
-                if ( curPoll.customChoice == true )
+                if ( curentPoll.customChoice == true )
                 {
                     Console.WriteLine("\t" + index + ". Custom Choice");
                 }
@@ -137,7 +158,7 @@ namespace Ilsrep.PollApplication.Client
                 // accept only correct choices
                 while ( true )
                 {
-                    Console.Write("Pick your choice: [1-" + (curPoll.customChoice ? curPoll.choice.Count + 1 : curPoll.choice.Count) + "]:");
+                    Console.Write("Pick your choice: [1-" + (curentPoll.customChoice ? curentPoll.choice.Count + 1 : curentPoll.choice.Count) + "]:");
 
                     // Get user choice
                     try
@@ -146,19 +167,19 @@ namespace Ilsrep.PollApplication.Client
                         --index;
 
                         // check if input correct
-                        if (index >= 0 && index <= curPoll.choice.Count - (curPoll.customChoice ? 0 : 1))
+                        if (index >= 0 && index <= curentPoll.choice.Count - (curentPoll.customChoice ? 0 : 1))
                             break;
 
                     }
                     catch( Exception )
                     {
-                        //continue;
+                        
                     }
                     Console.WriteLine("Invalid choice!");
                 }
 
                 // check if custom choice
-                if ( index == curPoll.choice.Count )
+                if ( index == curentPoll.choice.Count )
                 {
                     Console.Write("Enter your choice:" );
 
@@ -166,7 +187,7 @@ namespace Ilsrep.PollApplication.Client
                     Choice userChoice = new Choice();
                     userChoice.choice = Console.ReadLine();
                     userChoice.id = 0;
-                    userChoice.parent = curPoll;
+                    userChoice.parent = curentPoll;
 
                     // add custom choice to list
                     userChoices.Add(userChoice);
@@ -174,24 +195,24 @@ namespace Ilsrep.PollApplication.Client
                 else
                 {
                     // add one of the choices that already exist to list
-                    userChoices.Add(curPoll.choice[index]);
+                    userChoices.Add(curentPoll.choice[index]);
                 }
             }
 
             // go through choices and display them
             Console.Clear();
             Console.WriteLine(userName + ", here is your PollSession results:");
-            foreach(Choice choice in userChoices)
+            foreach(Choice userChoice in userChoices)
             {
-                Console.WriteLine(choice.parent.name + ": " + (choice.id == 0 ? "Custom Choice: " : choice.id + ". ") + choice.choice);
+                Console.WriteLine(userChoice.parent.name + ": " + (userChoice.id == 0 ? "Custom Choice: " : userChoice.id + ". ") + userChoice.choice + ( pollSession.testMode ? (userChoice.parent.correctChoiceId == userChoice.id ? " +" : " -")  : String.Empty ) );
             }
         }
 
         public static void Main()
         {
-            List<Poll> pollDoc = ParseXml();
+            ParseXml();
             DoUserDialog();
-            RunUserPoll(pollDoc);
+            RunUserPoll();
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);

@@ -10,7 +10,7 @@ namespace Ilsrep.PollApplication.Model
         public string name;
         public string description;
         public bool customChoice;
-        public int correctChoice;
+        public int correctChoiceId;
         public List<Choice> choice = new List<Choice>();
     }
 }
