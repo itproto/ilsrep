@@ -45,7 +45,6 @@ namespace Ilsrep.PollApplication.Client
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
 
             XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
-
             foreach (XmlNode xmlPollSession in xmlPollSessionList)
             {
                 //XmlNodeList xmlPollList = ; /* xmlDoc.GetElementsByTagName(POLL_ELEMENT); */
@@ -94,7 +93,6 @@ namespace Ilsrep.PollApplication.Client
                             newPoll.description = node.InnerText;
                         }
                     }
-
                     pollSession.polls.Add(newPoll);
                 }
             }
@@ -150,7 +148,7 @@ namespace Ilsrep.PollApplication.Client
                 }
 
                 // add option for customer choice
-                if ( curentPoll.customChoice == true )
+                if ( curentPoll.customChoice )
                 {
                     Console.WriteLine("\t" + index + ". Custom Choice");
                 }
@@ -158,7 +156,8 @@ namespace Ilsrep.PollApplication.Client
                 // accept only correct choices
                 while ( true )
                 {
-                    Console.Write("Pick your choice: [1-" + (curentPoll.customChoice ? curentPoll.choice.Count + 1 : curentPoll.choice.Count) + "]:");
+                    int choiceCount = (curentPoll.customChoice ? curentPoll.choice.Count + 1 : curentPoll.choice.Count);
+                    Console.Write("Pick your choice: [1-" + choiceCount + "]:");
 
                     // Get user choice
                     try
@@ -167,9 +166,9 @@ namespace Ilsrep.PollApplication.Client
                         --index;
 
                         // check if input correct
-                        if (index >= 0 && index <= curentPoll.choice.Count - (curentPoll.customChoice ? 0 : 1))
+                        bool choiceInputIsAcceptable = (index >= 0 && index <= curentPoll.choice.Count - (curentPoll.customChoice ? 0 : 1));
+                        if (choiceInputIsAcceptable)
                             break;
-
                     }
                     catch( Exception )
                     {
@@ -179,7 +178,8 @@ namespace Ilsrep.PollApplication.Client
                 }
 
                 // check if custom choice
-                if ( index == curentPoll.choice.Count )
+                bool ifCustomChoice = (index == curentPoll.choice.Count);
+                if (ifCustomChoice)
                 {
                     Console.Write("Enter your choice:" );
 
@@ -202,9 +202,47 @@ namespace Ilsrep.PollApplication.Client
             // go through choices and display them
             Console.Clear();
             Console.WriteLine(userName + ", here is your PollSession results:");
+            bool isTestMode = pollSession.testMode;
             foreach(Choice userChoice in userChoices)
             {
-                Console.WriteLine(userChoice.parent.name + ": " + (userChoice.id == 0 ? "Custom Choice: " : userChoice.id + ". ") + userChoice.choice + ( pollSession.testMode ? (userChoice.parent.correctChoiceId == userChoice.id ? " +" : " -")  : String.Empty ) );
+                Console.WriteLine(userChoice.parent.id + ". " + userChoice.parent.name + ": " + userChoice.choice);
+                if (isTestMode)
+                {
+                    // Get correctChoice by id
+                    string correctChoice = "";
+                    foreach (Choice curChoice in userChoice.parent.choice)
+                    {
+                        if (curChoice.id == userChoice.parent.correctChoiceId)
+                            correctChoice = curChoice.choice;
+                    }
+
+                    string choicePassed = (userChoice.parent.correctChoiceId == userChoice.id ? "+ Correct" : "- Wrong");
+                    Console.WriteLine("Correct choice: " + correctChoice);
+                    Console.WriteLine(choicePassed + "\n");
+                }
+            }
+            if (isTestMode)
+            {
+                int correctAnswersCount = 0;
+                foreach (Choice userChoice in userChoices)
+                {
+                    if (userChoice.id == userChoice.parent.correctChoiceId)
+                        correctAnswersCount++;
+                }
+
+                // Check if is passed
+                double userScore = Convert.ToDouble(correctAnswersCount) / Convert.ToDouble(userChoices.Count);
+                bool isPassed = (userScore >= pollSession.minScore);
+                if (isPassed)
+                {
+                    Console.WriteLine("PASSED");
+                }
+                else
+                {
+                    Console.WriteLine("Sorry, try again...");
+                }
+                Console.WriteLine("Your scores: " + userScore);
+                Console.WriteLine("Minimal needed scores: " + pollSession.minScore);
             }
         }
 
