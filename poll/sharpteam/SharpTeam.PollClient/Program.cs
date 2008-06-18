@@ -6,9 +6,9 @@ using System.Xml;
 using Ilsrep.PollApplication.Model;
 
 /*
- ParseXml author: ksi
- *Usr dialog author: ksi
- PollSession author: vlad
+ ParseXml by ksi
+ DoUserDialog by ksi
+ RunUserPoll by vlad
 */
 
 namespace Ilsrep.PollApplication.Client
@@ -17,6 +17,8 @@ namespace Ilsrep.PollApplication.Client
     {
         private const string PATH_TO_POLLS = "Polls.xml";
         private const string POLL_ELEMENT = "poll";
+        private const string CONSOLE_YES = "y";
+        private const string CONSOLE_NO = "n";
         static string userName = "";
 
         public static List<Poll> ParseXml()
@@ -74,8 +76,8 @@ namespace Ilsrep.PollApplication.Client
             }
             return pollDoc;
         }
-        
-        public static void UserDialog()
+
+        public static void DoUserDialog()
         {
             // Read user name
             Console.WriteLine("Welcome to polls client program.");
@@ -83,7 +85,7 @@ namespace Ilsrep.PollApplication.Client
             { 
                 Console.Write("Please enter your name:");
                 userName = Console.ReadLine();
-                if (userName != "")
+                if (userName != String.Empty)
                 {
                     break;
                 }
@@ -102,13 +104,13 @@ namespace Ilsrep.PollApplication.Client
             while (true)
             {
                 string userInput = Console.ReadLine();
-                if (userInput == "y") break;
-                if (userInput == "n") Environment.Exit(0);
+                if (userInput == CONSOLE_YES) break;
+                if (userInput == CONSOLE_NO) Environment.Exit(0);
                 Console.WriteLine("Wrong choice, please, choose [y/n]:");
             }
         }
 
-        public static void PollSession(List<Poll> pollDoc)
+        public static void RunUserPoll(List<Poll> pollDoc)
         {
             List<Choice> userChoices = new List<Choice>();
 
@@ -188,8 +190,8 @@ namespace Ilsrep.PollApplication.Client
         public static void Main()
         {
             List<Poll> pollDoc = ParseXml();
-            UserDialog();
-            PollSession(pollDoc);
+            DoUserDialog();
+            RunUserPoll(pollDoc);
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
