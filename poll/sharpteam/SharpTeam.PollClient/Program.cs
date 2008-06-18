@@ -216,13 +216,14 @@ namespace Ilsrep.PollApplication.Client
                             correctChoice = curChoice.choice;
                     }
 
-                    string choicePassed = (userChoice.parent.correctChoiceId == userChoice.id ? "+ Correct" : "- Wrong");
+                    string isChoicePassed = (userChoice.parent.correctChoiceId == userChoice.id ? "+ Correct" : "- Wrong");
                     Console.WriteLine("Correct choice: " + correctChoice);
-                    Console.WriteLine(choicePassed + "\n");
+                    Console.WriteLine(isChoicePassed + "\n");
                 }
             }
             if (isTestMode)
             {
+                // Get correct answers count
                 int correctAnswersCount = 0;
                 foreach (Choice userChoice in userChoices)
                 {
