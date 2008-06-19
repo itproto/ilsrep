@@ -20,23 +20,27 @@ namespace Ilsrep.PollApplication.Client
         private const string POLL_ELEMENT = "poll";
         private const string CONSOLE_YES = "y";
         private const string CONSOLE_NO = "n";
+        private const string HOST = "localhost";
+        private const int PORT = 3320;
         static string userName = "";
 
         static PollSession pollSession = new PollSession();
         static List<Choice> userChoices = new List<Choice>();
 
-        public static void ParseXml()
+        public static void ParseXml(string xmlData)
         {
             //---------------Init---------------
             List<Poll> pollDoc = new List<Poll>();
             XmlDocument xmlDoc = new XmlDocument();
             try
             {
-                xmlDoc.Load(PATH_TO_POLLS);
+                //xmlDoc.Load(PATH_TO_POLLS);
+                xmlDoc.LoadXml(xmlData);
             }
             catch(Exception)
             {
-                System.Console.WriteLine("Couldn't find xml file: " + PATH_TO_POLLS);
+                //Console.WriteLine("Couldn't find xml file: " + PATH_TO_POLLS);
+                Console.WriteLine("Corrupt xml data sent by server!");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
             }
@@ -247,9 +251,36 @@ namespace Ilsrep.PollApplication.Client
             }
         }
 
+        public static string getXmlData()
+        {
+            Console.WriteLine("Please wait. Connecting to poll server...");
+            
+            TcpCommunicator client = new TcpCommunicator();
+            client.Connect(HOST, PORT);
+
+            //Console.WriteLine("Connection established, press enter poll id:");
+            Console.WriteLine("Connection established.");
+
+            /*while (true)
+            {
+                string pollID = Console.ReadLine();
+
+                
+            }*/
+            
+            
+
+            String xmlData = client.getXML();
+
+            Console.WriteLine("Data received!");
+
+            return xmlData;
+        }
+
         public static void Main()
         {
-            ParseXml();
+            String xmlData = getXmlData();
+            ParseXml(xmlData);
             DoUserDialog();
             RunUserPoll();
 
