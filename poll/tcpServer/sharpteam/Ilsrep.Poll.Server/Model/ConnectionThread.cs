@@ -23,9 +23,13 @@ namespace Ilsrep.PollApplication.Model
             activeConnCount++;
             string clientAdderss = currentClient.Client.RemoteEndPoint.ToString();
             Console.WriteLine("New client accepted: {0} ({1} active connections)", clientAdderss, activeConnCount);
+            
+            /*
+            // Send WELCOME
             data = Encoding.ASCII.GetBytes(PollServer.WELCOME);
             currentStream.Write(data, 0, data.Length);
-
+            */
+             
             // Run dialog with client
             PollServer.RunClientSession(currentStream);
 
