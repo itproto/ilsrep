@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Text;
 using System.Xml;
 using System.IO;
+using Ilsrep.PollApplication.Model;
 
-namespace Ilsrep.Poll.Server
+namespace Ilsrep.PollApplication.Server
 {
-    public class Program
+    public class PollServer
     {
         private const int PORT = 3320;
-        private const Int32 DATA_SIZE = 65536;
-        private const int MAX_PENDING_CONN_COUNT = 10;
         private const string PATH_TO_POLLS = "Polls.xml";
+        private static byte[] data = new byte[PollServer.DATA_SIZE];
+        public const string WELCOME = "Welcome to poll server.";
+        public const Int32 DATA_SIZE = 65536;
+        
 
         /*
-        public static int GetId(string xmlStringId)
+        private static int GetId(string xmlStringId)
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmlStringId);
@@ -24,39 +28,55 @@ namespace Ilsrep.Poll.Server
         }
         */
 
-        public static string ReadFile(string fileName)
+        private static string ReadFileToString(string fileName)
         {
-            StreamReader streamReader = new StreamReader(fileName);
-            String fileData = streamReader.ReadToEnd();
-            streamReader.Close();
-            return fileData;
+            try
+            {
+                StreamReader streamReader = new StreamReader(fileName);
+                String fileData = streamReader.ReadToEnd();
+                streamReader.Close();
+                return fileData;
+            }
+            catch (Exception error)
+            {
+                return "An error occured: " + error;
+            }
+        }
+
+        public static void RunClientSession(NetworkStream client)
+        {
+            string xmlData = ReadFileToString(PATH_TO_POLLS);
+            data = Encoding.ASCII.GetBytes(xmlData);
+            client.Write(data, 0, data.Length);
         }
 
         public static void Main()
         {
-            byte[] data = new byte[DATA_SIZE];
+            // Get local ip
+            string localHost = System.Net.Dns.GetHostName();
+            string localIp = System.Net.Dns.GetHostByName(localHost).AddressList[0].ToString();
+
+            // Start server
+            Console.WriteLine("Server started on host: {0}:{1}", localIp, PORT);
             IPEndPoint clientAddress = new IPEndPoint(IPAddress.Any, PORT);
-            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            TcpListener tcpListener = new TcpListener(3320);
+            tcpListener.Start();
+            Console.WriteLine("Waiting for clients...");
+            while (true)
+            {
+                // Wait until client connect
+                while (!tcpListener.Pending())
+                {
+                    Thread.Sleep(1000);
+                }
 
-            // Connect a client
-            client.Bind(clientAddress);
-            client.Listen(MAX_PENDING_CONN_COUNT);
-            client = client.Accept();
-
-            // Write client info
-            IPEndPoint clientInfo = (IPEndPoint)client.RemoteEndPoint;
-            Console.WriteLine("New client {0}", clientInfo.Address);
-
-            // Send XmlFile
-            String fileData = ReadFile(PATH_TO_POLLS);
-            data = Encoding.ASCII.GetBytes(fileData);
-            int countSentBytes = client.Send(data);
-            Console.WriteLine("Sent to {0} {1} bytes", clientInfo.Address, countSentBytes);
-
-            // Close connection and exit
-            client.Close();
-            Console.WriteLine("Disconnected from {0}", clientInfo.Address);
-            Console.ReadKey(true);
+                // Create a new thread for each client
+                ConnectionThread newConnection = new ConnectionThread();
+                newConnection.threadListener = tcpListener;
+                Thread newThread = new Thread(new ThreadStart(newConnection.HandleConnection));
+                newThread.Start();
+            }
         }
     }
 }
+
