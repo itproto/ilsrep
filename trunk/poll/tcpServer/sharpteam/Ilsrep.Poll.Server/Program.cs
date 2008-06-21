@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -13,41 +14,70 @@ namespace Ilsrep.PollApplication.Server
     {
         private const int PORT = 3320;
         private const string PATH_TO_POLLS = "Polls.xml";
-        private static byte[] data = new byte[PollServer.DATA_SIZE];
         public const string WELCOME = "Welcome to poll server.";
         public const Int32 DATA_SIZE = 65536;
-        
 
-        /*
-        private static int GetId(string xmlStringId)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xmlStringId);
-            XmlNodeList pollSessionId = xmlDoc.GetElementsByTagName("pollSessionId");
-            return Convert.ToInt32(pollSessionId[0].InnerText);
-        }
-        */
-
-        private static string ReadFileToString(string fileName)
+        private static int GetPollSessionId(string xmlStringId)
         {
             try
             {
-                StreamReader streamReader = new StreamReader(fileName);
-                String fileData = streamReader.ReadToEnd();
-                streamReader.Close();
-                return fileData;
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(xmlStringId);
+                XmlNodeList pollSessionId = xmlDoc.GetElementsByTagName("pollSessionId");
+                return Convert.ToInt32(pollSessionId[0].InnerText);
             }
-            catch (Exception error)
+            catch (Exception)
             {
-                return "An error occured: " + error;
+                return -1;
             }
+        }
+
+        private static string GetPollSessionById(int pollSessionId)
+        {
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(PATH_TO_POLLS);
+                XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName("pollsession");
+                foreach (XmlNode xmlPollSession in xmlPollSessionList)
+                {
+                    bool isRightPollSession = (Convert.ToInt32(xmlPollSession.Attributes["id"].Value) == pollSessionId);
+                    if (isRightPollSession)
+                    {
+                        return xmlPollSession.OuterXml;
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                return "! An error occured in xml file reading";
+            }
+            return "! Wrong id";
         }
 
         public static void RunClientSession(NetworkStream client)
         {
-            string xmlData = ReadFileToString(PATH_TO_POLLS);
-            data = Encoding.ASCII.GetBytes(xmlData);
-            client.Write(data, 0, data.Length);
+            // Receive from client pollSessionId
+            byte[] data = new byte[DATA_SIZE];
+            int recvBytesCount = client.Read(data, 0, DATA_SIZE);
+            string recvString = Encoding.ASCII.GetString(data, 0, recvBytesCount);
+            int pollSessionId = GetPollSessionId(recvString);
+
+            // Check if exist such id and send answer
+            string sendString;
+            bool correctId = (pollSessionId != -1);
+            if (correctId)
+            {
+                // Send PollSession which id == pollSessionId
+                sendString = GetPollSessionById(pollSessionId);
+            }
+            else
+            {
+                sendString = "! Wrond id";
+            }
+            data = Encoding.ASCII.GetBytes(sendString);
+            client.Write(data, 0, sendString.Length);
         }
 
         public static void Main()
