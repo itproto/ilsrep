@@ -5,13 +5,17 @@ using System.Net.Sockets;
 
 namespace Ilsrep.PollApplication.Model
 {
-    class TcpCommunicator
+    public class TcpCommunicator
     {
         Socket m_client;
+        private const int DATA_SIZE = 65536;
 
         public bool isConnected
         {
-            get { return m_client.Connected; }
+            get 
+            { 
+                return m_client.Connected; 
+            }
         }
 
         public TcpCommunicator()
@@ -49,7 +53,6 @@ namespace Ilsrep.PollApplication.Model
 
             return total;
         }
-        */
          
         private string ReceiveData(int size)
         {
@@ -72,39 +75,48 @@ namespace Ilsrep.PollApplication.Model
 
             return sData;
         }
-
+        */
 
         public bool sendId(string id)
         {
             id = "<pollSessionId>" + id + "</pollSessionId>";
             int sentBytes = m_client.Send(Encoding.ASCII.GetBytes(id));
             return (sentBytes !=0);
-            //string result = ReceiveData(1);
+            
+            /*
+            string result = ReceiveData(1);
 
-            //if ( result == "1" )
-            //    return true;
-            //else
-            //    return false;
+            if ( result == "1" )
+                return true;
+            else
+                return false;
+            */
         }
 
-        public string getXML()
+        //public string GetXML()
+        public string ReceiveData()
         {
-            int countReceived;
+            int countReceivedBytes;
             String xmlData = String.Empty;
 
-            if ( ! isConnected )
+            if (!isConnected)
                 return String.Empty;
 
+            /*
             while (true)
             {
-                byte[] receivedData = new byte[1024];
-                countReceived = m_client.Receive(receivedData);
+            */
 
+                byte[] receivedData = new byte[DATA_SIZE];
+                countReceivedBytes = m_client.Receive(receivedData);
+                xmlData = Encoding.ASCII.GetString(receivedData, 0, countReceivedBytes);
+
+            /*
                 if (countReceived == 0)
                     break;
-
                 xmlData += Encoding.ASCII.GetString(receivedData, 0, countReceived);
             }
+            */
 
             return xmlData;
         }
