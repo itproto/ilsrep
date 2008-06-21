@@ -29,6 +29,7 @@ namespace Ilsrep.PollApplication.Model
             m_client.Disconnect(false);
         }
 
+        /*
         private int SendData(string sData)
         {
             Byte[] data = new Byte[1024];
@@ -48,7 +49,8 @@ namespace Ilsrep.PollApplication.Model
 
             return total;
         }
-
+        */
+         
         private string ReceiveData(int size)
         {
             int total = 0;
@@ -72,15 +74,17 @@ namespace Ilsrep.PollApplication.Model
         }
 
 
-        public bool sendID(string ID)
+        public bool sendId(string id)
         {
-            SendData(ID);
-            string result = ReceiveData(1);
+            id = "<pollSessionId>" + id + "</pollSessionId>";
+            int sentBytes = m_client.Send(Encoding.ASCII.GetBytes(id));
+            return (sentBytes !=0);
+            //string result = ReceiveData(1);
 
-            if ( result == "1" )
-                return true;
-            else
-                return false;
+            //if ( result == "1" )
+            //    return true;
+            //else
+            //    return false;
         }
 
         public string getXML()

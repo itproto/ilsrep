@@ -254,35 +254,27 @@ namespace Ilsrep.PollApplication.Client
         public static string getXmlData()
         {
             Console.WriteLine("Please wait. Connecting to poll server...");
-            
             TcpCommunicator client = new TcpCommunicator();
             client.Connect(HOST, PORT);
 
             //Console.WriteLine("Connection established, press enter poll id:");
             Console.WriteLine("Connection established.");
-
-            /*while (true)
-            {
-                string pollID = Console.ReadLine();
-
-                
-            }*/
-            
-            
+            Console.WriteLine("Input pollSession id:");
+            string pollSessionId = Console.ReadLine();
+            client.sendId(pollSessionId);
 
             String xmlData = client.getXML();
-
             Console.WriteLine("Data received!");
-
             return xmlData;
         }
 
         public static void Main()
         {
             String xmlData = getXmlData();
-            ParseXml(xmlData);
-            DoUserDialog();
-            RunUserPoll();
+            Console.WriteLine(xmlData);
+            //ParseXml(xmlData);
+            //DoUserDialog();
+            //RunUserPoll();
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
