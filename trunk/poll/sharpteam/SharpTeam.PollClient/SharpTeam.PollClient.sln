@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpTeam.PollClient", "SharpTeam.PollClient.csproj", "{A3C13730-641E-4DC1-83E5-C00EC06C4804}"
 EndProject
 Global
