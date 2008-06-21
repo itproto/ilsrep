@@ -6,14 +6,12 @@ using System.Xml;
 using Ilsrep.PollApplication.Model;
 
 /*
- ParseXml by ksi
- DoUserDialog by ksi
- RunUserPoll by vlad
+ Developped by SharpTeam: vlad & ksi
 */
 
 namespace Ilsrep.PollApplication.Client
 {
-    public class Program
+    public class PollClient
     {
         private const string PATH_TO_POLLS = "Polls.xml";
         private const string POLL_SESSION_ELEMENT = "pollsession";
@@ -23,23 +21,29 @@ namespace Ilsrep.PollApplication.Client
         private const string HOST = "localhost";
         private const int PORT = 3320;
         static string userName = "";
-
+        static TcpCommunicator server;
         static PollSession pollSession = new PollSession();
         static List<Choice> userChoices = new List<Choice>();
 
         public static void ParseXml(string xmlData)
         {
+            if (xmlData[0] == '!')
+            {
+                Console.WriteLine(xmlData);
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
+
             //---------------Init---------------
             List<Poll> pollDoc = new List<Poll>();
             XmlDocument xmlDoc = new XmlDocument();
             try
             {
-                //xmlDoc.Load(PATH_TO_POLLS);
                 xmlDoc.LoadXml(xmlData);
             }
             catch(Exception)
             {
-                //Console.WriteLine("Couldn't find xml file: " + PATH_TO_POLLS);
                 Console.WriteLine("Corrupt xml data sent by server!");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
@@ -49,31 +53,30 @@ namespace Ilsrep.PollApplication.Client
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
 
             XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
+            // Get pollSessions list
             foreach (XmlNode xmlPollSession in xmlPollSessionList)
             {
-                //XmlNodeList xmlPollList = ; /* xmlDoc.GetElementsByTagName(POLL_ELEMENT); */
-                //---------------Fill pollDoc---------------
                 pollSession.id = Convert.ToInt32(xmlPollSession.Attributes["id"].Value);
                 pollSession.name = xmlPollSession.Attributes["name"].Value;
                 pollSession.testMode = Convert.ToBoolean(xmlPollSession.Attributes["testMode"].Value);
                 pollSession.minScore = Convert.ToDouble(xmlPollSession.Attributes["minScore"].Value, cultureInfo);
 
+                // Get polls list
                 foreach (XmlNode xmlPoll in xmlPollSession.ChildNodes)
                 {
-                    Poll newPoll = new Poll();
+                    Poll curPoll = new Poll();
                     XmlAttributeCollection xmlAttr = xmlPoll.Attributes;
-                    // Get current Poll id
-                    newPoll.id = Convert.ToInt32(xmlAttr["id"].Value);
-                    // Get current Poll name
-                    newPoll.name = xmlAttr["name"].Value;
-                    // Get current Poll customChoiceEnabled option
+                    // Get current poll id
+                    curPoll.id = Convert.ToInt32(xmlAttr["id"].Value);
+                    // Get current poll name
+                    curPoll.name = xmlAttr["name"].Value;
+                    // Get current poll customChoiceEnabled option
                     if (xmlAttr["customChoiceEnabled"] != null)
-                        newPoll.customChoice = Convert.ToBoolean(xmlAttr["customChoiceEnabled"].Value);
-                    // Get current Poll description
-                    //newPoll.description = xmlPoll.FirstChild.InnerText;
+                        curPoll.customChoice = Convert.ToBoolean(xmlAttr["customChoiceEnabled"].Value);
                     // Get correct choice in current Poll
-                    newPoll.correctChoiceId = Convert.ToInt32(xmlAttr["correctChoice"].Value);
+                    curPoll.correctChoiceId = Convert.ToInt32(xmlAttr["correctChoice"].Value);
 
+                    // Get choices list
                     foreach( XmlNode node in xmlPoll.ChildNodes )
                     {
                         if (node.Name == "choices")
@@ -81,23 +84,24 @@ namespace Ilsrep.PollApplication.Client
                             // Get list of choices of current Poll
                             foreach (XmlNode xmlChoice in node.ChildNodes)
                             {
-                                Choice newChoice = new Choice();
+                                Choice curChoice = new Choice();
                                 XmlAttributeCollection xmlAttrChoice = xmlChoice.Attributes;
                                 // Get current choice id
-                                newChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
+                                curChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
                                 // Get current choice name
-                                newChoice.choice = xmlAttrChoice["name"].Value;
+                                curChoice.choice = xmlAttrChoice["name"].Value;
                                 // Save current poll in current choice for future convenience
-                                newChoice.parent = newPoll;
-                                newPoll.choice.Add(newChoice);
+                                curChoice.parent = curPoll;
+                                curPoll.choice.Add(curChoice);
                             }
                         }
                         else if (node.Name == "description")
                         {
-                            newPoll.description = node.InnerText;
+                            // Get current Poll description
+                            curPoll.description = node.InnerText;
                         }
                     }
-                    pollSession.polls.Add(newPoll);
+                    pollSession.polls.Add(curPoll);
                 }
             }
         }
@@ -251,30 +255,44 @@ namespace Ilsrep.PollApplication.Client
             }
         }
 
-        public static string getXmlData()
+        public static void ConnectToServer()
         {
-            Console.WriteLine("Please wait. Connecting to poll server...");
-            TcpCommunicator client = new TcpCommunicator();
-            client.Connect(HOST, PORT);
+            try
+            {
+                Console.WriteLine("Please wait. Connecting to poll server...");
+                server = new TcpCommunicator();
+                server.Connect(HOST, PORT);
+                if (server.isConnected)
+                    Console.WriteLine("Connection established.");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Could not connect to server");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
+        }
 
-            //Console.WriteLine("Connection established, press enter poll id:");
-            Console.WriteLine("Connection established.");
+        public static string GetPollById()
+        {
             Console.WriteLine("Input pollSession id:");
             string pollSessionId = Console.ReadLine();
-            client.sendId(pollSessionId);
+            server.sendId(pollSessionId);
 
-            String xmlData = client.getXML();
-            Console.WriteLine("Data received!");
+            String xmlData = server.ReceiveData();
+            if (xmlData != String.Empty)
+                Console.WriteLine("Data received");
             return xmlData;
         }
 
         public static void Main()
         {
-            String xmlData = getXmlData();
-            Console.WriteLine(xmlData);
-            //ParseXml(xmlData);
-            //DoUserDialog();
-            //RunUserPoll();
+            ConnectToServer();
+            String xmlData = GetPollById();
+            ParseXml(xmlData);
+            DoUserDialog();
+            RunUserPoll();
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
