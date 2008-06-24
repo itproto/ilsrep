@@ -104,6 +104,8 @@ namespace Ilsrep.PollApplication.Client
                     pollSession.polls.Add(curPoll);
                 }
             }
+
+            Console.WriteLine("XML parsed");
         }
 
         public static void DoUserDialog()
@@ -120,7 +122,7 @@ namespace Ilsrep.PollApplication.Client
                 }
                 else
                 {
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("You didn't enter your name.");
                 }
             }
@@ -229,6 +231,7 @@ namespace Ilsrep.PollApplication.Client
                     Console.WriteLine(isChoicePassed + "\n");
                 }
             }
+
             if (isTestMode)
             {
                 // Get correct answers count
@@ -262,8 +265,11 @@ namespace Ilsrep.PollApplication.Client
                 Console.WriteLine("Please wait. Connecting to poll server...");
                 server = new TcpCommunicator();
                 server.Connect(HOST, PORT);
+                
                 if (server.isConnected)
                     Console.WriteLine("Connection established.");
+                else
+                    throw new Exception("Not connected");
             }
             catch (Exception)
             {
@@ -276,13 +282,24 @@ namespace Ilsrep.PollApplication.Client
 
         public static string GetPollById()
         {
-            Console.WriteLine("Input pollSession id:");
-            string pollSessionId = Console.ReadLine();
-            server.sendId(pollSessionId);
+            while (true)
+            {
+                // Let used input poll session id
+                Console.WriteLine("Input poll session id:");
+                string pollSessionID = Console.ReadLine();
 
-            String xmlData = server.ReceiveData();
-            if (xmlData != String.Empty)
-                Console.WriteLine("Data received");
+                // if correct id then continue
+                if (server.sendID(pollSessionID))
+                    break;
+
+                // show that wrong id was inputed
+                Console.WriteLine("Invalid ID");
+            }
+
+            // receive poll
+            String xmlData = server.ReceiveXMLData();
+            Console.WriteLine("Data received");
+            
             return xmlData;
         }
 

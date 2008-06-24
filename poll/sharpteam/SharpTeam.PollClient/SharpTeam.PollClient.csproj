@@ -53,14 +53,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="model\Choice.cs">
+    <Compile Include="Model\Choice.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="model\Poll.cs">
+    <Compile Include="Model\Poll.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="model\PollSession.cs" />
-    <Compile Include="model\TcpCommunicator.cs" />
+    <Compile Include="Model\PollSession.cs" />
+    <Compile Include="Model\TcpCommunicator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
