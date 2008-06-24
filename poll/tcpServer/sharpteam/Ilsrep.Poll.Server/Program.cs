@@ -12,84 +12,21 @@ namespace Ilsrep.PollApplication.Server
 {
     public class PollServer
     {
-        private const int PORT = 3320;
-        private const string PATH_TO_POLLS = "Polls.xml";
+        public const int PORT = 3320;
+        public const int DATA_SIZE = 65536;
+        public const string PATH_TO_POLLS = "Polls.xml";
         public const string WELCOME = "Welcome to poll server.";
-        public const Int32 DATA_SIZE = 65536;
-
-        private static int GetPollSessionId(string xmlStringId)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(xmlStringId);
-                XmlNodeList pollSessionId = xmlDoc.GetElementsByTagName("pollSessionId");
-                return Convert.ToInt32(pollSessionId[0].InnerText);
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
-        }
-
-        private static string GetPollSessionById(int pollSessionId)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(PATH_TO_POLLS);
-                XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName("pollsession");
-                foreach (XmlNode xmlPollSession in xmlPollSessionList)
-                {
-                    bool isRightPollSession = (Convert.ToInt32(xmlPollSession.Attributes["id"].Value) == pollSessionId);
-                    if (isRightPollSession)
-                    {
-                        return xmlPollSession.OuterXml;
-                    }
-
-                }
-            }
-            catch (Exception)
-            {
-                return "! An error occured in xml file reading";
-            }
-            return "! Wrong id";
-        }
-
-        public static void RunClientSession(NetworkStream client)
-        {
-            // Receive from client pollSessionId
-            byte[] data = new byte[DATA_SIZE];
-            int recvBytesCount = client.Read(data, 0, DATA_SIZE);
-            string recvString = Encoding.ASCII.GetString(data, 0, recvBytesCount);
-            int pollSessionId = GetPollSessionId(recvString);
-
-            // Check if exist such id and send answer
-            string sendString;
-            bool correctId = (pollSessionId != -1);
-            if (correctId)
-            {
-                // Send PollSession which id == pollSessionId
-                sendString = GetPollSessionById(pollSessionId);
-            }
-            else
-            {
-                sendString = "! Wrond id";
-            }
-            data = Encoding.ASCII.GetBytes(sendString);
-            client.Write(data, 0, sendString.Length);
-        }
 
         public static void Main()
         {
             // Get local ip
             string localHost = System.Net.Dns.GetHostName();
-            string localIp = System.Net.Dns.GetHostByName(localHost).AddressList[0].ToString();
+            string localIp = System.Net.Dns.GetHostEntry(localHost).AddressList[0].ToString();
 
             // Start server
-            Console.WriteLine("Server started on host: {0}:{1}", localIp, PORT);
+            Console.WriteLine("Server started on host: *:{1}", localIp, PORT);
             IPEndPoint clientAddress = new IPEndPoint(IPAddress.Any, PORT);
-            TcpListener tcpListener = new TcpListener(3320);
+            TcpListener tcpListener = new TcpListener(IPAddress.Any, 3320);
             tcpListener.Start();
             Console.WriteLine("Waiting for clients...");
             while (true)
