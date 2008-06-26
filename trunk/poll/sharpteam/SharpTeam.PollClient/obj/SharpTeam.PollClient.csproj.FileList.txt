@@ -1,6 +1,0 @@
-bin\Debug\SharpTeam.PollClient.exe
-bin\Debug\SharpTeam.PollClient.pdb
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\SharpTeam.PollClient.exe
-obj\Debug\SharpTeam.PollClient.pdb
-bin\Debug\Polls.xml
