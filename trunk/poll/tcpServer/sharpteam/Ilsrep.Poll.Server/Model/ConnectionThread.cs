@@ -98,19 +98,27 @@ namespace Ilsrep.PollApplication.Model
 
                 // get poll sesssion id sent by server
                 //pollSessionID = GetPollSessionId(recievedString);
-                pollSessionID = Convert.ToInt32(recievedString);
-
-                // Check if exists such ID
-                if (idExists(pollSessionID))
+                try
                 {
-                    Console.WriteLine("{0}: ID validated: {1}", clientAddress, pollSessionID);
-                    sendString = "1";
-                    client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
-                    break;
+                    pollSessionID = Convert.ToInt32(recievedString);
+                    // Check if exists such ID
+                    if (idExists(pollSessionID))
+                    {
+                        Console.WriteLine("{0}: ID validated: {1}", clientAddress, pollSessionID);
+                        sendString = "1";
+                        client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("{0}: Client asked for non-existant ID: {1}", clientAddress, pollSessionID);
+                        sendString = "-1";
+                        client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    Console.WriteLine("{0}: Client asked for non-existant ID: {1}", clientAddress, pollSessionID);
+                    Console.WriteLine("{0}: Client asked for non-existant ID: {1}", clientAddress, recievedString);
                     sendString = "-1";
                     client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                 }

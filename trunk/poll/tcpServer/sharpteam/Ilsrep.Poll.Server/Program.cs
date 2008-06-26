@@ -21,10 +21,10 @@ namespace Ilsrep.PollApplication.Server
         {
             // Get local ip
             string localHost = System.Net.Dns.GetHostName();
-            string localIp = System.Net.Dns.GetHostEntry(localHost).AddressList[0].ToString();
+            string localIp = System.Net.Dns.GetHostEntry(localHost).AddressList[1].ToString();
 
             // Start server
-            Console.WriteLine("Server started on host: *:{1}", localIp, PORT);
+            Console.WriteLine("Server started on host: {0}:{1}", localIp, PORT);
             IPEndPoint clientAddress = new IPEndPoint(IPAddress.Any, PORT);
             TcpListener tcpListener = new TcpListener(IPAddress.Any, 3320);
             tcpListener.Start();
