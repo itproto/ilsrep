@@ -288,6 +288,8 @@ namespace Ilsrep.PollApplication.Client
                 Console.WriteLine("Input poll session id:");
                 string pollSessionID = Console.ReadLine();
 
+                if (pollSessionID == String.Empty)
+                    pollSessionID = "-1";
                 // if correct id then continue
                 if (server.sendID(pollSessionID))
                     break;
