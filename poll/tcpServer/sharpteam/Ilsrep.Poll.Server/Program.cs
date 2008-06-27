@@ -6,7 +6,6 @@ using System.Threading;
 using System.Text;
 using System.Xml;
 using System.IO;
-using Ilsrep.PollApplication.Model;
 
 namespace Ilsrep.PollApplication.Server
 {
@@ -38,7 +37,7 @@ namespace Ilsrep.PollApplication.Server
                 }
 
                 // Create a new thread for each client
-                ConnectionThread newConnection = new ConnectionThread();
+                PollHandler newConnection = new PollHandler();
                 newConnection.threadListener = tcpListener;
                 Thread newThread = new Thread(new ThreadStart(newConnection.HandleConnection));
                 newThread.Start();
