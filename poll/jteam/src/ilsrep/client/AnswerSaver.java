@@ -1,4 +1,4 @@
-package ua.com.interlogic.ils.task7.model;
+package ilsrep.client;
 
 import java.util.LinkedList;
 

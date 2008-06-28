@@ -1,4 +1,6 @@
-package ua.com.interlogic.ils.task7.model;
+package ilsrep.common;
+
+import ilsrep.client.PollClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +11,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ua.com.interlogic.ils.task7.Poll;
 
 /**
  * The "poll" element.
@@ -18,7 +19,7 @@ import ua.com.interlogic.ils.task7.Poll;
  * @author DCR
  */
 @XmlRootElement(name = "poll")
-public class PollElement {
+public class Poll {
 
     /**
      * Poll's ID.
@@ -34,12 +35,12 @@ public String pass="FAIL";
     /**
      * Poll's description, aka question.
      */
-    protected DescElement description = null;
+    protected Description description = null;
 
     /**
      * List of choices.
      */
-    protected List<ChoiceElement> choices = null;
+    protected List<Choice> choices = null;
 
     /**
      * Shows if custom choice is enabled("true" if enbled).
@@ -49,21 +50,21 @@ public String pass="FAIL";
     /**
      * @see #description
      */
-    public DescElement getDescription() {
+    public Description getDescription() {
         return description;
     }
 
     /**
      * @see #description
      */
-    public void setDescription(DescElement description) {
+    public void setDescription(Description description) {
         this.description = description;
     }
 
     /**
      * @see #choices
      */
-    public List<ChoiceElement> getChoices() {
+    public List<Choice> getChoices() {
         return choices;
     }
 /**
@@ -75,7 +76,7 @@ protected String correctChoice="-1";
      */
     @XmlElementWrapper(name = "choices")
     @XmlElementRef
-    public void setChoices(List<ChoiceElement> choices) {
+    public void setChoices(List<Choice> choices) {
         this.choices = choices;
     }
 
@@ -117,10 +118,10 @@ protected String correctChoice="-1";
      *             When I/O exception occurs.
      */
     public String queryUser() throws IOException {
-        Poll.consoleClearScreen();
+        PollClient.consoleClearScreen();
         System.out.println("Name: " + this.getName());
         System.out.println("Desription: " + this.getDescription().getValue());
-        for (ChoiceElement cur : this.getChoices()) {
+        for (Choice cur : this.getChoices()) {
             System.out.println("( " + cur.getId() + " ) " + cur.getName());
         }
         if (checkCustomEnabled())
@@ -143,7 +144,7 @@ protected String correctChoice="-1";
             selection = input.readLine();
         }
         else
-            for (ChoiceElement cur : this.getChoices()) {
+            for (Choice cur : this.getChoices()) {
 	      // converting selection number to what it represents      
 	      
                 if (selectionId == Integer.parseInt(cur.getId()))

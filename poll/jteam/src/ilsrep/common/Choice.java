@@ -1,4 +1,4 @@
-package ua.com.interlogic.ils.task7.model;
+package ilsrep.common;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "choice")
-public class ChoiceElement {
+public class Choice {
 
     /**
      * Choice identifier.

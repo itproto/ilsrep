@@ -1,4 +1,7 @@
-package ua.com.interlogic.ils.task7;
+package ilsrep.client;
+
+import ilsrep.common.Poll;
+import ilsrep.common.Pollsession;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,10 +15,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import ua.com.interlogic.ils.task7.model.PollElement;
-import ua.com.interlogic.ils.task7.model.PollsElement;
-import ua.com.interlogic.ils.task7.model.AnswerSaver;
-import ua.com.interlogic.ils.task7.model.TcpCommunicator;
 
 /**
  * Main class for task 7 - Poll.
@@ -24,7 +23,7 @@ import ua.com.interlogic.ils.task7.model.TcpCommunicator;
  * @author DCR
  * 
  */
-public class Poll {
+public class PollClient {
 
     /**
      * Main method for task 7.
@@ -42,9 +41,9 @@ public class Poll {
         System.out.println("Welcome to polls client program!\n");
         System.out.print("Please enter your name: ");
         String name = consoleInputReader.readLine();
-                JAXBContext cont = JAXBContext.newInstance(PollsElement.class);
+                JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller um = cont.createUnmarshaller();
-        PollsElement polls;
+        Pollsession polls;
         System.out.print("Use server?(1) or local file?(2)");
       
           String yesNoChoice = consoleInputReader.readLine();
@@ -58,11 +57,11 @@ public class Poll {
         // Serialising xml file into object model.
        
         File pollFile = new File(fileName);
-           polls= (PollsElement) um.unmarshal(pollFile);
+           polls= (Pollsession) um.unmarshal(pollFile);
         } else {
 	        TcpCommunicator communicator = new TcpCommunicator();
 	   Reader pollFile=communicator.getXML();
-	           polls= (PollsElement) um.unmarshal(pollFile);
+	           polls= (Pollsession) um.unmarshal(pollFile);
 	        
 	        }
    
@@ -84,7 +83,7 @@ saveElement.testMode=polls.getTestMode();
             return;
 
         String choice = null;
-        for (PollElement cur : polls.getPolls()) {
+        for (Poll cur : polls.getPolls()) {
             while (choice == null)
                 choice = cur.queryUser();
             saveElement.pushAnswer(cur.getName(), choice, cur.pass);
