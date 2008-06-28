@@ -1,4 +1,4 @@
-package ilsrep.client;
+package ilsrep.poll.client;
 
 import java.util.LinkedList;
 
