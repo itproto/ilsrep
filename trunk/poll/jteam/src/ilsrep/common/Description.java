@@ -1,4 +1,4 @@
-package ua.com.interlogic.ils.task7.model;
+package ilsrep.common;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlValue;
  *
  */
 @XmlRootElement(name = "description")
-public class DescElement {
+public class Description {
 
     /**
      * Value of element.
