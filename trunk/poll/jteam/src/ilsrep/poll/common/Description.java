@@ -1,4 +1,4 @@
-package ilsrep.common;
+package ilsrep.poll.common;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;

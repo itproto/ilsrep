@@ -1,4 +1,4 @@
-package ilsrep.common;
+package ilsrep.poll.common;
 
 import java.util.List;
 

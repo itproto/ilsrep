@@ -1,7 +1,7 @@
-package ilsrep.client;
+package ilsrep.poll.client;
 
-import ilsrep.common.Poll;
-import ilsrep.common.Pollsession;
+import ilsrep.poll.common.Poll;
+import ilsrep.poll.common.Pollsession;
 
 import java.io.BufferedReader;
 import java.io.File;

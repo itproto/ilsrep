@@ -1,6 +1,6 @@
-package ilsrep.common;
+package ilsrep.poll.common;
 
-import ilsrep.client.PollClient;
+import ilsrep.poll.client.PollClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
