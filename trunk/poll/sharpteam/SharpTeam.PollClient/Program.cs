@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
 using Ilsrep.PollApplication.Model;
+
 
 /*
  Developped by SharpTeam: vlad & ksi
@@ -14,6 +17,7 @@ namespace Ilsrep.PollApplication.Client
     public class PollClient
     {
         private const string PATH_TO_POLLS = "Polls.xml";
+        private const string POLL_XML_SAVE = "polls_save.xml";
         private const string POLL_SESSION_ELEMENT = "pollsession";
         private const string POLL_ELEMENT = "poll";
         private const string CONSOLE_YES = "y";
@@ -305,6 +309,25 @@ namespace Ilsrep.PollApplication.Client
             return xmlData;
         }
 
+        /*
+        static public void SerializeToXML()
+        {
+            XmlSerializer serializer =
+              new XmlSerializer(typeof(PollSession));
+            TextWriter textWriter = new StreamWriter(POLL_XML_SAVE);
+            serializer.Serialize(textWriter, pollSession);
+            
+            textWriter.Close();
+        }
+
+        static public void DeSerializeXML()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(PollSession));
+            Stream stream = new Stream
+            //serializer.Deserialize(
+        }
+        */
+
         public static void Main()
         {
             ConnectToServer();
@@ -312,6 +335,8 @@ namespace Ilsrep.PollApplication.Client
             ParseXml(xmlData);
             DoUserDialog();
             RunUserPoll();
+
+            SerializeToXML();
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
