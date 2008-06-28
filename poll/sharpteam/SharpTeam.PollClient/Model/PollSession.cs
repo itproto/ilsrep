@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Ilsrep.PollApplication.Model;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Ilsrep.PollApplication.Model
 {
+    [Serializable]
     class PollSession
     {
-        public int id;
-        public string name;
-        public bool testMode;
-        public double minScore;
-        public List<Poll> polls = new List<Poll>();
+        [XmlAttribute("id")] public int id;
+        [XmlAttribute("name")] public string name;
+        [XmlAttribute("testMode")] public bool testMode;
+        [XmlAttribute("double")] public double minScore;
+        [XmlElement("cars")] public List<Poll> polls = new List<Poll>();
     }
 }
