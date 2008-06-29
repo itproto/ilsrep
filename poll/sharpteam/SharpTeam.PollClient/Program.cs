@@ -96,7 +96,7 @@ namespace Ilsrep.PollApplication.Client
                                 curChoice.choice = xmlAttrChoice["name"].Value;
                                 // Save current poll in current choice for future convenience
                                 curChoice.parent = curPoll;
-                                curPoll.choice.Add(curChoice);
+                                curPoll.choices.Add(curChoice);
                             }
                         }
                         else if (node.Name == "description")
@@ -155,7 +155,7 @@ namespace Ilsrep.PollApplication.Client
                 
                 // List choices for this poll
                 int index = 1;
-                foreach (Choice currentChoice in curentPoll.choice)
+                foreach (Choice currentChoice in curentPoll.choices)
                 {
                     Console.WriteLine("\t" + index + ". " + currentChoice.choice);
                     ++ index;
@@ -170,7 +170,7 @@ namespace Ilsrep.PollApplication.Client
                 // accept only correct choices
                 while ( true )
                 {
-                    int choiceCount = (curentPoll.customChoice ? curentPoll.choice.Count + 1 : curentPoll.choice.Count);
+                    int choiceCount = (curentPoll.customChoice ? curentPoll.choices.Count + 1 : curentPoll.choices.Count);
                     Console.Write("Pick your choice: [1-" + choiceCount + "]:");
 
                     // Get user choice
@@ -180,7 +180,7 @@ namespace Ilsrep.PollApplication.Client
                         --index;
 
                         // check if input correct
-                        bool choiceInputIsAcceptable = (index >= 0 && index <= curentPoll.choice.Count - (curentPoll.customChoice ? 0 : 1));
+                        bool choiceInputIsAcceptable = (index >= 0 && index <= curentPoll.choices.Count - (curentPoll.customChoice ? 0 : 1));
                         if (choiceInputIsAcceptable)
                             break;
                     }
@@ -192,7 +192,7 @@ namespace Ilsrep.PollApplication.Client
                 }
 
                 // check if custom choice
-                bool ifCustomChoice = (index == curentPoll.choice.Count);
+                bool ifCustomChoice = (index == curentPoll.choices.Count);
                 if (ifCustomChoice)
                 {
                     Console.Write("Enter your choice:" );
@@ -209,7 +209,7 @@ namespace Ilsrep.PollApplication.Client
                 else
                 {
                     // add one of the choices that already exist to list
-                    userChoices.Add(curentPoll.choice[index]);
+                    userChoices.Add(curentPoll.choices[index]);
                 }
             }
 
@@ -224,7 +224,7 @@ namespace Ilsrep.PollApplication.Client
                 {
                     // Get correctChoice by id
                     string correctChoice = "";
-                    foreach (Choice curChoice in userChoice.parent.choice)
+                    foreach (Choice curChoice in userChoice.parent.choices)
                     {
                         if (curChoice.id == userChoice.parent.correctChoiceId)
                             correctChoice = curChoice.choice;
@@ -266,10 +266,12 @@ namespace Ilsrep.PollApplication.Client
         {
             try
             {
+                // connecting to server
                 Console.WriteLine("Please wait. Connecting to poll server...");
                 server = new TcpCommunicator();
                 server.Connect(HOST, PORT);
                 
+                // if all ok inform
                 if (server.isConnected)
                     Console.WriteLine("Connection established.");
                 else
@@ -277,6 +279,7 @@ namespace Ilsrep.PollApplication.Client
             }
             catch (Exception)
             {
+                // if any error occurs exit
                 Console.WriteLine("Could not connect to server");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey(true);
@@ -292,8 +295,10 @@ namespace Ilsrep.PollApplication.Client
                 Console.WriteLine("Input poll session id:");
                 string pollSessionID = Console.ReadLine();
 
+                // if empty string set ID to -1
                 if (pollSessionID == String.Empty)
                     pollSessionID = "-1";
+                
                 // if correct id then continue
                 if (server.sendID(pollSessionID))
                     break;
@@ -309,34 +314,73 @@ namespace Ilsrep.PollApplication.Client
             return xmlData;
         }
 
-        /*
-        static public void SerializeToXML()
+        private static String UTF8ByteArrayToString ( Byte[ ] characters )
         {
-            XmlSerializer serializer =
-              new XmlSerializer(typeof(PollSession));
-            TextWriter textWriter = new StreamWriter(POLL_XML_SAVE);
-            serializer.Serialize(textWriter, pollSession);
-            
-            textWriter.Close();
+            UTF8Encoding encoding = new UTF8Encoding ( );
+            String constructedString = encoding.GetString ( characters );
+
+            return ( constructedString );
         }
 
-        static public void DeSerializeXML()
+        private static Byte[] StringToUTF8ByteArray(String pXmlString)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(PollSession));
-            Stream stream = new Stream
-            //serializer.Deserialize(
+            UTF8Encoding encoding = new UTF8Encoding();
+            Byte[] byteArray = encoding.GetBytes(pXmlString);
+
+            return byteArray;
         }
-        */
+
+        public static void DeSerializeXML(string xmlString)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer( typeof(PollSession) );
+            MemoryStream memoryStream = new MemoryStream(StringToUTF8ByteArray(xmlString));
+            XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
+
+            pollSession = (PollSession)xmlSerializer.Deserialize(memoryStream);
+
+            foreach( Poll poll in pollSession.polls )
+            {
+                foreach (Choice choice in poll.choices)
+                {
+                    choice.parent = poll;
+                }
+            }
+
+            Console.WriteLine("XML Parsed");
+        }
+
+        public static String SerializeObject()
+        {
+            try
+            {
+                String XmlizedString = null;
+                MemoryStream memoryStream = new MemoryStream();
+                XmlSerializer xs = new XmlSerializer(typeof(PollSession));
+                XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
+
+                xs.Serialize(xmlTextWriter, pollSession);
+                memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
+                XmlizedString = UTF8ByteArrayToString(memoryStream.ToArray());
+
+                return XmlizedString;
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e);
+                return null;
+            }
+        }
 
         public static void Main()
         {
             ConnectToServer();
             String xmlData = GetPollById();
-            ParseXml(xmlData);
+            //ParseXml(xmlData);
+            DeSerializeXML(xmlData);
+            //Console.WriteLine(SerializeObject());
             DoUserDialog();
             RunUserPoll();
-
-            SerializeToXML();
+            
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);

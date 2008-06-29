@@ -6,15 +6,15 @@ using System.Xml.Serialization;
 
 namespace Ilsrep.PollApplication.Model
 {
-    [Serializable]
+    [XmlRoot("poll"), Serializable]
     public class Poll
     {
         [XmlAttribute("id")] public int id;
         [XmlAttribute("name")] public string name;
         [XmlAttribute("correctChoice")] public int correctChoiceId;
         [XmlElement("description")] public string description;
-        public bool customChoice; /* not needed? */
+        [XmlIgnore] public bool customChoice; /* not needed? */
         
-        [XmlElement("choices")] public List<Choice> choice = new List<Choice>();
+        [XmlArray("choices")] [XmlArrayItem("choice")] public List<Choice> choices = new List<Choice>();
     }
 }

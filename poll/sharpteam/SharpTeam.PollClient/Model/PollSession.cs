@@ -6,13 +6,13 @@ using System.Xml.Serialization;
 
 namespace Ilsrep.PollApplication.Model
 {
-    [Serializable]
-    class PollSession
+    [XmlRoot("pollsession"), Serializable]
+    public class PollSession
     {
         [XmlAttribute("id")] public int id;
         [XmlAttribute("name")] public string name;
         [XmlAttribute("testMode")] public bool testMode;
-        [XmlAttribute("double")] public double minScore;
-        [XmlElement("cars")] public List<Poll> polls = new List<Poll>();
+        [XmlAttribute("minScore")] public double minScore;
+        [XmlArray("polls"), XmlArrayItem("poll", typeof(Poll) )] public List<Poll> polls = new List<Poll>();
     }
 }
