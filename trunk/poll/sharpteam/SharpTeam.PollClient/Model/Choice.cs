@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace Ilsrep.PollApplication.Model
 {
-    [Serializable]
+    [XmlRoot("choice"), Serializable]
     public class Choice
     {
         [XmlAttribute("id")] public int id;
