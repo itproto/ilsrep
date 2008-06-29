@@ -9,28 +9,11 @@ using System.IO;
 namespace Ilsrep.PollApplication.Server
 {
     class PollHandler
-    {   
-        public TcpListener threadListener;
+    {
+        public TcpClient currentClient = new TcpClient();
         private string clientAddress;
         private static int activeConnCount = 0;
         private static byte[] data = new byte[PollServer.DATA_SIZE];
-
-        /*
-        private static int GetPollSessionId(string xmlStringId)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(xmlStringId);
-                XmlNodeList pollSessionId = xmlDoc.GetElementsByTagName("pollSessionId");
-                return Convert.ToInt32(pollSessionId[0].InnerText);
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
-        }
-        */
 
         private static bool idExists(int pollSessionID)
         {
@@ -75,11 +58,9 @@ namespace Ilsrep.PollApplication.Server
             }
             catch (Exception)
             {
-                //return "! An error occured in xml file reading";
                 return String.Empty;
             }
 
-            //return "! Wrong ";
             return String.Empty;
         }
 
@@ -95,12 +76,12 @@ namespace Ilsrep.PollApplication.Server
                 int receivedBytesCount = client.Read(data, 0, PollServer.DATA_SIZE);
                 string recievedString = Encoding.ASCII.GetString(data, 0, receivedBytesCount);
 
-                // get poll sesssion id sent by server
-                //pollSessionID = GetPollSessionId(recievedString);
+                // Get poll sesssion id sent by server
                 try
                 {
                     pollSessionID = Convert.ToInt32(recievedString);
-                    // Check if exists such ID
+
+                    // Check if exists such id
                     if (idExists(pollSessionID))
                     {
                         Console.WriteLine("{0}: ID validated: {1}", clientAddress, pollSessionID);
@@ -139,22 +120,15 @@ namespace Ilsrep.PollApplication.Server
         public void HandleConnection()
         {
             // Establish connection with new client
-            TcpClient currentClient = threadListener.AcceptTcpClient();
             NetworkStream currentStream = currentClient.GetStream();
             activeConnCount++;
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
             Console.WriteLine("New client accepted - {0} ({1} active connections)", clientAddress, activeConnCount);
-            
-            /*
-            // Send WELCOME
-            data = Encoding.ASCII.GetBytes(PollServer.WELCOME);
-            currentStream.Write(data, 0, data.Length);
-            */
-             
+                         
             // Run dialog with client
             RunClientSession(currentStream);
 
-            // Close connection with client
+            // Close clients connection
             currentStream.Close();
             currentClient.Close();
             activeConnCount--;
