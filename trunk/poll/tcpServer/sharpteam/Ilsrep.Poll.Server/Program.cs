@@ -14,33 +14,35 @@ namespace Ilsrep.PollApplication.Server
         public const int PORT = 3320;
         public const int DATA_SIZE = 65536;
         public const string PATH_TO_POLLS = "Polls.xml";
-        public const string WELCOME = "Welcome to poll server.";
 
         public static void Main()
         {
             // Get local ip
             string localHost = System.Net.Dns.GetHostName();
             string localIp = System.Net.Dns.GetHostEntry(localHost).AddressList[1].ToString();
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             // Start server
             Console.WriteLine("Server started on host: {0}:{1}", localIp, PORT);
             IPEndPoint clientAddress = new IPEndPoint(IPAddress.Any, PORT);
-            TcpListener tcpListener = new TcpListener(IPAddress.Any, 3320);
-            tcpListener.Start();
+            client.Bind(clientAddress);
             Console.WriteLine("Waiting for clients...");
             while (true)
             {
-                // Wait until client connect
-                while (!tcpListener.Pending())
+                client.Listen(10);
+                PollHandler newConnection = new PollHandler();
+                newConnection.currentClient.Client = client.Accept();
+
+                // Create a new thread if client is connected else wait
+                if (newConnection.currentClient.Client.Connected)
+                {
+                    Thread newThread = new Thread(new ThreadStart(newConnection.HandleConnection));
+                    newThread.Start();
+                }
+                else
                 {
                     Thread.Sleep(1000);
                 }
-
-                // Create a new thread for each client
-                PollHandler newConnection = new PollHandler();
-                newConnection.threadListener = tcpListener;
-                Thread newThread = new Thread(new ThreadStart(newConnection.HandleConnection));
-                newThread.Start();
             }
         }
     }
