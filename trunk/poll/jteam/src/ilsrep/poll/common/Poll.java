@@ -10,13 +10,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * The "poll" element.
  * 
  * @author TKOST
- * @author DCR
+ * @author DRC
  */
 @XmlRootElement(name = "poll")
 public class Poll {
@@ -25,8 +25,7 @@ public class Poll {
      * Poll's ID.
      */
     protected String id = null;
-    
-public String pass="FAIL";
+
     /**
      * Poll's name.
      */
@@ -48,6 +47,17 @@ public String pass="FAIL";
     protected String customEnabled = null;
 
     /**
+     * TODO: DRC: Fix comment.
+     */
+    protected String correctChoice = "-1";
+
+    /**
+     * TODO: DRC: Fix comment.
+     */
+    @XmlTransient
+    public String pass = "FAIL";
+
+    /**
      * @see #description
      */
     public Description getDescription() {
@@ -64,18 +74,15 @@ public String pass="FAIL";
     /**
      * @see #choices
      */
+    @XmlElementWrapper(name = "choices")
+    @XmlElementRef
     public List<Choice> getChoices() {
         return choices;
     }
-/**
-*@see #correct choice
-*/
-protected String correctChoice="-1";
+
     /**
      * @see #choices
      */
-    @XmlElementWrapper(name = "choices")
-    @XmlElementRef
     public void setChoices(List<Choice> choices) {
         this.choices = choices;
     }
@@ -129,7 +136,7 @@ protected String correctChoice="-1";
 
         String selection = null;
         int selectionId = -1;
-        //reading input data
+        // reading input data
         InputStreamReader converter = new InputStreamReader(System.in);
         BufferedReader input = new BufferedReader(converter);
         try {
@@ -137,25 +144,25 @@ protected String correctChoice="-1";
         }
         catch (NumberFormatException e) {
         }
-         //checking whether to output custom choice line
-                if (checkCustomEnabled() && selectionId == 0) {
-	        
+        // checking whether to output custom choice line
+        if (checkCustomEnabled() && selectionId == 0) {
+
             System.out.print("Please enter your choice: ");
             selection = input.readLine();
         }
         else
             for (Choice cur : this.getChoices()) {
-	      // converting selection number to what it represents      
-	      
+                // converting selection number to what it represents
+
                 if (selectionId == Integer.parseInt(cur.getId()))
                     selection = cur.getName();
-                   
-            }
-             if (selectionId == Integer.parseInt(this.getCorrectChoice())) this.pass="PASS";
 
-           
+            }
+        if (selectionId == Integer.parseInt(this.getCorrectChoice()))
+            this.pass = "PASS";
+
         System.out.println();
-//return the selected element
+        // return the selected element
 
         return selection;
     }
@@ -167,6 +174,7 @@ protected String correctChoice="-1";
     public String getCustomEnabled() {
         return customEnabled;
     }
+
     /**
      * @see #customEnabled
      */
@@ -184,13 +192,19 @@ protected String correctChoice="-1";
                 && (customEnabled.compareTo("true") == 0);
     }
 
+    /**
+     * @see #correctChoice
+     */
     @XmlAttribute(name = "correctChoice")
     public String getCorrectChoice() {
         return correctChoice;
     }
+
+    /**
+     * @see #correctChoice
+     */
     public void setCorrectChoice(String correctChoice) {
         this.correctChoice = correctChoice;
     }
 
-   
 }
