@@ -7,7 +7,7 @@
 
 	<property name="distr.dir" value="${basedir}/distr" />
 
-	<property name="jar.file" value="${basedir}/task7.jar" />
+	<property name="jar.file" value="${basedir}/poll.jar" />
 
 	<target name="init">
 		<tstamp />
