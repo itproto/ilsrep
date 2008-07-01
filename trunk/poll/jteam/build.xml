@@ -6,6 +6,7 @@
 	<property name="src.dir" value="${basedir}/src" />
 
 	<property name="distr.dir" value="${basedir}/distr" />
+	<property name="data.dir" value="${basedir}/data" />
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
 
@@ -14,9 +15,17 @@
 		<mkdir dir="${distr.dir}"/>
 	</target>
 
-	<target name="compile" depends="init">
+	<target name="copy-data" depends="init">
+		<copy todir="${distr.dir}/data">
+			<fileset dir="${data.dir}">
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compile" depends="init, copy-data">
 		<javac 	srcdir="${src.dir}"
 				destdir="${distr.dir}"
+				classpath="lib/xpilotpanel-lib.jar"
 				debug="off"
 				optimize="on"
 			/>

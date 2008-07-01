@@ -3,7 +3,7 @@ package ilsrep.poll.server;
 /**
  * Main class for poll server.
  * 
- * @author Taras Kostiak
+ * @author TKOST
  * 
  */
 public class PollServer {
