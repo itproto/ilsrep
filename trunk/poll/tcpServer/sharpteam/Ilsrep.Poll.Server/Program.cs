@@ -11,20 +11,70 @@ namespace Ilsrep.PollApplication.Server
 {
     public class PollServer
     {
-        public const int PORT = 3320;
         public const int DATA_SIZE = 65536;
-        public const string PATH_TO_POLLS = "Polls.xml";
+        static public string pathToPolls;
+        static public int port;
+        static public IPAddress host;
 
-        public static void Main()
+        private static void ParseArgs(string[] args)
         {
-            // Get local ip
-            string localHost = System.Net.Dns.GetHostName();
-            string localIp = System.Net.Dns.GetHostEntry(localHost).AddressList[1].ToString();
-            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            int curIndex = 0;
+            foreach (string arg in args)
+            {
+                switch (arg)
+                {
+                    case "-port":
+                        try
+                        {
+                            port = Convert.ToInt32(args[curIndex+1]);
+                        }
+                        catch (Exception)
+                        { 
+                        }
+                        break;
+                    case "-host":
+                        try
+                        {
+                            host = IPAddress.Parse(args[curIndex+1]);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                        break;
+                    case "-polls":
+                        pathToPolls = args[curIndex+1];
+                        try
+                        {
+                            XmlDocument xmlDoc = new XmlDocument();
+                            xmlDoc.Load(pathToPolls);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Error: Invalid path to polls");
+                            Console.ReadKey(true);
+                            Environment.Exit(-1);
+                        }
+                        break;
+                }
+                curIndex++;
+            }
+        }
+
+        public static void Main(string[] args)
+        {
+            // Set default host
+            host = IPAddress.Any;
+            // Set default port
+            port = 3320;
+            //Set default PathToPolls
+            pathToPolls = "Polls.xml";
+
+            ParseArgs(args);
 
             // Start server
-            Console.WriteLine("Server started on host: {0}:{1}", localIp, PORT);
-            IPEndPoint clientAddress = new IPEndPoint(IPAddress.Any, PORT);
+            Console.WriteLine("Server started on host: {0}:{1}", host.ToString(), port);
+            IPEndPoint clientAddress = new IPEndPoint(host, port);
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             client.Bind(clientAddress);
             Console.WriteLine("Waiting for clients...");
             while (true)

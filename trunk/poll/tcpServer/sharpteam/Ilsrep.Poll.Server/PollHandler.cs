@@ -20,7 +20,7 @@ namespace Ilsrep.PollApplication.Server
             try
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(PollServer.PATH_TO_POLLS);
+                xmlDoc.Load(PollServer.pathToPolls);
                 XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName("pollsession");
 
                 foreach (XmlNode xmlPollSession in xmlPollSessionList)
@@ -45,7 +45,7 @@ namespace Ilsrep.PollApplication.Server
             try
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(PollServer.PATH_TO_POLLS);
+                xmlDoc.Load(PollServer.pathToPolls);
                 XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName("pollsession");
                 foreach (XmlNode xmlPollSession in xmlPollSessionList)
                 {
