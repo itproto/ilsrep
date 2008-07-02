@@ -7,8 +7,11 @@
 
 	<property name="distr.dir" value="${basedir}/distr" />
 	<property name="data.dir" value="${basedir}/data" />
+	<property name="javadoc.dir" value="${basedir}/docs" />
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
+
+	<property name="class.path" value="lib/xpilotpanel-lib.jar" />
 
 	<target name="init">
 		<tstamp />
@@ -22,16 +25,16 @@
 		</copy>
 	</target>
 
-	<target name="compile" depends="copy-data, init">
+	<target name="compile" depends="init">
 		<javac 	srcdir="${src.dir}"
 				destdir="${distr.dir}"
-				classpath="lib/xpilotpanel-lib.jar"
-				debug="off"
+				classpath="${class.path}"
+				debug="on"
 				optimize="on"
 			/>
 	</target>
 
-	<target name="jar" depends="compile, init">
+	<target name="jar" depends="compile, copy-data, init">
 		<jar destfile="${jar.file}">
 			<fileset dir="${distr.dir}">
 			</fileset>
@@ -41,12 +44,17 @@
 		</jar>
 	</target>
 
+	<target name="javadoc" depends="init">
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}"
+			classpath="${class.path}"/>
+	</target>
+
 	<target name="clean">
 		<delete quiet="true" dir="${distr.dir}" />
 		<delete quiet="true" file="${jar.file}" />
 	</target>
 
-	<target name="commitclean" depends="jar">
+	<target name="commitclean" depends="jar, javadoc">
 		<delete quiet="true" dir="${distr.dir}" />
 	</target>
 

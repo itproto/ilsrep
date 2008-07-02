@@ -18,7 +18,7 @@ public class Description {
     protected String value = null;
     
     /**
-     * @see value
+     * @see #value
      */
     @XmlValue
     public String getValue() {
@@ -26,7 +26,7 @@ public class Description {
     }
 
     /**
-     * @see value
+     * @see #value
      */
     public void setValue(String value) {
         this.value = value;
