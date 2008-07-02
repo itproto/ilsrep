@@ -73,26 +73,48 @@ public class PollClient {
         mr.marshal(polls, System.out);
 
         // Processing polls.
-        AnswerSaver saveElement = new AnswerSaver();
+   /*     AnswerSaver saveElement = new AnswerSaver();
 saveElement.minScore=Float.parseFloat(polls.getMinScore());
 saveElement.testMode=polls.getTestMode();
+*/
+//New way of saving answers
+String testMode="false";
+float minScore=Float.parseFloat(polls.getMinScore()); 	
+testMode=polls.getTestMode();	
+String resultingOutput="Results \n"; //here we will store everything we will need to output	
         System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]");
         yesNoChoice = consoleInputReader.readLine();
         if (!(yesNoChoice.compareTo("y") == 0))
             return;
 
         String choice = null;
+        float i=0,n=0;
         for (Poll cur : polls.getPolls()) {
             while (choice == null)
-                choice = cur.queryUser();
-            saveElement.pushAnswer(cur.getName(), choice, cur.pass);
+            choice = cur.queryUser();
+ //          saveElement.pushAnswer(cur.getName(), choice, cur.pass);
+            if (testMode.compareTo("true")==0){
+    		 resultingOutput+=cur.getName() + " => " + choice + "=>"+cur.pass+"\n";
+    				 } else {
+	        		resultingOutput+=cur.getName() + " => " + choice +"\n";
+	        			}
+  					if (cur.pass=="PASS") i++;
+            n++;
+            
             choice = null;
         }
-
+ if(testMode.compareTo("true")==0){
+	resultingOutput+="Your score "+Float.toString(i/n)+"\n";
+	
+	if ((i/n)>=minScore){resultingOutput+="You pass";
+	} else{
+		 resultingOutput+="You fail";
+	 }
+	 }
         // Showing poll results.
         consoleClearScreen();
-        saveElement.popAnswer();
-
+     //   saveElement.popAnswer();
+	 System.out.println(resultingOutput);
         consoleInputReader.readLine();
     }
 
