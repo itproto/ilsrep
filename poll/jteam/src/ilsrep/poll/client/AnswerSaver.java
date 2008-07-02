@@ -42,10 +42,12 @@ public String testMode;
     /**
      * Adds name and choice selection pair to LogSaver.
      * 
-     * @param desc
+     * @param poll
      *            Name.
-     * @param sid
+     * @param answer
      *            Choice selection.
+     * @param correct
+     *            Shows if answer is correct.
      */
     public void pushAnswer(String poll, String answer, String correct) {
         AnswerHelper listElement = new AnswerHelper();
