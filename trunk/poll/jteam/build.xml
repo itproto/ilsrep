@@ -22,7 +22,7 @@
 		</copy>
 	</target>
 
-	<target name="compile" depends="init, copy-data">
+	<target name="compile" depends="copy-data, init">
 		<javac 	srcdir="${src.dir}"
 				destdir="${distr.dir}"
 				classpath="lib/xpilotpanel-lib.jar"
@@ -31,7 +31,7 @@
 			/>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile, init">
 		<jar destfile="${jar.file}">
 			<fileset dir="${distr.dir}">
 			</fileset>

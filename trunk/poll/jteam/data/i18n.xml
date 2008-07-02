@@ -4,5 +4,5 @@
 
 <properties version="1.0">
     <entry key="preference.maxConnections">Maximal quantity of connections parallel</entry>
-    <entry key="preference.tab.General">Maximal quantity of connections parallel</entry>
+    <entry key="preference.tab.General">General</entry>
 </properties>

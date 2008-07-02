@@ -31,7 +31,8 @@ public class ConfigurationEditor {
      */
     public static void main(String[] args) {
         // Creating file chooser GUI.
-        JFileChooser fileChooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser(System.getProperties()
+                .getProperty("user.dir"));
         fileChooser.setDialogTitle("Select poll server configuration file");
 
         // Starts GUI that allow user to choose file and then launches GUI that
