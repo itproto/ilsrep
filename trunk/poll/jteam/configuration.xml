@@ -5,4 +5,5 @@
 <entry key="maxConnections">16</entry>
 <entry key="alternativeIPAddress"/>
 <entry key="useAlternativeIPAddress">false</entry>
+<entry key="pollXmlPath">xml</entry>
 </properties>
