@@ -3,6 +3,10 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties version="1.0">
+    <entry key="preference.port">Port</entry>
     <entry key="preference.maxConnections">Maximal quantity of connections parallel</entry>
+    <entry key="preference.useAlternativeIPAddress">Start server on specified IP address</entry>
+    <entry key="preference.alternativeIPAddress">IP address to start server on</entry>
+
     <entry key="preference.tab.General">General</entry>
 </properties>

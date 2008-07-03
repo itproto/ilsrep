@@ -2,11 +2,17 @@
 
 <XPilotPanelPreferencesModel>
     <preferences>
+        <preference name="port" defaultValue="3320"/>
         <preference name="maxConnections" defaultValue="16"/>
+        <preference name="useAlternativeIPAddress" type="boolean" defaultValue="false"/>
+        <preference name="alternativeIPAddress"/>
     </preferences>
     <tabs>
         <tab name="General">
+            <preference name="port"/>
             <preference name="maxConnections"/>
+	        <preference name="useAlternativeIPAddress"/>
+	        <preference name="alternativeIPAddress"/>
         </tab>
     </tabs>
 </XPilotPanelPreferencesModel>
