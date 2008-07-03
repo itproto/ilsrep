@@ -48,10 +48,10 @@ public class PollClient {
           String yesNoChoice = consoleInputReader.readLine();
         if (!(yesNoChoice.compareTo("1") == 0)){
         System.out.print("Please enter filename to read poll xml "
-                + "from\n[press enter for default \"Polls.xml\"]: ");
+                + "from\n[press enter for default \"xml/Polls.xml\"]: ");
         String fileName = consoleInputReader.readLine();
         if (fileName.compareTo("") == 0)
-            fileName = "Polls.xml";
+            fileName = "xml/Polls.xml";
 
         // Serialising xml file into object model.
        

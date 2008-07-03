@@ -1,11 +1,21 @@
 package ilsrep.poll.server;
 
-import java.io.File;
-import java.io.IOException;
+import ilsrep.poll.common.Pollsession;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
+
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import net.sf.xpilotpanel.preferences.Preferences;
+import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 
 /**
  * Main class for poll server.
@@ -29,15 +39,20 @@ public class PollServer {
      *            Command line arguments.
      */
     public static void main(String[] args) {
+        // Check if configuration file specified.
         if (args.length == 0) {
             System.out
                     .println("ERROR: Configuration file not specified. Quitting!");
             System.exit(1);
         }
 
+        // Creating poll server instance and loading poll xml's.
         PollServer serverInstance = new PollServer(args[0]);
+
+        // Lauching server listening to clients on port.
         serverInstance.lauch();
 
+        // Exiting program with exit code got from server.
         System.exit(serverInstance.getExitCode());
     }
 
@@ -47,9 +62,35 @@ public class PollServer {
     Preferences configuration = null;
 
     /**
-     * Stores code with which server's program should exit.
+     * Stores code with which server's program should exit. <br>
+     * Also keeps server state.
      */
     protected int exitCode = -1;
+
+    /**
+     * Pollsessions that have been loaded to server.
+     */
+    protected List<Pollsession> pollsessions = null;
+
+    /**
+     * Port to start server on.
+     */
+    protected int port = -1;
+
+    /**
+     * Maximum connections to server.
+     */
+    protected int maxConnections = -1;
+
+    /**
+     * Shows if start server on alternative IP address.
+     */
+    protected boolean useAlternativeIPAddress = false;
+
+    /**
+     * IP address to start server on.
+     */
+    protected String alternativeIPAddress = null;
 
     /**
      * Creates <code>PollServer</code> and reads configuration from specified
@@ -61,6 +102,7 @@ public class PollServer {
     public PollServer(String configurationFileName) {
         File configurationFile = new File(configurationFileName);
 
+        // Check if configuration file exists, is file and is readable.
         if (!(configurationFile.exists() && configurationFile.isFile() && configurationFile
                 .canRead())) {
             System.out
@@ -68,6 +110,7 @@ public class PollServer {
             serverShutdown(2);
         }
 
+        // Loading configuration.
         configuration = null;
         try {
             configuration = ConfigurationEditor
@@ -76,7 +119,7 @@ public class PollServer {
         catch (IOException e) { // Is thrown when configuration file can't be
             // loaded.
             System.out
-                    .println("ERROR: I/O error while loading configuration model. Quitting!");
+                    .println("ERROR: I/O error while reading configuration. Quitting!");
             serverShutdown(2);
         }
         catch (JAXBException e) { // Is thrown when configuration file is
@@ -84,6 +127,78 @@ public class PollServer {
             System.out
                     .println("ERROR: specified configuration file is corrupted. Quitting!");
             serverShutdown(2);
+        }
+
+        // Processing configuration.
+        try {
+            port = Integer.parseInt(configuration.get("port"));
+        }
+        catch (NumberFormatException e) {
+            port = -1;
+        }
+        finally {
+            if (port <= 0) {
+                PreferenceSelector pSelector = new PreferenceSelector();
+                pSelector.setName("port");
+                port = Integer.parseInt(configuration.getModel()
+                        .getPreferenceBySelector(pSelector).getDefaultValue());
+            }
+        }
+
+        try {
+            maxConnections = Integer.parseInt(configuration
+                    .get("maxConnections"));
+        }
+        catch (NumberFormatException e) {
+            maxConnections = -1;
+        }
+        finally {
+            if (maxConnections <= 0) {
+                PreferenceSelector pSelector = new PreferenceSelector();
+                pSelector.setName("maxConnections");
+                maxConnections = Integer.parseInt(configuration.getModel()
+                        .getPreferenceBySelector(pSelector).getDefaultValue());
+            }
+        }
+
+        if (configuration.get("useAlternativeIPAddress").compareTo("true") == 0) {
+            useAlternativeIPAddress = true;
+            alternativeIPAddress = configuration.get("alternativeIPAddress");
+        }
+
+        // Reading all poll xml from specified directory into memory(objects).
+        pollsessions = new Vector<Pollsession>();
+
+        File xmlDir = new File(configuration.get("pollXmlPath"));
+
+        if (xmlDir.exists() && xmlDir.isDirectory()) {
+            File[] filesInDir = xmlDir.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File dir, String name) {
+                    int pointPosition = name.lastIndexOf((int) '.');
+                    return name.substring(pointPosition + 1).compareTo("xml") == 0;
+                }
+            });
+
+            for (File file : filesInDir) {
+                try {
+                    System.out.println(file.getAbsolutePath());
+                    JAXBContext cont = JAXBContext
+                            .newInstance(Pollsession.class);
+                    Unmarshaller um = cont.createUnmarshaller();
+
+                    Pollsession session = (Pollsession) um
+                            .unmarshal(new FileInputStream(file));
+                    pollsessions.add(session);
+                }
+                catch (JAXBException e) {
+                    // Doing nothing - ignoring file.
+                }
+                catch (FileNotFoundException e) {
+                    // Doing nothing - ignoring file.
+                }
+            }
         }
     }
 
@@ -110,7 +225,7 @@ public class PollServer {
      * @see #exitCode
      */
     public int getExitCode() {
-        return exitCode;
+        return (exitCode >= 0) ? exitCode : 0;
     }
 
     /**
@@ -126,7 +241,7 @@ public class PollServer {
      * Starts server listening on port.
      */
     public void lauch() {
-        // TODO: Realsise this method.
+        // TODO: Realise this method.
     }
 
 }

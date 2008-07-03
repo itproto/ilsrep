@@ -3,6 +3,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties version="1.0">
+    <entry key="preference.pollXmlPath">Шлях до poll xml файлів</entry>
     <entry key="preference.port">Порт</entry>
     <entry key="preference.maxConnections">Максимальна кількість з'єднань одночасно</entry>
     <entry key="preference.useAlternativeIPAddress">Запускати сервер на вказаній IP адресі</entry>

@@ -2,6 +2,7 @@
 
 <XPilotPanelPreferencesModel>
     <preferences>
+        <preference name="pollXmlPath" defaultValue="xml"/>
         <preference name="port" defaultValue="3320"/>
         <preference name="maxConnections" defaultValue="16"/>
         <preference name="useAlternativeIPAddress" type="boolean" defaultValue="false"/>
@@ -9,6 +10,7 @@
     </preferences>
     <tabs>
         <tab name="General">
+	        <preference name="pollXmlPath"/>
             <preference name="port"/>
             <preference name="maxConnections"/>
 	        <preference name="useAlternativeIPAddress"/>
