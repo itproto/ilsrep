@@ -32,9 +32,9 @@ namespace Ilsrep.PollApplication.Server
                         {
                             port = Convert.ToInt32(args[curIndex+1]);
                         }
-                        catch (Exception ex)
+                        catch (Exception exception)
                         {
-                            log.Error(ex.Message.ToString() + "\r\n\t" + "Invalid port used:" + args[curIndex + 1] + "\r\n\t" + "Default port loaded:" + port);
+                            log.Error("Invalid port used:" + args[curIndex + 1] + Environment.NewLine + "\t\tDefault port loaded:" + port,exception);
                         }
                         break;
                     case "-host":
@@ -42,9 +42,9 @@ namespace Ilsrep.PollApplication.Server
                         {
                             host = IPAddress.Parse(args[curIndex+1]);
                         }
-                        catch (Exception ex)
+                        catch (Exception exception)
                         {
-                            log.Error(ex.Message.ToString() + "\r\n\t" + "Invalid host used:" + args[curIndex + 1] + "\r\n\t" + "Default host loaded:" + IPAddress.Any.ToString());
+                            log.Error("Invalid host used:" + args[curIndex + 1] + Environment.NewLine + "\t\tDefault host loaded:" + IPAddress.Any.ToString(),exception);
                         }
                         break;
                     case "-polls":
@@ -54,9 +54,9 @@ namespace Ilsrep.PollApplication.Server
                             xmlDoc.Load(args[curIndex + 1]);
                             pathToPolls = args[curIndex + 1];
                         }
-                        catch (Exception ex)
+                        catch (Exception exception)
                         {
-                            log.Error(ex.Message.ToString() + "\r\n\t" + "Invalid path to polls:" + args[curIndex + 1] + "\r\n\t" + "Default path to polls loaded:" + pathToPolls);
+                            log.Error("Invalid path to polls:" + args[curIndex + 1] + Environment.NewLine + "\t\tDefault path to polls loaded:" + pathToPolls,exception);
                         }
                         break;
                 }
