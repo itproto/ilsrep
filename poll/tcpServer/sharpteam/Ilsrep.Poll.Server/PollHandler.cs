@@ -77,8 +77,18 @@ namespace Ilsrep.PollApplication.Server
             while (true)
             {
                 // Receive from client pollSessionId
-                int receivedBytesCount = client.Read(data, 0, PollServer.DATA_SIZE);
-                string recievedString = Encoding.ASCII.GetString(data, 0, receivedBytesCount);
+                int receivedBytesCount = 0;
+                string recievedString = String.Empty;
+                try
+                {
+                    receivedBytesCount = client.Read(data, 0, PollServer.DATA_SIZE);
+                    recievedString = Encoding.ASCII.GetString(data, 0, receivedBytesCount);
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message.ToString());
+                    return;
+                }
 
                 // Get poll sesssion id sent by server
                 try
