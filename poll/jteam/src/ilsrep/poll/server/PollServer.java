@@ -7,6 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
 
@@ -166,7 +170,7 @@ public class PollServer {
             alternativeIPAddress = configuration.get("alternativeIPAddress");
         }
 
-        // Reading all poll xml from specified directory into memory(objects).
+        // Reading all poll xml's from specified directory into memory(objects).
         pollsessions = new Vector<Pollsession>();
 
         File xmlDir = new File(configuration.get("pollXmlPath"));
@@ -183,7 +187,6 @@ public class PollServer {
 
             for (File file : filesInDir) {
                 try {
-                    System.out.println(file.getAbsolutePath());
                     JAXBContext cont = JAXBContext
                             .newInstance(Pollsession.class);
                     Unmarshaller um = cont.createUnmarshaller();
@@ -241,7 +244,72 @@ public class PollServer {
      * Starts server listening on port.
      */
     public void lauch() {
-        // TODO: Realise this method.
+        ServerSocket serverSock = null;
+        try {
+            serverSock = new ServerSocket(port, maxConnections);
+        }
+        catch (IOException e) {
+            System.out
+                    .println("ERROR! Can't bind ServerSocket to port. Quitting!");
+            serverShutdown(3);
+            return;
+        }
+
+        while (true) {
+            Socket client = null;
+            try {
+                client = serverSock.accept();
+            }
+            catch (IOException e) {
+                continue;
+            }
+
+            Class<?> handlerClass = null;
+            try {
+                handlerClass = Class
+                        .forName("ilsrep.poll.server.PollClientHandler");
+                Constructor<?> constructor = handlerClass.getConstructor();
+
+                ClientHandler handler = (ClientHandler) constructor
+                        .newInstance();
+
+                handler.handle(client, this);
+            }
+            catch (ClassNotFoundException e) {// Only will be invoked if
+                // "PollClientHandler" is not in
+                // classpath.
+                System.out
+                        .println("ERROR! Class PollClientHandler not found. Quitting!");
+                serverShutdown(4);
+                return;
+            }
+            catch (NoSuchMethodException e) {
+                System.out
+                        .println("ERROR! Class PollClientHandler don't have required constructor. Quitting!");
+                serverShutdown(4);
+                return;
+            }
+            catch (IllegalArgumentException e) {
+                // Fix...
+                serverShutdown(4);
+                return;
+            }
+            catch (InstantiationException e) {
+                // Fix...
+                serverShutdown(4);
+                return;
+            }
+            catch (IllegalAccessException e) {
+                // Fix...
+                serverShutdown(4);
+                return;
+            }
+            catch (InvocationTargetException e) {
+                // Fix...
+                serverShutdown(4);
+                return;
+            }
+        }
     }
 
 }

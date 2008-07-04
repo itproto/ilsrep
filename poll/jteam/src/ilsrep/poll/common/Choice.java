@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * The "choice" element.
  * 
- * @author Taras Kostiak
+ * @author TKOST
  * 
  */
 @XmlRootElement(name = "choice")

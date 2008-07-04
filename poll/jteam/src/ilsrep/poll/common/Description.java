@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlValue;
 /**
  * The "description" element. 
  * 
- * @author Taras Kostiak
+ * @author TKOST
  *
  */
 @XmlRootElement(name = "description")

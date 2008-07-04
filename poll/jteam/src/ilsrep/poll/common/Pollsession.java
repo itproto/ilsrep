@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 /**
  * The "polls" element.
  * 
- * @author Taras Kostiak
+ * @author TKOST
  * 
  */
 @XmlRootElement(name = "pollsession")
