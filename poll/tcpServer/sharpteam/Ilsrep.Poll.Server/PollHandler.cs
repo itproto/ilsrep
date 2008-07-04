@@ -36,7 +36,7 @@ namespace Ilsrep.PollApplication.Server
             }
             catch (Exception exception)
             {
-                log.Error(exception);
+                log.Error("Exception in GetPollSessionById. " + exception.Message);
                 return String.Empty;
             }
             return String.Empty;
@@ -60,7 +60,7 @@ namespace Ilsrep.PollApplication.Server
                 }
                 catch (Exception exception)
                 {
-                    log.Error(exception);
+                    log.Error(exception.Message);
                     return;
                 }
 
@@ -85,9 +85,9 @@ namespace Ilsrep.PollApplication.Server
                         client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                     }
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    log.Error(clientAddress + ": Client asked for non-existant ID: " + recievedString, exception);
+                    log.Info(clientAddress + ": Client asked for non-existant ID: " + recievedString);
                     sendString = "-1";
                     client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                 }
