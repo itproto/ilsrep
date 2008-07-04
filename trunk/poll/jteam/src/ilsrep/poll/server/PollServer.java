@@ -18,6 +18,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 
@@ -30,6 +33,16 @@ import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 public class PollServer {
 
     /**
+     * Log4j Logger for this class.
+     */
+    private static Logger logger = Logger.getLogger(PollServer.class);
+
+    /**
+     * Namespace path to log4j configuration.
+     */
+    public static String LOGGER_CONFIGURATION_FILE = "data/log4j-conf.properties";
+
+    /**
      * Main method for poll server. <br>
      * 
      * Exit codes: <br>
@@ -37,16 +50,21 @@ public class PollServer {
      * <li>0 - normal</li>
      * <li>1 - configuration file isn't specified</li>
      * <li>2 - configuration file can't be loaded</li>
+     * <li>3 - can't bind ServerSocket to port</li>
+     * <li>4 - problems with reflection</li>
      * </ul>
      * 
      * @param args
      *            Command line arguments.
      */
     public static void main(String[] args) {
+        // Loading log4j configuration.
+        PropertyConfigurator.configure(PollServer.class.getClassLoader()
+                .getResource(LOGGER_CONFIGURATION_FILE));
+
         // Check if configuration file specified.
         if (args.length == 0) {
-            System.out
-                    .println("ERROR: Configuration file not specified. Quitting!");
+            logger.fatal("Configuration file not specified. Quitting!");
             System.exit(1);
         }
 
@@ -104,33 +122,38 @@ public class PollServer {
      *            Configuration file name.
      */
     public PollServer(String configurationFileName) {
+        logger.debug("Creating server instance.");
+
         File configurationFile = new File(configurationFileName);
 
         // Check if configuration file exists, is file and is readable.
         if (!(configurationFile.exists() && configurationFile.isFile() && configurationFile
                 .canRead())) {
-            System.out
-                    .println("ERROR: Configuration file can't be read. Quitting!");
+            logger.fatal("Configuration file can't be read. Quitting!");
             serverShutdown(2);
+            return;
         }
 
         // Loading configuration.
         configuration = null;
         try {
+            logger.debug("Loading configuration from file: "
+                    + configurationFile.getAbsolutePath());
             configuration = ConfigurationEditor
                     .loadPreferences(configurationFile);
         }
         catch (IOException e) { // Is thrown when configuration file can't be
             // loaded.
-            System.out
-                    .println("ERROR: I/O error while reading configuration. Quitting!");
+            logger.fatal("I/O error while reading configuration. Quitting!");
             serverShutdown(2);
+            return;
         }
         catch (JAXBException e) { // Is thrown when configuration file is
             // corrupted(JAXB can't parse xml) or model corrupted.
-            System.out
-                    .println("ERROR: specified configuration file is corrupted. Quitting!");
+            logger
+                    .fatal("Specified configuration file is corrupted. Quitting!");
             serverShutdown(2);
+            return;
         }
 
         // Processing configuration.
@@ -142,6 +165,8 @@ public class PollServer {
         }
         finally {
             if (port <= 0) {
+                logger
+                        .warn("Specified port was wrong(not integer or less than zero). Using default.");
                 PreferenceSelector pSelector = new PreferenceSelector();
                 pSelector.setName("port");
                 port = Integer.parseInt(configuration.getModel()
@@ -158,6 +183,8 @@ public class PollServer {
         }
         finally {
             if (maxConnections <= 0) {
+                logger
+                        .warn("Specified maxConnections was wrong(not integer or less than zero). Using default.");
                 PreferenceSelector pSelector = new PreferenceSelector();
                 pSelector.setName("maxConnections");
                 maxConnections = Integer.parseInt(configuration.getModel()
@@ -187,6 +214,8 @@ public class PollServer {
 
             for (File file : filesInDir) {
                 try {
+                    logger.debug("Loading file as poll xml: "
+                            + file.getAbsolutePath());
                     JAXBContext cont = JAXBContext
                             .newInstance(Pollsession.class);
                     Unmarshaller um = cont.createUnmarshaller();
@@ -196,10 +225,12 @@ public class PollServer {
                     pollsessions.add(session);
                 }
                 catch (JAXBException e) {
-                    // Doing nothing - ignoring file.
+                    logger.warn("Poll xml file is corrupted: "
+                            + file.getAbsolutePath());
                 }
                 catch (FileNotFoundException e) {
-                    // Doing nothing - ignoring file.
+                    logger.warn("Poll xml file is not found: "
+                            + file.getAbsolutePath());
                 }
             }
         }
@@ -209,7 +240,7 @@ public class PollServer {
      * Normal server shutdown. <br>
      * Stops communication with all clients and exits program.
      */
-    public void serverShutodown() {
+    public void serverShutdown() {
         serverShutdown(0);
     }
 
@@ -218,7 +249,7 @@ public class PollServer {
      * 
      * @param code
      *            Code of problem(0 - for normal shutdown).
-     * @see #serverShutodown()
+     * @see #serverShutdown()
      */
     public void serverShutdown(int code) {
         exitCode = code;
@@ -226,6 +257,7 @@ public class PollServer {
 
     /**
      * @see #exitCode
+     * @see #main(String[])
      */
     public int getExitCode() {
         return (exitCode >= 0) ? exitCode : 0;
@@ -244,25 +276,39 @@ public class PollServer {
      * Starts server listening on port.
      */
     public void lauch() {
+        if (!isAlive())
+            return;
+
+        // Binding server to port.
         ServerSocket serverSock = null;
         try {
+            logger.debug("Binding server to port: " + port);
             serverSock = new ServerSocket(port, maxConnections);
         }
         catch (IOException e) {
-            System.out
-                    .println("ERROR! Can't bind ServerSocket to port. Quitting!");
+            logger.fatal("Can't bind ServerSocket to port. Quitting!");
             serverShutdown(3);
             return;
         }
 
+        // Working body of server - connections are accepted and processed in
+        // concurrent threads.
         while (true) {
             Socket client = null;
             try {
+                logger.debug("Accepting client connection.");
                 client = serverSock.accept();
             }
             catch (IOException e) {
+                logger
+                        .error("I/O exception while acception client connection. Ignoring!");
                 continue;
             }
+
+            // Creating and lauching PollClientHandler to recieved connection
+            // via reflection.
+            String reflectionProblemMessage = "Problems with reflection. Quitting!";
+            boolean reflectionProblemHappened = false;
 
             Class<?> handlerClass = null;
             try {
@@ -278,36 +324,29 @@ public class PollServer {
             catch (ClassNotFoundException e) {// Only will be invoked if
                 // "PollClientHandler" is not in
                 // classpath.
-                System.out
-                        .println("ERROR! Class PollClientHandler not found. Quitting!");
-                serverShutdown(4);
-                return;
+                reflectionProblemHappened = true;
             }
             catch (NoSuchMethodException e) {
-                System.out
-                        .println("ERROR! Class PollClientHandler don't have required constructor. Quitting!");
-                serverShutdown(4);
-                return;
+                reflectionProblemHappened = true;
             }
             catch (IllegalArgumentException e) {
-                // Fix...
-                serverShutdown(4);
-                return;
+                reflectionProblemHappened = true;
             }
             catch (InstantiationException e) {
-                // Fix...
-                serverShutdown(4);
-                return;
+                reflectionProblemHappened = true;
             }
             catch (IllegalAccessException e) {
-                // Fix...
-                serverShutdown(4);
-                return;
+                reflectionProblemHappened = true;
             }
             catch (InvocationTargetException e) {
-                // Fix...
-                serverShutdown(4);
-                return;
+                reflectionProblemHappened = true;
+            }
+            finally {
+                if (reflectionProblemHappened) {
+                    logger.fatal(reflectionProblemMessage);
+                    serverShutdown(4);
+                    return;
+                }
             }
         }
     }
