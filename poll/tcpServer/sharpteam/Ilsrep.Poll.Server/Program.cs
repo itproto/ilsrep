@@ -78,6 +78,17 @@ namespace Ilsrep.PollApplication.Server
 
             ParseArgs(args);
 
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(pathToPolls);
+            }
+            catch (Exception exception)
+            {
+                log.Error("Invalid path to polls:" + pathToPolls, exception);
+                Environment.Exit(-1);
+            }
+
             // Start server
             log.Info("Server started on host: " + host.ToString() + ":" + port);
             IPEndPoint clientAddress = new IPEndPoint(host, port);
