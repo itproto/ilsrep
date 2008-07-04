@@ -5,7 +5,7 @@ import java.util.LinkedList;
 /**
  * Saves name and choice pairs.
  * 
- * @author DCR
+ * @author DRC
  */
 public class AnswerSaver {
 public float minScore,i,n;
