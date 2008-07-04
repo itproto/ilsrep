@@ -5,11 +5,14 @@ using System.Threading;
 using System.Text;
 using System.Xml;
 using System.IO;
+using log4net;
+using log4net.Config;
 
 namespace Ilsrep.PollApplication.Server
 {
     class PollHandler
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(PollHandler));
         public TcpClient currentClient = new TcpClient();
         private string clientAddress;
         private static int activeConnCount = 0;
@@ -32,11 +35,11 @@ namespace Ilsrep.PollApplication.Server
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Error(ex.Message.ToString());
                 return false;
             }
-
             return false;
         }
 
@@ -56,8 +59,9 @@ namespace Ilsrep.PollApplication.Server
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Error(ex.Message.ToString());
                 return String.Empty;
             }
 
@@ -84,21 +88,22 @@ namespace Ilsrep.PollApplication.Server
                     // Check if exists such id
                     if (idExists(pollSessionID))
                     {
-                        Console.WriteLine("{0}: ID validated: {1}", clientAddress, pollSessionID);
+                        log.Info(clientAddress + ": ID validated: " + pollSessionID);
                         sendString = "1";
                         client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                         break;
                     }
                     else
                     {
-                        Console.WriteLine("{0}: Client asked for non-existant ID: {1}", clientAddress, pollSessionID);
+                        log.Info(clientAddress + ": Client asked for non-existant ID: " + pollSessionID);
                         sendString = "-1";
                         client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("{0}: Client asked for non-existant ID: {1}", clientAddress, recievedString);
+                    log.Error(ex.Message.ToString());
+                    log.Info(clientAddress + ": Client asked for non-existant ID: " + recievedString);
                     sendString = "-1";
                     client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                 }
@@ -109,7 +114,7 @@ namespace Ilsrep.PollApplication.Server
 
             if (sendString == String.Empty)
             {
-                Console.WriteLine("Unrecovable error: couldn't get poll by id");
+                log.Error("Couldn't get poll by id");
                 return;
             }
 
@@ -123,7 +128,7 @@ namespace Ilsrep.PollApplication.Server
             NetworkStream currentStream = currentClient.GetStream();
             activeConnCount++;
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
-            Console.WriteLine("New client accepted - {0} ({1} active connections)", clientAddress, activeConnCount);
+            log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
                          
             // Run dialog with client
             RunClientSession(currentStream);
@@ -132,7 +137,7 @@ namespace Ilsrep.PollApplication.Server
             currentStream.Close();
             currentClient.Close();
             activeConnCount--;
-            Console.WriteLine("Client disconnected: {0} ({1} active connections left)", clientAddress, activeConnCount);
+            log.Info("Client disconnected: " + clientAddress + " (" + activeConnCount + " active connections left)");
         }
     }
 }
