@@ -8,10 +8,11 @@
 	<property name="distr.dir" value="${basedir}/distr" />
 	<property name="data.dir" value="${basedir}/data" />
 	<property name="javadoc.dir" value="${basedir}/docs" />
-
+	<property name="lib.dir" value="${basedir}/lib" />
+	
 	<property name="jar.file" value="${basedir}/poll.jar" />
 
-	<property name="class.path" value="lib/xpilotpanel-lib.jar" />
+	<property name="class.path" value="${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar" />
 
 	<target name="init">
 		<tstamp />
