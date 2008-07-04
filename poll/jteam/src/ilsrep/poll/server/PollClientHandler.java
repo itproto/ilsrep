@@ -1,5 +1,6 @@
 package ilsrep.poll.server;
-
+import java.io.* ;
+import java.net.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,13 +51,21 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 + socket.getInetAddress().toString() + " / " + socket.getPort()
                 + ". Using local port " + socket.getLocalPort());
         try {
-            InputStream is = socket.getInputStream();
-            OutputStream os = socket.getOutputStream();
-
-            // TODO: Fix :)
-
-            is.close();
-            os.close();
+             BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+            String buffer;
+ 	buffer=inputReader.readLine();
+ 	
+ 	int indexString=buffer.indexOf("<getPollSession><pollSessionId>");
+ 	indexString=buffer.indexOf(">",indexString+20);
+ String pollId=buffer.substring(indexString+1,indexString+2);
+ Pollsession pollSession=this.serverInstance.getPollsessionById(pollId);
+ 
+  // logger.info(buffer);
+            		//outToServer.writeUTF(pollId);
+            		buffer=inputReader.readLine();
+            		buffer=inputReader.readLine();
+            		buffer=inputReader.readLine();
         }
         catch (IOException e) {
             logger.warn("I/O exception. Closing connection.");
