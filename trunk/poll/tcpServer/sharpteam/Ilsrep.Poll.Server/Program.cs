@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -8,6 +9,7 @@ using System.Xml;
 using System.IO;
 using log4net;
 using log4net.Config;
+using Ilsrep.PollApplication.Helpers;
 
 namespace Ilsrep.PollApplication.Server
 {
@@ -19,9 +21,10 @@ namespace Ilsrep.PollApplication.Server
         static public string pathToPolls;
         static public int port;
         static public IPAddress host;
-
+/*
         private static void ParseArgs(string[] args)
         {
+           
             int curIndex = 0;
             foreach (string arg in args)
             {
@@ -63,7 +66,7 @@ namespace Ilsrep.PollApplication.Server
                 curIndex++;
             }
         }
-
+*/
         public static void Main(string[] args)
         {
             // Configure logger
@@ -76,7 +79,19 @@ namespace Ilsrep.PollApplication.Server
             //Set default PathToPolls
             pathToPolls = "Polls.xml";
 
-            ParseArgs(args);
+            NameValueCollection commandLineParameters = CommandLineParametersHelper.Parse(args);
+
+            if (commandLineParameters["host"] != null && commandLineParameters["host"] != String.Empty)
+                host = IPAddress.Parse(commandLineParameters["host"]);
+
+
+            if (commandLineParameters["port"] != null && commandLineParameters["host"] != String.Empty)
+                port = Convert.ToInt32(commandLineParameters["port"]);
+
+            if (commandLineParameters["polls"] != null && commandLineParameters["host"] != String.Empty)
+                pathToPolls = commandLineParameters["polls"];
+
+            //ParseArgs(args);
 
             try
             {
