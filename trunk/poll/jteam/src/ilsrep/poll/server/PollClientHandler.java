@@ -1,10 +1,11 @@
 package ilsrep.poll.server;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class handles communication with poll client.
@@ -13,6 +14,11 @@ import java.net.Socket;
  * 
  */
 public class PollClientHandler implements ClientHandler, Runnable {
+
+    /**
+     * Log4j Logger for this class.
+     */
+    private static Logger logger = Logger.getLogger(PollClientHandler.class);
 
     /**
      * Socket with connected client.
@@ -40,27 +46,29 @@ public class PollClientHandler implements ClientHandler, Runnable {
      */
     @Override
     public void run() {
-        OutputStream os = null;
+        logger.info("Client connected from IP / port: "
+                + socket.getInetAddress().toString() + " / " + socket.getPort()
+                + ". Using local port " + socket.getLocalPort());
         try {
-            os = socket.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                    os));
-            writer.write("Test!\n");
-            writer.flush();
+            InputStream is = socket.getInputStream();
+            OutputStream os = socket.getOutputStream();
+
+            // TODO: Fix :)
+
+            is.close();
             os.close();
         }
         catch (IOException e) {
-            System.out.println("ERROR! I/O exception. Closing connection.");
-            return;
+            logger.warn("I/O exception. Closing connection.");
         }
         finally {
             try {
                 socket.close();
             }
             catch (IOException e) {
-                System.out.println("ERROR! I/O exception. Closing connection.");
-                return;
+                logger.warn("I/O exception. Closing connection.");
             }
+            serverInstance.removeConnection(socket);
         }
     }
 

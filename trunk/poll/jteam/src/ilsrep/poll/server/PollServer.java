@@ -9,8 +9,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Vector;
 
@@ -75,6 +77,8 @@ public class PollServer {
         serverInstance.lauch();
 
         // Exiting program with exit code got from server.
+        logger.info("Exiting program with code: "
+                + serverInstance.getExitCode());
         System.exit(serverInstance.getExitCode());
     }
 
@@ -112,7 +116,12 @@ public class PollServer {
     /**
      * IP address to start server on.
      */
-    protected String alternativeIPAddress = null;
+    protected InetAddress alternativeIPAddress = null;
+
+    /**
+     * Holds all active connections.
+     */
+    protected List<Socket> connections = null;
 
     /**
      * Creates <code>PollServer</code> and reads configuration from specified
@@ -137,7 +146,7 @@ public class PollServer {
         // Loading configuration.
         configuration = null;
         try {
-            logger.debug("Loading configuration from file: "
+            logger.info("Loading configuration from file: "
                     + configurationFile.getAbsolutePath());
             configuration = ConfigurationEditor
                     .loadPreferences(configurationFile);
@@ -194,7 +203,17 @@ public class PollServer {
 
         if (configuration.get("useAlternativeIPAddress").compareTo("true") == 0) {
             useAlternativeIPAddress = true;
-            alternativeIPAddress = configuration.get("alternativeIPAddress");
+            try {
+                alternativeIPAddress = InetAddress.getByName(configuration
+                        .get("alternativeIPAddress"));
+            }
+            catch (UnknownHostException e) {
+                logger.warn("Wrong alternative IP address was specified("
+                        + configuration.get("alternativeIPAddress")
+                        + "). Using default.");
+                alternativeIPAddress = null;
+                useAlternativeIPAddress = false;
+            }
         }
 
         // Reading all poll xml's from specified directory into memory(objects).
@@ -214,7 +233,7 @@ public class PollServer {
 
             for (File file : filesInDir) {
                 try {
-                    logger.debug("Loading file as poll xml: "
+                    logger.info("Loading file as poll xml: "
                             + file.getAbsolutePath());
                     JAXBContext cont = JAXBContext
                             .newInstance(Pollsession.class);
@@ -256,6 +275,8 @@ public class PollServer {
     }
 
     /**
+     * Returns code with what exit program.
+     * 
      * @see #exitCode
      * @see #main(String[])
      */
@@ -282,8 +303,13 @@ public class PollServer {
         // Binding server to port.
         ServerSocket serverSock = null;
         try {
-            logger.debug("Binding server to port: " + port);
-            serverSock = new ServerSocket(port, maxConnections);
+            if (!useAlternativeIPAddress)
+                serverSock = new ServerSocket(port, maxConnections);
+            else
+                serverSock = new ServerSocket(port, maxConnections,
+                        alternativeIPAddress);
+            logger.info("Bound server to port: " + port);
+            connections = new Vector<Socket>();
         }
         catch (IOException e) {
             logger.fatal("Can't bind ServerSocket to port. Quitting!");
@@ -298,10 +324,17 @@ public class PollServer {
             try {
                 logger.debug("Accepting client connection.");
                 client = serverSock.accept();
+
+                if (connections.size() > maxConnections) {
+                    logger
+                            .warn("Maximum number of connections used. Ignoring!");
+                    client.close();
+                    continue;
+                }
             }
             catch (IOException e) {
                 logger
-                        .error("I/O exception while acception client connection. Ignoring!");
+                        .error("I/O exception while accepting client connection. Ignoring!");
                 continue;
             }
 
@@ -319,6 +352,7 @@ public class PollServer {
                 ClientHandler handler = (ClientHandler) constructor
                         .newInstance();
 
+                registerConnection(client);
                 handler.handle(client, this);
             }
             catch (ClassNotFoundException e) {// Only will be invoked if
@@ -349,6 +383,55 @@ public class PollServer {
                 }
             }
         }
+    }
+
+    /**
+     * Searches for pollsession with specified id.
+     * 
+     * @param id
+     *            Id to search for.
+     * @return Pollsession with specified id.
+     */
+    public synchronized Pollsession getPollsessionById(String id) {
+        Pollsession searchResult = null;
+
+        for (Pollsession pls : pollsessions) {
+            if (pls.getId().compareTo(id) == 0) {
+                searchResult = pls;
+                break;
+            }
+        }
+
+        return searchResult;
+    }
+
+    /**
+     * Adds connection to list of active connections.
+     * 
+     * @param socketToAdd
+     *            Connection's socket to add.
+     */
+    public synchronized void registerConnection(Socket socketToAdd) {
+        connections.add(socketToAdd);
+        logger.debug("New connection accepted. Active connection count: "
+                + connections.size());
+    }
+
+    /**
+     * Removes connection from list of active connections.
+     * 
+     * @param socketToRemove
+     *            Connection's socket to remove.
+     */
+    public synchronized void removeConnection(Socket socketToRemove) {
+        for (int connIterator = 0; connIterator < connections.size(); connIterator++) {
+            if (connections.get(connIterator) == socketToRemove) {
+                connections.remove(connIterator);
+                break;
+            }
+        }
+        logger.debug("Connection closed. Active connection count: "
+                + connections.size());
     }
 
 }
