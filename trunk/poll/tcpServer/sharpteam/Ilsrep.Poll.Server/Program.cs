@@ -15,58 +15,14 @@ namespace Ilsrep.PollApplication.Server
 {
     public class PollServer
     {
+        // Initial declarations
         private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
         static public string pathToPolls;
         static public int port;
         static public IPAddress host;
-/*
-        private static void ParseArgs(string[] args)
-        {
-           
-            int curIndex = 0;
-            foreach (string arg in args)
-            {
-                switch (arg)
-                {
-                    case "-port":
-                        try
-                        {
-                            port = Convert.ToInt32(args[curIndex+1]);
-                        }
-                        catch (Exception exception)
-                        {
-                            log.Error("Invalid port used:" + args[curIndex + 1] + Environment.NewLine + "\t\tDefault port loaded:" + port,exception);
-                        }
-                        break;
-                    case "-host":
-                        try
-                        {
-                            host = IPAddress.Parse(args[curIndex+1]);
-                        }
-                        catch (Exception exception)
-                        {
-                            log.Error("Invalid host used:" + args[curIndex + 1] + Environment.NewLine + "\t\tDefault host loaded:" + IPAddress.Any.ToString(),exception);
-                        }
-                        break;
-                    case "-polls":
-                        try
-                        {
-                            XmlDocument xmlDoc = new XmlDocument();
-                            xmlDoc.Load(args[curIndex + 1]);
-                            pathToPolls = args[curIndex + 1];
-                        }
-                        catch (Exception exception)
-                        {
-                            log.Error("Invalid path to polls:" + args[curIndex + 1] + Environment.NewLine + "\t\tDefault path to polls loaded:" + pathToPolls,exception);
-                        }
-                        break;
-                }
-                curIndex++;
-            }
-        }
-*/
+
         public static void Main(string[] args)
         {
             // Configure logger
@@ -79,19 +35,34 @@ namespace Ilsrep.PollApplication.Server
             //Set default PathToPolls
             pathToPolls = "Polls.xml";
 
+            // Parse command line
             NameValueCollection commandLineParameters = CommandLineParametersHelper.Parse(args);
-
             if (commandLineParameters["host"] != null && commandLineParameters["host"] != String.Empty)
-                host = IPAddress.Parse(commandLineParameters["host"]);
+            {
+                try
+                {
+                    host = IPAddress.Parse(commandLineParameters["host"]);
+                }
+                catch (Exception exception)
+                {
+                    log.Error("Invalid host. " + exception.Message);
+                }
+            }
 
-
-            if (commandLineParameters["port"] != null && commandLineParameters["host"] != String.Empty)
-                port = Convert.ToInt32(commandLineParameters["port"]);
+            if (commandLineParameters["port"] != null && commandLineParameters["host"] != String.Empty)   
+            {
+                try
+                {
+                    port = Convert.ToInt32(commandLineParameters["port"]);
+                }
+                catch (Exception exception)
+                {
+                    log.Error("Invalid port. " + exception.Message);
+                }
+            }
 
             if (commandLineParameters["polls"] != null && commandLineParameters["host"] != String.Empty)
-                pathToPolls = commandLineParameters["polls"];
-
-            //ParseArgs(args);
+                    pathToPolls = commandLineParameters["polls"];
 
             try
             {
@@ -100,7 +71,8 @@ namespace Ilsrep.PollApplication.Server
             }
             catch (Exception exception)
             {
-                log.Error("Invalid path to polls:" + pathToPolls, exception);
+                log.Error("Invalid path to polls. " + exception.Message);
+                Console.ReadKey(true);
                 Environment.Exit(-1);
             }
 
