@@ -6,11 +6,15 @@ using System.Threading;
 using System.Text;
 using System.Xml;
 using System.IO;
+using log4net;
+using log4net.Config;
 
 namespace Ilsrep.PollApplication.Server
 {
     public class PollServer
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
+        public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
         static public string pathToPolls;
         static public int port;
@@ -28,8 +32,9 @@ namespace Ilsrep.PollApplication.Server
                         {
                             port = Convert.ToInt32(args[curIndex+1]);
                         }
-                        catch (Exception)
-                        { 
+                        catch (Exception ex)
+                        {
+                            log.Error(ex.Message.ToString() + "\r\n\t" + "Invalid port used:" + args[curIndex + 1] + "\r\n\t" + "Default port loaded:" + port);
                         }
                         break;
                     case "-host":
@@ -37,22 +42,21 @@ namespace Ilsrep.PollApplication.Server
                         {
                             host = IPAddress.Parse(args[curIndex+1]);
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            log.Error(ex.Message.ToString() + "\r\n\t" + "Invalid host used:" + args[curIndex + 1] + "\r\n\t" + "Default host loaded:" + IPAddress.Any.ToString());
                         }
                         break;
                     case "-polls":
-                        pathToPolls = args[curIndex+1];
                         try
                         {
                             XmlDocument xmlDoc = new XmlDocument();
-                            xmlDoc.Load(pathToPolls);
+                            xmlDoc.Load(args[curIndex + 1]);
+                            pathToPolls = args[curIndex + 1];
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            Console.WriteLine("Error: Invalid path to polls");
-                            Console.ReadKey(true);
-                            Environment.Exit(-1);
+                            log.Error(ex.Message.ToString() + "\r\n\t" + "Invalid path to polls:" + args[curIndex + 1] + "\r\n\t" + "Default path to polls loaded:" + pathToPolls);
                         }
                         break;
                 }
@@ -62,6 +66,9 @@ namespace Ilsrep.PollApplication.Server
 
         public static void Main(string[] args)
         {
+            // Configure logger
+            XmlConfigurator.Configure(new System.IO.FileInfo(PATH_TO_LOG_CONFIG));
+
             // Set default host
             host = IPAddress.Any;
             // Set default port
@@ -72,11 +79,11 @@ namespace Ilsrep.PollApplication.Server
             ParseArgs(args);
 
             // Start server
-            Console.WriteLine("Server started on host: {0}:{1}", host.ToString(), port);
+            log.Info("Server started on host: " + host.ToString() + ":" + port);
             IPEndPoint clientAddress = new IPEndPoint(host, port);
             Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             client.Bind(clientAddress);
-            Console.WriteLine("Waiting for clients...");
+            log.Info("Waiting for clients...");
             while (true)
             {
                 client.Listen(10);
