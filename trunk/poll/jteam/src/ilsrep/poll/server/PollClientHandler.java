@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  * This class handles communication with poll client.
  * 
  * @author TKOST
- * 
+ * @author DRC
  */
 public class PollClientHandler implements ClientHandler, Runnable {
 
@@ -51,32 +51,39 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 + socket.getInetAddress().toString() + " / " + socket.getPort()
                 + ". Using local port " + socket.getLocalPort());
         try {
-             BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+          
+	        BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
-            String buffer;
+            String buffer="";
  	buffer=inputReader.readLine();
- 	
+
  	int indexString=buffer.indexOf("<getPollSession><pollSessionId>");
  	indexString=buffer.indexOf(">",indexString+20);
  	int indexStringEnd=buffer.indexOf("<",indexString);
  String pollId=buffer.substring(indexString+1,indexStringEnd);
  //Pollsession pollSession=this.serverInstance.getPollsessionById(pollId);
- 
- //  logger.info(pollId);
+
+   logger.info(pollId);
    //    		 outToServer.writeUTF(pollId);
    if(this.serverInstance.pollFiles.containsKey(pollId)){
    File file=this.serverInstance.pollFiles.get(pollId);
-   
+    
    FileInputStream fis = new FileInputStream(file);
 int x= fis.available();
 byte b[]= new byte[x];
 fis.read(b);
 String content = new String(b);
 outToServer.writeUTF(content);
+
+
 outToServer.writeUTF("\n");
-} else {outToServer.writeUTF("-1 \n");
+} else {outToServer.writeUTF("-1\n");
 logger.warn("invalid id");
+
 }
+
+
+socket.close();
             		
         }
         catch (IOException e) {
