@@ -42,7 +42,7 @@ public class PollClient {
         String name = consoleInputReader.readLine();
                 JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller um = cont.createUnmarshaller();
-        Pollsession polls;
+        Pollsession polls=null;
         System.out.print("Use server?(1) or local file?(2)");
       
           String yesNoChoice = consoleInputReader.readLine();
@@ -58,10 +58,16 @@ public class PollClient {
         File pollFile = new File(fileName);
            polls= (Pollsession) um.unmarshal(pollFile);
         } else {
-	        TcpCommunicator communicator = new TcpCommunicator();
+	       
+	        boolean done=false;
+	        while (!done) { try{
+		         TcpCommunicator communicator = new TcpCommunicator();
 	   Reader pollFile=communicator.getXML();
+	   communicator.finalize();
 	           polls= (Pollsession) um.unmarshal(pollFile);
-	        
+	           done=true;
+	           } catch (Exception m){System.out.println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");}
+        }
 	        }
    
       
