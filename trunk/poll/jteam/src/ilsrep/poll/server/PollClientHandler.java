@@ -58,14 +58,26 @@ public class PollClientHandler implements ClientHandler, Runnable {
  	
  	int indexString=buffer.indexOf("<getPollSession><pollSessionId>");
  	indexString=buffer.indexOf(">",indexString+20);
- String pollId=buffer.substring(indexString+1,indexString+2);
+ 	int indexStringEnd=buffer.indexOf("<",indexString);
+ String pollId=buffer.substring(indexString+1,indexStringEnd);
  //Pollsession pollSession=this.serverInstance.getPollsessionById(pollId);
  
-  // logger.info(buffer);
-            		//outToServer.writeUTF(pollId);
-            		buffer=inputReader.readLine();
-            		buffer=inputReader.readLine();
-            		buffer=inputReader.readLine();
+ //  logger.info(pollId);
+   //    		 outToServer.writeUTF(pollId);
+   if(this.serverInstance.pollFiles.containsKey(pollId)){
+   File file=this.serverInstance.pollFiles.get(pollId);
+   
+   FileInputStream fis = new FileInputStream(file);
+int x= fis.available();
+byte b[]= new byte[x];
+fis.read(b);
+String content = new String(b);
+outToServer.writeUTF(content);
+outToServer.writeUTF("\n");
+} else {outToServer.writeUTF("-1 \n");
+logger.warn("invalid id");
+}
+            		
         }
         catch (IOException e) {
             logger.warn("I/O exception. Closing connection.");

@@ -43,7 +43,7 @@ protected String serverIp="127.0.0.1";
  * @see TcpCommunicator
  * 
  */	
-int port=43;
+int port=3320;
 /**
  *Data connection socket.
  *
@@ -112,14 +112,18 @@ public Reader getXML() {
 		try{
 		//Generating input and output streams
 		BufferedReader consoleInputReader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Give me the id, baby:");
-		String id = consoleInputReader.readLine();
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		inFromServer = clientSocket.getInputStream();
+		boolean gotIt=false;
+		while(gotIt==false){
+			xmlItself="";
+			System.out.println("Give me the id, baby:");
+		String id = consoleInputReader.readLine();
 		//sending request
-		outToServer.writeUTF("<getPollSession><pollSessionId>"+id+"</pollSessionId></getPollSession>");  
+		outToServer.writeUTF("<getPollSession><pollSessionId>"+id+"</pollSessionId></getPollSession> \n");  
 		System.out.println("Getting it, baby");
 	 	String buffer;
+	 	
 	 	BufferedReader inputReader = new BufferedReader(new InputStreamReader(inFromServer));
 	 	//Getting and parsing request. Reading line because
 	 	// for some reason m test server returned first line empty, and the output started from second line.
@@ -129,6 +133,10 @@ public Reader getXML() {
 	 		xmlItself=xmlItself+"\n"+buffer;
  			} while(!(buffer.indexOf("/pollsession")>0));
 	 	System.out.println("Got it");
+
+	 	if(xmlItself.indexOf("<")!=-1)  break	;
+		 
+		 	}
  		System.out.println(xmlItself);
  		//Making Reader out of string (needed for marshaller)
  		xmlBuffered= new StringReader(xmlItself);

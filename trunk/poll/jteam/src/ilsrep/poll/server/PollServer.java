@@ -15,7 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -103,7 +103,7 @@ public class PollServer {
      * Port to start server on.
      */
     protected int port = -1;
-
+Hashtable<String, File> pollFiles=new Hashtable<String, File>(); 
     /**
      * Maximum connections to server.
      */
@@ -218,6 +218,7 @@ public class PollServer {
         }
 
         // Reading all poll xml's from specified directory into memory(objects).
+        //DRC to TKOST: For what frigging reason do we need to do that?
         pollsessions = new Vector<Pollsession>();
 
         File xmlDir = new File(configuration.get("pollXmlPath"));
@@ -234,7 +235,7 @@ public class PollServer {
 
             for (File file : filesInDir) {
                 try {
-                    logger.info("Loading file as poll xml: "
+	                                    logger.info("Loading file as poll xml: "
                             + file.getAbsolutePath());
                     JAXBContext cont = JAXBContext
                             .newInstance(Pollsession.class);
@@ -243,6 +244,7 @@ public class PollServer {
                     Pollsession session = (Pollsession) um
                             .unmarshal(new FileInputStream(file));
                     pollsessions.add(session);
+                    pollFiles.put(session.getId(),file);
                 }
                 catch (JAXBException e) {
                     logger.warn("Poll xml file is corrupted: "
