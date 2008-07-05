@@ -59,7 +59,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
  	int indexString=buffer.indexOf("<getPollSession><pollSessionId>");
  	indexString=buffer.indexOf(">",indexString+20);
  String pollId=buffer.substring(indexString+1,indexString+2);
- Pollsession pollSession=this.serverInstance.getPollsessionById(pollId);
+ //Pollsession pollSession=this.serverInstance.getPollsessionById(pollId);
  
   // logger.info(buffer);
             		//outToServer.writeUTF(pollId);
