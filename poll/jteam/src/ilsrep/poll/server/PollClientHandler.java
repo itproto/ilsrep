@@ -56,7 +56,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
             DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
             String buffer="";
  	buffer=inputReader.readLine();
-
+if (buffer.indexOf("<getPollSession><pollSessionId>")!=-1){
  	int indexString=buffer.indexOf("<getPollSession><pollSessionId>");
  	indexString=buffer.indexOf(">",indexString+20);
  	int indexStringEnd=buffer.indexOf("<",indexString);
@@ -84,7 +84,21 @@ logger.warn("invalid id");
 
 
 socket.close();
-            		
+}   else {
+	logger.warn("RECEIVING XML");
+	String xmlItself=buffer;
+	boolean eternal=true;
+	 		 while(eternal) {
+		 		 buffer=inputReader.readLine();
+		 		
+		 		 		xmlItself=xmlItself+"\n"+buffer;
+	 			 		 			if  (buffer.indexOf("/pollses")!=-1) break;
+ 			}
+	
+	logger.warn(xmlItself);
+		logger.warn("XML RECEIVED");
+
+	}     		
         }
         catch (IOException e) {
             logger.warn("I/O exception. Closing connection.");

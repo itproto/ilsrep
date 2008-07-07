@@ -154,6 +154,25 @@ public Reader getXML() {
   	return xmlBuffered; 	
 	
 	}
+	public void sendXml(String genXml){
+		
+		InputStream inFromServer=null;
+	String xmlItself="";
+	Reader xmlBuffered=null;
+		try{
+		//Generating input and output streams
+		
+		
+		BufferedReader consoleInputReader = new BufferedReader(new InputStreamReader(System.in));
+		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+		inFromServer = clientSocket.getInputStream();
+		
+		outToServer.writeUTF(genXml);  
+		System.out.println("Sent it, baby");
+		}catch (Exception e){System.out.println("ExCePtIoN"); e.printStackTrace();}
+		
+		
+		}
 	
 	
 	
