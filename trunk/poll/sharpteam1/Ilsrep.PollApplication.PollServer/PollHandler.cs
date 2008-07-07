@@ -5,6 +5,7 @@ using System.Threading;
 using System.Text;
 using System.Xml;
 using System.IO;
+using System.Collections.Generic;
 using log4net;
 using log4net.Config;
 
@@ -109,18 +110,35 @@ namespace Ilsrep.PollApplication.PollServer
             }
 
             XmlNode xmlPollSession = xmlDoc.GetElementsByTagName("pollsession")[0];
-            int pollSessionId = Convert.ToInt32(xmlPollSession.Attributes["id"].Value);
             string pollSessionName = xmlPollSession.Attributes["name"].Value;
 
-            // Save current poll session in file
-            string curPathToPollSession = PollServer.pathToPolls + "PollSession_" + pollSessionId + ".xml";
-            xmlDoc.Save(curPathToPollSession);
-            
-            // Add information about current poll session to Poll_id.xml
+            // Generate new id
+            int pollSessionId;
+            List<int> idList = new List<int>();
             XmlDocument Poll_id = new XmlDocument();
-            XmlDocument curPollInformation = new XmlDocument();
             Poll_id.Load(PollServer.pathToPolls + "Poll_id.xml");
-            curPollInformation.LoadXml("<" + POLL_SESSION_ELEMENT + " id=" + pollSessionId + " name=" + pollSessionName + " file=" + curPathToPollSession + " />");
+            XmlNodeList pollSessionList = Poll_id.GetElementsByTagName(POLL_SESSION_ELEMENT);
+            foreach (XmlNode pollSession in pollSessionList)
+            {
+                pollSessionId = Convert.ToInt32(pollSession.Attributes["id"].Value);
+                idList.Add(pollSessionId);
+            }
+            idList.Sort();
+            int curPollSessionId = idList[idList.Count-1] + 1;
+
+            // Save current poll session in file
+            //How add attribute otherwise???
+            XmlDocument temp = new XmlDocument();
+            temp.LoadXml("<temp id=" + curPollSessionId + " />");
+            xmlDoc.FirstChild.Attributes.Append(temp.FirstChild.Attributes[0]);
+            //???
+            
+            string curPathToPollSession = PollServer.pathToPolls + "PollSession_" + curPollSessionId + ".xml";
+            xmlDoc.Save(curPathToPollSession);
+
+            // Add information about current poll session to Poll_id.xml
+            XmlDocument curPollInformation = new XmlDocument();
+            curPollInformation.LoadXml("<" + POLL_SESSION_ELEMENT + " id=" + curPollSessionId + "name=" + pollSessionName + " file=" + curPathToPollSession + " />");
             Poll_id.FirstChild.AppendChild(curPollInformation);            
         }
 
