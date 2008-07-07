@@ -1,0 +1,5 @@
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\bin\Debug\Ilsrep.Common.TcpServer.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\bin\Debug\Ilsrep.Common.TcpServer.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\obj\Debug\Ilsrep.Common.TcpServer.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\obj\Debug\Ilsrep.Common.TcpServer.pdb

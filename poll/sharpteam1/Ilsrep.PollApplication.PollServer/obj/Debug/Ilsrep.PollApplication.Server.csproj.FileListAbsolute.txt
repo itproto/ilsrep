@@ -1,0 +1,12 @@
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Debug\LogConfig.xml
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Debug\Polls.xml
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Debug\Ilsrep.PollApplication.Server.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Debug\Ilsrep.PollApplication.Server.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Debug\log4net.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\obj\Debug\Ilsrep.PollApplication.Server.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\obj\Debug\Ilsrep.PollApplication.Server.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Poll.Server\obj\Debug\Ilsrep.PollApplication.Server.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Poll.Server\obj\Debug\Ilsrep.PollApplication.Server.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Server\obj\Debug\Ilsrep.PollApplication.Server.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Server\obj\Debug\Ilsrep.PollApplication.Server.pdb
