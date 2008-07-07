@@ -108,7 +108,7 @@ namespace Ilsrep.PollApplication.PollServer
                 return;
             }
 
-            XmlNode xmlPollSession = xmlDoc.FirstChild;
+            XmlNode xmlPollSession = xmlDoc.GetElementsByTagName("pollsession")[0];
             int pollSessionId = Convert.ToInt32(xmlPollSession.Attributes["id"].Value);
             string pollSessionName = xmlPollSession.Attributes["name"].Value;
 
