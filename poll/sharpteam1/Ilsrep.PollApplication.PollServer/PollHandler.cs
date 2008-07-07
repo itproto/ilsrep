@@ -125,21 +125,23 @@ namespace Ilsrep.PollApplication.PollServer
             }
             idList.Sort();
             int curPollSessionId = idList[idList.Count-1] + 1;
-
+            /*
             // Save current poll session in file
             //How add attribute otherwise???
             XmlDocument temp = new XmlDocument();
-            temp.LoadXml("<temp id=" + curPollSessionId + " />");
-            xmlDoc.FirstChild.Attributes.Append(temp.FirstChild.Attributes[0]);
+            string tempString = "<temp id=\"" + curPollSessionId + "\" />";
+            temp.LoadXml(tempString);
+            xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes.Append(temp.FirstChild.Attributes[0]);
             //???
-            
+            */
             string curPathToPollSession = PollServer.pathToPolls + "PollSession_" + curPollSessionId + ".xml";
             xmlDoc.Save(curPathToPollSession);
 
             // Add information about current poll session to Poll_id.xml
             XmlDocument curPollInformation = new XmlDocument();
-            curPollInformation.LoadXml("<" + POLL_SESSION_ELEMENT + " id=" + curPollSessionId + "name=" + pollSessionName + " file=" + curPathToPollSession + " />");
-            Poll_id.FirstChild.AppendChild(curPollInformation);            
+            curPollInformation.LoadXml("<" + POLL_SESSION_ELEMENT + " id=\"" + curPollSessionId + "\" name=\"" + pollSessionName + "\" file=\"" + curPathToPollSession + "\" />");
+            Poll_id.GetElementsByTagName("pollsessions")[0].AppendChild(curPollInformation);
+            Poll_id.Save(PollServer.pathToPolls + "Poll_id.xml");
         }
 
         public void SendPollSession(NetworkStream client)
