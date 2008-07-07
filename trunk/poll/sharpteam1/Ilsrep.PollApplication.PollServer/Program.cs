@@ -11,7 +11,7 @@ using log4net;
 using log4net.Config;
 using Ilsrep.PollApplication.Helpers;
 
-namespace Ilsrep.PollApplication.Server
+namespace Ilsrep.PollApplication.PollServer
 {
     public class PollServer
     {
