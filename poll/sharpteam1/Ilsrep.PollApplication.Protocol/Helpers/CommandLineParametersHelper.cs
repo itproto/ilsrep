@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Ilsrep.PollApplication.Helpers
+namespace Ilsrep.Common
 {
-    class CommandLineParametersHelper
+    public class CommandLineParametersHelper
     {
         public static NameValueCollection Parse(string[] args)
         {

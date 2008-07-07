@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.Poll
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollProtocol", "Ilsrep.PollApplication.Protocol\Ilsrep.PollApplication.PollProtocol.csproj", "{97BFC9FF-DB20-4465-8FF0-6FB8CD4B0080}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Common.TcpServer", "Ilsrep.Common.TcpServer\Ilsrep.Common.TcpServer.csproj", "{B00F7C13-0DE1-48F4-BC78-F9FB6F367980}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Common", "Ilsrep.Common.TcpServer\Ilsrep.Common.csproj", "{B00F7C13-0DE1-48F4-BC78-F9FB6F367980}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

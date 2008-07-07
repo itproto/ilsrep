@@ -92,9 +92,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ilsrep.Common.TcpServer\Ilsrep.Common.TcpServer.csproj">
+    <ProjectReference Include="..\Ilsrep.Common.TcpServer\Ilsrep.Common.csproj">
       <Project>{B00F7C13-0DE1-48F4-BC78-F9FB6F367980}</Project>
-      <Name>Ilsrep.Common.TcpServer</Name>
+      <Name>Ilsrep.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ilsrep.PollApplication.Protocol\Ilsrep.PollApplication.PollProtocol.csproj">
       <Project>{97BFC9FF-DB20-4465-8FF0-6FB8CD4B0080}</Project>

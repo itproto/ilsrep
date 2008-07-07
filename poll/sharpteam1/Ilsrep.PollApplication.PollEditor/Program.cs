@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.Common.TcpServer;
@@ -138,7 +139,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 TcpServer client = new TcpServer();
                 client.Connect(HOST, PORT);
                 client.Send("CreatePollSession");
-                client.Send(XMLSerializationHelper.Serialize(pollSession));
+                client.Send(PollSerializator.Serialize(pollSession));
                 client.Disconnect();
             }
         }
