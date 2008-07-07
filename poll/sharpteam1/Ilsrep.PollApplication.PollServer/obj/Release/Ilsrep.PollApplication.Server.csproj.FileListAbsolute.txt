@@ -1,8 +1,0 @@
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Release\LogConfig.xml
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Release\Polls.xml
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Release\Ilsrep.PollApplication.Server.exe
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Release\Ilsrep.PollApplication.Server.pdb
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\bin\Release\log4net.dll
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\obj\Release\ResolveAssemblyReference.cache
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\obj\Release\Ilsrep.PollApplication.Server.exe
-C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Server\Ilsrep.Poll.Server\obj\Release\Ilsrep.PollApplication.Server.pdb
