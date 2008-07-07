@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Helpers;
-using Ilsrep.Common.TcpServer;
+using Ilsrep.Common;
 
 namespace Ilsrep.PollApplication.PollEditor
 {
