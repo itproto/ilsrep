@@ -9,11 +9,13 @@ namespace Ilsrep.PollApplication.PollEditor
 {
     public class PollEditor
     {
+        private static System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
+
         private static String username = String.Empty;
         private static PollSession pollSession = new PollSession();
 
         private const String HOST = "localhost";
-        private const int PORT = 3102;
+        private const int PORT = 3120;
 
         /// <summary>
         /// Helper method to get answers on questions, with possibility of choosing what user can answer
@@ -33,18 +35,16 @@ namespace Ilsrep.PollApplication.PollEditor
 
                 if (inputLine != String.Empty)
                 {
-                    if (allowedAnswers.Length == 0)
-                        break;
+                    if (allowedAnswers == null || allowedAnswers.Length == 0)
+                        return inputLine;
                     
                     foreach (String allowedAnswer in allowedAnswers)
                         if (inputLine == allowedAnswer)
-                            break;
+                            return inputLine;
                 }
                 
                 Console.WriteLine("Wrong input!");
             }
-
-            return inputLine;
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Ilsrep.PollApplication.PollEditor
             pollSession.testMode = ToBoolean(AskQuestion("Test mode[y/n]?", new String[] { "y", "n" }));
 
             if (pollSession.testMode == true)
-                pollSession.minScore = Convert.ToDouble(AskQuestion("Min score to pass test:", null));
+                pollSession.minScore = Convert.ToDouble(AskQuestion("Min score to pass test:", null), cultureInfo);
 
             while (true)
             {
@@ -82,12 +82,13 @@ namespace Ilsrep.PollApplication.PollEditor
                 Poll newPoll = new Poll();
 
                 newPoll.id = pollSession.polls.Count + 1;
+                newPoll.correctChoiceId = 0;
                 newPoll.name = AskQuestion("Poll name:", null);
                 newPoll.description = AskQuestion("Poll description:", null);
 
                 while (true)
                 {
-                    bool addNewChoice = ToBoolean(AskQuestion("Add new poll[y/n]?", new String[] { "y", "n" }));
+                    bool addNewChoice = ToBoolean(AskQuestion("Add new choice[y/n]?", new String[] { "y", "n" }));
 
                     if (addNewChoice == false)
                         break;
@@ -97,19 +98,23 @@ namespace Ilsrep.PollApplication.PollEditor
                     newChoice.id = newPoll.choices.Count + 1;
                     newChoice.parent = newPoll;
                     newChoice.choice = AskQuestion("Choice name:", null);
-                    bool isChoiceCorrect = ToBoolean(AskQuestion("Is this choice correct[y/n]?", new String[] { "y", "n" }));
-
+                    
                     newPoll.choices.Add( newChoice );
 
-                    if (isChoiceCorrect == true)
-                        newPoll.correctChoiceId = newChoice.id;
+                    if (newPoll.correctChoiceId == 0)
+                    {
+                        bool isChoiceCorrect = ToBoolean(AskQuestion("Is this choice correct[y/n]?", new String[] { "y", "n" }));
+
+                        if (isChoiceCorrect == true)
+                            newPoll.correctChoiceId = newChoice.id;
+                    }
 
                     Console.WriteLine("Choice added!");
                 }
 
                 if (pollSession.testMode == false)
                 {
-                    newPoll.customChoice = ToBoolean(AskQuestion("Enable custom choice for this poll?", new String[] { "y", "n" }));
+                    newPoll.customChoice = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
                 }
 
                 pollSession.polls.Add(newPoll);
@@ -122,15 +127,17 @@ namespace Ilsrep.PollApplication.PollEditor
         /// </summary>
         public static void Main()
         {
+            cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
+            
             RunUserDialog();
 
-            bool connectToServer = ToBoolean(AskQuestion("Do you want to save pollsesion to server?", new String[] { "y", "n" }));
+            bool connectToServer = ToBoolean(AskQuestion("Do you want to save pollsesion to server[y/n]?", new String[] { "y", "n" }));
 
             if (connectToServer == true)
             {
                 TcpServer client = new TcpServer();
                 client.Connect(HOST, PORT);
-                client.Send("createPollSession");
+                client.Send("CreatePollSession");
                 client.Send(XMLSerializationHelper.Serialize(pollSession));
                 client.Disconnect();
             }

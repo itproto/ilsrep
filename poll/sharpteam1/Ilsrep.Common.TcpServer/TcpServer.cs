@@ -24,7 +24,15 @@ namespace Ilsrep.Common.TcpServer
 
         public void Connect(string address, int port)
         {
-            m_client.Connect(address, port);
+            try
+            {
+                m_client.Connect(address, port);
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("Couldn't connect to {0}:{1} - timed out", address, port);
+                Environment.Exit(-1);
+            }
         }
 
         public void Disconnect()
