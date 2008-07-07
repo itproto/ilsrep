@@ -3,3 +3,8 @@ C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpSer
 C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\bin\Debug\Ilsrep.Common.TcpServer.pdb
 C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\obj\Debug\Ilsrep.Common.TcpServer.dll
 C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.Common.TcpServer\obj\Debug\Ilsrep.Common.TcpServer.pdb
+C:\Slawik\ILS\C#\Ilsrep.Polls\Ilsrep.Common.TcpServer\bin\Debug\Ilsrep.Common.TcpServer.dll
+C:\Slawik\ILS\C#\Ilsrep.Polls\Ilsrep.Common.TcpServer\bin\Debug\Ilsrep.Common.TcpServer.pdb
+C:\Slawik\ILS\C#\Ilsrep.Polls\Ilsrep.Common.TcpServer\obj\Debug\ResolveAssemblyReference.cache
+C:\Slawik\ILS\C#\Ilsrep.Polls\Ilsrep.Common.TcpServer\obj\Debug\Ilsrep.Common.TcpServer.dll
+C:\Slawik\ILS\C#\Ilsrep.Polls\Ilsrep.Common.TcpServer\obj\Debug\Ilsrep.Common.TcpServer.pdb
