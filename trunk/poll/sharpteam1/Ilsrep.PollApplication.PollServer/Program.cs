@@ -35,7 +35,7 @@ namespace Ilsrep.PollApplication.PollServer
             // Set default port
             port = 3320;
             //Set default PathToPolls
-            pathToPolls = "";
+            pathToPolls = "polls/";
 
             // Parse command line
             NameValueCollection commandLineParameters = CommandLineParametersHelper.Parse(args);

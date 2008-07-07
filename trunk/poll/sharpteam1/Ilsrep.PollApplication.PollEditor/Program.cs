@@ -16,7 +16,7 @@ namespace Ilsrep.PollApplication.PollEditor
         private static PollSession pollSession = new PollSession();
 
         private const String HOST = "localhost";
-        private const int PORT = 3120;
+        private const int PORT = 3320;
 
         /// <summary>
         /// Helper method to get answers on questions, with possibility of choosing what user can answer
