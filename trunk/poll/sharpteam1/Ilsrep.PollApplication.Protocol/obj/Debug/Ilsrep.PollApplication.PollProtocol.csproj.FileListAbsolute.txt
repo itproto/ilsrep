@@ -1,0 +1,5 @@
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Protocol\bin\Debug\Ilsrep.PollApplication.PollProtocol.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Protocol\bin\Debug\Ilsrep.PollApplication.PollProtocol.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Protocol\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Protocol\obj\Debug\Ilsrep.PollApplication.PollProtocol.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.Protocol\obj\Debug\Ilsrep.PollApplication.PollProtocol.pdb

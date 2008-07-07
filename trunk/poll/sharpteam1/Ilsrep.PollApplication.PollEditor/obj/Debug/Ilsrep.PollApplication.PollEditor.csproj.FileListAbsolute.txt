@@ -1,0 +1,14 @@
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Client\Ilsrep.PollApplication.PollEditor\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Client\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.PollApplication.PollEditor.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Client\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.PollApplication.PollEditor.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Client\Ilsrep.PollApplication.PollEditor\obj\Debug\Ilsrep.PollApplication.PollEditor.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Client\Ilsrep.PollApplication.PollEditor\obj\Debug\Ilsrep.PollApplication.PollEditor.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\obj\Debug\Ilsrep.PollApplication.PollEditor.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\obj\Debug\Ilsrep.PollApplication.PollEditor.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.PollApplication.PollEditor.exe
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.PollApplication.PollEditor.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.PollApplication.PollProtocol.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.PollApplication.PollProtocol.pdb
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.Common.TcpServer.dll
+C:\Users\vladykx\Documents\Visual Studio 2005\Projects\Poll\Ilsrep.PollApplication.PollEditor\bin\Debug\Ilsrep.Common.TcpServer.pdb
