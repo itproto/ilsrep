@@ -7,13 +7,14 @@
     <ProjectGuid>{66FA0406-4697-46B8-AA2E-F01802AC510C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ilsrep.Poll.Server</RootNamespace>
-    <AssemblyName>Ilsrep.Poll.Server</AssemblyName>
+    <RootNamespace>Ilsrep.PollApplication.PollServer</RootNamespace>
+    <AssemblyName>Ilsrep.PollApplication.PollServer</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,11 +39,13 @@
       <HintPath>..\Libs\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandLineParametersHelper.cs" />
     <Compile Include="PollHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,6 +60,12 @@
     <Content Include="polls\Poll_id.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ilsrep.PollApplication.Protocol\Ilsrep.PollApplication.PollProtocol.csproj">
+      <Project>{97BFC9FF-DB20-4465-8FF0-6FB8CD4B0080}</Project>
+      <Name>Ilsrep.PollApplication.PollProtocol</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
