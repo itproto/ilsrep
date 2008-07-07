@@ -23,7 +23,7 @@ namespace Ilsrep.PollApplication.Client
         private const string CONSOLE_YES = "y";
         private const string CONSOLE_NO = "n";
         private const string HOST = "localhost";
-        private const int PORT = 3320;
+        private const int PORT = 3120;
         static string userName = "";
         static TcpCommunicator server;
         static PollSession pollSession = new PollSession();
