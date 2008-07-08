@@ -25,7 +25,7 @@ namespace Ilsrep.PollApplication.PollServer
             try
             {
                 // Search patch to needed file by id
-                string patchToPollSession = "";
+                string pathToPollSession = string.Empty;
                 XmlDocument Poll_id = new XmlDocument();
                 Poll_id.Load(PollServer.pathToPolls + PollServer.PATH_TO_POLL_ID);
                 XmlNodeList pollSessionList = Poll_id.GetElementsByTagName(POLL_SESSION_ELEMENT);
@@ -34,14 +34,14 @@ namespace Ilsrep.PollApplication.PollServer
                     bool isRightPollSession = (Convert.ToInt32(curPollSession.Attributes["id"].Value) == pollSessionID);
                     if (isRightPollSession)
                     {
-                        patchToPollSession = curPollSession.Attributes["file"].Value;
+                        pathToPollSession = curPollSession.Attributes["file"].Value;
                         break;
                     }
                 }
 
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(patchToPollSession);
-                return xmlDoc.FirstChild.OuterXml;
+                xmlDoc.Load(pathToPollSession);
+                return xmlDoc.OuterXml;
             }
             catch (Exception exception)
             {
@@ -74,7 +74,7 @@ namespace Ilsrep.PollApplication.PollServer
             string receivedString = ReceiveFromClient(client);
             if (receivedString == String.Empty)
                 return;
-
+            
             // Choose one option {GetPollSession or CreatePollSession}
             switch (receivedString)
             {
@@ -125,21 +125,27 @@ namespace Ilsrep.PollApplication.PollServer
             }
             idList.Sort();
             int curPollSessionId = idList[idList.Count-1] + 1;
-            /*
+            
             // Save current poll session in file
-            //How add attribute otherwise???
-            XmlDocument temp = new XmlDocument();
-            string tempString = "<temp id=\"" + curPollSessionId + "\" />";
-            temp.LoadXml(tempString);
-            xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes.Append(temp.FirstChild.Attributes[0]);
-            //???
-            */
+            XmlAttribute pollSessionIdAttribute = xmlDoc.CreateAttribute("id");
+            pollSessionIdAttribute.Value = curPollSessionId.ToString();
+            xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes.Append(pollSessionIdAttribute);
             string curPathToPollSession = PollServer.pathToPolls + "PollSession_" + curPollSessionId + ".xml";
             xmlDoc.Save(curPathToPollSession);
 
             // Add information about current poll session to Poll_id.xml
-            XmlDocument curPollInformation = new XmlDocument();
-            curPollInformation.LoadXml("<" + POLL_SESSION_ELEMENT + " id=\"" + curPollSessionId + "\" name=\"" + pollSessionName + "\" file=\"" + curPathToPollSession + "\" />");
+            XmlElement curPollInformation = Poll_id.CreateElement(POLL_SESSION_ELEMENT);
+
+            XmlAttribute idAttribute = Poll_id.CreateAttribute("id");
+            idAttribute.Value = curPollSessionId.ToString();
+            XmlAttribute nameAttribute = Poll_id.CreateAttribute("name");
+            nameAttribute.Value = pollSessionName;
+            XmlAttribute fileAttribute = Poll_id.CreateAttribute("file");
+            fileAttribute.Value = curPathToPollSession;
+            curPollInformation.Attributes.Append(idAttribute);
+            curPollInformation.Attributes.Append(nameAttribute);
+            curPollInformation.Attributes.Append(fileAttribute);
+            //Poll_id.ChildNodes[1].AppendChild(curPollInformation);
             Poll_id.GetElementsByTagName("pollsessions")[0].AppendChild(curPollInformation);
             Poll_id.Save(PollServer.pathToPolls + "Poll_id.xml");
         }
