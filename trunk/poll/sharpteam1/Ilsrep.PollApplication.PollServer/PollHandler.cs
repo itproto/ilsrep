@@ -163,8 +163,8 @@ namespace Ilsrep.PollApplication.PollServer
             xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes.Append(pollSessionIdAttribute);
 
             // Save pollSession in new file
-            string newPathToPollSession = PollServer.pollsFolder + "PollSession_" + curPollSessionId + ".xml";
-            xmlDoc.Save(curPathToPollSession);
+            string newPathToPollSession = PollServer.pollsFolder + "PollSession_" + newPollSessionId + ".xml";
+            xmlDoc.Save(newPathToPollSession);
 
             // Add information about current poll session to Poll_id.xml
             XmlElement newPollInformation = Poll_id.CreateElement(POLL_SESSION_ELEMENT);
@@ -179,6 +179,7 @@ namespace Ilsrep.PollApplication.PollServer
             newPollInformation.Attributes.Append(fileAttribute);
             Poll_id.GetElementsByTagName("pollsessions")[0].AppendChild(newPollInformation);
             Poll_id.Save(PollServer.pollsFolder + PATH_TO_POLL_ID);
+            log.Info("New PollSession has been added(name=\"" + pollSessionName + "\" id=\""+ newPollSessionId + "\")");
         }
 
         /// <summary>
