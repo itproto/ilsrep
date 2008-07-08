@@ -19,9 +19,8 @@ namespace Ilsrep.PollApplication.PollServer
         // Initial declarations
         private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
-        public const string PATH_TO_POLL_ID = "Poll_id.xml";
         public const int DATA_SIZE = 65536;
-        static public string pathToPolls;
+        static public string pollsFolder;
         static public int port;
         static public IPAddress host;
 
@@ -34,8 +33,8 @@ namespace Ilsrep.PollApplication.PollServer
             host = IPAddress.Any;
             // Set default port
             port = 3320;
-            //Set default PathToPolls
-            pathToPolls = "polls/";
+            //Set default pollsFolder
+            pollsFolder = "polls/";
 
             // Parse command line
             NameValueCollection commandLineParameters = CommandLineParametersHelper.Parse(args);
@@ -50,7 +49,6 @@ namespace Ilsrep.PollApplication.PollServer
                     log.Error("Invalid host. " + exception.Message);
                 }
             }
-
             if (commandLineParameters["port"] != null && commandLineParameters["host"] != String.Empty)   
             {
                 try
@@ -64,7 +62,7 @@ namespace Ilsrep.PollApplication.PollServer
             }
 
             if (commandLineParameters["polls"] != null && commandLineParameters["polls"] != String.Empty)
-                pathToPolls = commandLineParameters["polls"] + "/";
+                pollsFolder = commandLineParameters["polls"] + "/";
 
             // Start server
             log.Info("Server started on host: " + host.ToString() + ":" + port);

@@ -19,7 +19,13 @@ namespace Ilsrep.PollApplication.PollServer
         private static int activeConnCount = 0;
         private static byte[] data = new byte[PollServer.DATA_SIZE];
         private const string POLL_SESSION_ELEMENT = "pollsession";
+        public const string PATH_TO_POLL_ID = "Poll_id.xml";
 
+        /// <summary>
+        /// The function search poll session by id
+        /// </summary>
+        /// <param name="pollSessionID">Id of needed poll session</param>
+        /// <returns>Poll session in XmlStirng</returns>
         private static string GetPollSessionById(int pollSessionID)
         {
             try
@@ -27,7 +33,7 @@ namespace Ilsrep.PollApplication.PollServer
                 // Search patch to needed file by id
                 string pathToPollSession = string.Empty;
                 XmlDocument Poll_id = new XmlDocument();
-                Poll_id.Load(PollServer.pathToPolls + PollServer.PATH_TO_POLL_ID);
+                Poll_id.Load(PollServer.pollsFolder + PATH_TO_POLL_ID);
                 XmlNodeList pollSessionList = Poll_id.GetElementsByTagName(POLL_SESSION_ELEMENT);
                 foreach (XmlNode curPollSession in pollSessionList)
                 {
@@ -50,6 +56,11 @@ namespace Ilsrep.PollApplication.PollServer
             }
         }
 
+        /// <summary>
+        /// Receive data from client application
+        /// </summary>
+        /// <param name="client">NetworkStream client</param>
+        /// <returns>Received string if received or empty string if exception</returns>
         public string ReceiveFromClient(NetworkStream client)
         {
             byte[] data = new byte[PollServer.DATA_SIZE];
@@ -68,14 +79,18 @@ namespace Ilsrep.PollApplication.PollServer
             return recievedString;
         }
 
+        /// <summary>
+        /// Receive option from client and select one: GetPollSession or CreatePollSession
+        /// </summary>
+        /// <param name="client">NetworkStream client</param>
         public void RunClientSession(NetworkStream client)
         {
-            // Receive option {GetPollSession or CreatePollSession} from client
+            // Receive option from client
             string receivedString = ReceiveFromClient(client);
             if (receivedString == String.Empty)
                 return;
             
-            // Choose one option {GetPollSession or CreatePollSession}
+            // Select option {GetPollSession or CreatePollSession}
             switch (receivedString)
             {
                 case "GetPollSession":
@@ -90,6 +105,10 @@ namespace Ilsrep.PollApplication.PollServer
             }
         }
 
+        /// <summary>
+        /// Receive XmlString from PollEditor, save it to new XmlFile and append Poll_id.xml file
+        /// </summary>
+        /// <param name="client">NetworkStream client</param>
         public void CreatePollSession(NetworkStream client)
         {
             // Receive new poll session
@@ -109,14 +128,24 @@ namespace Ilsrep.PollApplication.PollServer
                 return;
             }
 
-            XmlNode xmlPollSession = xmlDoc.GetElementsByTagName("pollsession")[0];
-            string pollSessionName = xmlPollSession.Attributes["name"].Value;
+            // Get name of poll session
+            //XmlNode xmlPollSession = xmlDoc.GetElementsByTagName("pollsession")[0];
+            //string pollSessionName = xmlPollSession.Attributes["name"].Value;
+            string pollSessionName = xmlDoc.GetElementsByTagName("pollsession")[0].Attributes["name"].Value;
 
-            // Generate new id
+            // Get idList from Poll_id.xml
             int pollSessionId;
             List<int> idList = new List<int>();
             XmlDocument Poll_id = new XmlDocument();
-            Poll_id.Load(PollServer.pathToPolls + "Poll_id.xml");
+            try
+            {
+                Poll_id.Load(PollServer.pollsFolder + PATH_TO_POLL_ID);
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.Message);
+                return;
+            }
             XmlNodeList pollSessionList = Poll_id.GetElementsByTagName(POLL_SESSION_ELEMENT);
             foreach (XmlNode pollSession in pollSessionList)
             {
@@ -124,39 +153,46 @@ namespace Ilsrep.PollApplication.PollServer
                 idList.Add(pollSessionId);
             }
             idList.Sort();
-            int curPollSessionId = idList[idList.Count-1] + 1;
+
+            // Generate new id
+            int newPollSessionId = idList[idList.Count-1] + 1;
             
-            // Save current poll session in file
+            // Add id attribute to pollSession
             XmlAttribute pollSessionIdAttribute = xmlDoc.CreateAttribute("id");
-            pollSessionIdAttribute.Value = curPollSessionId.ToString();
+            pollSessionIdAttribute.Value = newPollSessionId.ToString();
             xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes.Append(pollSessionIdAttribute);
-            string curPathToPollSession = PollServer.pathToPolls + "PollSession_" + curPollSessionId + ".xml";
+
+            // Save pollSession in new file
+            string newPathToPollSession = PollServer.pollsFolder + "PollSession_" + curPollSessionId + ".xml";
             xmlDoc.Save(curPathToPollSession);
 
             // Add information about current poll session to Poll_id.xml
-            XmlElement curPollInformation = Poll_id.CreateElement(POLL_SESSION_ELEMENT);
-
+            XmlElement newPollInformation = Poll_id.CreateElement(POLL_SESSION_ELEMENT);
             XmlAttribute idAttribute = Poll_id.CreateAttribute("id");
-            idAttribute.Value = curPollSessionId.ToString();
+            idAttribute.Value = newPollSessionId.ToString();
             XmlAttribute nameAttribute = Poll_id.CreateAttribute("name");
             nameAttribute.Value = pollSessionName;
             XmlAttribute fileAttribute = Poll_id.CreateAttribute("file");
-            fileAttribute.Value = curPathToPollSession;
-            curPollInformation.Attributes.Append(idAttribute);
-            curPollInformation.Attributes.Append(nameAttribute);
-            curPollInformation.Attributes.Append(fileAttribute);
-            //Poll_id.ChildNodes[1].AppendChild(curPollInformation);
-            Poll_id.GetElementsByTagName("pollsessions")[0].AppendChild(curPollInformation);
-            Poll_id.Save(PollServer.pathToPolls + "Poll_id.xml");
+            fileAttribute.Value = newPathToPollSession;
+            newPollInformation.Attributes.Append(idAttribute);
+            newPollInformation.Attributes.Append(nameAttribute);
+            newPollInformation.Attributes.Append(fileAttribute);
+            Poll_id.GetElementsByTagName("pollsessions")[0].AppendChild(newPollInformation);
+            Poll_id.Save(PollServer.pollsFolder + PATH_TO_POLL_ID);
         }
 
+        /// <summary>
+        /// Receive pollSessionId from PollClient and send PollSession with corresponding id
+        /// </summary>
+        /// <param name="client">NetworkStream client</param>
         public void SendPollSession(NetworkStream client)
         {
             string sendString;
             int pollSessionID = 0;
+
+            // Receive from client pollSessionId
             while (true)
             {
-                // Receive from client pollSessionId
                 string receivedString = ReceiveFromClient(client);
                 if (receivedString == String.Empty)
                     return;
@@ -192,17 +228,18 @@ namespace Ilsrep.PollApplication.PollServer
 
             // Send PollSession
             sendString = GetPollSessionById(pollSessionID);
-
             if (sendString == String.Empty)
             {
-                log.Error("Couldn't get poll by id");
+                log.Error("Can not get poll by id");
                 return;
             }
-
             data = Encoding.ASCII.GetBytes(sendString);
             client.Write(data, 0, sendString.Length);
         }
 
+        /// <summary>
+        /// Handle client connection
+        /// </summary>
         public void HandleConnection()
         {
             // Establish connection with new client
@@ -210,7 +247,7 @@ namespace Ilsrep.PollApplication.PollServer
             activeConnCount++;
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
             log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
-                         
+
             // Run dialog with client
             RunClientSession(currentStream);
 
