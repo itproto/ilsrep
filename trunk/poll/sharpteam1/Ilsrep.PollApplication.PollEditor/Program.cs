@@ -101,21 +101,42 @@ namespace Ilsrep.PollApplication.PollEditor
                     newChoice.choice = AskQuestion("Choice name:", null);
                     
                     newPoll.choices.Add( newChoice );
-
-                    if (newPoll.correctChoiceId == 0)
-                    {
-                        bool isChoiceCorrect = ToBoolean(AskQuestion("Is this choice correct[y/n]?", new String[] { "y", "n" }));
-
-                        if (isChoiceCorrect == true)
-                            newPoll.correctChoiceId = newChoice.id;
-                    }
-
                     Console.WriteLine("Choice added!");
                 }
 
                 if (pollSession.testMode == false)
                 {
                     newPoll.customChoice = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
+                }
+                else
+                {
+                    // Ask correct choice
+                    Console.WriteLine("Please, enter id of correct choice:");
+                    foreach (Choice choice in newPoll.choices)
+                        Console.WriteLine("\t" + choice.id + ". " + choice.choice);
+                    while (true)
+                    {
+                        newPoll.correctChoiceId = -1;
+                        try
+                        {
+                            int correctId = Convert.ToInt32(Console.ReadLine());
+                            foreach (Choice choice in newPoll.choices)
+                            {
+                                if (choice.id == correctId)
+                                {
+                                    newPoll.correctChoiceId = correctId;
+                                    break;
+                                }
+                            }
+                            if (newPoll.correctChoiceId != -1)
+                                break;
+                            Console.WriteLine("Invalid id!");
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid id!");
+                        }
+                    }
                 }
 
                 pollSession.polls.Add(newPoll);
