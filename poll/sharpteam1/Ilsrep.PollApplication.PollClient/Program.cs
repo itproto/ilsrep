@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Helpers;
 
 
 /*
@@ -23,7 +24,7 @@ namespace Ilsrep.PollApplication.PollClient
         private const string CONSOLE_YES = "y";
         private const string CONSOLE_NO = "n";
         private const string HOST = "localhost";
-        private const int PORT = 3120;
+        private const int PORT = 3320;
         static string userName = "";
         static TcpCommunicator server;
         static PollSession pollSession = new PollSession();
@@ -273,7 +274,10 @@ namespace Ilsrep.PollApplication.PollClient
                 
                 // if all ok inform
                 if (server.isConnected)
+                {
                     Console.WriteLine("Connection established.");
+                    server.Send("GetPollSession");
+                }
                 else
                     throw new Exception("Not connected");
             }
@@ -329,7 +333,7 @@ namespace Ilsrep.PollApplication.PollClient
 
             return byteArray;
         }
-
+        /*
         public static void DeSerializeXML(string xmlString)
         {
             XmlSerializer xmlSerializer = new XmlSerializer( typeof(PollSession) );
@@ -348,7 +352,7 @@ namespace Ilsrep.PollApplication.PollClient
 
             Console.WriteLine("XML Parsed");
         }
-
+        */
         public static String SerializeObject()
         {
             try
@@ -374,13 +378,14 @@ namespace Ilsrep.PollApplication.PollClient
         public static void Main()
         {
             ConnectToServer();
+
             String xmlData = GetPollById();
-            //ParseXml(xmlData);
-            DeSerializeXML(xmlData);
-            //Console.WriteLine(SerializeObject());
-            DoUserDialog();
-            RunUserPoll();
             
+            pollSession = PollSerializator.DeSerialize(xmlData);
+            //DeSerializeXML(xmlData);
+            DoUserDialog();
+
+            RunUserPoll();
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
