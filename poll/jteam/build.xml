@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="task7" default="jar">
+<project name="task7" default="run-dir">
 
 	<property name="basedir" value="." />
 	<property name="src.dir" value="${basedir}/src" />
@@ -9,14 +9,17 @@
 	<property name="data.dir" value="${basedir}/data" />
 	<property name="javadoc.dir" value="${basedir}/docs" />
 	<property name="lib.dir" value="${basedir}/lib" />
-	
+	<property name="run.dir" value="${basedir}/run" />
+	<property name="scripts.dir" value="${basedir}/scripts" />
+	<property name="xml.dir" value="${basedir}/xml" />
+
 	<property name="jar.file" value="${basedir}/poll.jar" />
 
 	<property name="class.path" value="${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar" />
 
 	<target name="init">
 		<tstamp />
-		<mkdir dir="${distr.dir}"/>
+		<mkdir dir="${distr.dir}" />
 	</target>
 
 	<target name="copy-data" depends="init">
@@ -27,12 +30,7 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<javac 	srcdir="${src.dir}"
-				destdir="${distr.dir}"
-				classpath="${class.path}"
-				debug="on"
-				optimize="on"
-			/>
+		<javac srcdir="${src.dir}" destdir="${distr.dir}" classpath="${class.path}" debug="on" optimize="on" />
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
@@ -46,17 +44,35 @@
 	</target>
 
 	<target name="javadoc" depends="init">
-		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}"
-			classpath="${class.path}"/>
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" classpath="${class.path}" />
+	</target>
+
+	<target name="run-dir" depends="jar">
+		<copy todir="${run.dir}" file="${jar.file}" />
+		<copy todir="${run.dir}" file="configuration.xml" />
+		<copy todir="${run.dir}">
+			<fileset dir="${scripts.dir}">
+			</fileset>
+		</copy>
+		<copy todir="${run.dir}/lib">
+			<fileset dir="${lib.dir}">
+			</fileset>
+		</copy>
+		<copy todir="${run.dir}/xml">
+			<fileset dir="${xml.dir}">
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="clean">
 		<delete quiet="true" dir="${distr.dir}" />
+		<delete quiet="true" dir="${run.dir}" />
 		<delete quiet="true" file="${jar.file}" />
 	</target>
 
 	<target name="commitclean" depends="jar, javadoc">
 		<delete quiet="true" dir="${distr.dir}" />
+		<delete quiet="true" dir="${run.dir}" />
 	</target>
 
 </project>

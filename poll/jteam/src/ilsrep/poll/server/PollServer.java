@@ -1,8 +1,6 @@
 package ilsrep.poll.server;
 
 import ilsrep.poll.common.Pollsession;
-import java.io.* ;
-import java.net.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,8 +12,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.*;
+import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -55,6 +54,7 @@ public class PollServer {
      * <li>2 - configuration file can't be loaded</li>
      * <li>3 - can't bind ServerSocket to port</li>
      * <li>4 - problems with reflection</li>
+     * <li>5 - Pollsession class not found or have no apropriate annotations</li>
      * </ul>
      * 
      * @param args
@@ -100,10 +100,15 @@ public class PollServer {
     protected List<Pollsession> pollsessions = null;
 
     /**
+     * Holds all poll xml files as <code>File</code>.
+     */
+    protected Hashtable<String, File> pollFiles = new Hashtable<String, File>();
+
+    /**
      * Port to start server on.
      */
     protected int port = -1;
-Hashtable<String, File> pollFiles=new Hashtable<String, File>(); 
+
     /**
      * Maximum connections to server.
      */
@@ -218,7 +223,7 @@ Hashtable<String, File> pollFiles=new Hashtable<String, File>();
         }
 
         // Reading all poll xml's from specified directory into memory(objects).
-        //DRC to TKOST: For what frigging reason do we need to do that?
+        // DRC to TKOST: For what frigging reason do we need to do that?
         pollsessions = new Vector<Pollsession>();
 
         File xmlDir = new File(configuration.get("pollXmlPath"));
@@ -233,18 +238,27 @@ Hashtable<String, File> pollFiles=new Hashtable<String, File>();
                 }
             });
 
+            // Creating JAXB context for file processing.
+            JAXBContext cont = null;
+            try {
+                cont = JAXBContext.newInstance(Pollsession.class);
+            }
+            catch (JAXBException e) {
+                logger
+                        .fatal("Pollsession class not found or have no apropriate annotations. Quitting!");
+                serverShutdown(5);
+                return;
+            }
             for (File file : filesInDir) {
                 try {
-	                                    logger.info("Loading file as poll xml: "
+                    logger.info("Loading file as poll xml: "
                             + file.getAbsolutePath());
-                    JAXBContext cont = JAXBContext
-                            .newInstance(Pollsession.class);
                     Unmarshaller um = cont.createUnmarshaller();
 
                     Pollsession session = (Pollsession) um
                             .unmarshal(new FileInputStream(file));
                     pollsessions.add(session);
-                    pollFiles.put(session.getId(),file);
+                    pollFiles.put(session.getId(), file);
                 }
                 catch (JAXBException e) {
                     logger.warn("Poll xml file is corrupted: "
@@ -275,6 +289,16 @@ Hashtable<String, File> pollFiles=new Hashtable<String, File>();
      */
     public void serverShutdown(int code) {
         exitCode = code;
+
+        // Closing all connections on server exit.
+        if (connections != null)
+            for (Socket connection : connections) {
+                try {
+                    connection.close();
+                }
+                catch (IOException e) {
+                }
+            }
     }
 
     /**
@@ -429,12 +453,16 @@ Hashtable<String, File> pollFiles=new Hashtable<String, File>();
     public synchronized void removeConnection(Socket socketToRemove) {
         for (int connIterator = 0; connIterator < connections.size(); connIterator++) {
             if (connections.get(connIterator) == socketToRemove) {
+                logger.info("Connection to "
+                        + connections.get(connIterator).getInetAddress()
+                                .toString() + ":"
+                        + connections.get(connIterator).getPort()
+                        + " closed. Active connection count: "
+                        + (connections.size() - 1));
                 connections.remove(connIterator);
                 break;
             }
         }
-        logger.debug("Connection closed. Active connection count: "
-                + connections.size());
     }
 
 }
