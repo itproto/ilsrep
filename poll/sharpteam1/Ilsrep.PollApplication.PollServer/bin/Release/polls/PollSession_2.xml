@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <pollsession id="2" name="Test Poll" testMode="true" minScore="0.5">
-<polls>
   <poll id="1" name ="Repository choice" correctChoice="1">
     <description>Please choice repository:</description>
     <choices>
@@ -37,5 +36,4 @@
       <choice id="2"  name="Python" />
     </choices>
   </poll>
-</polls>
 </pollsession>
