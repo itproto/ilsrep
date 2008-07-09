@@ -53,7 +53,7 @@ public class PollEditor {
                 int n = 1;
 
                 yesNoChoice = "y";
-                while (((correct >= n - 1) && (testMode.indexOf("true") != -1))
+                while (((correct >= n ) && (testMode.indexOf("true") != -1))
                         || (yesNoChoice.indexOf("y") != -1)) {
 
                     System.out.println("enter choice");
