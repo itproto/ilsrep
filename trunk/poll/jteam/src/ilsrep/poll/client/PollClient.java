@@ -8,12 +8,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.UnknownHostException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
 
 /**
  * Main class for task 7 - Poll.
@@ -36,41 +36,79 @@ public class PollClient {
      */
     public static void main(String[] args) throws JAXBException, IOException {
         // Greeting user and asking his name and filename of poll xml file.
-        BufferedReader consoleInputReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader consoleInputReader = new BufferedReader(
+                new InputStreamReader(System.in));
         System.out.println("Welcome to polls client program!\n");
         System.out.print("Please enter your name: ");
         String name = consoleInputReader.readLine();
-                JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+        JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller um = cont.createUnmarshaller();
-        Pollsession polls=null;
-        System.out.print("Use server?(1) or local file?(2)");
-      
-          String yesNoChoice = consoleInputReader.readLine();
-        if (!(yesNoChoice.compareTo("1") == 0)){
-        System.out.print("Please enter filename to read poll xml "
-                + "from\n[press enter for default \"xml/Polls.xml\"]: ");
-        String fileName = consoleInputReader.readLine();
-        if (fileName.compareTo("") == 0)
-            fileName = "xml/Polls.xml";
+        Pollsession polls = null;
+        System.out.print("Use server?(1) or local file?(2): ");
 
-        // Serialising xml file into object model.
-       
-        File pollFile = new File(fileName);
-           polls= (Pollsession) um.unmarshal(pollFile);
-        } else {
-	       
-	        boolean done=false;
-	        while (!done) { try{
-		         TcpCommunicator communicator = new TcpCommunicator();
-	   Reader pollFile=communicator.getXML();
-	   communicator.finalize();
-	           polls= (Pollsession) um.unmarshal(pollFile);
-	           done=true;
-	           } catch (Exception m){System.out.println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");}
+        String yesNoChoice = consoleInputReader.readLine();
+        if (!(yesNoChoice.compareTo("1") == 0)) {
+            System.out.print("Please enter filename to read poll xml "
+                    + "from\n[press enter for default \"xml/Polls.xml\"]: ");
+            String fileName = consoleInputReader.readLine();
+            if (fileName.compareTo("") == 0)
+                fileName = "xml/Polls.xml";
+
+            // Serialising xml file into object model.
+
+            File pollFile = new File(fileName);
+            polls = (Pollsession) um.unmarshal(pollFile);
         }
-	        }
-   
-      
+        else {
+            System.out.print("Please enter server:port to read poll xml "
+                    + "from\n[press enter for default \"127.0.0.1:3320\"]: ");
+            String serverPortString = consoleInputReader.readLine();
+
+            boolean done = false;
+            while (!done) {
+                try {
+                    TcpCommunicator communicator = null;
+
+                    if (serverPortString.compareTo("") != 0) {
+                        int separatorIndex = serverPortString.indexOf(':');
+                        if (separatorIndex != 1) {
+                            try {
+                                String serverName = serverPortString.substring(
+                                        0, separatorIndex);
+                                int port = Integer.parseInt(serverPortString
+                                        .substring(separatorIndex + 1));
+
+                                communicator = new TcpCommunicator(serverName,
+                                        port);
+                            }
+                            catch (NumberFormatException e) {
+                                communicator = null;
+                            }
+                            catch (UnknownHostException e) {
+                                communicator = null;
+                            }
+                            catch (IOException e) {
+                                communicator = null;
+                            }
+                        }
+                    }
+
+                    if (communicator == null)
+                        communicator = new TcpCommunicator();
+
+                    Reader pollFile = communicator.getXML();
+                    communicator.finalize();
+                    polls = (Pollsession) um.unmarshal(pollFile);
+                    done = true;
+                }
+                catch (Exception m) {
+                    // TODO: This cause client hang when it can't connect to
+                    // server.
+                    System.out
+                            .println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
+                }
+            }
+        }
 
         // Showing xml, generated from already read object model.
         Marshaller mr = cont.createMarshaller();
@@ -79,48 +117,55 @@ public class PollClient {
         mr.marshal(polls, System.out);
 
         // Processing polls.
-   /*     AnswerSaver saveElement = new AnswerSaver();
-saveElement.minScore=Float.parseFloat(polls.getMinScore());
-saveElement.testMode=polls.getTestMode();
-*/
-//New way of saving answers
-String testMode="false";
-float minScore=Float.parseFloat(polls.getMinScore()); 	
-testMode=polls.getTestMode();	
-String resultingOutput="Results \n"; //here we will store everything we will need to output	
+        /*
+         * AnswerSaver saveElement = new AnswerSaver();
+         * saveElement.minScore=Float.parseFloat(polls.getMinScore());
+         * saveElement.testMode=polls.getTestMode();
+         */
+        // New way of saving answers
+        String testMode = "false";
+        float minScore = Float.parseFloat(polls.getMinScore());
+        testMode = polls.getTestMode();
+        String resultingOutput = "Results \n"; // here we will store everything
+        // we will need to output
         System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]");
         yesNoChoice = consoleInputReader.readLine();
         if (!(yesNoChoice.compareTo("y") == 0))
             return;
 
         String choice = null;
-        float i=0,n=0;
+        float i = 0, n = 0;
         for (Poll cur : polls.getPolls()) {
             while (choice == null)
-            choice = cur.queryUser();
- //          saveElement.pushAnswer(cur.getName(), choice, cur.pass);
-            if (testMode.compareTo("true")==0){
-    		 resultingOutput+=cur.getName() + " => " + choice + "=>"+cur.pass+"\n";
-    				 } else {
-	        		resultingOutput+=cur.getName() + " => " + choice +"\n";
-	        			}
-  					if (cur.pass=="PASS") i++;
+                choice = cur.queryUser();
+            // saveElement.pushAnswer(cur.getName(), choice, cur.pass);
+            if (testMode.compareTo("true") == 0) {
+                resultingOutput += cur.getName() + " => " + choice + "=>"
+                        + cur.pass + "\n";
+            }
+            else {
+                resultingOutput += cur.getName() + " => " + choice + "\n";
+            }
+            if (cur.pass == "PASS")
+                i++;
             n++;
-            
+
             choice = null;
         }
- if(testMode.compareTo("true")==0){
-	resultingOutput+="Your score "+Float.toString(i/n)+"\n";
-	
-	if ((i/n)>=minScore){resultingOutput+="You pass";
-	} else{
-		 resultingOutput+="You fail";
-	 }
-	 }
+        if (testMode.compareTo("true") == 0) {
+            resultingOutput += "Your score " + Float.toString(i / n) + "\n";
+
+            if ((i / n) >= minScore) {
+                resultingOutput += "You pass";
+            }
+            else {
+                resultingOutput += "You fail";
+            }
+        }
         // Showing poll results.
         consoleClearScreen();
-     //   saveElement.popAnswer();
-	 System.out.println(resultingOutput);
+        // saveElement.popAnswer();
+        System.out.println(resultingOutput);
         consoleInputReader.readLine();
     }
 
