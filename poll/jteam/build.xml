@@ -10,7 +10,7 @@
 	<property name="javadoc.dir" value="${basedir}/docs" />
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="run.dir" value="${basedir}/run" />
-	<property name="scripts.dir" value="${basedir}/scripts" />
+	
 	<property name="xml.dir" value="${basedir}/xml" />
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
@@ -50,10 +50,7 @@
 	<target name="run-dir" depends="jar">
 		<copy todir="${run.dir}" file="${jar.file}" />
 		<copy todir="${run.dir}" file="configuration.xml" />
-		<copy todir="${run.dir}">
-			<fileset dir="${scripts.dir}">
-			</fileset>
-		</copy>
+		
 		<copy todir="${run.dir}/lib">
 			<fileset dir="${lib.dir}">
 			</fileset>
