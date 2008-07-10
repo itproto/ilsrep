@@ -21,6 +21,8 @@ namespace Ilsrep.PollApplication.PollServer
         private const string POLL_SESSION_ELEMENT = "pollsession";
         public const string POLL_SESSIONS_LIST_FILE = "PollSessionsList.xml";
 
+        private static bool canDisconnect = false;
+
         /// <summary>
         /// The function search poll session by id
         /// </summary>
@@ -104,6 +106,7 @@ namespace Ilsrep.PollApplication.PollServer
                     break;
                 default:
                     log.Error("Invalid option sent by client");
+                    canDisconnect = true;
                     break;
             }
         }
@@ -238,14 +241,14 @@ namespace Ilsrep.PollApplication.PollServer
                     else
                     {
                         log.Info(clientAddress + ": Client asked for non-existant ID: " + pollSessionID);
-                        sendString = "-1";
+                        sendString = "0";
                         client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                     }
                 }
                 catch (Exception)
                 {
                     log.Info(clientAddress + ": Client asked for non-existant ID: " + receivedString);
-                    sendString = "-1";
+                    sendString = "0";
                     client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
                 }
             }
@@ -272,8 +275,14 @@ namespace Ilsrep.PollApplication.PollServer
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
             log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
 
-            // Run dialog with client
-            RunClientSession(currentStream);
+            while (!canDisconnect)
+            {
+                if (!currentClient.Connected)
+                    break;
+
+                // Run dialog with client
+                RunClientSession(currentStream);
+            }
 
             // Close clients connection
             currentStream.Close();

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Helpers;
-
+using Ilsrep.Common;
 
 /*
  Developped by SharpTeam: vlad & ksi
@@ -18,7 +19,6 @@ namespace Ilsrep.PollApplication.PollClient
     public class PollClient
     {
         private const string PATH_TO_POLLS = "Polls.xml";
-        private const string POLL_XML_SAVE = "polls_save.xml";
         private const string POLL_SESSION_ELEMENT = "pollsession";
         private const string POLL_ELEMENT = "poll";
         private const string CONSOLE_YES = "y";
@@ -26,7 +26,7 @@ namespace Ilsrep.PollApplication.PollClient
         private const string HOST = "localhost";
         private const int PORT = 3320;
         static string userName = "";
-        static TcpCommunicator server;
+        static TcpServer server;
         static PollSession pollSession = new PollSession();
         static List<Choice> userChoices = new List<Choice>();
 
@@ -113,7 +113,7 @@ namespace Ilsrep.PollApplication.PollClient
             Console.WriteLine("XML parsed");
         }
 
-        public static void DoUserDialog()
+        public static void RunUserDialog()
         {
             // Read user name
             Console.WriteLine("Welcome to polls client program.");
@@ -263,20 +263,23 @@ namespace Ilsrep.PollApplication.PollClient
             }
         }
 
+        /// <summary>
+        /// Connect to Poll Server to begin transaction. If connection fails quit application as it is essential.
+        /// </summary>
         public static void ConnectToServer()
         {
             try
             {
                 // connecting to server
                 Console.WriteLine("Please wait. Connecting to poll server...");
-                server = new TcpCommunicator();
+                server = new TcpServer();
+                //server = new TcpCommunicator();
                 server.Connect(HOST, PORT);
                 
                 // if all ok inform
                 if (server.isConnected)
                 {
                     Console.WriteLine("Connection established.");
-                    server.Send("GetPollSession");
                 }
                 else
                     throw new Exception("Not connected");
@@ -291,100 +294,88 @@ namespace Ilsrep.PollApplication.PollClient
             }
         }
 
-        public static string GetPollById()
+        /// <summary>
+        /// Server sends list of available poll sessions. User picks one and client gets that poll session from server.
+        /// </summary>
+        public static void GetPollSession()
         {
+            server.Send("GetPollSessionsList");
+            
+            XmlDocument xmlDoc = new XmlDocument();
+            try
+            {
+                xmlDoc.LoadXml(server.Receive());
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Corrupted list of sessions sent.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
+
+            XmlNodeList xmlAvailablePollSessions = xmlDoc.GetElementsByTagName("pollsession");
+            NameValueCollection availablePollSessions = new NameValueCollection();
+
+            foreach (XmlNode xmlAvailablePollSession in xmlAvailablePollSessions)
+                availablePollSessions.Add(xmlAvailablePollSession.Attributes.GetNamedItem("id").Value, xmlAvailablePollSession.Attributes.GetNamedItem("name").Value);
+
             while (true)
             {
-                // Let used input poll session id
-                Console.WriteLine("Input poll session id:");
-                string pollSessionID = Console.ReadLine();
+                int index = 1;
+                foreach (String availablePollSession in availablePollSessions)
+                    Console.WriteLine("[" + index + "] " + availablePollSessions[availablePollSession] );
 
-                // if empty string set ID to -1
-                if (pollSessionID == String.Empty)
-                    pollSessionID = "-1";
-                
-                // if correct id then continue
-                if (server.sendID(pollSessionID))
-                    break;
+
+                // Let used input poll session id
+                Console.WriteLine("Please select poll session:");
+                string userAnswer = Console.ReadLine();
+
+                try
+                {
+                    index = Convert.ToInt32(userAnswer);
+
+                    if (index > 0 && index <= availablePollSessions.Count)
+                    {
+                        string pollSessionID = availablePollSessions.GetKey(index-1);
+                        server.Send("GetPollSession");
+                        server.Send(pollSessionID);
+
+                        break;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
 
                 // show that wrong id was inputed
-                Console.WriteLine("Invalid ID");
+                Console.WriteLine("Invalid poll session");
             }
 
             // receive poll
-            String xmlData = server.ReceiveXMLData();
-            Console.WriteLine("Data received");
-            
-            return xmlData;
-        }
-
-        private static String UTF8ByteArrayToString ( Byte[ ] characters )
-        {
-            UTF8Encoding encoding = new UTF8Encoding ( );
-            String constructedString = encoding.GetString ( characters );
-
-            return ( constructedString );
-        }
-
-        private static Byte[] StringToUTF8ByteArray(String pXmlString)
-        {
-            UTF8Encoding encoding = new UTF8Encoding();
-            Byte[] byteArray = encoding.GetBytes(pXmlString);
-
-            return byteArray;
-        }
-        /*
-        public static void DeSerializeXML(string xmlString)
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer( typeof(PollSession) );
-            MemoryStream memoryStream = new MemoryStream(StringToUTF8ByteArray(xmlString));
-            XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
-
-            pollSession = (PollSession)xmlSerializer.Deserialize(memoryStream);
-
-            foreach( Poll poll in pollSession.polls )
+            string isPollSessionOK = server.Receive(1);
+            if (isPollSessionOK == "1")
             {
-                foreach (Choice choice in poll.choices)
-                {
-                    choice.parent = poll;
-                }
+                String xmlData = server.Receive();
+                Console.WriteLine("Data received");
+                pollSession = PollSerializator.DeSerialize(xmlData);
+                Console.WriteLine("Data parsed");
+                server.Disconnect();
+                Console.WriteLine("Disconnected from server");
             }
-
-            Console.WriteLine("XML Parsed");
-        }
-        */
-        public static String SerializeObject()
-        {
-            try
+            else
             {
-                String XmlizedString = null;
-                MemoryStream memoryStream = new MemoryStream();
-                XmlSerializer xs = new XmlSerializer(typeof(PollSession));
-                XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
-
-                xs.Serialize(xmlTextWriter, pollSession);
-                memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
-                XmlizedString = UTF8ByteArrayToString(memoryStream.ToArray());
-
-                return XmlizedString;
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e);
-                return null;
+                Console.WriteLine("Communication error");
+                Environment.Exit(-1);
             }
         }
 
         public static void Main()
         {
             ConnectToServer();
-
-            String xmlData = GetPollById();
-            
-            pollSession = PollSerializator.DeSerialize(xmlData);
-            //DeSerializeXML(xmlData);
-            DoUserDialog();
-
+            GetPollSession();
+            RunUserDialog();
             RunUserPoll();
 
             Console.WriteLine("Press any key to continue...");
