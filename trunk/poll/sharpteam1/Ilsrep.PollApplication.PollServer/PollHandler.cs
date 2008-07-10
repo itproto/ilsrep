@@ -21,8 +21,6 @@ namespace Ilsrep.PollApplication.PollServer
         private const string POLL_SESSION_ELEMENT = "pollsession";
         public const string POLL_SESSIONS_LIST_FILE = "PollSessionsList.xml";
 
-        private static bool canDisconnect = false;
-
         /// <summary>
         /// The function search poll session by id
         /// </summary>
@@ -87,27 +85,34 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="client">NetworkStream client</param>
         public void RunClientSession(NetworkStream client)
         {
-            // Receive option from client
-            string receivedString = ReceiveFromClient(client);
-            if (receivedString == String.Empty)
-                return;
-            
-            // Select option
-            switch (receivedString)
+            bool canDisconnect = false;
+            while (true)
             {
-                case "GetPollSessionsList":
-                    SendPollSessionsList(client);
-                    break;
-                case "GetPollSession":
-                    SendPollSession(client);
-                    break;
-                case "CreatePollSession":
-                    CreatePollSession(client);
-                    break;
-                default:
-                    log.Error("Invalid option sent by client");
-                    canDisconnect = true;
-                    break;
+                // Receive option from client
+                string receivedString = ReceiveFromClient(client);
+                if (receivedString == String.Empty)
+                    return;
+
+                // Select option
+                switch (receivedString)
+                {
+                    case "GetPollSessionsList":
+                        SendPollSessionsList(client);
+                        break;
+                    case "GetPollSession":
+                        SendPollSession(client);
+                        break;
+                    case "CreatePollSession":
+                        CreatePollSession(client);
+                        break;
+                    case "End":
+                        canDisconnect = true;
+                        break;
+                    default:
+                        log.Error("Invalid option sent by client");
+                        canDisconnect = true;
+                        break;
+                }
             }
         }
 
@@ -275,14 +280,8 @@ namespace Ilsrep.PollApplication.PollServer
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
             log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
 
-            while (!canDisconnect)
-            {
-                if (!currentClient.Connected)
-                    break;
-
-                // Run dialog with client
-                RunClientSession(currentStream);
-            }
+            // Run dialog with client
+            RunClientSession(currentStream);
 
             // Close clients connection
             currentStream.Close();

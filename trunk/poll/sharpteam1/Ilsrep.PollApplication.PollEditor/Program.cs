@@ -161,6 +161,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 client.Connect(HOST, PORT);
                 client.Send("CreatePollSession");
                 client.Send(PollSerializator.Serialize(pollSession));
+                client.Send("End");
                 client.Disconnect();
             }
         }
