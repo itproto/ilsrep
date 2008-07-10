@@ -15,12 +15,31 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlRootElement(name = "pollsession")
 public class Pollsession {
 
-    /**
+    /*
      * TODO: DRC: Separate: each variable - its line; all are initialised with
      * <code>null</code>(fix logic where it interfere); each variable - must
-     * have comment.
+     * have comment. Separated, but logic may corrupt.
      */
-    private String minScore = "-1", name, id, testMode = "false";
+
+    /**
+     * Pollsession id.
+     */
+    protected String id = null;
+
+    /**
+     * Pollsession name.
+     */
+    protected String name = null;
+
+    /**
+     * Minimal score to pass in test mode.
+     */
+    protected String minScore = null;
+
+    /**
+     * "True" indicates of test mode.
+     */
+    protected String testMode = null;
 
     /**
      * "poll" elements.

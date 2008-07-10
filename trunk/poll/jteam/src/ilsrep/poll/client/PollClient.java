@@ -86,7 +86,7 @@ public class PollClient {
                             }
                             catch (UnknownHostException e) {
                                 communicator = null;
-                                                            }
+                            }
                             catch (IOException e) {
                                 communicator = null;
                             }
@@ -95,7 +95,7 @@ public class PollClient {
 
                     if (communicator == null)
                         communicator = new TcpCommunicator();
-communicator.listXml();
+                    communicator.listXml();
                     Reader pollFile = communicator.getXML();
                     communicator.finalize();
                     polls = (Pollsession) um.unmarshal(pollFile);
@@ -104,7 +104,8 @@ communicator.listXml();
                 catch (Exception m) {
                     // TODO: This cause client hang when it can't connect to
                     // server.
-                    System.out.println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
+                    System.out
+                            .println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
                 }
             }
         }
@@ -123,8 +124,16 @@ communicator.listXml();
          */
         // New way of saving answers
         String testMode = "false";
-        float minScore = Float.parseFloat(polls.getMinScore());
-        testMode = polls.getTestMode();
+        if (polls.getTestMode() != null)
+            testMode = polls.getTestMode();
+        float minScore = -1;
+        try {
+            if (polls.getMinScore() != null)
+                minScore = Float.parseFloat(polls.getMinScore());
+        }
+        catch (NumberFormatException e) {
+            // If it is wrong in xml - it stays "-1".
+        }
         String resultingOutput = "Results \n"; // here we will store everything
         // we will need to output
         System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]");

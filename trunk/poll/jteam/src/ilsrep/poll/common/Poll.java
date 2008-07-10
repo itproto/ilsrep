@@ -47,9 +47,9 @@ public class Poll {
     protected String customEnabled = null;
 
     /**
-     * TODO: DRC: Fix comment.
+     * Id of correct choice.
      */
-    protected String correctChoice = "-1";
+    protected String correctChoice = null;
 
     /**
      * TODO: DRC: Fix comment.
@@ -197,7 +197,7 @@ public class Poll {
      */
     @XmlAttribute(name = "correctChoice")
     public String getCorrectChoice() {
-        return correctChoice;
+        return correctChoice != null ? correctChoice : "-1";
     }
 
     /**

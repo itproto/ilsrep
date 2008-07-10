@@ -92,7 +92,6 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 socket.close();
             }
             else {
-                logger.warn("RECEIVING XML");
                 String xmlItself = buffer;
                 boolean eternal = true;
                 while (eternal) {
@@ -103,22 +102,19 @@ public class PollClientHandler implements ClientHandler, Runnable {
                         break;
                 }
 
+                // Removing first two chars, `cos of drc bug.
+                xmlItself = xmlItself.substring(2);
+
                 serverInstance.addPollXML(xmlItself);
-
-                logger.warn(xmlItself);
-                logger.warn("XML RECEIVED");
-
             }
         }
         catch (IOException e) {
-            logger.warn("I/O exception. Closing connection.");
         }
         finally {
             try {
                 socket.close();
             }
             catch (IOException e) {
-                logger.warn("I/O exception. Closing connection.");
             }
             serverInstance.removeConnection(socket);
         }

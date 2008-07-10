@@ -192,8 +192,14 @@ public class TcpCommunicator {
         catch (Exception e) {
             System.out.println("ExCePtIoN");
             e.printStackTrace();
-            try {BufferedReader consoleInputReader = new BufferedReader( new InputStreamReader(System.in));
-                    consoleInputReader.readLine();} catch(Exception exception){};
+            try {
+                BufferedReader consoleInputReader = new BufferedReader(
+                        new InputStreamReader(System.in));
+                consoleInputReader.readLine();
+            }
+            catch (Exception exception) {
+            }
+            ;
             ;
         }
         ;
@@ -230,42 +236,57 @@ public class TcpCommunicator {
         catch (Exception e) {
             System.out.println("ExCePtIoN");
             e.printStackTrace();
-            try {BufferedReader consoleInputReader = new BufferedReader( new InputStreamReader(System.in));
-                    consoleInputReader.readLine();} catch(Exception exception){};
+            try {
+                BufferedReader consoleInputReader = new BufferedReader(
+                        new InputStreamReader(System.in));
+                consoleInputReader.readLine();
+            }
+            catch (Exception exception) {
+            }
+            ;
         }
 
     }
 
-     /**
+    /**
      * Retrieves and outputs XML IDs and names
      * 
      * 
-     *            
+     * 
      */
-    public void listXml () {
-	     System.out.println("Getting list of polls...");
-	     boolean allOk=false;
-	     while(!allOk){
-     try { 
-	     allOk=true;
-	     DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
-      BufferedReader inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-      outToServer.writeUTF("LIST\n");
-      inputReader.readLine();
-      String buffer="";
-      String output="";
-      while(!((buffer=inputReader.readLine()).equals("END"))) output+=buffer;
-      System.out.println(output);} catch (Exception e) {
-	      
-	       System.out.println("Wrong response from server...Press ENTER to retry");
-	       try {BufferedReader consoleInputReader = new BufferedReader( new InputStreamReader(System.in));
-                    consoleInputReader.readLine();} catch(Exception exception){};
-          allOk=false;
-	      }
-	      
-      }
-	  
-	    
+    public void listXml() {
+        System.out.println("Getting list of polls...");
+        boolean allOk = false;
+        while (!allOk) {
+            try {
+                allOk = true;
+                DataOutputStream outToServer = new DataOutputStream(
+                        clientSocket.getOutputStream());
+                BufferedReader inputReader = new BufferedReader(
+                        new InputStreamReader(clientSocket.getInputStream()));
+                outToServer.writeUTF("LIST\n");
+                inputReader.readLine();
+                String buffer = "";
+                String output = "";
+                while (!((buffer = inputReader.readLine()).equals("END")))
+                    output += buffer;
+                System.out.println(output);
+            }
+            catch (Exception e) {
+                System.out
+                        .println("Wrong response from server...Press ENTER to retry");
+                try {
+                    BufferedReader consoleInputReader = new BufferedReader(
+                            new InputStreamReader(System.in));
+                    consoleInputReader.readLine();
+                }
+                catch (Exception exception) {
+                }
+                allOk = false;
+            }
+
+        }
+
     }
-    
+
 }
