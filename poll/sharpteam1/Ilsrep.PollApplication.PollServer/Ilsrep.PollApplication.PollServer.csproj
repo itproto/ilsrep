@@ -54,10 +54,10 @@
     <Content Include="LogConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="polls\PollSession_2.xml">
+    <Content Include="polls\PollSessionsList.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="polls\Poll_id.xml">
+    <Content Include="polls\PollSession_2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
