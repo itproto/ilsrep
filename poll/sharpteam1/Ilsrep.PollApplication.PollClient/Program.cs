@@ -354,6 +354,7 @@ namespace Ilsrep.PollApplication.PollClient
                 Console.WriteLine("Data received");
                 pollSession = PollSerializator.DeSerialize(xmlData);
                 Console.WriteLine("Data parsed");
+                server.Send("End");
                 server.Disconnect();
                 Console.WriteLine("Disconnected from server");
             }
@@ -370,7 +371,7 @@ namespace Ilsrep.PollApplication.PollClient
             GetPollSession();
             RunUserDialog();
             RunUserPoll();
-
+            
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
         }
