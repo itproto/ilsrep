@@ -45,13 +45,23 @@ namespace Ilsrep.Common
             m_client.Send(Encoding.ASCII.GetBytes(data));
         }
 
-        public string Receive()
+        public String Receive()
         {
-            Byte[] receivedData = new Byte[1024];
+            Byte[] receivedData = new Byte[m_client.Available];
+            int countReceived = 0;
 
-            m_client.Receive(receivedData);
+            countReceived = m_client.Receive(receivedData);
 
-            return Encoding.ASCII.GetString(receivedData);
+            return Encoding.ASCII.GetString(receivedData, 0, countReceived);
+        }
+
+        public String Receive(int countReceive)
+        {
+            Byte[] receivedData = new Byte[countReceive];
+
+            int countReceived = m_client.Receive(receivedData);
+
+            return Encoding.ASCII.GetString(receivedData, 0, countReceived);
         }
     }
 }
