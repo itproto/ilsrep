@@ -13,7 +13,7 @@ namespace Ilsrep.PollApplication.Model
         [XmlAttribute("name")] public string name;
         [XmlAttribute("correctChoice")] public int correctChoiceId;
         [XmlElement("description")] public string description;
-        [XmlIgnore] public bool customChoice; /* not needed? */
+        [XmlAttribute("customChoiceEnabled")]public bool customChoice;
         
         [XmlArray("choices")] [XmlArrayItem("choice")] public List<Choice> choices = new List<Choice>();
     }
