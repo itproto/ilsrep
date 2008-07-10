@@ -254,7 +254,7 @@ public class TcpCommunicator {
       inputReader.readLine();
       String buffer="";
       String output="";
-      while((buffer=inputReader.readLine())!="END") output+=buffer;
+      while(!((buffer=inputReader.readLine()).equals("END"))) output+=buffer;
       System.out.println(output);} catch (Exception e) {
 	      
 	       System.out.println("Wrong response from server...Press ENTER to retry");
