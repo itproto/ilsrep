@@ -86,7 +86,7 @@ public class PollClient {
                             }
                             catch (UnknownHostException e) {
                                 communicator = null;
-                            }
+                                                            }
                             catch (IOException e) {
                                 communicator = null;
                             }
@@ -104,8 +104,7 @@ communicator.listXml();
                 catch (Exception m) {
                     // TODO: This cause client hang when it can't connect to
                     // server.
-                    System.out
-                            .println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
+                    System.out.println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
                 }
             }
         }

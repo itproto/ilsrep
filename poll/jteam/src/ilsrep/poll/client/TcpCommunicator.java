@@ -192,6 +192,8 @@ public class TcpCommunicator {
         catch (Exception e) {
             System.out.println("ExCePtIoN");
             e.printStackTrace();
+            try {BufferedReader consoleInputReader = new BufferedReader( new InputStreamReader(System.in));
+                    consoleInputReader.readLine();} catch(Exception exception){};
             ;
         }
         ;
@@ -228,6 +230,8 @@ public class TcpCommunicator {
         catch (Exception e) {
             System.out.println("ExCePtIoN");
             e.printStackTrace();
+            try {BufferedReader consoleInputReader = new BufferedReader( new InputStreamReader(System.in));
+                    consoleInputReader.readLine();} catch(Exception exception){};
         }
 
     }
