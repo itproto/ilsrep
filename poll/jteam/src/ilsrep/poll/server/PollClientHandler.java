@@ -67,8 +67,8 @@ public class PollClientHandler implements ClientHandler, Runnable {
                     listBuffer.append(sess.getId() + ") " + sess.getName()
                             + "\n");
                 }
-                outToServer.writeUTF(listBuffer.toString());
-                outToServer.writeUTF("END\n");
+                outToServer.writeBytes(listBuffer.toString());
+                outToServer.writeBytes("END\n");
 
                 buffer = inputReader.readLine();
                 if (buffer.indexOf("<getPollSession><pollSessionId>") != -1) {
@@ -115,8 +115,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 }
 
                 // Removing first two chars, `cos of drc bug.
-                xmlItself = xmlItself.substring(2);
-
+               
                 serverInstance.addPollXML(xmlItself);
             }
         }
