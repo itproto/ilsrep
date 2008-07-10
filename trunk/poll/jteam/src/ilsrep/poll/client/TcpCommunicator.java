@@ -227,7 +227,7 @@ public class TcpCommunicator {
                     .getOutputStream());
             // inFromServer = clientSocket.getInputStream();
 
-            outToServer.writeUTF(genXml);
+            outToServer.writeBytes(genXml);
             System.out.println("XML sent to server.");
         }
         catch (Exception e) {
@@ -265,10 +265,8 @@ public class TcpCommunicator {
                 // inputReader.readLine();
                 String buffer = "";
                 String output = "";
-                while (!((buffer = inputReader.readLine()).substring(2)
-                        .equals("END")))
-                    output += buffer + "\n";
-                System.out.println("\n" + output.substring(2));
+                while (!((buffer = inputReader.readLine()).equals("END"))) output += buffer + "\n";
+                System.out.println("\n" + output);
             }
             catch (Exception e) {
                 System.out
