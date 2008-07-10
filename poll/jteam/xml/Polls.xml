@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<pollsession id="2" name="Test Poll" testMode="true" minScore="0.5">
+<pollsession id="1" name="Test Poll" testMode="true" minScore="0.5">
 
   <poll id="1" name ="Repository choice" correctChoice="1">
     <description>Please choice repository:</description>
