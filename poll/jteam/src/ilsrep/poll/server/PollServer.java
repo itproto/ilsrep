@@ -533,6 +533,7 @@ public class PollServer {
             PipedInputStream is = new PipedInputStream(os);
 
             os.write(xmlItSelf.getBytes());
+            os.close();
 
             Unmarshaller um = pollsessionContext.createUnmarshaller();
             Pollsession newSession = (Pollsession) um.unmarshal(is);
