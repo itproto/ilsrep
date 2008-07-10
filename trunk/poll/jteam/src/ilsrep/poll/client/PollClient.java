@@ -44,9 +44,13 @@ public class PollClient {
         JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller um = cont.createUnmarshaller();
         Pollsession polls = null;
+        boolean repeater=true;
+        String yesNoChoice="y";
+        while(repeater){
         System.out.print("Use server?(1) or local file?(2): ");
-
-        String yesNoChoice = consoleInputReader.readLine();
+         yesNoChoice = consoleInputReader.readLine();
+    if(((yesNoChoice.equals("1"))||(yesNoChoice.equals("2")))) repeater=false;
+        }
         if (!(yesNoChoice.compareTo("1") == 0)) {
             System.out.print("Please enter filename to read poll xml "
                     + "from\n[press enter for default \"xml/Polls.xml\"]: ");
@@ -136,9 +140,15 @@ public class PollClient {
         }
         String resultingOutput = "Results \n"; // here we will store everything
         // we will need to output
+        repeater=true;
+        while (repeater){
         System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]: ");
-        yesNoChoice = consoleInputReader.readLine();
+      
+          yesNoChoice = consoleInputReader.readLine();
+           if(((yesNoChoice.equals("y"))||(yesNoChoice.equals("n")))) repeater=false;
+      }
         if (!(yesNoChoice.compareTo("y") == 0))
+        
             return;
 
         String choice = null;
