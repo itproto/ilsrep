@@ -173,8 +173,7 @@ public class TcpCommunicator {
                         break;
 
                     xmlItself = xmlItself + "\n" + buffer;
-                    System.out.println(buffer);
-                    if (buffer.indexOf("/pollses") != -1)
+                                        if (buffer.indexOf("/pollses") != -1)
                         break;
                 }
             }
@@ -182,7 +181,7 @@ public class TcpCommunicator {
                 System.out.println("XML Received.. preparing poll");
             }
 
-            System.out.println(xmlItself);
+           
             // Making Reader out of string (needed for marshaller)
             xmlBuffered = new StringReader(xmlItself);
         }
