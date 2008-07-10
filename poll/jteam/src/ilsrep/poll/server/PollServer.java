@@ -556,6 +556,8 @@ public class PollServer {
 
             pollsessions.add(newSession);
             pollFiles.put(newSession.getId(), newXmlFile);
+            logger.info("Pollsession added. Name: " + newSession.getName()
+                    + " Id: " + newSession.getId());
         }
         catch (JAXBException e) {
             return;

@@ -136,7 +136,7 @@ public class PollClient {
         }
         String resultingOutput = "Results \n"; // here we will store everything
         // we will need to output
-        System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]");
+        System.out.print("\nOk, " + name + ", are you ready for poll? [y/n]: ");
         yesNoChoice = consoleInputReader.readLine();
         if (!(yesNoChoice.compareTo("y") == 0))
             return;

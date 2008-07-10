@@ -1,5 +1,7 @@
 package ilsrep.poll.server;
 
+import ilsrep.poll.common.Pollsession;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -52,41 +54,51 @@ public class PollClientHandler implements ClientHandler, Runnable {
         logger.info("Client connected from IP:port: "
                 + socket.getInetAddress().toString() + ":" + socket.getPort());
         try {
-
             BufferedReader inputReader = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             DataOutputStream outToServer = new DataOutputStream(socket
                     .getOutputStream());
             String buffer = "";
+
             buffer = inputReader.readLine();
-            if (buffer.indexOf("<getPollSession><pollSessionId>") != -1) {
-                int indexString = buffer
-                        .indexOf("<getPollSession><pollSessionId>");
-                indexString = buffer.indexOf(">", indexString + 20);
-                int indexStringEnd = buffer.indexOf("<", indexString);
-                String pollId = buffer.substring(indexString + 1,
-                        indexStringEnd);
-                // Pollsession
-                // pollSession=this.serverInstance.getPollsessionById(pollId);
+            if (buffer.indexOf("LIST") != -1) {
+                StringBuffer listBuffer = new StringBuffer();
+                for (Pollsession sess : serverInstance.pollsessions) {
+                    listBuffer.append(sess.getId() + ") " + sess.getName()
+                            + "\n");
+                }
+                outToServer.writeUTF(listBuffer.toString());
+                outToServer.writeUTF("END\n");
 
-                logger.info(pollId);
-                // outToServer.writeUTF(pollId);
-                if (this.serverInstance.pollFiles.containsKey(pollId)) {
-                    File file = this.serverInstance.pollFiles.get(pollId);
+                buffer = inputReader.readLine();
+                if (buffer.indexOf("<getPollSession><pollSessionId>") != -1) {
+                    int indexString = buffer
+                            .indexOf("<getPollSession><pollSessionId>");
+                    indexString = buffer.indexOf(">", indexString + 20);
+                    int indexStringEnd = buffer.indexOf("<", indexString);
+                    String pollId = buffer.substring(indexString + 1,
+                            indexStringEnd);
+                    // Pollsession
+                    // pollSession=this.serverInstance.getPollsessionById(pollId);
 
-                    FileInputStream fis = new FileInputStream(file);
-                    int x = fis.available();
-                    byte b[] = new byte[x];
-                    fis.read(b);
-                    String content = new String(b);
-                    outToServer.writeUTF(content);
+                    // logger.info(pollId);
+                    // outToServer.writeUTF(pollId);
+                    if (this.serverInstance.pollFiles.containsKey(pollId)) {
+                        File file = this.serverInstance.pollFiles.get(pollId);
 
-                    outToServer.writeUTF("\n");
+                        FileInputStream fis = new FileInputStream(file);
+                        int x = fis.available();
+                        byte b[] = new byte[x];
+                        fis.read(b);
+                        String content = new String(b);
+                        outToServer.writeUTF(content);
+
+                        outToServer.writeUTF("\n");
+                    }
                 }
                 else {
                     outToServer.writeUTF("-1\n");
                     logger.warn("invalid id");
-
                 }
 
                 socket.close();

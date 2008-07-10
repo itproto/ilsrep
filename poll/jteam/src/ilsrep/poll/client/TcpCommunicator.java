@@ -150,7 +150,7 @@ public class TcpCommunicator {
             inFromServer = clientSocket.getInputStream();
 
             xmlItself = "";
-            System.out.println("Enter ID number of the desired poll:");
+            System.out.print("Enter ID number of the desired poll: ");
             String id = consoleInputReader.readLine();
             // sending request
             outToServer.writeUTF("<getPollSession><pollSessionId>" + id
@@ -169,7 +169,7 @@ public class TcpCommunicator {
             try {
                 while (eternal) {
                     buffer = inputReader.readLine();
-                    if (buffer.indexOf("-1") != -1)
+                    if (buffer.compareTo("-1") == 0)
                         break;
 
                     xmlItself = xmlItself + "\n" + buffer;
@@ -179,11 +179,8 @@ public class TcpCommunicator {
                 }
             }
             catch (Exception m) {
-
                 System.out.println("XML Received.. preparing poll");
             }
-
-            ;
 
             System.out.println(xmlItself);
             // Making Reader out of string (needed for marshaller)
@@ -265,12 +262,13 @@ public class TcpCommunicator {
                 BufferedReader inputReader = new BufferedReader(
                         new InputStreamReader(clientSocket.getInputStream()));
                 outToServer.writeUTF("LIST\n");
-                inputReader.readLine();
+                // inputReader.readLine();
                 String buffer = "";
                 String output = "";
-                while (!((buffer = inputReader.readLine()).equals("END")))
-                    output += buffer;
-                System.out.println(output);
+                while (!((buffer = inputReader.readLine()).substring(2)
+                        .equals("END")))
+                    output += buffer + "\n";
+                System.out.println("\n" + output.substring(2));
             }
             catch (Exception e) {
                 System.out
