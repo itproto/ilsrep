@@ -95,7 +95,7 @@ public class PollClient {
 
                     if (communicator == null)
                         communicator = new TcpCommunicator();
-
+communicator.listXml();
                     Reader pollFile = communicator.getXML();
                     communicator.finalize();
                     polls = (Pollsession) um.unmarshal(pollFile);

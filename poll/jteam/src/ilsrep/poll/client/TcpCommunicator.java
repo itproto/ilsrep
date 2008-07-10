@@ -103,7 +103,7 @@ public class TcpCommunicator {
         System.out.println("Connecting to " + serverIp + " on "
                 + Integer.toString(port));
         clientSocket = new Socket(serverIp, port);
-        System.out.println("Take a deep breath");
+        System.out.println("Connected!");
     }
 
     /**
@@ -150,12 +150,12 @@ public class TcpCommunicator {
             inFromServer = clientSocket.getInputStream();
 
             xmlItself = "";
-            System.out.println("Give me the id, baby:");
+            System.out.println("Enter ID number of the desired poll:");
             String id = consoleInputReader.readLine();
             // sending request
             outToServer.writeUTF("<getPollSession><pollSessionId>" + id
                     + "</pollSessionId></getPollSession> \n");
-            System.out.println("Getting it, baby");
+            System.out.println("Receiving XML...");
 
             String buffer;
 
@@ -180,7 +180,7 @@ public class TcpCommunicator {
             }
             catch (Exception m) {
 
-                System.out.println("Got it");
+                System.out.println("XML Received.. preparing poll");
             }
 
             ;
@@ -223,7 +223,7 @@ public class TcpCommunicator {
             // inFromServer = clientSocket.getInputStream();
 
             outToServer.writeUTF(genXml);
-            System.out.println("Sent it, baby");
+            System.out.println("XML sent to server.");
         }
         catch (Exception e) {
             System.out.println("ExCePtIoN");
@@ -232,4 +232,36 @@ public class TcpCommunicator {
 
     }
 
+     /**
+     * Retrieves and outputs XML IDs and names
+     * 
+     * 
+     *            
+     */
+    public void listXml () {
+	     System.out.println("Getting list of polls...");
+	     boolean allOk=false;
+	     while(!allOk){
+     try { 
+	     allOk=true;
+	     DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
+      BufferedReader inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      outToServer.writeUTF("LIST\n");
+      inputReader.readLine();
+      String buffer="";
+      String output="";
+      while((buffer=inputReader.readLine())!="END") output+=buffer;
+      System.out.println(output);} catch (Exception e) {
+	      
+	       System.out.println("Wrong response from server...Press ENTER to retry");
+	       try {BufferedReader consoleInputReader = new BufferedReader( new InputStreamReader(System.in));
+                    consoleInputReader.readLine();} catch(Exception exception){};
+          allOk=false;
+	      }
+	      
+      }
+	  
+	    
+    }
+    
 }
