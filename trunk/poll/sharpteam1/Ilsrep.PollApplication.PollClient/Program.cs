@@ -18,7 +18,6 @@ namespace Ilsrep.PollApplication.PollClient
 {
     public class PollClient
     {
-        private const string PATH_TO_POLLS = "Polls.xml";
         private const string POLL_SESSION_ELEMENT = "pollsession";
         private const string POLL_ELEMENT = "poll";
         private const string CONSOLE_YES = "y";
@@ -32,13 +31,6 @@ namespace Ilsrep.PollApplication.PollClient
 
         public static void ParseXml(string xmlData)
         {
-            if (xmlData[0] == '!')
-            {
-                Console.WriteLine(xmlData);
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey(true);
-                Environment.Exit(-1);
-            }
 
             //---------------Init---------------
             List<Poll> pollDoc = new List<Poll>();
@@ -109,7 +101,6 @@ namespace Ilsrep.PollApplication.PollClient
                     pollSession.polls.Add(curPoll);
                 }
             }
-
             Console.WriteLine("XML parsed");
         }
 
@@ -300,7 +291,6 @@ namespace Ilsrep.PollApplication.PollClient
         public static void GetPollSession()
         {
             server.Send("GetPollSessionsList");
-            
             XmlDocument xmlDoc = new XmlDocument();
             try
             {
@@ -314,19 +304,22 @@ namespace Ilsrep.PollApplication.PollClient
                 Environment.Exit(-1);
             }
 
-            XmlNodeList xmlAvailablePollSessions = xmlDoc.GetElementsByTagName("pollsession");
+            XmlNodeList xmlAvailablePollSessions = xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
             NameValueCollection availablePollSessions = new NameValueCollection();
 
             foreach (XmlNode xmlAvailablePollSession in xmlAvailablePollSessions)
-                availablePollSessions.Add(xmlAvailablePollSession.Attributes.GetNamedItem("id").Value, xmlAvailablePollSession.Attributes.GetNamedItem("name").Value);
+                availablePollSessions.Add(xmlAvailablePollSession.Attributes["id"].Value, xmlAvailablePollSession.Attributes["name"].Value);
+
+            // Output list of poll sessions
+            int index = 1;
+            foreach (String availablePollSession in availablePollSessions)
+            {
+                Console.WriteLine(index + ". " + availablePollSessions[availablePollSession]);
+                index++;
+            }
 
             while (true)
             {
-                int index = 1;
-                foreach (String availablePollSession in availablePollSessions)
-                    Console.WriteLine("[" + index + "] " + availablePollSessions[availablePollSession] );
-
-
                 // Let used input poll session id
                 Console.WriteLine("Please select poll session:");
                 string userAnswer = Console.ReadLine();
@@ -344,13 +337,13 @@ namespace Ilsrep.PollApplication.PollClient
                         break;
                     }
                 }
-                catch (Exception e)
+                catch (Exception exception)
                 {
 
                 }
 
                 // show that wrong id was inputed
-                Console.WriteLine("Invalid poll session");
+                Console.WriteLine("Invalid poll session id! Please, input correct id");
             }
 
             // receive poll

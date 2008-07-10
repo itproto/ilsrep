@@ -7,6 +7,7 @@ namespace Ilsrep.Common
 {
     public class TcpServer
     {
+        public const int DATA_SIZE = 65536;
         Socket m_client;
 
         public bool isConnected
@@ -31,7 +32,6 @@ namespace Ilsrep.Common
             catch (SocketException)
             {
                 Console.WriteLine("Couldn't connect to {0}:{1} - timed out", address, port);
-                Environment.Exit(-1);
             }
         }
 
@@ -47,12 +47,16 @@ namespace Ilsrep.Common
 
         public String Receive()
         {
-            Byte[] receivedData = new Byte[m_client.Available];
+            /*Byte[] receivedData = new Byte[m_client.Available];
             int countReceived = 0;
 
             countReceived = m_client.Receive(receivedData);
 
-            return Encoding.ASCII.GetString(receivedData, 0, countReceived);
+            return Encoding.ASCII.GetString(receivedData, 0, countReceived);*/
+            byte[] data = new byte[DATA_SIZE];
+            int countReceived = 0;
+            countReceived = m_client.Receive(data);
+            return Encoding.ASCII.GetString(data,0,countReceived);
         }
 
         public String Receive(int countReceive)
