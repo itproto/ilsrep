@@ -1,11 +1,15 @@
 package ilsrep.poll.server;
 
 import ilsrep.poll.common.Pollsession;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
@@ -18,13 +22,14 @@ import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Main class for poll server.
@@ -130,6 +135,11 @@ public class PollServer {
     protected List<Socket> connections = null;
 
     /**
+     * Multithreaded JAXBContext for Pollsession class.
+     */
+    protected JAXBContext pollsessionContext = null;
+
+    /**
      * Creates <code>PollServer</code> and reads configuration from specified
      * file.
      * 
@@ -168,6 +178,16 @@ public class PollServer {
             logger
                     .fatal("Specified configuration file is corrupted. Quitting!");
             serverShutdown(2);
+            return;
+        }
+
+        try {
+            pollsessionContext = JAXBContext.newInstance(Pollsession.class);
+        }
+        catch (JAXBException e) {
+            logger
+                    .fatal("Pollsession class not found or have no apropriate annotations. Quitting!");
+            serverShutdown(5);
             return;
         }
 
@@ -238,22 +258,11 @@ public class PollServer {
                 }
             });
 
-            // Creating JAXB context for file processing.
-            JAXBContext cont = null;
-            try {
-                cont = JAXBContext.newInstance(Pollsession.class);
-            }
-            catch (JAXBException e) {
-                logger
-                        .fatal("Pollsession class not found or have no apropriate annotations. Quitting!");
-                serverShutdown(5);
-                return;
-            }
             for (File file : filesInDir) {
                 try {
                     logger.info("Loading file as poll xml: "
                             + file.getAbsolutePath());
-                    Unmarshaller um = cont.createUnmarshaller();
+                    Unmarshaller um = pollsessionContext.createUnmarshaller();
 
                     Pollsession session = (Pollsession) um
                             .unmarshal(new FileInputStream(file));
@@ -462,6 +471,96 @@ public class PollServer {
                 connections.remove(connIterator);
                 break;
             }
+        }
+    }
+
+    /**
+     * @see #pollsessionContext
+     */
+    public JAXBContext getPollsessionContext() {
+        return pollsessionContext;
+    }
+
+    /**
+     * Returns next free ID.
+     * 
+     * @return Free ID.
+     */
+    private String getNextID() {
+        int max = Integer.MIN_VALUE;
+
+        // Searching for first greater than 0 integer ID.
+        for (Pollsession sess : pollsessions) {
+            try {
+                max = Integer.parseInt(sess.getId());
+                if (max > 0)
+                    break;
+                else
+                    continue;
+            }
+            catch (NumberFormatException e) {
+                continue;
+            }
+        }
+
+        if (max == Integer.MIN_VALUE)
+            return "1";
+
+        for (Pollsession sess : pollsessions) {
+            try {
+                int currentID = Integer.parseInt(sess.getId());
+                if (currentID > max)
+                    max = currentID;
+            }
+            catch (NumberFormatException e) {
+                continue;
+            }
+        }
+
+        return "" + (max + 1);
+    }
+
+    /**
+     * Adds xml to server's list of pollsessions.
+     * 
+     * @param xmlItSelf
+     *            Poll xml in string.
+     */
+    public void addPollXML(String xmlItSelf) {
+        try {
+            // Used to make string be read as InputStream.
+            PipedOutputStream os = new PipedOutputStream();
+            PipedInputStream is = new PipedInputStream(os);
+
+            os.write(xmlItSelf.getBytes());
+
+            Unmarshaller um = pollsessionContext.createUnmarshaller();
+            Pollsession newSession = (Pollsession) um.unmarshal(is);
+
+            String idForNewSession = getNextID();
+            newSession.setId(idForNewSession);
+
+            File newXmlFile = new File(configuration.get("pollXmlPath")
+                    + "/Pollsession_" + idForNewSession + ".xml");
+            boolean fileCreated = newXmlFile.createNewFile();
+
+            if (!fileCreated)
+                return;
+
+            FileOutputStream newXmlFileStream = new FileOutputStream(newXmlFile);
+
+            Marshaller mr = pollsessionContext.createMarshaller();
+            mr.setProperty("jaxb.formatted.output", true);
+            mr.marshal(newSession, newXmlFileStream);
+
+            pollsessions.add(newSession);
+            pollFiles.put(newSession.getId(), newXmlFile);
+        }
+        catch (JAXBException e) {
+            return;
+        }
+        catch (IOException e) {
+            return;
         }
     }
 

@@ -49,10 +49,8 @@ public class PollClientHandler implements ClientHandler, Runnable {
      */
     @Override
     public void run() {
-        logger
-                .info("Client connected from IP:port: "
-                        + socket.getInetAddress().toString() + ":"
-                        + socket.getPort());
+        logger.info("Client connected from IP:port: "
+                + socket.getInetAddress().toString() + ":" + socket.getPort());
         try {
 
             BufferedReader inputReader = new BufferedReader(
@@ -104,6 +102,10 @@ public class PollClientHandler implements ClientHandler, Runnable {
                     if (buffer.indexOf("/pollses") != -1)
                         break;
                 }
+
+                xmlItself = xmlItself.substring(1);
+
+                serverInstance.addPollXML(xmlItself);
 
                 logger.warn(xmlItself);
                 logger.warn("XML RECEIVED");
