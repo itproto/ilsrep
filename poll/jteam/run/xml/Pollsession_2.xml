@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<pollsession testMode="true" name="Drac test" minScore="0.1" id="2">
+    <poll name="Drac rules?" id="1" correctChoice="2">
+        <choices>
+            <choice name="No" id="1"/>
+            <choice name="Sure! DRac rules!" id="2"/>
+        </choices>
+        <description>Is drac the best?</description>
+    </poll>
+</pollsession>
