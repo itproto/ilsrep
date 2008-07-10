@@ -103,8 +103,6 @@ public class PollClientHandler implements ClientHandler, Runnable {
                         break;
                 }
 
-                xmlItself = xmlItself.substring(1);
-
                 serverInstance.addPollXML(xmlItself);
 
                 logger.warn(xmlItself);
