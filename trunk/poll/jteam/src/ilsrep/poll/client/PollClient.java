@@ -298,6 +298,15 @@ public class PollClient {
                 }
                 catch (NumberFormatException e) {
                     try {
+                        String numberName = "";
+                        if (type == 2)
+                            numberName = "integer";
+                        else
+                            if (type == 3)
+                                numberName = "double";
+
+                        System.out.print("Wrong answer. Please write "
+                                + numberName + ": ");
                         answer = consoleReader.readLine();
                     }
                     catch (IOException e1) {
