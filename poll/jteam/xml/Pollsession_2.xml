@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<pollsession testMode="true" name="An other test." minScore="0.666" id="2">
+    <poll name="Political correct OS." id="1" correctChoice="1">
+        <choices>
+            <choice name="GNU/Linux" id="1"/>
+            <choice name="Windows" id="2"/>
+            <choice name="Dos" id="3"/>
+            <choice name="Mac OS {X}" id="4"/>
+        </choices>
+        <description>What OS is politically correct?</description>
+    </poll>
+    <poll name="Best programming language." id="2" correctChoice="6">
+        <choices>
+            <choice name="C" id="1"/>
+            <choice name="C++" id="2"/>
+            <choice name="C#" id="3"/>
+            <choice name="Lisp" id="4"/>
+            <choice name="Bash" id="5"/>
+            <choice name="Java" id="6"/>
+            <choice name="Perl" id="7"/>
+        </choices>
+        <description>What programming language is best?</description>
+    </poll>
+</pollsession>
