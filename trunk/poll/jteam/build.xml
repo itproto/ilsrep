@@ -34,12 +34,9 @@
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
-		<jar destfile="${jar.file}">
+		<jar destfile="${jar.file}" manifest="./MANIFEST.MF">
 			<fileset dir="${distr.dir}">
 			</fileset>
-			<manifest>
-				<attribute name="Main-Class" value="ilsrep.poll.client.PollClient" />
-			</manifest>
 		</jar>
 	</target>
 
