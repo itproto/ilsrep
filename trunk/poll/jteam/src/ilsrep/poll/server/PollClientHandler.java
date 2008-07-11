@@ -52,7 +52,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
     @Override
     public void run() {
         logger.info("Client connected from IP:port: "
-                + socket.getInetAddress().toString() + ":" + socket.getPort());
+                + generateHostPortAsText(socket));
         try {
             BufferedReader inputReader = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
@@ -69,15 +69,17 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 }
                 outToServer.writeBytes(listBuffer.toString());
                 outToServer.writeBytes("END\n");
+                logger.debug("List sent to client. ("
+                        + generateHostPortAsText(socket) + ")");
 
                 buffer = inputReader.readLine();
+                String pollId = null;
                 if (buffer.indexOf("<getPollSession><pollSessionId>") != -1) {
                     int indexString = buffer
                             .indexOf("<getPollSession><pollSessionId>");
                     indexString = buffer.indexOf(">", indexString + 20);
                     int indexStringEnd = buffer.indexOf("<", indexString);
-                    String pollId = buffer.substring(indexString + 1,
-                            indexStringEnd);
+                    pollId = buffer.substring(indexString + 1, indexStringEnd);
                     // Pollsession
                     // pollSession=this.serverInstance.getPollsessionById(pollId);
 
@@ -94,11 +96,19 @@ public class PollClientHandler implements ClientHandler, Runnable {
                         outToServer.writeUTF(content);
 
                         outToServer.writeUTF("\n");
+                        logger
+                                .debug("Poll(Id: " + pollId
+                                        + ") sent to client.");
+                    }
+                    else {
+                        outToServer.writeUTF("-1\n");
+                        logger.warn("Client(" + generateHostPortAsText(socket)
+                                + ") asked for invalid id: " + pollId);
                     }
                 }
                 else {
-                    outToServer.writeUTF("-1\n");
-                    logger.warn("invalid id");
+                    logger.warn("Client(" + generateHostPortAsText(socket)
+                            + ") input corrupted. Closing connection.");
                 }
 
                 socket.close();
@@ -114,12 +124,14 @@ public class PollClientHandler implements ClientHandler, Runnable {
                         break;
                 }
 
-                // Removing first two chars, `cos of drc bug.
-               
+                logger.debug("Recieved xml from client: "
+                        + generateHostPortAsText(socket) + ". Adding.");
                 serverInstance.addPollXML(xmlItself);
             }
         }
         catch (IOException e) {
+            logger.warn("Connection error with "
+                    + generateHostPortAsText(socket));
         }
         finally {
             try {
@@ -129,6 +141,17 @@ public class PollClientHandler implements ClientHandler, Runnable {
             }
             serverInstance.removeConnection(socket);
         }
+    }
+
+    /**
+     * Generates string for output from socket's IP and port.
+     * 
+     * @param socket
+     *            Socket to get info from.
+     * @return Generated string.
+     */
+    public static String generateHostPortAsText(Socket socket) {
+        return socket.getInetAddress().toString() + ":" + socket.getPort();
     }
 
 }
