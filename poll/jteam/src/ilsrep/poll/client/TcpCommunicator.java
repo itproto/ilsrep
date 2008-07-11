@@ -143,15 +143,16 @@ public class TcpCommunicator {
         try {
             // Generating input and output streams
 
-            BufferedReader consoleInputReader = new BufferedReader(
-                    new InputStreamReader(System.in));
+            // BufferedReader consoleInputReader = new BufferedReader(
+            // new InputStreamReader(System.in));
             DataOutputStream outToServer = new DataOutputStream(clientSocket
                     .getOutputStream());
             inFromServer = clientSocket.getInputStream();
 
             xmlItself = "";
-            System.out.print("Enter ID number of the desired poll: ");
-            String id = consoleInputReader.readLine();
+            // System.out.print("Enter ID number of the desired poll: ");
+            String id = PollClient
+                    .readFromConsole("Enter ID number of the desired poll");
             // sending request
             outToServer.writeUTF("<getPollSession><pollSessionId>" + id
                     + "</pollSessionId></getPollSession> \n");
@@ -173,7 +174,7 @@ public class TcpCommunicator {
                         break;
 
                     xmlItself = xmlItself + "\n" + buffer;
-                                        if (buffer.indexOf("/pollses") != -1)
+                    if (buffer.indexOf("/pollses") != -1)
                         break;
                 }
             }
@@ -181,7 +182,6 @@ public class TcpCommunicator {
                 System.out.println("XML Received.. preparing poll");
             }
 
-           
             // Making Reader out of string (needed for marshaller)
             xmlBuffered = new StringReader(xmlItself);
         }
@@ -195,10 +195,8 @@ public class TcpCommunicator {
             }
             catch (Exception exception) {
             }
-            ;
-            ;
         }
-        ;
+
         // returning reader
         return xmlBuffered;
 
@@ -239,16 +237,12 @@ public class TcpCommunicator {
             }
             catch (Exception exception) {
             }
-            ;
         }
 
     }
 
     /**
      * Retrieves and outputs XML IDs and names
-     * 
-     * 
-     * 
      */
     public void listXml() {
         System.out.println("Getting list of polls...");
@@ -264,7 +258,8 @@ public class TcpCommunicator {
                 // inputReader.readLine();
                 String buffer = "";
                 String output = "";
-                while (!((buffer = inputReader.readLine()).equals("END"))) output += buffer + "\n";
+                while (!((buffer = inputReader.readLine()).equals("END")))
+                    output += buffer + "\n";
                 System.out.println("\n" + output);
             }
             catch (Exception e) {

@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 /**
- * Handles XML creation
+ * Handles XML creation and uploading to server.
  * 
  * @author DRC
  * 
@@ -14,26 +14,39 @@ public class PollEditor {
     // each parameter of XML is being promted to user. After entering number of
     // the correct choice the user is required to enter
     // minumum the number of choices that equals it
+    /**
+     * Main method for poll editor. <br>
+     * TODO: BUG: When not in test mode - adds correctChoice="-1" attribute to
+     * each "poll" element.
+     * 
+     * @param args
+     *            Command line arguments.
+     */
     public static void main(String[] args) {
 
         try {
             String yesNoChoice = "y";
-            BufferedReader consoleInputReader = new BufferedReader(
-                    new InputStreamReader(System.in));
+            // BufferedReader consoleInputReader = new BufferedReader(
+            // new InputStreamReader(System.in));
             String genXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
             String name = "1"; // default number
             genXml += "<pollsession id=\"" + name + "\" name=\"";
-            System.out.print("Enter pollsession name: ");
-            name = consoleInputReader.readLine();
+            // System.out.print("Enter pollsession name: ");
+            name = PollClient.readFromConsole("Enter pollsession name");
             genXml += name + "\" testMode=\"";
-            System.out.print("Will this poll run in testmode? [y/n]: ");
-            yesNoChoice = consoleInputReader.readLine();
+            // System.out.print("Will this poll run in testmode? [y/n]: ");
+            System.out.println();
+            yesNoChoice = PollClient.readFromConsole(
+                    "Will this poll run in testmode?",
+                    PollClient.Y_N_ANSWER_SET);
             name = (yesNoChoice.indexOf("y") != -1) ? "true" : "false";
             genXml += name + "\" ";
             String testMode = name;
             if (testMode.indexOf("true") != -1) {
-                System.out.print("Enter minimum score: ");
-                name = consoleInputReader.readLine();
+                // System.out.print("Enter minimum score: ");
+                System.out.println();
+                name = PollClient.readFromConsole("Enter minimum score",
+                        PollClient.ANSWER_TYPE_DOUBLE);
                 genXml += "minScore=\"" + name + "\" ";
             }
             genXml += "> \n";
@@ -44,21 +57,24 @@ public class PollEditor {
             int correct = 0;
             // This cycle serves to enter polls
             while (yesNoChoice2.indexOf("y") != -1) {
-                System.out.print("Enter poll name: ");
-                name = consoleInputReader.readLine();
+                // System.out.print("Enter poll name: ");
+                System.out.println();
+                name = PollClient.readFromConsole("Enter poll name");
                 genXml += " <poll id=\"" + Integer.toString(i) + "\" name=\""
                         + name + "\"";
                 if (testMode.indexOf("true") != -1) {
-                    System.out
-                            .print("Enter number of the correct choice in poll: ");
-                    name = consoleInputReader.readLine();
+                    // System.out
+                    // .print("Enter number of the correct choice in poll: ");
+                    name = PollClient.readFromConsole(
+                            "Enter number of the correct choice in poll",
+                            PollClient.ANSWER_TYPE_INTEGER);
                     genXml += " correctChoice=\"" + name + "\" ";
                     correct = Integer.parseInt(name);
                 }
 
                 genXml += " >\n";
-                System.out.print("Enter poll description: ");
-                name = consoleInputReader.readLine();
+                // System.out.print("Enter poll description: ");
+                name = PollClient.readFromConsole("Enter poll description");
                 genXml += " <description>" + name
                         + "</description>\n<choices>\n";
                 int n = 1;
@@ -68,14 +84,16 @@ public class PollEditor {
                 while (((correct >= n) && (testMode.indexOf("true") != -1))
                         || (yesNoChoice.indexOf("y") != -1)) {
 
-                    System.out.print("Enter choice option: ");
-                    name = consoleInputReader.readLine();
+                    // System.out.print("Enter choice option: ");
+                    name = PollClient.readFromConsole("Enter choice option");
                     genXml += "<choice id=\"" + Integer.toString(n)
                             + "\"  name=\"" + name + "\" />\n";
                     if (correct <= n) {
-                        System.out.print("Add new choice option? [y/n]: ");
+                        // System.out.print("Add new choice option? [y/n]: ");
 
-                        yesNoChoice = consoleInputReader.readLine();
+                        yesNoChoice = PollClient.readFromConsole(
+                                "Add new choice option?",
+                                PollClient.Y_N_ANSWER_SET);
                     }
 
                     n++;
@@ -83,14 +101,15 @@ public class PollEditor {
 
                 genXml += "</choices>\n</poll>\n";
 
-                System.out.print("Add new Poll? [y/n]: ");
+                // System.out.print("Add new Poll? [y/n]: ");
 
-                yesNoChoice2 = consoleInputReader.readLine();
+                yesNoChoice2 = PollClient.readFromConsole("Add new Poll?",
+                        PollClient.Y_N_ANSWER_SET);
 
                 i++;
             }
             genXml += "</pollsession>\n\n";
-            System.out.println(genXml);
+            System.out.println("\n" + genXml);
             TcpCommunicator communicator = new TcpCommunicator();
             communicator.sendXml(genXml);
 
