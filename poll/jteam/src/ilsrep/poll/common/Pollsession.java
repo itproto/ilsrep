@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
 
 /**
- * The "polls" element.
+ * The "pollsession" element.
  * 
  * @author TKOST
  * 
