@@ -1,5 +1,6 @@
 package ilsrep.poll.common;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -48,6 +49,7 @@ public class Pollpacket {
     /**
      * @see #pollsessionList
      */
+    @XmlElement(name = "pollsessionlist")
     public Pollsessionlist getPollsessionList() {
         return pollsessionList;
     }
