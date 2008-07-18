@@ -58,8 +58,12 @@
     <Compile Include="Helpers\CommandLineParametersHelper.cs" />
     <Compile Include="Helpers\PollSerializator.cs" />
     <Compile Include="Model\Choice.cs" />
+    <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Poll.cs" />
+    <Compile Include="Model\PollPacket.cs" />
     <Compile Include="Model\PollSession.cs" />
+    <Compile Include="Model\PollSessionsList.cs" />
+    <Compile Include="Model\Request.cs" />
     <Compile Include="Model\TcpCommunicator.cs" />
   </ItemGroup>
   <ItemGroup>

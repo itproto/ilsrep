@@ -51,5 +51,47 @@ namespace Ilsrep.PollApplication.Helpers
                 return null;
             }
         }
+
+        public static PollPacket DeSerializePacket(string xmlString)
+        {
+            PollPacket pollPacket = new PollPacket();
+
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(PollPacket));
+            MemoryStream memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(xmlString));
+            XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.ASCII);
+
+            pollPacket = (PollPacket)xmlSerializer.Deserialize(memoryStream);
+
+            foreach (Poll poll in pollPacket.pollSession.polls)
+            {
+                foreach (Choice choice in poll.choices)
+                {
+                    choice.parent = poll;
+                }
+            }
+
+            return pollPacket;
+        }
+
+        public static String SerializePacket(PollPacket pollPacket)
+        {
+            try
+            {
+                String XmlizedString = null;
+                MemoryStream memoryStream = new MemoryStream();
+                XmlSerializer xs = new XmlSerializer(typeof(PollPacket));
+                XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.ASCII);
+
+                xs.Serialize(xmlTextWriter, pollPacket);
+                memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
+                XmlizedString = Encoding.ASCII.GetString(memoryStream.ToArray());
+
+                return XmlizedString;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
