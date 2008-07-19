@@ -159,9 +159,11 @@ namespace Ilsrep.PollApplication.PollEditor
             {
                 TcpServer client = new TcpServer();
                 client.Connect(HOST, PORT);
-                client.Send("CreatePollSession");
-                client.Send(PollSerializator.Serialize(pollSession));
-                client.Send("End");
+                PollPacket sendPacket = new PollPacket();
+                sendPacket.request.type = Request.CREATE_POLLSESSION;
+                sendPacket.pollSession = pollSession;
+                string sendString = PollSerializator.SerializePacket(sendPacket);
+                client.Send(sendString);
                 client.Disconnect();
             }
         }
