@@ -3,7 +3,7 @@ package ilsrep.poll.server.db;
 import ilsrep.poll.common.Pollsessionlist;
 
 import java.io.File;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * This class is for working with SQLite DB.
@@ -16,7 +16,7 @@ public class SQLiteDBWorker extends DBWorker {
     /**
      * File to load DB from.
      */
-    protected File dataFile = null;
+    protected String dataFile = "..\\sql\\pollserver.s3db";
 
     /**
      * Creates <code>SQLiteDBWorker</code> w/o connecting to DB, but stores
@@ -25,7 +25,7 @@ public class SQLiteDBWorker extends DBWorker {
      * @param dataFile
      *            File to load DB from.
      */
-    public SQLiteDBWorker(File dataFile) {
+    public SQLiteDBWorker(String dataFile) {
         this.dataFile = dataFile;
     }
 
@@ -34,25 +34,11 @@ public class SQLiteDBWorker extends DBWorker {
      */
     @Override
     public void connect() throws SQLException {
-        // TODO: Fix connection to SQLLite.
+        try { Class.forName("org.sqlite.JDBC");
+      Connection conn = DriverManager.getConnection("jdbc:sqlite:"+dataFile);
+      this.conn=conn;
+    } catch(Exception e) {System.out.println("ExCePTION");}
     }
 
-    /**
-     * @see ilsrep.poll.server.db.DBWorker#getPollsessionById(java.lang.String)
-     */
-    @Override
-    public String getPollsessionById(String id) throws SQLException {
-        // TODO: Fix getting pollsession by id from SQLLite.
-        return null;
-    }
-
-    /**
-     * @see ilsrep.poll.server.db.DBWorker#getPollsessionlist()
-     */
-    @Override
-    public Pollsessionlist getPollsessionlist() throws SQLException {
-        // TODO: Fix getting pollsession list from SQLLite.
-        return null;
-    }
 
 }
