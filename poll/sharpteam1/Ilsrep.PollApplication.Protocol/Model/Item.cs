@@ -9,7 +9,7 @@ namespace Ilsrep.PollApplication.Model
     [XmlRoot("item"), Serializable]
     public class Item
     {
-        [XmlAttribute("id")] public int id;
+        [XmlAttribute("id")] public string id;
         [XmlAttribute("name")] public string name;
     }
 }

@@ -11,7 +11,7 @@ using Ilsrep.PollApplication.Helpers;
 using Ilsrep.Common;
 
 /*
- Developped by SharpTeam: vlad & ksi
+ Developed by SharpTeam: vlad & ksi
 */
 
 namespace Ilsrep.PollApplication.PollClient
@@ -290,32 +290,21 @@ namespace Ilsrep.PollApplication.PollClient
         /// </summary>
         public static void GetPollSession()
         {
-            server.Send("GetPollSessionsList");
-            XmlDocument xmlDoc = new XmlDocument();
-            try
-            {
-                xmlDoc.LoadXml(server.Receive());
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("Corrupted list of sessions sent.");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey(true);
-                Environment.Exit(-1);
-            }
+            PollPacket sendPacket = new PollPacket();
+            sendPacket.request.type = Request.GET_LIST;
+            string sendString = PollSerializator.SerializePacket(sendPacket);
+            server.Send(sendString);
 
-            XmlNodeList xmlAvailablePollSessions = xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
-            NameValueCollection availablePollSessions = new NameValueCollection();
-
-            foreach (XmlNode xmlAvailablePollSession in xmlAvailablePollSessions)
-                availablePollSessions.Add(xmlAvailablePollSession.Attributes["id"].Value, xmlAvailablePollSession.Attributes["name"].Value);
+            string receivedString = server.Receive();
+            PollPacket receivedPacket = new PollPacket();
+            receivedPacket = PollSerializator.DeSerializePacket(receivedString);
 
             // Output list of poll sessions
-            int index = 1;
-            foreach (String availablePollSession in availablePollSessions)
+            int index = 0;
+            foreach (Item curItem in receivedPacket.pollSessionList.items)
             {
-                Console.WriteLine(index + ". " + availablePollSessions[availablePollSession]);
                 index++;
+                Console.WriteLine(index + ". " + curItem.name);
             }
 
             while (true)
@@ -328,12 +317,13 @@ namespace Ilsrep.PollApplication.PollClient
                 {
                     index = Convert.ToInt32(userAnswer);
 
-                    if (index > 0 && index <= availablePollSessions.Count)
+                    if (index > 0 && index <= receivedPacket.pollSessionList.items.Count)
                     {
-                        string pollSessionID = availablePollSessions.GetKey(index-1);
-                        server.Send("GetPollSession");
-                        server.Send(pollSessionID);
-
+                        string pollSessionID = receivedPacket.pollSessionList.items[index - 1].id;
+                        sendPacket.request.type = Request.GET_POLLSESSION;
+                        sendPacket.request.id = pollSessionID;
+                        sendString = PollSerializator.SerializePacket(sendPacket);
+                        server.Send(sendString);
                         break;
                     }
                 }
@@ -347,22 +337,13 @@ namespace Ilsrep.PollApplication.PollClient
             }
 
             // receive poll
-            string isPollSessionOK = server.Receive(1);
-            if (isPollSessionOK == "1")
-            {
-                String xmlData = server.Receive();
-                Console.WriteLine("Data received");
-                pollSession = PollSerializator.DeSerialize(xmlData);
-                Console.WriteLine("Data parsed");
-                server.Send("End");
-                server.Disconnect();
-                Console.WriteLine("Disconnected from server");
-            }
-            else
-            {
-                Console.WriteLine("Communication error");
-                Environment.Exit(-1);
-            }
+            receivedString = server.Receive();
+            Console.WriteLine("Data received");
+            receivedPacket = PollSerializator.DeSerializePacket(receivedString);
+            pollSession = receivedPacket.pollSession;
+            Console.WriteLine("Data parsed");
+            server.Disconnect();
+            Console.WriteLine("Disconnected from server");
         }
 
         public static void Main()

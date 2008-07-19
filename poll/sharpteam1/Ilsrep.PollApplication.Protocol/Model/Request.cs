@@ -9,9 +9,10 @@ namespace Ilsrep.PollApplication.Model
     [XmlRoot("request"), Serializable]
     public class Request
     {
-        [XmlIgnore] public string TYPE_LIST = "list";
-        [XmlIgnore] public string TYPE_POLLXML = "pollxml";
+        [XmlIgnore] public const string GET_LIST = "getList";
+        [XmlIgnore] public const string GET_POLLSESSION = "getPollsession";
+        [XmlIgnore] public const string CREATE_POLLSESSION = "createPollsession";
         [XmlAttribute("type")] public string type;
-        [XmlAttribute("id")] public int id;
+        [XmlAttribute("id")] public string id;
     }
 }

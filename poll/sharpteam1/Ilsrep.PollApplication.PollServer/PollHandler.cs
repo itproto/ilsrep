@@ -8,6 +8,8 @@ using System.IO;
 using System.Collections.Generic;
 using log4net;
 using log4net.Config;
+using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Helpers;
 
 namespace Ilsrep.PollApplication.PollServer
 {
@@ -15,6 +17,8 @@ namespace Ilsrep.PollApplication.PollServer
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(PollHandler));
         public TcpClient currentClient = new TcpClient();
+        private static PollPacket sendPacket = new PollPacket();
+        private static PollPacket receivedPacket = new PollPacket();
         private string clientAddress;
         private static int activeConnCount = 0;
         private static byte[] data = new byte[PollServer.DATA_SIZE];
@@ -26,18 +30,18 @@ namespace Ilsrep.PollApplication.PollServer
         /// </summary>
         /// <param name="pollSessionID">Id of needed poll session</param>
         /// <returns>Poll session in XmlStirng</returns>
-        private static string GetPollSessionById(int pollSessionID)
+        private static PollSession GetPollSessionById(string pollSessionId)
         {
             try
             {
                 // Search patch to needed file by id
                 string pathToPollSession = string.Empty;
-                XmlDocument PollSessionsListDoc = new XmlDocument();
-                PollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
-                XmlNodeList pollSessionsList = PollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
+                XmlDocument pollSessionsListDoc = new XmlDocument();
+                pollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
+                XmlNodeList pollSessionsList = pollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
                 foreach (XmlNode curPollSession in pollSessionsList)
                 {
-                    bool isRightPollSession = (Convert.ToInt32(curPollSession.Attributes["id"].Value) == pollSessionID);
+                    bool isRightPollSession = (curPollSession.Attributes["id"].Value == pollSessionId);
                     if (isRightPollSession)
                     {
                         pathToPollSession = curPollSession.Attributes["file"].Value;
@@ -47,12 +51,13 @@ namespace Ilsrep.PollApplication.PollServer
 
                 XmlDocument pollSessionDoc = new XmlDocument();
                 pollSessionDoc.Load(pathToPollSession);
-                return pollSessionDoc.OuterXml;
+                PollSession pollSession = PollSerializator.DeSerialize(pollSessionDoc.OuterXml);
+                return pollSession;
             }
             catch (Exception exception)
             {
                 log.Error("Exception in GetPollSessionById. " + exception.Message);
-                return String.Empty;
+                return null;
             }
         }
 
@@ -80,37 +85,34 @@ namespace Ilsrep.PollApplication.PollServer
         }
 
         /// <summary>
-        /// Receive option from client and select one: GetPollSessionsList, GetPollSession or CreatePollSession
+        /// Receive PollPacket from client and response for a query
         /// </summary>
         /// <param name="client">NetworkStream client</param>
         public void RunClientSession(NetworkStream client)
         {
-            bool canDisconnect = false;
             while (true)
             {
-                // Receive option from client
+                // Receive PollPacket from client
                 string receivedString = ReceiveFromClient(client);
                 if (receivedString == String.Empty)
                     return;
 
+                receivedPacket = PollSerializator.DeSerializePacket(receivedString);
+
                 // Select option
-                switch (receivedString)
+                switch (receivedPacket.request.type)
                 {
-                    case "GetPollSessionsList":
+                    case Request.GET_LIST:
                         SendPollSessionsList(client);
                         break;
-                    case "GetPollSession":
+                    case Request.GET_POLLSESSION:
                         SendPollSession(client);
-                        break;
-                    case "CreatePollSession":
+                        break; 
+                    case Request.CREATE_POLLSESSION:
                         CreatePollSession(client);
-                        break;
-                    case "End":
-                        canDisconnect = true;
                         break;
                     default:
                         log.Error("Invalid option sent by client");
-                        canDisconnect = true;
                         break;
                 }
             }
@@ -198,14 +200,24 @@ namespace Ilsrep.PollApplication.PollServer
         public void SendPollSessionsList(NetworkStream client)
         {
             string sendString;
-            XmlDocument PollSessionsListDoc = new XmlDocument();
+            XmlDocument pollSessionsListDoc = new XmlDocument();
             try
             {
-                PollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
-                sendString = PollSessionsListDoc.OuterXml;
+                pollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
+                XmlNodeList pollSessionsList = pollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
+                
+                foreach(XmlNode curPollSession in pollSessionsList)
+                {
+                    Item curItem = new Item();
+                    curItem.id = curPollSession.Attributes["id"].Value;
+                    curItem.name = curPollSession.Attributes["name"].Value;
+                    sendPacket.pollSessionList.items.Add(curItem);
+                }
+
+                sendString = PollSerializator.SerializePacket(sendPacket);
                 data = Encoding.ASCII.GetBytes(sendString);
                 client.Write(data, 0, sendString.Length);
-                log.Info("PollSessionList successfully sent to client");
+                log.Info("List of PollSessions successfully sent to client");
             }
             catch (Exception exception)
             {
@@ -219,52 +231,11 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="client">NetworkStream client</param>
         public void SendPollSession(NetworkStream client)
         {
-            string sendString;
-            int pollSessionID = 0;
-
-            // Receive from client pollSessionId
-            while (true)
-            {
-                string receivedString = ReceiveFromClient(client);
-                if (receivedString == String.Empty)
-                    return;
-
-                // Get poll sesssion id sent by client
-                try
-                {
-                    pollSessionID = Convert.ToInt32(receivedString);
-
-                    // Check if exists such id
-                    bool idExist = (GetPollSessionById(pollSessionID) != String.Empty);
-                    if (idExist)
-                    {
-                        log.Info(clientAddress + ": ID validated: " + pollSessionID);
-                        sendString = "1";
-                        client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
-                        break;
-                    }
-                    else
-                    {
-                        log.Info(clientAddress + ": Client asked for non-existant ID: " + pollSessionID);
-                        sendString = "0";
-                        client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
-                    }
-                }
-                catch (Exception)
-                {
-                    log.Info(clientAddress + ": Client asked for non-existant ID: " + receivedString);
-                    sendString = "0";
-                    client.Write(Encoding.ASCII.GetBytes(sendString), 0, sendString.Length);
-                }
-            }
-
+            string pollSessionId = receivedPacket.request.id;
+            
             // Send PollSession
-            sendString = GetPollSessionById(pollSessionID);
-            if (sendString == String.Empty)
-            {
-                log.Error("Can not get poll by id");
-                return;
-            }
+            sendPacket.pollSession = GetPollSessionById(pollSessionId);
+            string sendString = PollSerializator.SerializePacket(sendPacket);
             data = Encoding.ASCII.GetBytes(sendString);
             client.Write(data, 0, sendString.Length);
         }
