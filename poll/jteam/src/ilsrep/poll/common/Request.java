@@ -15,12 +15,12 @@ public class Request {
     /**
      * Indicates of type of request: get list of xml's stored on server.
      */
-    public static final String TYPE_LIST = "list";
+    public static final String TYPE_LIST = "getList";
 
     /**
      * Indicates of type of request: get pollxml by id.
      */
-    public static final String TYPE_POLLXML = "pollxml";
+    public static final String TYPE_POLLXML = "getPollsession";
 
     /**
      * Type of request:
