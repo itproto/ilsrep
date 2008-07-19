@@ -1,8 +1,9 @@
 package ilsrep.poll.server.db;
 
 import ilsrep.poll.common.Pollsessionlist;
-
-import java.sql.SQLException;
+import ilsrep.poll.common.Item;
+import java.sql.*;
+import java.util.*;
 
 /**
  * This abstract class is utility for working with any DB.<br>
@@ -12,7 +13,7 @@ import java.sql.SQLException;
  * 
  */
 public abstract class DBWorker {
-
+public Connection conn;
     /**
      * Establishes connection to concrete(should be overriden) DB.
      * 
@@ -30,7 +31,20 @@ public abstract class DBWorker {
      * @throws SQLException
      *             On some DB problems.
      */
-    public abstract String getPollsessionById(String id) throws SQLException;
+    public  String getPollsessionById(String id) throws SQLException{
+	    this.connect();
+	    String xmlItself;
+	   Statement stat = this.conn.createStatement(); 
+	   ResultSet rs = stat.executeQuery("select xml from polls where id="+id);
+	   if (rs.next()) {xmlItself=rs.getString("xml") ;
+	   }   else {
+		   xmlItself=null; }
+		   this.conn.close();
+		   return xmlItself;
+	    
+	    
+	    
+	    };
 
     /**
      * Fetches pollsession list from DB.
@@ -39,6 +53,26 @@ public abstract class DBWorker {
      * @throws SQLException
      *             On some DB problems.
      */
-    public abstract Pollsessionlist getPollsessionlist() throws SQLException;
+    public Pollsessionlist  getPollsessionlist() throws SQLException{
+	    this.connect();
+	        Pollsessionlist  pollList=new Pollsessionlist();
+	        List<Item> lstItems = new ArrayList<Item>();
+Item itm = new Item();
+	   Statement stat = this.conn.createStatement(); 
+	   ResultSet rs = stat.executeQuery("select id, name from polls");
+	   while (rs.next()) {
+		   itm.setId(Integer.toString(rs.getInt("id")));
+		   itm.setName(rs.getString("name"));
+		   lstItems.add(itm);
+		   	   }   ;
+		   	   pollList.setItems(lstItems);
+	   this.conn.close();
+	    return pollList;
+	    
+	    
+	    };
+	    
+	    
+	    
+	    };
 
-}
