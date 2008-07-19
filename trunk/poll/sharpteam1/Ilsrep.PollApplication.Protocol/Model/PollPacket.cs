@@ -9,11 +9,8 @@ namespace Ilsrep.PollApplication.Model
     [XmlRoot("pollpacket"), Serializable]
     public class PollPacket
     {
-        [XmlElement("request")]
-        public Request request = new Request();
-        [XmlElement("pollsessionlist")]
-        public PollSessionList pollSessionList = new PollSessionList();
-        [XmlElement("pollsession")]
-        public PollSession pollSession = new PollSession();
+        [XmlElement("request")] public Request request = new Request();
+        [XmlElement("pollsessionlist")] public PollSessionList pollSessionList = new PollSessionList();
+        [XmlElement("pollsession")] public PollSession pollSession = new PollSession();
     }
 }
