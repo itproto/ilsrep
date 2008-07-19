@@ -124,40 +124,24 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="client">NetworkStream client</param>
         public void CreatePollSession(NetworkStream client)
         {
-            // Receive new poll session
-            string receivedString = ReceiveFromClient(client);
-            if (receivedString == String.Empty)
-                return;
-
-            // Check if received xml data is correct
-            XmlDocument pollSessionDoc = new XmlDocument();
-            try
-            {
-                pollSessionDoc.LoadXml(receivedString);
-            }
-            catch (Exception exception)
-            {
-                log.Error(exception.Message);
-                return;
-            }
-
-            // Get name of poll session
-            string pollSessionName = pollSessionDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes["name"].Value;
+            PollSession newPollSession = new PollSession();
+            newPollSession = receivedPacket.pollSession;
 
             // Get idList from PollSessionsList.xml
             int pollSessionId;
             List<int> idList = new List<int>();
-            XmlDocument PollSessionsListDoc = new XmlDocument();
+            XmlDocument pollSessionsListDoc = new XmlDocument();
             try
             {
-                PollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
+                pollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
             }
             catch (Exception exception)
             {
                 log.Error(exception.Message);
                 return;
             }
-            XmlNodeList pollSessionsList = PollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
+            
+            XmlNodeList pollSessionsList = pollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
             foreach (XmlNode pollSession in pollSessionsList)
             {
                 pollSessionId = Convert.ToInt32(pollSession.Attributes["id"].Value);
@@ -167,30 +151,31 @@ namespace Ilsrep.PollApplication.PollServer
 
             // Generate new id
             int newPollSessionId = idList[idList.Count-1] + 1;
-            
-            // Add id attribute to pollSession
-            XmlAttribute pollSessionIdAttribute = pollSessionDoc.CreateAttribute("id");
-            pollSessionIdAttribute.Value = newPollSessionId.ToString();
-            pollSessionDoc.GetElementsByTagName(POLL_SESSION_ELEMENT)[0].Attributes.Append(pollSessionIdAttribute);
 
-            // Save pollSession in new file
+            // Add id attribute to pollSession
+            newPollSession.id = newPollSessionId;
+
+            // Save newPollSession in new file
+            XmlDocument pollSessionDoc = new XmlDocument();
             string newPathToPollSession = PollServer.pollsFolder + "PollSession_" + newPollSessionId + ".xml";
+            string newPollSessionXml = PollSerializator.Serialize(newPollSession);
+            pollSessionDoc.LoadXml(newPollSessionXml);
             pollSessionDoc.Save(newPathToPollSession);
 
-            // Add information about current poll session to PollSessionsList.xml
-            XmlElement newPollSessionInf = PollSessionsListDoc.CreateElement(POLL_SESSION_ELEMENT);
-            XmlAttribute idAttribute = PollSessionsListDoc.CreateAttribute("id");
-            idAttribute.Value = newPollSessionId.ToString();
-            XmlAttribute nameAttribute = PollSessionsListDoc.CreateAttribute("name");
-            nameAttribute.Value = pollSessionName;
-            XmlAttribute fileAttribute = PollSessionsListDoc.CreateAttribute("file");
+            // Add information about current pollSession to PollSessionsList.xml
+            XmlElement newPollSessionInf = pollSessionsListDoc.CreateElement(POLL_SESSION_ELEMENT);
+            XmlAttribute idAttribute = pollSessionsListDoc.CreateAttribute("id");
+            idAttribute.Value = Convert.ToString(newPollSession.id);
+            XmlAttribute nameAttribute = pollSessionsListDoc.CreateAttribute("name");
+            nameAttribute.Value = newPollSession.name;
+            XmlAttribute fileAttribute = pollSessionsListDoc.CreateAttribute("file");
             fileAttribute.Value = newPathToPollSession;
             newPollSessionInf.Attributes.Append(idAttribute);
             newPollSessionInf.Attributes.Append(nameAttribute);
             newPollSessionInf.Attributes.Append(fileAttribute);
-            PollSessionsListDoc.GetElementsByTagName("pollsessions")[0].AppendChild(newPollSessionInf);
-            PollSessionsListDoc.Save(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
-            log.Info("New PollSession has been added(name=\"" + pollSessionName + "\" id=\""+ newPollSessionId + "\")");
+            pollSessionsListDoc.GetElementsByTagName("pollsessions")[0].AppendChild(newPollSessionInf);
+            pollSessionsListDoc.Save(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
+            log.Info("New PollSession has been added(name=\"" + newPollSession.name + "\" id=\""+ newPollSession.id + "\")");
         }
 
         /// <summary>
@@ -200,6 +185,7 @@ namespace Ilsrep.PollApplication.PollServer
         public void SendPollSessionsList(NetworkStream client)
         {
             string sendString;
+            PollPacket sendPacket = new PollPacket();
             XmlDocument pollSessionsListDoc = new XmlDocument();
             try
             {
