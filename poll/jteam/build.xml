@@ -12,10 +12,11 @@
 	<property name="run.dir" value="${basedir}/run" />
 	<property name="scripts.dir" value="${basedir}/scripts" />
 	<property name="xml.dir" value="${basedir}/xml" />
+	<property name="sql.dir" value="${basedir}/sql" />
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
 
-	<property name="class.path" value="${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar" />
+	<property name="class.path" value="${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar" />
 
 	<target name="init">
 		<tstamp />
@@ -34,7 +35,8 @@
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
-		<jar destfile="${jar.file}" manifest="./MANIFEST.MF">
+		<jar destfile="${jar.file}">
+			<!-- manifest="./MANIFEST.MF" -->
 			<fileset dir="${distr.dir}">
 			</fileset>
 		</jar>
@@ -58,6 +60,10 @@
 		</copy>
 		<copy todir="${run.dir}/xml">
 			<fileset dir="${xml.dir}">
+			</fileset>
+		</copy>
+		<copy todir="${run.dir}/sql">
+			<fileset dir="${sql.dir}">
 			</fileset>
 		</copy>
 	</target>

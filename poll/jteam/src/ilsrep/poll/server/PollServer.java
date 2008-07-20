@@ -91,7 +91,7 @@ public class PollServer {
     /**
      * Configuration of this server.
      */
-    Preferences configuration = null;
+    protected Preferences configuration = null;
 
     /**
      * Stores code with which server's program should exit. <br>
@@ -565,6 +565,15 @@ public class PollServer {
         catch (IOException e) {
             return;
         }
+    }
+
+    /**
+     * Is used to obtain server configuration.
+     * 
+     * @return Configuration, using XPilotPanel's utilities.
+     */
+    public Preferences getConfiguration() {
+        return configuration;
     }
 
 }

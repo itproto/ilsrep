@@ -1,14 +1,10 @@
 package ilsrep.poll.server.db;
 
-import ilsrep.poll.common.Pollsessionlist;
-
-import java.io.File;
-import java.sql.*;
-
 /**
  * This class is for working with SQLite DB.
  * 
  * @author TKOST
+ * @author DRC
  * 
  */
 public class SQLiteDBWorker extends DBWorker {
@@ -19,26 +15,25 @@ public class SQLiteDBWorker extends DBWorker {
     protected String dataFile = "..\\sql\\pollserver.s3db";
 
     /**
+     * SQLite's JDBC driver name.
+     */
+    public static final String SQLite_DRIVER_CLASS_NAME = "org.sqlite.JDBC";
+
+    /**
      * Creates <code>SQLiteDBWorker</code> w/o connecting to DB, but stores
      * connection parameters.
      * 
      * @param dataFile
      *            File to load DB from.
+     * @throws ClassNotFoundException
+     *             If DB driver not found.
      */
-    public SQLiteDBWorker(String dataFile) {
+    public SQLiteDBWorker(String dataFile) throws ClassNotFoundException {
         this.dataFile = dataFile;
-    }
 
-    /**
-     * @see ilsrep.poll.server.db.DBWorker#connect()
-     */
-    @Override
-    public void connect() throws SQLException {
-        try { Class.forName("org.sqlite.JDBC");
-      Connection conn = DriverManager.getConnection("jdbc:sqlite:"+dataFile);
-      this.conn=conn;
-    } catch(Exception e) {System.out.println("ExCePTION");}
+        Class.forName(SQLite_DRIVER_CLASS_NAME);
+        driverClassName = SQLite_DRIVER_CLASS_NAME;
+        dbURL = "jdbc:sqlite:" + dataFile;
     }
-
 
 }

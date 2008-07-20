@@ -10,20 +10,24 @@ import javax.xml.bind.Marshaller;
 /**
  * Testing class, should be removed.
  * 
- * @author Taras Kostiak
+ * @author TKOST
  * 
  */
 public class ProtocolTester {
 
     public static void main(String[] args) throws JAXBException {
+        for (Pollpacket packet : getTestPackets()) {
+            printPacket(packet);
+            System.out.println();
+        }
+    }
+
+    public static void printPacket(Pollpacket packet) throws JAXBException {
         JAXBContext pollpacketCont = JAXBContext.newInstance(Pollpacket.class);
 
         Marshaller mr = pollpacketCont.createMarshaller();
         mr.setProperty("jaxb.formatted.output", true);
-        for (Pollpacket packet : getTestPackets()) {
-            mr.marshal(packet, System.out);
-            System.out.println();
-        }
+        mr.marshal(packet, System.out);
     }
 
     private static List<Pollpacket> getTestPackets() {
