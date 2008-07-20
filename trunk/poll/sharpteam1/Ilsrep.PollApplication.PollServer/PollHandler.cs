@@ -10,6 +10,7 @@ using log4net;
 using log4net.Config;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Helpers;
+using System.Data.SQLite;
 
 namespace Ilsrep.PollApplication.PollServer
 {
@@ -24,39 +25,42 @@ namespace Ilsrep.PollApplication.PollServer
         private static byte[] data = new byte[PollServer.DATA_SIZE];
         private const string POLL_SESSION_ELEMENT = "pollsession";
         public const string POLL_SESSIONS_LIST_FILE = "PollSessionsList.xml";
+        private const string POLLS_TABLE_NAME = "polls";
+        private const string PATH_TO_DATA_BASE = "pollserver.db";
+
+        /// <summary>
+        /// The function execute query to data base
+        /// </summary>
+        /// <param name="query">query in string</param>
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        /// <returns>result of query</returns>
+        static SQLiteDataReader Query(string query, SQLiteConnection curDataBaseCon)
+        {
+            SQLiteCommand command = new SQLiteCommand(query, curDataBaseCon);
+            SQLiteDataReader result = command.ExecuteReader();
+            return result;
+        }
 
         /// <summary>
         /// The function search poll session by id
         /// </summary>
-        /// <param name="pollSessionID">Id of needed poll session</param>
-        /// <returns>Poll session in XmlStirng</returns>
-        private static PollSession GetPollSessionById(string pollSessionId)
+        /// <param name="pollSessionIdStr">Id of needed poll session</param>
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        /// <returns>Poll session</returns>
+        /// <exception>null</exception>
+        private static PollSession GetPollSessionById(string pollSessionIdStr, SQLiteConnection curDataBaseCon)
         {
             try
             {
                 // Search patch to needed file by id
-                string pathToPollSession = string.Empty;
-                XmlDocument pollSessionsListDoc = new XmlDocument();
-                pollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
-                XmlNodeList pollSessionsList = pollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
-                foreach (XmlNode curPollSession in pollSessionsList)
-                {
-                    bool isRightPollSession = (curPollSession.Attributes["id"].Value == pollSessionId);
-                    if (isRightPollSession)
-                    {
-                        pathToPollSession = curPollSession.Attributes["file"].Value;
-                        break;
-                    }
-                }
-
-                XmlDocument pollSessionDoc = new XmlDocument();
-                pollSessionDoc.Load(pathToPollSession);
-                PollSession pollSession = PollSerializator.DeSerialize(pollSessionDoc.OuterXml);
+                int pollSessionId = Convert.ToInt32(pollSessionIdStr);
+                string pollSessionXml = Query("SELECT * from " + POLLS_TABLE_NAME + " where id='" + pollSessionId + "'", curDataBaseCon)["xml"].ToString();
+                PollSession pollSession = PollSerializator.DeSerialize(pollSessionXml);
                 return pollSession;
             }
             catch (Exception exception)
             {
-                log.Error("Exception in GetPollSessionById. " + exception.Message);
+                log.Error(exception.Message);
                 return null;
             }
         }
@@ -88,7 +92,8 @@ namespace Ilsrep.PollApplication.PollServer
         /// Receive PollPacket from client and response for a query
         /// </summary>
         /// <param name="client">NetworkStream client</param>
-        public void RunClientSession(NetworkStream client)
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        public void RunClientSession(NetworkStream client, SQLiteConnection curDataBaseCon)
         {
             while (true)
             {
@@ -96,20 +101,19 @@ namespace Ilsrep.PollApplication.PollServer
                 string receivedString = ReceiveFromClient(client);
                 if (receivedString == String.Empty)
                     return;
-
                 receivedPacket = PollSerializator.DeSerializePacket(receivedString);
 
                 // Select option
                 switch (receivedPacket.request.type)
                 {
                     case Request.GET_LIST:
-                        SendPollSessionsList(client);
+                        SendPollSessionsList(client, curDataBaseCon);
                         break;
                     case Request.GET_POLLSESSION:
-                        SendPollSession(client);
+                        SendPollSession(client, curDataBaseCon);
                         break; 
                     case Request.CREATE_POLLSESSION:
-                        CreatePollSession(client);
+                        CreatePollSession(client, curDataBaseCon);
                         break;
                     default:
                         log.Error("Invalid option sent by client");
@@ -119,62 +123,22 @@ namespace Ilsrep.PollApplication.PollServer
         }
 
         /// <summary>
-        /// Receive XmlString from PollEditor, save it to new XmlFile and append PollSessionsList.xml file
+        /// Receive new poll session from PollEditor and save it to database
         /// </summary>
         /// <param name="client">NetworkStream client</param>
-        public void CreatePollSession(NetworkStream client)
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        public void CreatePollSession(NetworkStream client, SQLiteConnection curDataBaseCon)
         {
             PollSession newPollSession = new PollSession();
             newPollSession = receivedPacket.pollSession;
 
-            // Get idList from PollSessionsList.xml
-            int pollSessionId;
-            List<int> idList = new List<int>();
-            XmlDocument pollSessionsListDoc = new XmlDocument();
-            try
-            {
-                pollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
-            }
-            catch (Exception exception)
-            {
-                log.Error(exception.Message);
-                return;
-            }
-            
-            XmlNodeList pollSessionsList = pollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
-            foreach (XmlNode pollSession in pollSessionsList)
-            {
-                pollSessionId = Convert.ToInt32(pollSession.Attributes["id"].Value);
-                idList.Add(pollSessionId);
-            }
-            idList.Sort();
-
             // Generate new id
-            int newPollSessionId = idList[idList.Count-1] + 1;
-
-            // Add id attribute to pollSession
-            newPollSession.id = newPollSessionId;
-
-            // Save newPollSession in new file
-            XmlDocument pollSessionDoc = new XmlDocument();
-            string newPathToPollSession = PollServer.pollsFolder + "PollSession_" + newPollSessionId + ".xml";
-            string newPollSessionXml = PollSerializator.Serialize(newPollSession);
-            pollSessionDoc.LoadXml(newPollSessionXml);
-            pollSessionDoc.Save(newPathToPollSession);
-
-            // Add information about current pollSession to PollSessionsList.xml
-            XmlElement newPollSessionInf = pollSessionsListDoc.CreateElement(POLL_SESSION_ELEMENT);
-            XmlAttribute idAttribute = pollSessionsListDoc.CreateAttribute("id");
-            idAttribute.Value = Convert.ToString(newPollSession.id);
-            XmlAttribute nameAttribute = pollSessionsListDoc.CreateAttribute("name");
-            nameAttribute.Value = newPollSession.name;
-            XmlAttribute fileAttribute = pollSessionsListDoc.CreateAttribute("file");
-            fileAttribute.Value = newPathToPollSession;
-            newPollSessionInf.Attributes.Append(idAttribute);
-            newPollSessionInf.Attributes.Append(nameAttribute);
-            newPollSessionInf.Attributes.Append(fileAttribute);
-            pollSessionsListDoc.GetElementsByTagName("pollsessions")[0].AppendChild(newPollSessionInf);
-            pollSessionsListDoc.Save(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
+            SQLiteDataReader sqliteReader = Query("SELECT * from " + POLLS_TABLE_NAME + " order by id DESC", curDataBaseCon);
+            newPollSession.id = Convert.ToInt32(sqliteReader["id"]) + 1;
+            
+            // Save newPollSession in data base
+            string newPollSessionString = PollSerializator.Serialize(newPollSession);
+            Query("INSERT into " + POLLS_TABLE_NAME + " values ('" + newPollSession.id + "','" + newPollSession.name + "','" + newPollSessionString + "')", curDataBaseCon);
             log.Info("New PollSession has been added(name=\"" + newPollSession.name + "\" id=\""+ newPollSession.id + "\")");
         }
 
@@ -182,24 +146,22 @@ namespace Ilsrep.PollApplication.PollServer
         /// Send to client list of PollSessions
         /// </summary>
         /// <param name="client">NetworkStream client</param>
-        public void SendPollSessionsList(NetworkStream client)
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        public void SendPollSessionsList(NetworkStream client, SQLiteConnection curDataBaseCon)
         {
             string sendString;
             PollPacket sendPacket = new PollPacket();
-            XmlDocument pollSessionsListDoc = new XmlDocument();
+
             try
             {
-                pollSessionsListDoc.Load(PollServer.pollsFolder + POLL_SESSIONS_LIST_FILE);
-                XmlNodeList pollSessionsList = pollSessionsListDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
-                
-                foreach(XmlNode curPollSession in pollSessionsList)
+                SQLiteDataReader sqliteReader = Query("SELECT * from " + POLLS_TABLE_NAME, curDataBaseCon);
+                while(sqliteReader.Read())
                 {
                     Item curItem = new Item();
-                    curItem.id = curPollSession.Attributes["id"].Value;
-                    curItem.name = curPollSession.Attributes["name"].Value;
+                    curItem.id = sqliteReader["id"].ToString();
+                    curItem.name = sqliteReader["name"].ToString();
                     sendPacket.pollSessionList.items.Add(curItem);
                 }
-
                 sendString = PollSerializator.SerializePacket(sendPacket);
                 data = Encoding.ASCII.GetBytes(sendString);
                 client.Write(data, 0, sendString.Length);
@@ -215,15 +177,17 @@ namespace Ilsrep.PollApplication.PollServer
         /// Receive pollSessionId from PollClient and send PollSession with corresponding id
         /// </summary>
         /// <param name="client">NetworkStream client</param>
-        public void SendPollSession(NetworkStream client)
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        public void SendPollSession(NetworkStream client, SQLiteConnection curDataBaseCon)
         {
             string pollSessionId = receivedPacket.request.id;
             
             // Send PollSession
-            sendPacket.pollSession = GetPollSessionById(pollSessionId);
+            sendPacket.pollSession = GetPollSessionById(pollSessionId, curDataBaseCon);
             string sendString = PollSerializator.SerializePacket(sendPacket);
             data = Encoding.ASCII.GetBytes(sendString);
             client.Write(data, 0, sendString.Length);
+            log.Info("Id of poll session, sent to client - " + pollSessionId);
         }
 
         /// <summary>
@@ -236,11 +200,16 @@ namespace Ilsrep.PollApplication.PollServer
             activeConnCount++;
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
             log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
+            
+            //Connect to data base
+            SQLiteConnection curDataBaseCon = new SQLiteConnection("data source=\"" + PATH_TO_DATA_BASE + "\"");
+            curDataBaseCon.Open();
 
             // Run dialog with client
-            RunClientSession(currentStream);
+            RunClientSession(currentStream, curDataBaseCon);
 
             // Close clients connection
+            curDataBaseCon.Close();
             currentStream.Close();
             currentClient.Close();
             activeConnCount--;
