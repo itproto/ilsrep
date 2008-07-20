@@ -64,7 +64,6 @@
     <Compile Include="Model\PollSession.cs" />
     <Compile Include="Model\PollSessionsList.cs" />
     <Compile Include="Model\Request.cs" />
-    <Compile Include="Model\TcpCommunicator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

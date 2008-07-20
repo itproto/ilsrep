@@ -24,9 +24,7 @@ namespace Ilsrep.PollApplication.PollServer
         private static int activeConnCount = 0;
         private static byte[] data = new byte[PollServer.DATA_SIZE];
         private const string POLL_SESSION_ELEMENT = "pollsession";
-        public const string POLL_SESSIONS_LIST_FILE = "PollSessionsList.xml";
-        private const string POLLS_TABLE_NAME = "polls";
-        private const string PATH_TO_DATA_BASE = "pollserver.db";
+        public const string POLLS_TABLE_NAME = "polls";
 
         /// <summary>
         /// The function execute query to data base
@@ -34,7 +32,7 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="query">query in string</param>
         /// <param name="curDataBaseCon">connection of current client to data base</param>
         /// <returns>result of query</returns>
-        static SQLiteDataReader Query(string query, SQLiteConnection curDataBaseCon)
+        public static SQLiteDataReader Query(string query, SQLiteConnection curDataBaseCon)
         {
             SQLiteCommand command = new SQLiteCommand(query, curDataBaseCon);
             SQLiteDataReader result = command.ExecuteReader();
@@ -133,13 +131,27 @@ namespace Ilsrep.PollApplication.PollServer
             newPollSession = receivedPacket.pollSession;
 
             // Generate new id
-            SQLiteDataReader sqliteReader = Query("SELECT * from " + POLLS_TABLE_NAME + " order by id DESC", curDataBaseCon);
-            newPollSession.id = Convert.ToInt32(sqliteReader["id"]) + 1;
+            try
+            {
+                SQLiteDataReader sqliteReader = Query("SELECT * from " + POLLS_TABLE_NAME + " order by id DESC", curDataBaseCon);
+                newPollSession.id = Convert.ToInt32(sqliteReader["id"]) + 1;
+            }
+            catch
+            {
+                newPollSession.id = 1;
+            }
             
-            // Save newPollSession in data base
-            string newPollSessionString = PollSerializator.Serialize(newPollSession);
-            Query("INSERT into " + POLLS_TABLE_NAME + " values ('" + newPollSession.id + "','" + newPollSession.name + "','" + newPollSessionString + "')", curDataBaseCon);
-            log.Info("New PollSession has been added(name=\"" + newPollSession.name + "\" id=\""+ newPollSession.id + "\")");
+            try
+            {
+                // Save newPollSession in data base
+                string newPollSessionString = PollSerializator.Serialize(newPollSession);
+                Query("INSERT into " + POLLS_TABLE_NAME + " values ('" + newPollSession.id + "','" + newPollSession.name + "','" + newPollSessionString + "')", curDataBaseCon);
+                log.Info("New PollSession has been added(name=\"" + newPollSession.name + "\" id=\"" + newPollSession.id + "\")");
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.Message);
+            }
         }
 
         /// <summary>
@@ -202,8 +214,16 @@ namespace Ilsrep.PollApplication.PollServer
             log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
             
             //Connect to data base
-            SQLiteConnection curDataBaseCon = new SQLiteConnection("data source=\"" + PATH_TO_DATA_BASE + "\"");
-            curDataBaseCon.Open();
+            SQLiteConnection curDataBaseCon = new SQLiteConnection();
+            try
+            {
+                curDataBaseCon = new SQLiteConnection("data source=\"" + PollServer.pathToPolls + "\"");
+                curDataBaseCon.Open();
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.Message);
+            }
 
             // Run dialog with client
             RunClientSession(currentStream, curDataBaseCon);

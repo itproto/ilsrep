@@ -12,6 +12,7 @@ using log4net.Config;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.Common;
+using System.Data.SQLite;
 
 namespace Ilsrep.PollApplication.PollServer
 {
@@ -21,21 +22,14 @@ namespace Ilsrep.PollApplication.PollServer
         private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
-        static public string pollsFolder;
-        static public int port;
-        static public IPAddress host;
+        static public string pathToPolls = "pollserver.db";
+        static public int port = 3320;
+        static public IPAddress host = IPAddress.Any;
 
         public static void Main(string[] args)
         {
             // Configure logger
             XmlConfigurator.Configure(new System.IO.FileInfo(PATH_TO_LOG_CONFIG));
-
-            // Set default host
-            host = IPAddress.Any;
-            // Set default port
-            port = 3320;
-            //Set default pollsFolder
-            pollsFolder = "polls/";
 
             // Parse command line
             NameValueCollection commandLineParameters = CommandLineParametersHelper.Parse(args);
@@ -50,7 +44,7 @@ namespace Ilsrep.PollApplication.PollServer
                     log.Error("Invalid host. " + exception.Message);
                 }
             }
-            if (commandLineParameters["port"] != null && commandLineParameters["host"] != String.Empty)   
+            if (commandLineParameters["port"] != null && commandLineParameters["port"] != String.Empty)   
             {
                 try
                 {
@@ -63,7 +57,21 @@ namespace Ilsrep.PollApplication.PollServer
             }
 
             if (commandLineParameters["polls"] != null && commandLineParameters["polls"] != String.Empty)
-                pollsFolder = commandLineParameters["polls"] + "/";
+                pathToPolls = commandLineParameters["polls"];
+
+            //Check if data base already exists, if false then create new DB
+            SQLiteConnection dataBaseCon = new SQLiteConnection("data source=\"" + pathToPolls + "\"");
+            dataBaseCon.Open();
+            try
+            {
+                PollHandler.Query("SELECT * from " + PollHandler.POLLS_TABLE_NAME, dataBaseCon);
+            }
+            catch
+            {
+                PollHandler.Query("CREATE TABLE " + PollHandler.POLLS_TABLE_NAME + " (id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(255), xml TEXT)", dataBaseCon);
+                log.Info("New data base created: " + pathToPolls);
+            }
+            dataBaseCon.Close();
 
             // Start server
             log.Info("Server started on host: " + host.ToString() + ":" + port);
