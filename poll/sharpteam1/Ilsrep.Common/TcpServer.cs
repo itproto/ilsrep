@@ -47,12 +47,6 @@ namespace Ilsrep.Common
 
         public String Receive()
         {
-            /*Byte[] receivedData = new Byte[m_client.Available];
-            int countReceived = 0;
-
-            countReceived = m_client.Receive(receivedData);
-
-            return Encoding.ASCII.GetString(receivedData, 0, countReceived);*/
             byte[] data = new byte[DATA_SIZE];
             int countReceived = 0;
             countReceived = m_client.Receive(data);
@@ -62,9 +56,7 @@ namespace Ilsrep.Common
         public String Receive(int countReceive)
         {
             Byte[] receivedData = new Byte[countReceive];
-
             int countReceived = m_client.Receive(receivedData);
-
             return Encoding.ASCII.GetString(receivedData, 0, countReceived);
         }
     }

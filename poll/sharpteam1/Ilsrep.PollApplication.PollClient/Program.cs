@@ -29,81 +29,6 @@ namespace Ilsrep.PollApplication.PollClient
         static PollSession pollSession = new PollSession();
         static List<Choice> userChoices = new List<Choice>();
 
-        public static void ParseXml(string xmlData)
-        {
-
-            //---------------Init---------------
-            List<Poll> pollDoc = new List<Poll>();
-            XmlDocument xmlDoc = new XmlDocument();
-            try
-            {
-                xmlDoc.LoadXml(xmlData);
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("Corrupt xml data sent by server!");
-                Console.ReadKey(true);
-                Environment.Exit(-1);
-            }
-
-            System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
-            cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
-
-            XmlNodeList xmlPollSessionList = xmlDoc.GetElementsByTagName(POLL_SESSION_ELEMENT);
-            // Get pollSessions list
-            foreach (XmlNode xmlPollSession in xmlPollSessionList)
-            {
-                pollSession.id = Convert.ToInt32(xmlPollSession.Attributes["id"].Value);
-                pollSession.name = xmlPollSession.Attributes["name"].Value;
-                pollSession.testMode = Convert.ToBoolean(xmlPollSession.Attributes["testMode"].Value);
-                pollSession.minScore = Convert.ToDouble(xmlPollSession.Attributes["minScore"].Value, cultureInfo);
-
-                // Get polls list
-                foreach (XmlNode xmlPoll in xmlPollSession.ChildNodes)
-                {
-                    Poll curPoll = new Poll();
-                    XmlAttributeCollection xmlAttr = xmlPoll.Attributes;
-                    // Get current poll id
-                    curPoll.id = Convert.ToInt32(xmlAttr["id"].Value);
-                    // Get current poll name
-                    curPoll.name = xmlAttr["name"].Value;
-                    // Get current poll customChoiceEnabled option
-                    if (xmlAttr["customChoiceEnabled"] != null)
-                        curPoll.customChoice = Convert.ToBoolean(xmlAttr["customChoiceEnabled"].Value);
-                    // Get correct choice in current Poll
-                    curPoll.correctChoiceId = Convert.ToInt32(xmlAttr["correctChoice"].Value);
-
-                    // Get choices list
-                    foreach( XmlNode node in xmlPoll.ChildNodes )
-                    {
-                        if (node.Name == "choices")
-                        {
-                            // Get list of choices of current Poll
-                            foreach (XmlNode xmlChoice in node.ChildNodes)
-                            {
-                                Choice curChoice = new Choice();
-                                XmlAttributeCollection xmlAttrChoice = xmlChoice.Attributes;
-                                // Get current choice id
-                                curChoice.id = Convert.ToInt32(xmlAttrChoice["id"].Value);
-                                // Get current choice name
-                                curChoice.choice = xmlAttrChoice["name"].Value;
-                                // Save current poll in current choice for future convenience
-                                curChoice.parent = curPoll;
-                                curPoll.choices.Add(curChoice);
-                            }
-                        }
-                        else if (node.Name == "description")
-                        {
-                            // Get current Poll description
-                            curPoll.description = node.InnerText;
-                        }
-                    }
-                    pollSession.polls.Add(curPoll);
-                }
-            }
-            Console.WriteLine("XML parsed");
-        }
-
         public static void RunUserDialog()
         {
             // Read user name
@@ -261,10 +186,9 @@ namespace Ilsrep.PollApplication.PollClient
         {
             try
             {
-                // connecting to server
+                // connect to server
                 Console.WriteLine("Please wait. Connecting to poll server...");
                 server = new TcpServer();
-                //server = new TcpCommunicator();
                 server.Connect(HOST, PORT);
                 
                 // if all ok inform
@@ -277,8 +201,7 @@ namespace Ilsrep.PollApplication.PollClient
             }
             catch (Exception)
             {
-                // if any error occurs exit
-                Console.WriteLine("Could not connect to server");
+                // if any error occurs - exit
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
@@ -298,6 +221,17 @@ namespace Ilsrep.PollApplication.PollClient
             string receivedString = server.Receive();
             PollPacket receivedPacket = new PollPacket();
             receivedPacket = PollSerializator.DeSerializePacket(receivedString);
+
+            //Check if list is not empty
+            if (receivedPacket.pollSessionList.items.Count == 0)
+            {
+                Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
+                server.Disconnect();
+                Console.WriteLine("Disconnected from server");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
 
             // Output list of poll sessions
             Console.WriteLine("Please select poll session:");
