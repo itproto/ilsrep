@@ -7,7 +7,13 @@
         <preference name="maxConnections" defaultValue="16"/>
         <preference name="useAlternativeIPAddress" type="boolean" defaultValue="false"/>
         <preference name="alternativeIPAddress"/>
+
+        <preference name="poolMinIdle" defaultValue="1"/>
+        <preference name="poolInitialSize" defaultValue="1"/>
+        <preference name="poolMaxIdle" defaultValue="4"/>
+        <preference name="poolMaxActive" defaultValue="16"/>
     </preferences>
+
     <tabs>
         <tab name="General">
 	        <preference name="pollXmlPath"/>
@@ -15,6 +21,12 @@
             <preference name="maxConnections"/>
 	        <preference name="useAlternativeIPAddress"/>
 	        <preference name="alternativeIPAddress"/>
+        </tab>
+        <tab name="dbPool">
+            <preference name="poolInitialSize"/>
+	        <preference name="poolMinIdle"/>
+            <preference name="poolMaxIdle"/>
+	        <preference name="poolMaxActive"/>
         </tab>
     </tabs>
 </XPilotPanelPreferencesModel>

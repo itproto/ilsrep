@@ -1,5 +1,7 @@
 package ilsrep.poll.server.db;
 
+import ilsrep.poll.server.PollServer;
+
 /**
  * This class is for working with SQLite DB.
  * 
@@ -28,7 +30,10 @@ public class SQLiteDBWorker extends DBWorker {
      * @throws ClassNotFoundException
      *             If DB driver not found.
      */
-    public SQLiteDBWorker(String dataFile) throws ClassNotFoundException {
+    public SQLiteDBWorker(PollServer srvInstance, String dataFile)
+            throws ClassNotFoundException {
+        super(srvInstance);
+
         this.dataFile = dataFile;
 
         Class.forName(SQLite_DRIVER_CLASS_NAME);
