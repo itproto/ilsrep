@@ -18,7 +18,7 @@ public class DBTester {
 
     public static void main(String[] args) throws ClassNotFoundException,
             SQLException, JAXBException {
-        DBWorker db = new SQLiteDBWorker("sql/pollserver.s3db");
+        DBWorker db = new SQLiteDBWorker(null, "sql/pollserver.s3db");
 
         db.connect();
 

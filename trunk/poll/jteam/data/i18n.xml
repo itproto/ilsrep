@@ -9,5 +9,11 @@
     <entry key="preference.useAlternativeIPAddress">Start server on specified IP address</entry>
     <entry key="preference.alternativeIPAddress">IP address to start server on</entry>
 
+    <entry key="preference.poolMinIdle">Minimal quantity of idle connections</entry>
+    <entry key="preference.poolInitialSize">Initial quantity of connections</entry>
+    <entry key="preference.poolMaxIdle">Maximal quantity of idle connections</entry>
+    <entry key="preference.poolMaxActive">Maximal quantity of connections</entry>
+
     <entry key="preference.tab.General">General</entry>
+    <entry key="preference.tab.dbPool">DB pool configuration</entry>
 </properties>
