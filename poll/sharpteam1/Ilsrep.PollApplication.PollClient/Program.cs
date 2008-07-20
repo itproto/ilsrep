@@ -300,17 +300,17 @@ namespace Ilsrep.PollApplication.PollClient
             receivedPacket = PollSerializator.DeSerializePacket(receivedString);
 
             // Output list of poll sessions
+            Console.WriteLine("Please select poll session:");
             int index = 0;
             foreach (Item curItem in receivedPacket.pollSessionList.items)
             {
                 index++;
                 Console.WriteLine(index + ". " + curItem.name);
             }
-
+            
             while (true)
             {
                 // Let used input poll session id
-                Console.WriteLine("Please select poll session:");
                 string userAnswer = Console.ReadLine();
 
                 try
