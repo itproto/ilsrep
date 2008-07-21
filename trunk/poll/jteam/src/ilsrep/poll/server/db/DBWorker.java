@@ -224,6 +224,7 @@ public abstract class DBWorker {
             Connection conn = dataSource.getConnection();
             Statement stat = conn.createStatement();
 
+            // Calculating id for this pollsession.
             ResultSet rs = stat.executeQuery("select id from polls");
             List<String> list = new ArrayList<String>();
             while (rs.next())
@@ -235,11 +236,16 @@ public abstract class DBWorker {
             }
             sess.setId(Integer.toString(i));
 
+            // Preparing pollsession for writing into DB(marshalling from object
+            // into stream).
             JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
             Marshaller m = cont.createMarshaller();
             StringWriter os = new StringWriter();
             m.marshal(sess, os);
-            stat.executeQuery("insert into polls(id, name, xml) values ("
+            m.setProperty("jaxb.formatted.output", true);
+
+            // Writing pollsession into DB.
+            stat.executeUpdate("insert into polls(id, name, xml) values ("
                     + Integer.toString(i) + ",\"" + sess.getName() + "\",\'"
                     + os.toString() + "\')");
 
@@ -248,7 +254,6 @@ public abstract class DBWorker {
         }
         catch (SQLException e) {
             i = -1;
-            e.printStackTrace();
         }
         catch (JAXBException e) {
             i = -1;

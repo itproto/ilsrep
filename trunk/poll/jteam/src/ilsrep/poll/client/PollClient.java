@@ -46,28 +46,32 @@ public class PollClient {
         boolean repeater = true;
         String[] answerSet123 = { "1", "2", "3" };
         String yesNoChoice = readFromConsole(
-                "Use server?(1) or local file?(2) or print version and exit(3)", answerSet123);
+                "Use server?(1) or local file?(2) or print version and exit(3)",
+                answerSet123);
         // while (repeater) {
         // System.out.print("Use server?(1) or local file?(2): ");
         // yesNoChoice = consoleInputReader.readLine();
         // if (((yesNoChoice.equals("1")) || (yesNoChoice.equals("2"))))
         // repeater = false;
         // }
-        
-        if ((yesNoChoice.compareTo("3") == 0)) {
-	        Package[] allPackages = {PollClient.class.getPackage(), PollServer.class.getPackage(), Pollsession.class.getPackage() } ;
-	        
-    System.out.println("All loaded packages:");
-    for(int i=0; i < allPackages.length; i++) {
-   
-	     System.out.println("" + (i+1) +
-            ": " + allPackages[i].getName() +
-            ": " + allPackages[i].getImplementationTitle() +
-            ", version: " + allPackages[i].getImplementationVersion());
 
-    }
-    System.exit(0);
-}
+        if ((yesNoChoice.compareTo("3") == 0)) {
+            Package[] allPackages = { PollClient.class.getPackage(),
+                    PollServer.class.getPackage(),
+                    Pollsession.class.getPackage() };
+
+            System.out.println("All loaded packages:");
+            for (int i = 0; i < allPackages.length; i++) {
+
+                System.out.println("" + (i + 1) + ": "
+                        + allPackages[i].getName() + ": "
+                        + allPackages[i].getImplementationTitle()
+                        + ", version: "
+                        + allPackages[i].getImplementationVersion());
+
+            }
+            System.exit(0);
+        }
         if ((yesNoChoice.compareTo("2") == 0)) {
             // System.out.print("Please enter filename to read poll xml "
             // + "from\n[press enter for default \"xml/Polls.xml\"]: ");

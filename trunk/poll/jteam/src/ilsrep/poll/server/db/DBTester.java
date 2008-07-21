@@ -26,21 +26,14 @@ public class DBTester {
 
         db.connect();
 
-        // printSelects(db);
-
-        String someXml = db.getPollsessionById("1");
-        StringReader xmlReader = new StringReader(someXml);
-        JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
-        Unmarshaller um = cont.createUnmarshaller();
-        Pollsession sess = (Pollsession) um.unmarshal(xmlReader);
-        System.out.println(db.storePollsession(sess));
+        // writeXml(db, "1");
 
         printSelects(db);
 
         db.close();
     }
 
-    private static void printSelects(DBWorker db) throws SQLException,
+    public static void printSelects(DBWorker db) throws SQLException,
             JAXBException {
         Pollsessionlist lst = db.getPollsessionlist();
 
@@ -50,9 +43,20 @@ public class DBTester {
         ProtocolTester.printPacket(packet);
 
         final char newLine = '\n';
-        System.out.println(newLine + db.getPollsessionById("1") + newLine
-                + db.getPollsessionById("2") + newLine
-                + db.getPollsessionById("3"));
+        for (int i = 1; i < 10; i++) {
+            System.out.println(newLine
+                    + db.getPollsessionById(Integer.toString(i)) + newLine);
+        }
+    }
+
+    public static void writeXml(DBWorker db, String alreadyExistingID)
+            throws SQLException, JAXBException {
+        String someXml = db.getPollsessionById(alreadyExistingID);
+        StringReader xmlReader = new StringReader(someXml);
+        JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+        Unmarshaller um = cont.createUnmarshaller();
+        Pollsession sess = (Pollsession) um.unmarshal(xmlReader);
+        db.storePollsession(sess);
     }
 
 }
