@@ -296,7 +296,7 @@ namespace Ilsrep.PollApplication.PollClient
 
             foreach (Choice userChoice in userChoices)
             {
-                PollSessionResult curPollSessionResult = new PollSessionResult();
+                PollResult curPollSessionResult = new PollResult();
                 curPollSessionResult.questionId = userChoice.parent.id;
                 if (userChoice.id == 0)
                 {

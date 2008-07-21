@@ -6,8 +6,8 @@ using System.Xml.Serialization;
 
 namespace Ilsrep.PollApplication.Model
 {
-    [XmlRoot("pollsessionresult"), Serializable]
-    public class PollSessionResult
+    [XmlRoot("pollresult"), Serializable]
+    public class PollResult
     {
         [XmlAttribute("questionid")] public int questionId;
         [XmlAttribute("answerid")] public int answerId;

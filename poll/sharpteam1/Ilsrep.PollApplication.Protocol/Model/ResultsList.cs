@@ -9,7 +9,7 @@ namespace Ilsrep.PollApplication.Model
     [XmlRoot("resultslist"), Serializable]
     public class ResultsList
     {
-        [XmlElement("pollsessionresult", typeof(PollSessionResult))] public List<PollSessionResult> results = new List<PollSessionResult>();
+        [XmlElement("pollresult", typeof(PollResult))] public List<PollResult> results = new List<PollResult>();
         [XmlAttribute("username")] public string userName;
         [XmlAttribute("pollsessionid")] public int pollsessionId;
     }
