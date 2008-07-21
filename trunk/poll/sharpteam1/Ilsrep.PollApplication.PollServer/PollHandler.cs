@@ -144,7 +144,7 @@ namespace Ilsrep.PollApplication.PollServer
             }
 
             // Insert new pollSessionResult to database
-            foreach(PollSessionResult result in receivedPacket.resultsList.results)
+            foreach(PollResult result in receivedPacket.resultsList.results)
             {
                 try
                 {
