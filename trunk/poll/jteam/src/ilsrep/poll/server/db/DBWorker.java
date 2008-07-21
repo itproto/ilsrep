@@ -6,7 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
 import javax.sql.DataSource;
 
 import net.sf.xpilotpanel.preferences.Preferences;
@@ -217,8 +220,28 @@ public abstract class DBWorker {
      *         added.
      */
     public int storePollsession(Pollsession sess) {
-        // TODO: Fix saving into DB.
-        return -1;
+    int i=0;
+    boolean eternal=true;
+    try{
+    Connection conn = dataSource.getConnection();
+        Statement stat = conn.createStatement();
+        ResultSet rs = stat.executeQuery("select id from polls");
+    List<String> list= new ArrayList<String>();
+    while(rs.next()) list.add(rs.getString("id"));
+    while(eternal){
+	    i++;
+	    if (!list.contains(Integer.toString(i))) break;
+	    }
+    sess.setId(Integer.toString(i));
+    JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+        Marshaller m = cont.createMarshaller();
+        
+    StringWriter os = new StringWriter();
+       m.marshal(sess, os );
+       stat.executeQuery("insert into polls(id, name, xml) values ("+Integer.toString(i)+",\""+sess.getName()+"\",\"" + os.toString()+"\")");
+   } catch (Exception e){};
+	    
+        return i;
     }
 
 }
