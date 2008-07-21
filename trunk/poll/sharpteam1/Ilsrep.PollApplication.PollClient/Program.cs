@@ -208,6 +208,12 @@ namespace Ilsrep.PollApplication.PollClient
             }
         }
 
+        public static void DisconnectFromServer()
+        {
+            server.Disconnect();
+            Console.WriteLine("Disconnected from server");
+        }
+
         /// <summary>
         /// Server sends list of available poll sessions. User picks one and client gets that poll session from server.
         /// </summary>
@@ -276,17 +282,50 @@ namespace Ilsrep.PollApplication.PollClient
             receivedPacket = PollSerializator.DeSerializePacket(receivedString);
             pollSession = receivedPacket.pollSession;
             Console.WriteLine("Data parsed");
-            server.Disconnect();
-            Console.WriteLine("Disconnected from server");
+        }
+
+        /// <summary>
+        /// Send to server results of pollsession
+        /// </summary>
+        public static void SavePollSessionResults()
+        {
+            foreach (Choice userChoice in userChoices)
+            {
+                PollPacket sendPacket = new PollPacket();
+                sendPacket.request.type = Request.SAVE_RESULT;
+                sendPacket.pollSessionResult.userName = userName;
+                sendPacket.pollSessionResult.pollsessionId = pollSession.id;
+                sendPacket.pollSessionResult.questionId = userChoice.parent.id;
+                if (userChoice.id == 0)
+                {
+                    sendPacket.pollSessionResult.answerId = 0;
+                    sendPacket.pollSessionResult.customChoice = userChoice.choice;
+                }
+                else
+                {
+                    sendPacket.pollSessionResult.answerId = userChoice.id;
+                }
+
+                string sendString = PollSerializator.SerializePacket(sendPacket);
+                server.Send(sendString);
+                DisconnectFromServer();
+                ConnectToServer();
+            }
         }
 
         public static void Main()
         {
             ConnectToServer();
             GetPollSession();
+            DisconnectFromServer();
+
             RunUserDialog();
             RunUserPoll();
-            
+
+            ConnectToServer();
+            SavePollSessionResults();
+            DisconnectFromServer();
+
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
         }

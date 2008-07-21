@@ -12,6 +12,7 @@ namespace Ilsrep.PollApplication.Model
         [XmlIgnore] public const string GET_LIST = "getList";
         [XmlIgnore] public const string GET_POLLSESSION = "getPollsession";
         [XmlIgnore] public const string CREATE_POLLSESSION = "createPollsession";
+        [XmlIgnore] public const string SAVE_RESULT = "saveResult";
         [XmlAttribute("type")] public string type;
         [XmlAttribute("id")] public string id;
     }
