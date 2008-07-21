@@ -114,6 +114,9 @@ namespace Ilsrep.PollApplication.PollServer
                     case Request.CREATE_POLLSESSION:
                         CreatePollSession(client, curDataBaseCon);
                         break;
+                    case Request.SAVE_RESULT:
+                        SavePollSessionResult(client, curDataBaseCon);
+                        break;
                     default:
                         log.Error("Invalid option sent by client");
                         break;
@@ -122,7 +125,41 @@ namespace Ilsrep.PollApplication.PollServer
         }
 
         /// <summary>
-        /// Receive new poll session from PollEditor and save it to database
+        /// Receive from Client pollsession result and save it in database
+        /// </summary>
+        /// <param name="client">NetworkStream client</param>
+        /// <param name="curDataBaseCon">connection of current client to data base</param>
+        public void SavePollSessionResult(NetworkStream client, SQLiteConnection curDataBaseCon)
+        {
+            // Generate new id
+            int newId;
+            try
+            {
+                SQLiteDataReader sqliteReader = Query("SELECT * from " + RESULTS_TABLE_NAME + " order by id DESC", curDataBaseCon);
+                newId = Convert.ToInt32(sqliteReader["id"]) + 1;
+            }
+            catch
+            {
+                newId = 1;
+            }
+
+            // Insert new pollSessionResult to database
+            try
+            {
+                Query("INSERT into " + RESULTS_TABLE_NAME + " values('" + newId + "', '" + receivedPacket.pollSessionResult.userName + "', '" + receivedPacket.pollSessionResult.pollsessionId + "', '" + receivedPacket.pollSessionResult.questionId + "', '" + receivedPacket.pollSessionResult.answerId + "', '" + receivedPacket.pollSessionResult.customChoice + "', DATETIME('NOW'))", curDataBaseCon);
+
+                // Check DB record
+                SQLiteDataReader r = Query("SELECT * from " + RESULTS_TABLE_NAME + " WHERE id='" + newId + "'", curDataBaseCon);
+                Console.WriteLine("id={0} name={1} pollsession_id={2} question_id={3} answer_id={4} custom_choice={5} date={6}", r["id"], r["user_name"], r["pollsession_id"], r["question_id"], r["answer_id"], r["custom_choice"], r["date"]);
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Receive new pollsession from PollEditor and save it to database
         /// </summary>
         /// <param name="client">NetworkStream client</param>
         /// <param name="curDataBaseCon">connection of current client to data base</param>
