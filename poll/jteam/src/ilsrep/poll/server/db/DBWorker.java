@@ -240,8 +240,8 @@ public abstract class DBWorker {
             StringWriter os = new StringWriter();
             m.marshal(sess, os);
             stat.executeQuery("insert into polls(id, name, xml) values ("
-                    + Integer.toString(i) + ",\"" + sess.getName() + "\",\""
-                    + os.toString() + "\")");
+                    + Integer.toString(i) + ",\"" + sess.getName() + "\",\'"
+                    + os.toString() + "\')");
 
             stat.close();
             conn.close();
