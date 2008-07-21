@@ -3,7 +3,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties version="1.0">
-    <entry key="preference.pollXmlPath">Путь к poll xml файлам/entry>
     <entry key="preference.port">Порт</entry>
     <entry key="preference.maxConnections">Максимальное количество соединений в один момент</entry>
     <entry key="preference.useAlternativeIPAddress">Запускать серсер на указаном IP адресе</entry>
