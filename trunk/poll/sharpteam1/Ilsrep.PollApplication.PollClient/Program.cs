@@ -289,28 +289,29 @@ namespace Ilsrep.PollApplication.PollClient
         /// </summary>
         public static void SavePollSessionResults()
         {
+            PollPacket sendPacket = new PollPacket();
+            sendPacket.request.type = Request.SAVE_RESULT;
+            sendPacket.resultsList.userName = userName;
+            sendPacket.resultsList.pollsessionId = pollSession.id;
+
             foreach (Choice userChoice in userChoices)
             {
-                PollPacket sendPacket = new PollPacket();
-                sendPacket.request.type = Request.SAVE_RESULT;
-                sendPacket.pollSessionResult.userName = userName;
-                sendPacket.pollSessionResult.pollsessionId = pollSession.id;
-                sendPacket.pollSessionResult.questionId = userChoice.parent.id;
+                PollSessionResult curPollSessionResult = new PollSessionResult();
+                curPollSessionResult.questionId = userChoice.parent.id;
                 if (userChoice.id == 0)
                 {
-                    sendPacket.pollSessionResult.answerId = 0;
-                    sendPacket.pollSessionResult.customChoice = userChoice.choice;
+                    curPollSessionResult.answerId = 0;
+                    curPollSessionResult.customChoice = userChoice.choice;
                 }
                 else
                 {
-                    sendPacket.pollSessionResult.answerId = userChoice.id;
+                    curPollSessionResult.answerId = userChoice.id;
                 }
-
-                string sendString = PollSerializator.SerializePacket(sendPacket);
-                server.Send(sendString);
-                DisconnectFromServer();
-                ConnectToServer();
+                sendPacket.resultsList.results.Add(curPollSessionResult);
             }
+            string sendString = PollSerializator.SerializePacket(sendPacket);
+            server.Send(sendString);
+            Console.WriteLine("Result of pollsession successfully sent to server");
         }
 
         public static void Main()

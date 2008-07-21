@@ -144,17 +144,21 @@ namespace Ilsrep.PollApplication.PollServer
             }
 
             // Insert new pollSessionResult to database
-            try
+            foreach(PollSessionResult result in receivedPacket.resultsList.results)
             {
-                Query("INSERT into " + RESULTS_TABLE_NAME + " values('" + newId + "', '" + receivedPacket.pollSessionResult.userName + "', '" + receivedPacket.pollSessionResult.pollsessionId + "', '" + receivedPacket.pollSessionResult.questionId + "', '" + receivedPacket.pollSessionResult.answerId + "', '" + receivedPacket.pollSessionResult.customChoice + "', DATETIME('NOW'))", curDataBaseCon);
+                try
+                {
+                    Query("INSERT into " + RESULTS_TABLE_NAME + " values('" + newId + "', '" + receivedPacket.resultsList.userName + "', '" + receivedPacket.resultsList.pollsessionId + "', '" + result.questionId + "', '" + result.answerId + "', '" + result.customChoice + "', DATETIME('NOW'))", curDataBaseCon);
 
-                // Check DB record
-                SQLiteDataReader r = Query("SELECT * from " + RESULTS_TABLE_NAME + " WHERE id='" + newId + "'", curDataBaseCon);
-                Console.WriteLine("id={0} name={1} pollsession_id={2} question_id={3} answer_id={4} custom_choice={5} date={6}", r["id"], r["user_name"], r["pollsession_id"], r["question_id"], r["answer_id"], r["custom_choice"], r["date"]);
-            }
-            catch (Exception exception)
-            {
-                log.Error(exception.Message);
+                    // Check DB record
+                    SQLiteDataReader r = Query("SELECT * from " + RESULTS_TABLE_NAME + " WHERE id='" + newId + "'", curDataBaseCon);
+                    Console.WriteLine("id={0} name={1} pollsession_id={2} question_id={3} answer_id={4} custom_choice={5} date={6}", r["id"], r["user_name"], r["pollsession_id"], r["question_id"], r["answer_id"], r["custom_choice"], r["date"]);
+                }
+                catch (Exception exception)
+                {
+                    log.Error(exception.Message);
+                }
+                newId++;
             }
         }
 
