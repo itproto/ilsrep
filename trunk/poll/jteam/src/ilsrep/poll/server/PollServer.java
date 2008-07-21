@@ -1,28 +1,24 @@
 package ilsrep.poll.server;
 
 import ilsrep.poll.common.Pollsession;
+import ilsrep.poll.server.db.DBWorker;
+import ilsrep.poll.server.db.SQLiteDBWorker;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Hashtable;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import net.sf.xpilotpanel.preferences.Preferences;
@@ -60,6 +56,7 @@ public class PollServer {
      * <li>3 - can't bind ServerSocket to port</li>
      * <li>4 - problems with reflection</li>
      * <li>5 - Pollsession class not found or have no apropriate annotations</li>
+     * <li>6 - DB inialisation error</li>
      * </ul>
      * 
      * @param args
@@ -100,14 +97,9 @@ public class PollServer {
     protected int exitCode = -1;
 
     /**
-     * Pollsessions that have been loaded to server.
+     * DB for server.
      */
-    protected List<Pollsession> pollsessions = null;
-
-    /**
-     * Holds all poll xml files as <code>File</code>.
-     */
-    protected Hashtable<String, File> pollFiles = new Hashtable<String, File>();
+    protected DBWorker db = null;
 
     /**
      * Port to start server on.
@@ -242,43 +234,61 @@ public class PollServer {
             }
         }
 
+        // DB initialisation(should be moved somewhere if DB can be other that
+        // SQLite).
+        try {
+            db = new SQLiteDBWorker(this, configuration.get("dbFile"));
+            db.connect();
+        }
+        catch (ClassNotFoundException e) {
+            logger.fatal("DB inialisation error. Quitting!");
+            serverShutdown(6);
+            return;
+        }
+        catch (SQLException e) {
+            logger.fatal("DB inialisation error. Quitting!");
+            serverShutdown(6);
+            return;
+        }
+
+        // (not used more - moved to DB)
         // Reading all poll xml's from specified directory into memory(objects).
         // DRC to TKOST: For what frigging reason do we need to do that?
-        pollsessions = new Vector<Pollsession>();
-
-        File xmlDir = new File(configuration.get("pollXmlPath"));
-
-        if (xmlDir.exists() && xmlDir.isDirectory()) {
-            File[] filesInDir = xmlDir.listFiles(new FilenameFilter() {
-
-                @Override
-                public boolean accept(File dir, String name) {
-                    int pointPosition = name.lastIndexOf((int) '.');
-                    return name.substring(pointPosition + 1).compareTo("xml") == 0;
-                }
-            });
-
-            for (File file : filesInDir) {
-                try {
-                    logger.info("Loading file as poll xml: "
-                            + file.getAbsolutePath());
-                    Unmarshaller um = pollsessionContext.createUnmarshaller();
-
-                    Pollsession session = (Pollsession) um
-                            .unmarshal(new FileInputStream(file));
-                    pollsessions.add(session);
-                    pollFiles.put(session.getId(), file);
-                }
-                catch (JAXBException e) {
-                    logger.warn("Poll xml file is corrupted: "
-                            + file.getAbsolutePath());
-                }
-                catch (FileNotFoundException e) {
-                    logger.warn("Poll xml file is not found: "
-                            + file.getAbsolutePath());
-                }
-            }
-        }
+        // pollsessions = new Vector<Pollsession>();
+        //
+        // File xmlDir = new File(configuration.get("pollXmlPath"));
+        //
+        // if (xmlDir.exists() && xmlDir.isDirectory()) {
+        // File[] filesInDir = xmlDir.listFiles(new FilenameFilter() {
+        //
+        // @Override
+        // public boolean accept(File dir, String name) {
+        // int pointPosition = name.lastIndexOf((int) '.');
+        // return name.substring(pointPosition + 1).compareTo("xml") == 0;
+        // }
+        // });
+        //
+        // for (File file : filesInDir) {
+        // try {
+        // logger.info("Loading file as poll xml: "
+        // + file.getAbsolutePath());
+        // Unmarshaller um = pollsessionContext.createUnmarshaller();
+        //
+        // Pollsession session = (Pollsession) um
+        // .unmarshal(new FileInputStream(file));
+        // pollsessions.add(session);
+        // pollFiles.put(session.getId(), file);
+        // }
+        // catch (JAXBException e) {
+        // logger.warn("Poll xml file is corrupted: "
+        // + file.getAbsolutePath());
+        // }
+        // catch (FileNotFoundException e) {
+        // logger.warn("Poll xml file is not found: "
+        // + file.getAbsolutePath());
+        // }
+        // }
+        // }
     }
 
     /**
@@ -422,23 +432,37 @@ public class PollServer {
     }
 
     /**
-     * Searches for pollsession with specified id.
+     * Searches for pollsession with specified id in DB.
      * 
      * @param id
      *            Id to search for.
-     * @return Pollsession with specified id.
+     * @return Pollsession with specified id or null if not found.
      */
     public synchronized Pollsession getPollsessionById(String id) {
-        Pollsession searchResult = null;
-
-        for (Pollsession pls : pollsessions) {
-            if (pls.getId().compareTo(id) == 0) {
-                searchResult = pls;
-                break;
-            }
+        String pollsessionAsString = null;
+        try {
+            pollsessionAsString = db.getPollsessionById(id);
+        }
+        catch (SQLException e) {
+            // If error in DB.
+            return null;
         }
 
-        return searchResult;
+        if (pollsessionAsString == null)
+            return null;
+
+        Pollsession pollsession = null;
+        try {
+            StringReader reader = new StringReader(pollsessionAsString);
+            Unmarshaller um = getPollsessionContext().createUnmarshaller();
+            pollsession = (Pollsession) um.unmarshal(reader);
+        }
+        catch (JAXBException e) {
+            // If xml retrieved from DB is not valid.
+            return null;
+        }
+
+        return pollsession;
     }
 
     /**
@@ -481,44 +505,44 @@ public class PollServer {
         return pollsessionContext;
     }
 
-    /**
-     * Returns next free ID.
-     * 
-     * @return Free ID.
-     */
-    private String getNextID() {
-        int max = Integer.MIN_VALUE;
-
-        // Searching for first greater than 0 integer ID.
-        for (Pollsession sess : pollsessions) {
-            try {
-                max = Integer.parseInt(sess.getId());
-                if (max > 0)
-                    break;
-                else
-                    continue;
-            }
-            catch (NumberFormatException e) {
-                continue;
-            }
-        }
-
-        if (max == Integer.MIN_VALUE)
-            return "1";
-
-        for (Pollsession sess : pollsessions) {
-            try {
-                int currentID = Integer.parseInt(sess.getId());
-                if (currentID > max)
-                    max = currentID;
-            }
-            catch (NumberFormatException e) {
-                continue;
-            }
-        }
-
-        return "" + (max + 1);
-    }
+    // /**
+    // * Returns next free ID.
+    // *
+    // * @return Free ID.
+    // */
+    // private String getNextID() {
+    // int max = Integer.MIN_VALUE;
+    //
+    // // Searching for first greater than 0 integer ID.
+    // for (Pollsession sess : pollsessions) {
+    // try {
+    // max = Integer.parseInt(sess.getId());
+    // if (max > 0)
+    // break;
+    // else
+    // continue;
+    // }
+    // catch (NumberFormatException e) {
+    // continue;
+    // }
+    // }
+    //
+    // if (max == Integer.MIN_VALUE)
+    // return "1";
+    //
+    // for (Pollsession sess : pollsessions) {
+    // try {
+    // int currentID = Integer.parseInt(sess.getId());
+    // if (currentID > max)
+    // max = currentID;
+    // }
+    // catch (NumberFormatException e) {
+    // continue;
+    // }
+    // }
+    //
+    // return "" + (max + 1);
+    // }
 
     /**
      * Adds xml to server's list of pollsessions.
@@ -528,41 +552,16 @@ public class PollServer {
      */
     public void addPollXML(String xmlItSelf) {
         try {
-            // Used to make string be read as InputStream.
-            PipedOutputStream os = new PipedOutputStream();
-            PipedInputStream is = new PipedInputStream(os);
-
-            os.write(xmlItSelf.getBytes());
-            os.close();
-
+            StringReader reader = new StringReader(xmlItSelf);
             Unmarshaller um = pollsessionContext.createUnmarshaller();
-            Pollsession newSession = (Pollsession) um.unmarshal(is);
+            Pollsession newSession = (Pollsession) um.unmarshal(reader);
 
-            String idForNewSession = getNextID();
-            newSession.setId(idForNewSession);
+            db.storePollsession(newSession);
 
-            File newXmlFile = new File(configuration.get("pollXmlPath")
-                    + "/Pollsession_" + idForNewSession + ".xml");
-            boolean fileCreated = newXmlFile.createNewFile();
-
-            if (!fileCreated)
-                return;
-
-            FileOutputStream newXmlFileStream = new FileOutputStream(newXmlFile);
-
-            Marshaller mr = pollsessionContext.createMarshaller();
-            mr.setProperty("jaxb.formatted.output", true);
-            mr.marshal(newSession, newXmlFileStream);
-
-            pollsessions.add(newSession);
-            pollFiles.put(newSession.getId(), newXmlFile);
             logger.info("Pollsession added. Name: " + newSession.getName()
                     + " Id: " + newSession.getId());
         }
         catch (JAXBException e) {
-            return;
-        }
-        catch (IOException e) {
             return;
         }
     }
@@ -574,6 +573,15 @@ public class PollServer {
      */
     public Preferences getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Returns initialised <code>DBWorker</code> for this server instance.
+     * 
+     * @return Initialised <code>DBWorker</code>.
+     */
+    public DBWorker getDB() {
+        return db;
     }
 
 }

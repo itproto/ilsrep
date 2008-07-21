@@ -1,14 +1,14 @@
 package ilsrep.poll.server;
 
-import ilsrep.poll.common.Pollsession;
+import ilsrep.poll.common.Item;
+import ilsrep.poll.common.Pollsessionlist;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
@@ -63,9 +63,16 @@ public class PollClientHandler implements ClientHandler, Runnable {
             buffer = inputReader.readLine();
             if (buffer.indexOf("LIST") != -1) {
                 StringBuffer listBuffer = new StringBuffer();
-                for (Pollsession sess : serverInstance.pollsessions) {
-                    listBuffer.append(sess.getId() + ") " + sess.getName()
-                            + "\n");
+                try {
+                    Pollsessionlist list = serverInstance.getDB()
+                            .getPollsessionlist();
+                    for (Item i : list.getItems()) {
+                        listBuffer
+                                .append(i.getId() + ") " + i.getName() + "\n");
+                    }
+                }
+                catch (SQLException e) {
+                    // Shouldn't happen. If happened - sending empty list.
                 }
                 outToServer.writeBytes(listBuffer.toString());
                 outToServer.writeBytes("END\n");
@@ -80,21 +87,19 @@ public class PollClientHandler implements ClientHandler, Runnable {
                     indexString = buffer.indexOf(">", indexString + 20);
                     int indexStringEnd = buffer.indexOf("<", indexString);
                     pollId = buffer.substring(indexString + 1, indexStringEnd);
-                    // Pollsession
-                    // pollSession=this.serverInstance.getPollsessionById(pollId);
 
-                    // logger.info(pollId);
-                    // outToServer.writeUTF(pollId);
-                    if (this.serverInstance.pollFiles.containsKey(pollId)) {
-                        File file = this.serverInstance.pollFiles.get(pollId);
+                    String requestedXml = null;
+                    try {
+                        requestedXml = serverInstance.getDB()
+                                .getPollsessionById(pollId);
+                    }
+                    catch (SQLException e) {
+                        // Shouldn't happen. If happened - sending "-1" warning
+                        // that no such pollsession.
+                    }
 
-                        FileInputStream fis = new FileInputStream(file);
-                        int x = fis.available();
-                        byte b[] = new byte[x];
-                        fis.read(b);
-                        String content = new String(b);
-                        outToServer.writeUTF(content);
-
+                    if (requestedXml != null) {
+                        outToServer.writeUTF(/*"\n" + */requestedXml);
                         outToServer.writeUTF("\n");
                         logger
                                 .debug("Poll(Id: " + pollId
@@ -130,6 +135,10 @@ public class PollClientHandler implements ClientHandler, Runnable {
             }
         }
         catch (IOException e) {
+            logger.warn("Connection error with "
+                    + generateHostPortAsText(socket));
+        }
+        catch (Exception e) {
             logger.warn("Connection error with "
                     + generateHostPortAsText(socket));
         }
