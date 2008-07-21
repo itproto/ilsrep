@@ -14,6 +14,7 @@ import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
+import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.server.PollServer;
@@ -205,6 +206,19 @@ public abstract class DBWorker {
         }
 
         return optionInt;
+    }
+
+    /**
+     * Stores pollsession in DB.
+     * 
+     * @param sess
+     *            Pollsession, w/o id.
+     * @return Id of this pollsession in DB, or <code>-1</code> if it weren't
+     *         added.
+     */
+    public int storePollsession(Pollsession sess) {
+        // TODO: Fix saving into DB.
+        return -1;
     }
 
 }
