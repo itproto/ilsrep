@@ -25,6 +25,7 @@ namespace Ilsrep.PollApplication.PollServer
         private static byte[] data = new byte[PollServer.DATA_SIZE];
         private const string POLL_SESSION_ELEMENT = "pollsession";
         public const string POLLS_TABLE_NAME = "polls";
+        public const string RESULTS_TABLE_NAME = "results";
 
         /// <summary>
         /// The function execute query to data base

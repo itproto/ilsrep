@@ -12,5 +12,6 @@ namespace Ilsrep.PollApplication.Model
         [XmlElement("request")] public Request request = new Request();
         [XmlElement("pollsessionlist")] public PollSessionList pollSessionList = new PollSessionList();
         [XmlElement("pollsession")] public PollSession pollSession = new PollSession();
+        [XmlElement("pollsessionresult")] public PollSessionResult pollSessionResult = new PollSessionResult();
     }
 }

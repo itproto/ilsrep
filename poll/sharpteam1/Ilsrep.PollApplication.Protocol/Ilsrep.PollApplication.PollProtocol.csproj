@@ -61,7 +61,12 @@
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Poll.cs" />
     <Compile Include="Model\PollPacket.cs" />
-    <Compile Include="Model\PollSession.cs" />
+    <Compile Include="Model\PollSession.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Model\PollSessionResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Model\PollSessionsList.cs" />
     <Compile Include="Model\Request.cs" />
   </ItemGroup>

@@ -69,6 +69,7 @@ namespace Ilsrep.PollApplication.PollServer
             catch
             {
                 PollHandler.Query("CREATE TABLE " + PollHandler.POLLS_TABLE_NAME + " (id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(255), xml TEXT)", dataBaseCon);
+                PollHandler.Query("CREATE TABLE " + PollHandler.RESULTS_TABLE_NAME + " (id INTEGER PRIMARY KEY NOT NULL, user_name VARCHAR(255), )", dataBaseCon);
                 log.Info("New data base created: " + pathToPolls);
             }
             dataBaseCon.Close();
