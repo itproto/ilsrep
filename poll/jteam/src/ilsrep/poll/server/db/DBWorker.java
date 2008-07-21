@@ -10,7 +10,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
-import javax.sql.DataSource;
 
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
@@ -56,7 +55,7 @@ public abstract class DBWorker {
      * <code>DataSource</code> for DB.<br>
      * Is pool.
      */
-    protected DataSource dataSource = null;
+    protected BasicDataSource dataSource = null;
 
     /**
      * DB's URL for JDBC.
@@ -220,28 +219,61 @@ public abstract class DBWorker {
      *         added.
      */
     public int storePollsession(Pollsession sess) {
-    int i=0;
-    boolean eternal=true;
-    try{
-    Connection conn = dataSource.getConnection();
-        Statement stat = conn.createStatement();
-        ResultSet rs = stat.executeQuery("select id from polls");
-    List<String> list= new ArrayList<String>();
-    while(rs.next()) list.add(rs.getString("id"));
-    while(eternal){
-	    i++;
-	    if (!list.contains(Integer.toString(i))) break;
-	    }
-    sess.setId(Integer.toString(i));
-    JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
-        Marshaller m = cont.createMarshaller();
-        
-    StringWriter os = new StringWriter();
-       m.marshal(sess, os );
-       stat.executeQuery("insert into polls(id, name, xml) values ("+Integer.toString(i)+",\""+sess.getName()+"\",\"" + os.toString()+"\")");
-   } catch (Exception e){};
-	    
+        int i = 0;
+        try {
+            Connection conn = dataSource.getConnection();
+            Statement stat = conn.createStatement();
+
+            ResultSet rs = stat.executeQuery("select id from polls");
+            List<String> list = new ArrayList<String>();
+            while (rs.next())
+                list.add(rs.getString("id"));
+            while (true) {
+                i++;
+                if (!list.contains(Integer.toString(i)))
+                    break;
+            }
+            sess.setId(Integer.toString(i));
+
+            JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+            Marshaller m = cont.createMarshaller();
+            StringWriter os = new StringWriter();
+            m.marshal(sess, os);
+            stat.executeQuery("insert into polls(id, name, xml) values ("
+                    + Integer.toString(i) + ",\"" + sess.getName() + "\",\""
+                    + os.toString() + "\")");
+
+            stat.close();
+            conn.close();
+        }
+        catch (SQLException e) {
+            i = -1;
+            e.printStackTrace();
+        }
+        catch (JAXBException e) {
+            i = -1;
+        }
+
         return i;
+    }
+
+    /**
+     * Stops connections to DB.
+     * 
+     * @throws SQLException
+     *             On some DB errors.
+     */
+    public void close() throws SQLException {
+        dataSource.close();
+    }
+
+    /**
+     * @see java.lang.Object#finalize()
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        close();
     }
 
 }
