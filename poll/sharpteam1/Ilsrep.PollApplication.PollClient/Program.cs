@@ -18,8 +18,6 @@ namespace Ilsrep.PollApplication.PollClient
 {
     public class PollClient
     {
-        private const string POLL_SESSION_ELEMENT = "pollsession";
-        private const string POLL_ELEMENT = "poll";
         private const string CONSOLE_YES = "y";
         private const string CONSOLE_NO = "n";
         private const string HOST = "localhost";
@@ -199,10 +197,11 @@ namespace Ilsrep.PollApplication.PollClient
                 else
                     throw new Exception("Not connected");
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 // if any error occurs - exit
-                Console.WriteLine("Press any key to continue...");
+                Console.WriteLine(exception.Message);
+                Console.WriteLine("Press any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
             }
@@ -226,7 +225,7 @@ namespace Ilsrep.PollApplication.PollClient
 
             string receivedString = server.Receive();
             PollPacket receivedPacket = new PollPacket();
-            receivedPacket = PollSerializator.DeSerializePacket(receivedString);
+            receivedPacket = PollSerializator.DeserializePacket(receivedString);
 
             //Check if list is not empty
             if (receivedPacket.pollSessionList.items.Count == 0)
@@ -234,7 +233,7 @@ namespace Ilsrep.PollApplication.PollClient
                 Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
                 server.Disconnect();
                 Console.WriteLine("Disconnected from server");
-                Console.WriteLine("Press any key to continue...");
+                Console.WriteLine("Press any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
             }
@@ -279,13 +278,13 @@ namespace Ilsrep.PollApplication.PollClient
             // receive poll
             receivedString = server.Receive();
             Console.WriteLine("Data received");
-            receivedPacket = PollSerializator.DeSerializePacket(receivedString);
+            receivedPacket = PollSerializator.DeserializePacket(receivedString);
             pollSession = receivedPacket.pollSession;
             Console.WriteLine("Data parsed");
         }
 
         /// <summary>
-        /// Send to server results of pollsession
+        /// Send results of pollsession to server
         /// </summary>
         public static void SavePollSessionResults()
         {
@@ -327,7 +326,7 @@ namespace Ilsrep.PollApplication.PollClient
             SavePollSessionResults();
             DisconnectFromServer();
 
-            Console.WriteLine("Press any key to continue...");
+            Console.WriteLine("Press any key to exit...");
             Console.ReadKey(true);
         }
     }

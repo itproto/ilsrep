@@ -11,10 +11,8 @@ namespace Ilsrep.PollApplication.PollEditor
     public class PollEditor
     {
         private static System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
-
         private static String username = String.Empty;
         private static PollSession pollSession = new PollSession();
-
         private const String HOST = "localhost";
         private const int PORT = 3320;
 
@@ -150,11 +148,10 @@ namespace Ilsrep.PollApplication.PollEditor
         public static void Main()
         {
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
-            
             RunUserDialog();
 
+            // Save pollsession to server
             bool connectToServer = ToBoolean(AskQuestion("Do you want to save pollsesion to server[y/n]?", new String[] { "y", "n" }));
-
             if (connectToServer == true)
             {
                 TcpServer client = new TcpServer();
@@ -165,7 +162,10 @@ namespace Ilsrep.PollApplication.PollEditor
                 string sendString = PollSerializator.SerializePacket(sendPacket);
                 client.Send(sendString);
                 client.Disconnect();
+                Console.WriteLine("Pollsession successfully sent to server");
             }
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey(true);
         }
     }
 }

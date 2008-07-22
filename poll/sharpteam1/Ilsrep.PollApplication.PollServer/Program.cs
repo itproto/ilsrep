@@ -11,7 +11,6 @@ using log4net;
 using log4net.Config;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.PollApplication.Model;
-using Ilsrep.Common;
 using System.Data.SQLite;
 
 namespace Ilsrep.PollApplication.PollServer
@@ -22,7 +21,7 @@ namespace Ilsrep.PollApplication.PollServer
         private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
-        static public string pathToPolls = "pollserver.db";
+        static public string pathToDatabase = "pollserver.db";
         static public int port = 3320;
         static public IPAddress host = IPAddress.Any;
 
@@ -55,12 +54,11 @@ namespace Ilsrep.PollApplication.PollServer
                     log.Error("Invalid port. " + exception.Message);
                 }
             }
-
-            if (commandLineParameters["polls"] != null && commandLineParameters["polls"] != String.Empty)
-                pathToPolls = commandLineParameters["polls"];
+            if (commandLineParameters["data"] != null && commandLineParameters["data"] != String.Empty)
+                pathToDatabase = commandLineParameters["data"];
 
             //Check if data base already exists, if false then create new DB
-            SQLiteConnection dataBaseCon = new SQLiteConnection("data source=\"" + pathToPolls + "\"");
+            SQLiteConnection dataBaseCon = new SQLiteConnection("data source=\"" + pathToDatabase + "\"");
             dataBaseCon.Open();
             try
             {
@@ -70,7 +68,7 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 PollHandler.Query("CREATE TABLE " + PollHandler.POLLS_TABLE_NAME + " (id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(255), xml TEXT)", dataBaseCon);
                 PollHandler.Query("CREATE TABLE " + PollHandler.RESULTS_TABLE_NAME + " (id INTEGER PRIMARY KEY NOT NULL, user_name VARCHAR(255), pollsession_id INTEGER, question_id INTEGER, answer_id INTEGER NULL, custom_choice VARCHAR(255), date DATE)", dataBaseCon);
-                log.Info("New data base created: " + pathToPolls);
+                log.Info("New data base created: " + pathToDatabase);
             }
             dataBaseCon.Close();
 
