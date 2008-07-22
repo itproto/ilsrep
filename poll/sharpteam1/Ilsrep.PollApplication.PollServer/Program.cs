@@ -59,7 +59,19 @@ namespace Ilsrep.PollApplication.PollServer
 
             //Check if data base already exists, if false then create new DB
             SQLiteConnection dataBaseCon = new SQLiteConnection("data source=\"" + pathToDatabase + "\"");
-            dataBaseCon.Open();
+            try
+            {
+                dataBaseCon.Open();
+            }
+            catch (Exception excrption)
+            {
+                log.Error(excrption.Message);
+                Console.WriteLine("Probably, folder that you indicates doesn't exist. Please, create folder and try again");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
+
             try
             {
                 PollHandler.Query("SELECT * from " + PollHandler.POLLS_TABLE_NAME, dataBaseCon);
