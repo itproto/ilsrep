@@ -11,7 +11,6 @@
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="run.dir" value="${basedir}/run" />
 	<property name="scripts.dir" value="${basedir}/scripts" />
-	<property name="xml.dir" value="${basedir}/xml" />
 	<property name="sql.dir" value="${basedir}/sql" />
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
@@ -56,10 +55,6 @@
 		</copy>
 		<copy todir="${run.dir}/lib">
 			<fileset dir="${lib.dir}">
-			</fileset>
-		</copy>
-		<copy todir="${run.dir}/xml">
-			<fileset dir="${xml.dir}">
 			</fileset>
 		</copy>
 		<copy todir="${run.dir}/sql">
