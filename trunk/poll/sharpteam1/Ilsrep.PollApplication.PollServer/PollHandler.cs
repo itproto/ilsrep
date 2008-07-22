@@ -23,7 +23,6 @@ namespace Ilsrep.PollApplication.PollServer
         private string clientAddress;
         private static int activeConnCount = 0;
         private static byte[] data = new byte[PollServer.DATA_SIZE];
-        private const string POLL_SESSION_ELEMENT = "pollsession";
         public const string POLLS_TABLE_NAME = "polls";
         public const string RESULTS_TABLE_NAME = "results";
 
@@ -54,7 +53,7 @@ namespace Ilsrep.PollApplication.PollServer
                 // Search patch to needed file by id
                 int pollSessionId = Convert.ToInt32(pollSessionIdStr);
                 string pollSessionXml = Query("SELECT * from " + POLLS_TABLE_NAME + " where id='" + pollSessionId + "'", curDataBaseCon)["xml"].ToString();
-                PollSession pollSession = PollSerializator.DeSerialize(pollSessionXml);
+                PollSession pollSession = PollSerializator.DeserializePollSession(pollSessionXml);
                 return pollSession;
             }
             catch (Exception exception)
@@ -100,7 +99,7 @@ namespace Ilsrep.PollApplication.PollServer
                 string receivedString = ReceiveFromClient(client);
                 if (receivedString == String.Empty)
                     return;
-                receivedPacket = PollSerializator.DeSerializePacket(receivedString);
+                receivedPacket = PollSerializator.DeserializePacket(receivedString);
 
                 // Select option
                 switch (receivedPacket.request.type)
@@ -143,14 +142,17 @@ namespace Ilsrep.PollApplication.PollServer
                 newId = 1;
             }
 
+            // Get current date
+            string currentDate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
+
             // Insert new pollSessionResult to database
             foreach(PollResult result in receivedPacket.resultsList.results)
             {
                 try
                 {
-                    Query("INSERT into " + RESULTS_TABLE_NAME + " values('" + newId + "', '" + receivedPacket.resultsList.userName + "', '" + receivedPacket.resultsList.pollsessionId + "', '" + result.questionId + "', '" + result.answerId + "', '" + result.customChoice + "', DATETIME('NOW'))", curDataBaseCon);
+                    Query("INSERT into " + RESULTS_TABLE_NAME + " values('" + newId + "', '" + receivedPacket.resultsList.userName + "', '" + receivedPacket.resultsList.pollsessionId + "', '" + result.questionId + "', '" + result.answerId + "', '" + result.customChoice + "', '" + currentDate + "')", curDataBaseCon);
 
-                    // Check DB record
+                    // Check pollSessionResult record by selecting him from DB and writing to console
                     SQLiteDataReader r = Query("SELECT * from " + RESULTS_TABLE_NAME + " WHERE id='" + newId + "'", curDataBaseCon);
                     Console.WriteLine("id={0} name={1} pollsession_id={2} question_id={3} answer_id={4} custom_choice={5} date={6}", r["id"], r["user_name"], r["pollsession_id"], r["question_id"], r["answer_id"], r["custom_choice"], r["date"]);
                 }
@@ -182,11 +184,11 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 newPollSession.id = 1;
             }
-            
+
+            // Save newPollSession in data base
             try
             {
-                // Save newPollSession in data base
-                string newPollSessionString = PollSerializator.Serialize(newPollSession);
+                string newPollSessionString = PollSerializator.SerializePollSession(newPollSession);
                 Query("INSERT into " + POLLS_TABLE_NAME + " values ('" + newPollSession.id + "','" + newPollSession.name + "','" + newPollSessionString + "')", curDataBaseCon);
                 log.Info("New PollSession has been added(name=\"" + newPollSession.name + "\" id=\"" + newPollSession.id + "\")");
             }
@@ -255,11 +257,11 @@ namespace Ilsrep.PollApplication.PollServer
             clientAddress = currentClient.Client.RemoteEndPoint.ToString();
             log.Info("New client accepted: " + clientAddress + " (" + activeConnCount + " active connections)");
             
-            //Connect to data base
+            //Create new connection to database
             SQLiteConnection curDataBaseCon = new SQLiteConnection();
             try
             {
-                curDataBaseCon = new SQLiteConnection("data source=\"" + PollServer.pathToPolls + "\"");
+                curDataBaseCon = new SQLiteConnection("data source=\"" + PollServer.pathToDatabase + "\"");
                 curDataBaseCon.Open();
             }
             catch (Exception exception)

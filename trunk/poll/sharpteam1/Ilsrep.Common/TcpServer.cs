@@ -31,7 +31,7 @@ namespace Ilsrep.Common
             }
             catch (SocketException)
             {
-                Console.WriteLine("Couldn't connect to {0}:{1} - timed out", address, port);
+                throw new Exception("Couldn't connect to " + address + ":" + port + " - timed out");
             }
         }
 
@@ -44,20 +44,13 @@ namespace Ilsrep.Common
         {
             m_client.Send(Encoding.ASCII.GetBytes(data));
         }
-
+        
         public String Receive()
         {
             byte[] data = new byte[DATA_SIZE];
             int countReceived = 0;
             countReceived = m_client.Receive(data);
             return Encoding.ASCII.GetString(data,0,countReceived);
-        }
-
-        public String Receive(int countReceive)
-        {
-            Byte[] receivedData = new Byte[countReceive];
-            int countReceived = m_client.Receive(receivedData);
-            return Encoding.ASCII.GetString(receivedData, 0, countReceived);
         }
     }
 }
