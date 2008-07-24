@@ -5,12 +5,11 @@ import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Request;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 
@@ -229,20 +228,29 @@ public class PollClientHandler implements ClientHandler, Runnable {
      * @throws IOException
      *             On errors in stream(I/O errors).
      */
-    public static void sendPacket(OutputStream outStream, Pollpacket packet)
-            throws JAXBException, IOException {
+    public static synchronized void sendPacket(OutputStream outStream,
+            Pollpacket packet) throws JAXBException, IOException {
         JAXBContext pollPacketContext = JAXBContext
                 .newInstance(Pollpacket.class);
-
         Marshaller mr = pollPacketContext.createMarshaller();
 
-        mr.marshal(packet, outStream);
+        StringWriter wr = new StringWriter();
 
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                outStream));
-        writer.newLine();
+        mr.marshal(packet, wr);
 
-        outStream.flush();
+        outStream.write(wr.toString().getBytes());
+        // JAXBContext pollPacketContext = JAXBContext
+        // .newInstance(Pollpacket.class);
+        //
+        // Marshaller mr = pollPacketContext.createMarshaller();
+        //
+        // mr.marshal(packet, outStream);
+        //
+        // BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+        // outStream));
+        // writer.newLine();
+        //
+        // outStream.flush();
     }
 
 }
