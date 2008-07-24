@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.UnknownHostException;
 
 import javax.xml.bind.JAXBContext;
@@ -92,42 +91,45 @@ public class PollClient {
                     + " to read poll xml from\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
 
+            TcpCommunicator communicator = null;
+
+            if (serverPortString.compareTo("") != 0) {
+                int separatorIndex = serverPortString.indexOf(':');
+                if (separatorIndex != 1) {
+                    try {
+                        String serverName = serverPortString.substring(0,
+                                separatorIndex);
+                        int port = Integer.parseInt(serverPortString
+                                .substring(separatorIndex + 1));
+
+                        communicator = new TcpCommunicator(serverName, port);
+                    }
+                    catch (NumberFormatException e) {
+                        communicator = null;
+                    }
+                    catch (UnknownHostException e) {
+                        communicator = null;
+                    }
+                    catch (IOException e) {
+                        communicator = null;
+                    }
+                }
+            }
+
+            if (communicator == null)
+                communicator = new TcpCommunicator();
+            communicator.listXml();
+
             boolean done = false;
             while (!done) {
                 try {
-                    TcpCommunicator communicator = null;
+                    polls = communicator.getXML();
 
-                    if (serverPortString.compareTo("") != 0) {
-                        int separatorIndex = serverPortString.indexOf(':');
-                        if (separatorIndex != 1) {
-                            try {
-                                String serverName = serverPortString.substring(
-                                        0, separatorIndex);
-                                int port = Integer.parseInt(serverPortString
-                                        .substring(separatorIndex + 1));
-
-                                communicator = new TcpCommunicator(serverName,
-                                        port);
-                            }
-                            catch (NumberFormatException e) {
-                                communicator = null;
-                            }
-                            catch (UnknownHostException e) {
-                                communicator = null;
-                            }
-                            catch (IOException e) {
-                                communicator = null;
-                            }
-                        }
+                    if (polls != null)
+                        done = true;
+                    else {
+                        System.out.println("No such id on server. RETRYING...");
                     }
-
-                    if (communicator == null)
-                        communicator = new TcpCommunicator();
-                    communicator.listXml();
-                    Reader pollFile = communicator.getXML();
-                    communicator.finalize();
-                    polls = (Pollsession) um.unmarshal(pollFile);
-                    done = true;
                 }
                 catch (Exception m) {
                     // TODO: BUG: This cause client hang when it can't connect
@@ -136,6 +138,7 @@ public class PollClient {
                             .println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
                 }
             }
+            communicator.finalize();
         }
 
         // Showing xml, generated from already read object model.

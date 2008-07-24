@@ -23,6 +23,11 @@ public class Request {
     public static final String TYPE_POLLXML = "getPollsession";
 
     /**
+     * Indicates of type of request: add new pollsession.
+     */
+    public static final String TYPE_CREATE_POLLSESSION = "createPollsession";;
+
+    /**
      * Type of request:
      * <ul>
      * <li>list {@link Request#TYPE_LIST}</li>

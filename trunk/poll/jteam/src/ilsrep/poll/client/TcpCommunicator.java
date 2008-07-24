@@ -1,14 +1,21 @@
 package ilsrep.poll.client;
 
+import ilsrep.poll.common.Item;
+import ilsrep.poll.common.Pollpacket;
+import ilsrep.poll.common.Pollsession;
+import ilsrep.poll.common.Request;
+import ilsrep.poll.server.PollClientHandler;
+
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * Handles TCP socket connection with the server
@@ -133,73 +140,33 @@ public class TcpCommunicator {
      * receives byte data from server and converts it to a Reader object.
      * 
      * @return xmlBuffered received XML from server
+     * @throws IOException
+     *             On network I/O errors.
+     * @throws JAXBException
+     *             On corrupted output from server.
      * 
      * @see TcpCommunicator
      */
-    public Reader getXML() {
-        InputStream inFromServer = null;
-        String xmlItself = "";
-        Reader xmlBuffered = null;
-        try {
-            // Generating input and output streams
+    public Pollsession getXML() throws JAXBException, IOException {
+        String id = PollClient
+                .readFromConsole("Enter ID number of the desired poll");
 
-            // BufferedReader consoleInputReader = new BufferedReader(
-            // new InputStreamReader(System.in));
-            DataOutputStream outToServer = new DataOutputStream(clientSocket
-                    .getOutputStream());
-            inFromServer = clientSocket.getInputStream();
+        // Forming request packet.
+        Request pollxmlRequest = new Request();
+        pollxmlRequest.setType(Request.TYPE_POLLXML);
+        pollxmlRequest.setId(id);
+        Pollpacket requestPacket = new Pollpacket();
+        requestPacket.setRequest(pollxmlRequest);
 
-            xmlItself = "";
-            // System.out.print("Enter ID number of the desired poll: ");
-            String id = PollClient
-                    .readFromConsole("Enter ID number of the desired poll");
-            // sending request
-            outToServer.writeUTF("<getPollSession><pollSessionId>" + id
-                    + "</pollSessionId></getPollSession> \n");
-            System.out.println("Receiving XML...");
+        // Sending request and getting response.
+        Pollpacket responsePacket = null;
+        PollClientHandler.sendPacket(clientSocket.getOutputStream(),
+                requestPacket);
+        responsePacket = PollClientHandler.receivePacket(clientSocket
+                .getInputStream());
 
-            String buffer;
-
-            BufferedReader inputReader = new BufferedReader(
-                    new InputStreamReader(inFromServer));
-            // Getting and parsing request. Reading line because
-            // for some reason m test server returned first line empty, and the
-            // output started from second line.
-            inputReader.readLine();
-            boolean eternal = true;
-            try {
-                while (eternal) {
-                    buffer = inputReader.readLine();
-                    if (buffer.compareTo("-1") == 0)
-                        break;
-
-                    xmlItself = xmlItself + "\n" + buffer;
-                    if (buffer.indexOf("/pollses") != -1)
-                        break;
-                }
-            }
-            catch (Exception m) {
-                System.out.println("XML Received.. preparing poll");
-            }
-
-            // Making Reader out of string (needed for marshaller)
-            xmlBuffered = new StringReader(xmlItself);
-        }
-        catch (Exception e) {
-            System.out.println("ExCePtIoN");
-            e.printStackTrace();
-            try {
-                BufferedReader consoleInputReader = new BufferedReader(
-                        new InputStreamReader(System.in));
-                consoleInputReader.readLine();
-            }
-            catch (Exception exception) {
-            }
-        }
-
-        // returning reader
-        return xmlBuffered;
-
+        return (responsePacket != null) ? responsePacket.getPollsession()
+                : null;
     }
 
     /**
@@ -209,26 +176,27 @@ public class TcpCommunicator {
      *            Xml, as <code>String</code>.
      */
     public void sendXml(String genXml) {
-        // TKOST: I commented out variables that are not used, to make it don't
-        // generate warnings on compilation.
-
-        // InputStream inFromServer = null;
-        // String xmlItself = "";
-        // Reader xmlBuffered = null;
         try {
-            // Generating input and output streams
+            StringReader xmlReader = new StringReader(genXml);
 
-            // BufferedReader consoleInputReader = new BufferedReader(
-            // new InputStreamReader(System.in));
-            DataOutputStream outToServer = new DataOutputStream(clientSocket
-                    .getOutputStream());
-            // inFromServer = clientSocket.getInputStream();
+            JAXBContext pollPacketCont = JAXBContext
+                    .newInstance(Pollsession.class);
 
-            outToServer.writeBytes(genXml);
-            System.out.println("XML sent to server.");
+            Unmarshaller um = pollPacketCont.createUnmarshaller();
+
+            Pollsession sessionToSend = (Pollsession) um.unmarshal(xmlReader);
+
+            Pollpacket packetToSend = new Pollpacket();
+            Request saveRequest = new Request();
+            saveRequest.setType(Request.TYPE_CREATE_POLLSESSION);
+            packetToSend.setRequest(saveRequest);
+            packetToSend.setPollsession(sessionToSend);
+
+            PollClientHandler.sendPacket(clientSocket.getOutputStream(),
+                    packetToSend);
         }
         catch (Exception e) {
-            System.out.println("ExCePtIoN");
+            System.out.println("Error while sending xml to server.");
             e.printStackTrace();
             try {
                 BufferedReader consoleInputReader = new BufferedReader(
@@ -245,38 +213,38 @@ public class TcpCommunicator {
      * Retrieves and outputs XML IDs and names
      */
     public void listXml() {
-        System.out.println("Getting list of polls...");
-        boolean allOk = false;
-        while (!allOk) {
-            try {
-                allOk = true;
-                DataOutputStream outToServer = new DataOutputStream(
-                        clientSocket.getOutputStream());
-                BufferedReader inputReader = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
-                outToServer.writeUTF("LIST\n");
-                // inputReader.readLine();
-                String buffer = "";
-                String output = "";
-                while (!((buffer = inputReader.readLine()).equals("END")))
-                    output += buffer + "\n";
-                System.out.println("\n" + output);
-            }
-            catch (Exception e) {
-                System.out
-                        .println("Wrong response from server...Press ENTER to retry");
-                try {
-                    BufferedReader consoleInputReader = new BufferedReader(
-                            new InputStreamReader(System.in));
-                    consoleInputReader.readLine();
-                }
-                catch (Exception exception) {
-                }
-                allOk = false;
-            }
+        // Forming request packet.
+        Pollpacket requestPacket = new Pollpacket();
+        Request request = new Request();
+        request.setType(Request.TYPE_LIST);
+        requestPacket.setRequest(request);
 
+        try {
+            // Sending list request.
+            PollClientHandler.sendPacket(clientSocket.getOutputStream(),
+                    requestPacket);
+
+            // Receiving response.
+            Pollpacket response = PollClientHandler.receivePacket(clientSocket
+                    .getInputStream());
+
+            // Processing.
+            if (response.getPollsessionList() != null
+                    && response.getPollsessionList().getItems() != null) {
+                for (Item i : response.getPollsessionList().getItems()) {
+                    System.out.println(i.getId() + ") " + i.getName());
+                }
+            }
+            else {
+                System.out.println("Server sent no list or list is empty.");
+            }
         }
-
+        catch (JAXBException e) {
+            return;
+        }
+        catch (IOException e) {
+            return;
+        }
     }
 
 }

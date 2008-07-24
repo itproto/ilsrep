@@ -1,14 +1,23 @@
 package ilsrep.poll.server;
 
-import ilsrep.poll.common.Item;
+import ilsrep.poll.common.Pollpacket;
+import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.Pollsessionlist;
+import ilsrep.poll.common.Request;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.net.Socket;
 import java.sql.SQLException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 
@@ -53,94 +62,71 @@ public class PollClientHandler implements ClientHandler, Runnable {
     public void run() {
         logger.info("Client connected from IP:port: "
                 + generateHostPortAsText(socket));
+
         try {
-            BufferedReader inputReader = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-            DataOutputStream outToServer = new DataOutputStream(socket
-                    .getOutputStream());
-            String buffer = "";
+            while (true) {
+                if (socket.isClosed())
+                    break;
 
-            buffer = inputReader.readLine();
-            if (buffer.indexOf("LIST") != -1) {
-                StringBuffer listBuffer = new StringBuffer();
-                try {
-                    Pollsessionlist list = serverInstance.getDB()
-                            .getPollsessionlist();
-                    for (Item i : list.getItems()) {
-                        listBuffer
-                                .append(i.getId() + ") " + i.getName() + "\n");
+                Pollpacket receivedPacket = null;
+                receivedPacket = receivePacket();
+
+                if (receivedPacket.getRequest() != null) {
+                    if (receivedPacket.getRequest().getType().compareTo(
+                            Request.TYPE_LIST) == 0) {
+                        Pollsessionlist list = serverInstance.getDB()
+                                .getPollsessionlist();
+
+                        Pollpacket packetForSending = new Pollpacket();
+                        packetForSending.setPollsessionList(list);
+                        sendPacket(packetForSending);
                     }
+                    else
+                        if (receivedPacket.getRequest().getType().compareTo(
+                                Request.TYPE_POLLXML) == 0) {
+                            Pollsession session = null;
+                            try {
+                                session = serverInstance
+                                        .getPollsessionById(receivedPacket
+                                                .getRequest().getId());
+                            }
+                            catch (NullPointerException e) {
+                                // This should be fixed in protocol.
+                                session = null;
+                            }
+
+                            Pollpacket packetForSending = new Pollpacket();
+
+                            // Sending empty packet if pollsession not found in
+                            // DB.
+                            if (session != null)
+                                packetForSending.setPollsession(session);
+
+                            sendPacket(packetForSending);
+                        }
+                        else
+                            if (receivedPacket.getRequest().getType()
+                                    .compareTo(Request.TYPE_CREATE_POLLSESSION) == 0) {
+                                if (receivedPacket.getPollsession() != null) {
+                                    serverInstance.getDB().storePollsession(
+                                            receivedPacket.getPollsession());
+                                }
+                            }
                 }
-                catch (SQLException e) {
-                    // Shouldn't happen. If happened - sending empty list.
-                }
-                outToServer.writeBytes(listBuffer.toString());
-                outToServer.writeBytes("END\n");
-                logger.debug("List sent to client. ("
-                        + generateHostPortAsText(socket) + ")");
-
-                buffer = inputReader.readLine();
-                String pollId = null;
-                if (buffer.indexOf("<getPollSession><pollSessionId>") != -1) {
-                    int indexString = buffer
-                            .indexOf("<getPollSession><pollSessionId>");
-                    indexString = buffer.indexOf(">", indexString + 20);
-                    int indexStringEnd = buffer.indexOf("<", indexString);
-                    pollId = buffer.substring(indexString + 1, indexStringEnd);
-
-                    String requestedXml = null;
-                    try {
-                        requestedXml = serverInstance.getDB()
-                                .getPollsessionById(pollId);
-                    }
-                    catch (SQLException e) {
-                        // Shouldn't happen. If happened - sending "-1" warning
-                        // that no such pollsession.
-                    }
-
-                    if (requestedXml != null) {
-                        outToServer.writeUTF(/*"\n" + */requestedXml);
-                        outToServer.writeUTF("\n");
-                        logger
-                                .debug("Poll(Id: " + pollId
-                                        + ") sent to client.");
-                    }
-                    else {
-                        outToServer.writeUTF("-1\n");
-                        logger.warn("Client(" + generateHostPortAsText(socket)
-                                + ") asked for invalid id: " + pollId);
-                    }
-                }
-                else {
-                    logger.warn("Client(" + generateHostPortAsText(socket)
-                            + ") input corrupted. Closing connection.");
-                }
-
-                socket.close();
             }
-            else {
-                String xmlItself = buffer;
-                boolean eternal = true;
-                while (eternal) {
-                    buffer = inputReader.readLine();
-
-                    xmlItself = xmlItself + "\n" + buffer;
-                    if (buffer.indexOf("/pollses") != -1)
-                        break;
-                }
-
-                logger.debug("Recieved xml from client: "
-                        + generateHostPortAsText(socket) + ". Adding.");
-                serverInstance.addPollXML(xmlItself);
-            }
+        }
+        catch (JAXBException e) {
+            // Serialising problems or JAXB init problems(no Pollpacket class in
+            // classpath or corrupted).
         }
         catch (IOException e) {
-            logger.warn("Connection error with "
-                    + generateHostPortAsText(socket));
+            // On network I/O problems.
+        }
+        catch (SQLException e) {
+            // On DB problems.
         }
         catch (Exception e) {
-            logger.warn("Connection error with "
-                    + generateHostPortAsText(socket));
+            // On other exceptions.
         }
         finally {
             try {
@@ -161,6 +147,102 @@ public class PollClientHandler implements ClientHandler, Runnable {
      */
     public static String generateHostPortAsText(Socket socket) {
         return socket.getInetAddress().toString() + ":" + socket.getPort();
+    }
+
+    /**
+     * Receives packet from this handler's connection.
+     * 
+     * @return Received packet as object.
+     * @throws JAXBException
+     *             On errors in stream(broken client input).
+     * @throws IOException
+     *             On errors in stream(I/O errors).
+     */
+    private Pollpacket receivePacket() throws JAXBException, IOException {
+        return receivePacket(socket.getInputStream());
+    }
+
+    /**
+     * Sends packet to client.
+     * 
+     * @param packet
+     *            Packet to send.
+     * @throws JAXBException
+     *             On errors in stream(broken client input).
+     * @throws IOException
+     *             On errors in stream(I/O errors).
+     */
+    private void sendPacket(Pollpacket packet) throws JAXBException,
+            IOException {
+        sendPacket(socket.getOutputStream(), packet);
+    }
+
+    /**
+     * Serialises packet from given stream.
+     * 
+     * @param inStream
+     *            Stream to serialise to.
+     * @return Received packet as object.
+     * @throws JAXBException
+     *             On errors in stream(broken client input).
+     * @throws IOException
+     *             On errors in stream(I/O errors).
+     */
+    public static Pollpacket receivePacket(InputStream inStream)
+            throws JAXBException, IOException {
+        JAXBContext pollPacketContext = JAXBContext
+                .newInstance(Pollpacket.class);
+
+        StringBuffer inputBuffer = new StringBuffer();
+
+        final int bufferSize = 64 * 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        while (true) {
+            int bytesRead = inStream.read(buffer, 0, bufferSize);
+
+            String s = new String(buffer, 0, bytesRead);
+
+            inputBuffer.append(s);
+
+            if (inStream.available() == 0)
+                break;
+        }
+
+        Unmarshaller um = pollPacketContext.createUnmarshaller();
+        StringReader reader = new StringReader(inputBuffer.toString().trim());
+
+        Pollpacket receivedPacket = (Pollpacket) um.unmarshal(reader);
+
+        return receivedPacket;
+    }
+
+    /**
+     * De-serialises packet from given stream.
+     * 
+     * @param outStream
+     *            Stream to de-serialise from.
+     * @param packet
+     *            Packet to send.
+     * @throws JAXBException
+     *             On errors in stream(broken client input).
+     * @throws IOException
+     *             On errors in stream(I/O errors).
+     */
+    public static void sendPacket(OutputStream outStream, Pollpacket packet)
+            throws JAXBException, IOException {
+        JAXBContext pollPacketContext = JAXBContext
+                .newInstance(Pollpacket.class);
+
+        Marshaller mr = pollPacketContext.createMarshaller();
+
+        mr.marshal(packet, outStream);
+
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                outStream));
+        writer.newLine();
+
+        outStream.flush();
     }
 
 }

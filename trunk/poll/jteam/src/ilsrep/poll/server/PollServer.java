@@ -505,45 +505,6 @@ public class PollServer {
         return pollsessionContext;
     }
 
-    // /**
-    // * Returns next free ID.
-    // *
-    // * @return Free ID.
-    // */
-    // private String getNextID() {
-    // int max = Integer.MIN_VALUE;
-    //
-    // // Searching for first greater than 0 integer ID.
-    // for (Pollsession sess : pollsessions) {
-    // try {
-    // max = Integer.parseInt(sess.getId());
-    // if (max > 0)
-    // break;
-    // else
-    // continue;
-    // }
-    // catch (NumberFormatException e) {
-    // continue;
-    // }
-    // }
-    //
-    // if (max == Integer.MIN_VALUE)
-    // return "1";
-    //
-    // for (Pollsession sess : pollsessions) {
-    // try {
-    // int currentID = Integer.parseInt(sess.getId());
-    // if (currentID > max)
-    // max = currentID;
-    // }
-    // catch (NumberFormatException e) {
-    // continue;
-    // }
-    // }
-    //
-    // return "" + (max + 1);
-    // }
-
     /**
      * Adds xml to server's list of pollsessions.
      * 
