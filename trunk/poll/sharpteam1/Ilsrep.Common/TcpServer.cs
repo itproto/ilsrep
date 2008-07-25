@@ -7,7 +7,7 @@ namespace Ilsrep.Common
 {
     public class TcpServer
     {
-        public const int DATA_SIZE = 65536;
+        public const int DATA_SIZE = 64 * 1024;
         Socket m_client;
 
         public bool isConnected

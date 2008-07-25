@@ -98,8 +98,16 @@ namespace Ilsrep.PollApplication.PollServer
                 // Receive PollPacket from client
                 string receivedString = ReceiveFromClient(client);
                 if (receivedString == String.Empty)
+                {
+                    log.Error("An empty string received");
                     return;
+                }
                 receivedPacket = PollSerializator.DeserializePacket(receivedString);
+                if (receivedPacket == null)
+                {
+                    log.Error("Invalid data received");
+                    return;
+                }
 
                 // Select option
                 switch (receivedPacket.request.type)
