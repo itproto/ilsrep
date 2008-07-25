@@ -57,7 +57,7 @@ namespace Ilsrep.PollApplication.PollServer
             if (commandLineParameters["data"] != null && commandLineParameters["data"] != String.Empty)
                 pathToDatabase = commandLineParameters["data"];
 
-            //Check if data base already exists, if false then create new DB
+            // Try to open data base
             SQLiteConnection dataBaseCon = new SQLiteConnection("data source=\"" + pathToDatabase + "\"");
             try
             {
@@ -72,6 +72,7 @@ namespace Ilsrep.PollApplication.PollServer
                 Environment.Exit(-1);
             }
 
+            //Check if data base already exists, if false then create new DB
             try
             {
                 PollHandler.Query("SELECT * from " + PollHandler.POLLS_TABLE_NAME, dataBaseCon);
@@ -88,8 +89,19 @@ namespace Ilsrep.PollApplication.PollServer
             log.Info("Server started on host: " + host.ToString() + ":" + port);
             IPEndPoint clientAddress = new IPEndPoint(host, port);
             Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            client.Bind(clientAddress);
+            try
+            {
+                client.Bind(clientAddress);
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.Message);
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
             log.Info("Waiting for clients...");
+
             while (true)
             {
                 client.Listen(10);

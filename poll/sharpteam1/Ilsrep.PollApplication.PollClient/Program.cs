@@ -207,10 +207,55 @@ namespace Ilsrep.PollApplication.PollClient
             }
         }
 
+        /// <summary>
+        /// Disconnect from server
+        /// </summary>
         public static void DisconnectFromServer()
         {
             server.Disconnect();
             Console.WriteLine("Disconnected from server");
+        }
+
+        /// <summary>
+        /// Function receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+        /// </summary>
+        /// <returns>PollPacket receivedPacket</returns>
+        public static PollPacket ReceivePollPacket()
+        {
+            while (true)
+            {
+                string receivedString = server.Receive();
+                PollPacket receivedPacket = new PollPacket();
+                receivedPacket = PollSerializator.DeserializePacket(receivedString);
+
+                // Check if received data is correct
+                if (receivedPacket == null)
+                {
+                    Console.WriteLine("Wrong data received!");
+                    Console.WriteLine("Would you like to retry?[y/n]:");
+                    while (true)
+                    {
+                        string userInput;
+                        userInput = Console.ReadLine();
+                        if (userInput == "y")
+                        {
+                            break;
+                        }
+                        else if (userInput == "n")
+                        {
+                            Environment.Exit(-1);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid choice!");
+                        }
+                    }                    
+                }
+                else
+                {
+                    return receivedPacket;
+                }
+            }
         }
 
         /// <summary>
@@ -223,11 +268,10 @@ namespace Ilsrep.PollApplication.PollClient
             string sendString = PollSerializator.SerializePacket(sendPacket);
             server.Send(sendString);
 
-            string receivedString = server.Receive();
             PollPacket receivedPacket = new PollPacket();
-            receivedPacket = PollSerializator.DeserializePacket(receivedString);
+            receivedPacket = ReceivePollPacket();
 
-            //Check if list is not empty
+            // Check if list is not empty
             if (receivedPacket.pollSessionList.items.Count == 0)
             {
                 Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
@@ -271,16 +315,14 @@ namespace Ilsrep.PollApplication.PollClient
 
                 }
 
-                // show that wrong id was inputed
+                // Show that wrong id was inputed
                 Console.WriteLine("Invalid poll session id! Please, input correct id");
             }
 
-            // receive poll
-            receivedString = server.Receive();
-            Console.WriteLine("Data received");
-            receivedPacket = PollSerializator.DeserializePacket(receivedString);
+            // Receive poll
+            receivedPacket = ReceivePollPacket();
+
             pollSession = receivedPacket.pollSession;
-            Console.WriteLine("Data parsed");
         }
 
         /// <summary>

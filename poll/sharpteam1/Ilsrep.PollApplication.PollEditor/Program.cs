@@ -69,7 +69,23 @@ namespace Ilsrep.PollApplication.PollEditor
             pollSession.testMode = ToBoolean(AskQuestion("Test mode[y/n]?", new String[] { "y", "n" }));
 
             if (pollSession.testMode == true)
-                pollSession.minScore = Convert.ToDouble(AskQuestion("Min score to pass test:", null), cultureInfo);
+            {
+                while (true)
+                {
+                    try
+                    {
+                        pollSession.minScore = Convert.ToDouble(AskQuestion("Min score to pass test:", null), cultureInfo);
+                        if (pollSession.minScore > 1 || pollSession.minScore < 0)
+                            throw new Exception("minScore must be greater 0 and lesser 1");
+                        break;
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine("Error: {0}", exception.Message);
+                        Console.WriteLine("Please, input correct minScore(example: 0.57)");
+                    }
+                }
+            }
 
             while (true)
             {
