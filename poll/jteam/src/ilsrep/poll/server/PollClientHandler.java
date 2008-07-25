@@ -200,9 +200,11 @@ public class PollClientHandler implements ClientHandler, Runnable {
         while (true) {
             int bytesRead = inStream.read(buffer, 0, bufferSize);
 
-            String s = new String(buffer, 0, bytesRead);
+            if (bytesRead > 0) {
+                String s = new String(buffer, 0, bytesRead);
 
-            inputBuffer.append(s);
+                inputBuffer.append(s);
+            }
 
             if (inStream.available() == 0)
                 break;
