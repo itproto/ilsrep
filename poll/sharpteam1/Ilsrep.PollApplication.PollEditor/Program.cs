@@ -89,10 +89,12 @@ namespace Ilsrep.PollApplication.PollEditor
 
             while (true)
             {
-                bool addNewPoll = ToBoolean(AskQuestion("Add new poll[y/n]?", new String[] { "y", "n" }));
-
-                if (addNewPoll == false)
-                    break;
+                if (pollSession.polls.Count > 0)
+                {
+                    bool addNewPoll = ToBoolean(AskQuestion("Add new poll[y/n]?", new String[] { "y", "n" }));
+                    if (addNewPoll == false)
+                        break;
+                }
 
                 Poll newPoll = new Poll();
 
@@ -103,10 +105,13 @@ namespace Ilsrep.PollApplication.PollEditor
 
                 while (true)
                 {
-                    bool addNewChoice = ToBoolean(AskQuestion("Add new choice[y/n]?", new String[] { "y", "n" }));
-
-                    if (addNewChoice == false)
-                        break;
+                    bool isTestMode = pollSession.testMode;
+                    if (newPoll.choices.Count >= (isTestMode ? 2 : 0))
+                    {
+                        bool addNewChoice = ToBoolean(AskQuestion("Add new choice[y/n]?", new String[] { "y", "n" }));
+                        if (addNewChoice == false)
+                            break;
+                    }
 
                     Choice newChoice = new Choice();
 
@@ -120,7 +125,15 @@ namespace Ilsrep.PollApplication.PollEditor
 
                 if (pollSession.testMode == false)
                 {
-                    newPoll.customChoice = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
+                    // Enable CustomChoice automaticly if user doesn't inputed any choice
+                    if (newPoll.choices.Count == 0)
+                    {
+                        newPoll.customChoice = true;
+                    }
+                    else
+                    {
+                        newPoll.customChoice = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
+                    }
                 }
                 else
                 {

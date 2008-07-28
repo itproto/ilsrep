@@ -99,7 +99,6 @@ namespace Ilsrep.PollApplication.PollServer
                 string receivedString = ReceiveFromClient(client);
                 if (receivedString == String.Empty)
                 {
-                    log.Error("An empty string received");
                     return;
                 }
                 receivedPacket = PollSerializator.DeserializePacket(receivedString);

@@ -49,7 +49,14 @@ namespace Ilsrep.Common
         {
             byte[] data = new byte[DATA_SIZE];
             int countReceived = 0;
-            countReceived = m_client.Receive(data);
+            try
+            {
+                countReceived = m_client.Receive(data);
+            }
+            catch (Exception)
+            {
+                return String.Empty;
+            }
             return Encoding.ASCII.GetString(data,0,countReceived);
         }
     }
