@@ -107,14 +107,23 @@ namespace Ilsrep.PollApplication.PollClient
                 }
 
                 // check if custom choice
-                bool ifCustomChoice = (index == curentPoll.choices.Count);
-                if (ifCustomChoice)
+                bool isCustomChoice = (index == curentPoll.choices.Count);
+                if (isCustomChoice)
                 {
                     Console.Write("Enter your choice:" );
 
+                    string userInput = String.Empty;
+                    while (true)
+                    {
+                        userInput = Console.ReadLine();
+                        if (userInput != String.Empty)
+                            break;
+                        Console.WriteLine("Custom choice can't be empty!");
+                    }
+
                     // create custom choice
                     Choice userChoice = new Choice();
-                    userChoice.choice = Console.ReadLine();
+                    userChoice.choice = userInput;
                     userChoice.id = 0;
                     userChoice.parent = curentPoll;
 
@@ -312,7 +321,8 @@ namespace Ilsrep.PollApplication.PollClient
                 }
                 catch (Exception exception)
                 {
-
+                    Console.WriteLine(exception.Message);
+                    break;
                 }
 
                 // Show that wrong id was inputed
