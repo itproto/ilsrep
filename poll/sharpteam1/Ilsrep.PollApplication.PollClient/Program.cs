@@ -226,13 +226,17 @@ namespace Ilsrep.PollApplication.PollClient
         }
 
         /// <summary>
-        /// Function receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+        /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
         /// </summary>
+        /// <param name="sendPacket">PollPacket with request to send</param>
         /// <returns>PollPacket receivedPacket</returns>
-        public static PollPacket ReceivePollPacket()
+        public static PollPacket ReceivePollPacket(PollPacket sendPacket)
         {
             while (true)
             {
+                string sendString = PollSerializator.SerializePacket(sendPacket);
+                server.Send(sendString);
+
                 string receivedString = server.Receive();
                 PollPacket receivedPacket = new PollPacket();
                 receivedPacket = PollSerializator.DeserializePacket(receivedString);
@@ -248,6 +252,9 @@ namespace Ilsrep.PollApplication.PollClient
                         userInput = Console.ReadLine();
                         if (userInput == "y")
                         {
+                            DisconnectFromServer();
+                            Console.ReadKey(true);
+                            ConnectToServer();
                             break;
                         }
                         else if (userInput == "n")
@@ -274,11 +281,9 @@ namespace Ilsrep.PollApplication.PollClient
         {
             PollPacket sendPacket = new PollPacket();
             sendPacket.request.type = Request.GET_LIST;
-            string sendString = PollSerializator.SerializePacket(sendPacket);
-            server.Send(sendString);
 
             PollPacket receivedPacket = new PollPacket();
-            receivedPacket = ReceivePollPacket();
+            receivedPacket = ReceivePollPacket(sendPacket);
 
             // Check if list is not empty
             if (receivedPacket.pollSessionList.items.Count == 0)
@@ -314,8 +319,10 @@ namespace Ilsrep.PollApplication.PollClient
                         string pollSessionID = receivedPacket.pollSessionList.items[index - 1].id;
                         sendPacket.request.type = Request.GET_POLLSESSION;
                         sendPacket.request.id = pollSessionID;
-                        sendString = PollSerializator.SerializePacket(sendPacket);
-                        server.Send(sendString);
+
+                        // Receive poll
+                        receivedPacket = ReceivePollPacket(sendPacket);
+                        pollSession = receivedPacket.pollSession;
                         break;
                     }
                 }
@@ -328,11 +335,6 @@ namespace Ilsrep.PollApplication.PollClient
                 // Show that wrong id was inputed
                 Console.WriteLine("Invalid poll session id! Please, input correct id");
             }
-
-            // Receive poll
-            receivedPacket = ReceivePollPacket();
-
-            pollSession = receivedPacket.pollSession;
         }
 
         /// <summary>
