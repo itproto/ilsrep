@@ -42,7 +42,7 @@ namespace Ilsrep.PollApplication.PollClient
                 else
                 {
                     //Console.Clear();
-                    Console.WriteLine("You didn't enter your name.");
+                    Console.WriteLine("! You didn't enter your name.");
                 }
             }
 
@@ -56,7 +56,7 @@ namespace Ilsrep.PollApplication.PollClient
                 string userInput = Console.ReadLine();
                 if (userInput == CONSOLE_YES) break;
                 if (userInput == CONSOLE_NO) Environment.Exit(0);
-                Console.WriteLine("Wrong choice, please, choose [y/n]:");
+                Console.WriteLine("! Wrong choice, please, choose [y/n]:");
             }
         }
 
@@ -103,7 +103,7 @@ namespace Ilsrep.PollApplication.PollClient
                     {
                         
                     }
-                    Console.WriteLine("Invalid choice!");
+                    Console.WriteLine("! Invalid choice");
                 }
 
                 // check if custom choice
@@ -118,7 +118,7 @@ namespace Ilsrep.PollApplication.PollClient
                         userInput = Console.ReadLine();
                         if (userInput != String.Empty)
                             break;
-                        Console.WriteLine("Custom choice can't be empty!");
+                        Console.WriteLine("! Custom choice can't be empty");
                     }
 
                     // create custom choice
@@ -201,7 +201,7 @@ namespace Ilsrep.PollApplication.PollClient
                 // if all ok inform
                 if (server.isConnected)
                 {
-                    Console.WriteLine("Connection established.");
+                    Console.WriteLine("+ Connection established.");
                 }
                 else
                     throw new Exception("Not connected");
@@ -209,7 +209,7 @@ namespace Ilsrep.PollApplication.PollClient
             catch (Exception exception)
             {
                 // if any error occurs - exit
-                Console.WriteLine(exception.Message);
+                Console.WriteLine("! " + exception.Message);
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
@@ -222,7 +222,7 @@ namespace Ilsrep.PollApplication.PollClient
         public static void DisconnectFromServer()
         {
             server.Disconnect();
-            Console.WriteLine("Disconnected from server");
+            Console.WriteLine("- Disconnected from server");
         }
 
         /// <summary>
@@ -234,8 +234,15 @@ namespace Ilsrep.PollApplication.PollClient
         {
             while (true)
             {
-                string sendString = PollSerializator.SerializePacket(sendPacket);
-                server.Send(sendString);
+                try
+                {
+                    string sendString = PollSerializator.SerializePacket(sendPacket);
+                    server.Send(sendString);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("! " + exception.Message);
+                }
 
                 string receivedString = server.Receive();
                 PollPacket receivedPacket = new PollPacket();
@@ -244,7 +251,7 @@ namespace Ilsrep.PollApplication.PollClient
                 // Check if received data is correct
                 if (receivedPacket == null)
                 {
-                    Console.WriteLine("Wrong data received!");
+                    Console.WriteLine("! Wrong data received");
                     Console.WriteLine("Would you like to retry?[y/n]:");
                     while (true)
                     {
@@ -253,7 +260,6 @@ namespace Ilsrep.PollApplication.PollClient
                         if (userInput == "y")
                         {
                             DisconnectFromServer();
-                            Console.ReadKey(true);
                             ConnectToServer();
                             break;
                         }
@@ -263,7 +269,7 @@ namespace Ilsrep.PollApplication.PollClient
                         }
                         else
                         {
-                            Console.WriteLine("Invalid choice!");
+                            Console.WriteLine("! Invalid choice");
                         }
                     }                    
                 }
@@ -290,7 +296,7 @@ namespace Ilsrep.PollApplication.PollClient
             {
                 Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
                 server.Disconnect();
-                Console.WriteLine("Disconnected from server");
+                Console.WriteLine("- Disconnected from server");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey(true);
                 Environment.Exit(-1);
@@ -307,7 +313,7 @@ namespace Ilsrep.PollApplication.PollClient
             
             while (true)
             {
-                // Let used input poll session id
+                // Let user input poll session id
                 string userAnswer = Console.ReadLine();
 
                 try
@@ -319,22 +325,23 @@ namespace Ilsrep.PollApplication.PollClient
                         string pollSessionID = receivedPacket.pollSessionList.items[index - 1].id;
                         sendPacket.request.type = Request.GET_POLLSESSION;
                         sendPacket.request.id = pollSessionID;
-
-                        // Receive poll
-                        receivedPacket = ReceivePollPacket(sendPacket);
-                        pollSession = receivedPacket.pollSession;
                         break;
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid poll session id! Please, input correct id");
                     }
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine(exception.Message);
-                    break;
-                }
-
-                // Show that wrong id was inputed
-                Console.WriteLine("Invalid poll session id! Please, input correct id");
+                    Console.WriteLine("! " + exception.Message);
+                }                
             }
+
+            // Receive poll
+            receivedPacket = ReceivePollPacket(sendPacket);
+            pollSession = receivedPacket.pollSession;
+            Console.WriteLine("<- PollSession received");
         }
 
         /// <summary>
@@ -364,7 +371,7 @@ namespace Ilsrep.PollApplication.PollClient
             }
             string sendString = PollSerializator.SerializePacket(sendPacket);
             server.Send(sendString);
-            Console.WriteLine("Result of pollsession successfully sent to server");
+            Console.WriteLine("-> Result of pollsession successfully sent to server");
         }
 
         public static void Main()
