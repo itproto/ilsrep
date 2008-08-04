@@ -141,6 +141,7 @@ logger.info("Started bullshit");
                 .executeQuery("select name,testmode,minscore from pollsession where id=" + id);
         if (rs.next()) {
 //code here
+try{
 logger.info("Started bullshit2");
 Pollsession sess=new Pollsession();
 sess.setId(id);
@@ -156,34 +157,32 @@ while(rs.next()){
 	Poll poll=new Poll();
 	String pollId=rs.getString("poll_id");
 	poll.setId(Integer.toString(pollnum));
-	ResultSet chrs=stat.executeQuery("select * from polls where id="+pollId);
+	Statement stater = conn.createStatement();
+	ResultSet chrs=stater.executeQuery("select * from polls where id="+pollId);
 	poll.setName(chrs.getString("name"));
 	Description desc=new Description();
 	desc.setValue(chrs.getString("description"));
 	poll.setDescription(desc);
-	poll.setCustomEnabled(rs.getBoolean("customenabled")? "true" : "false");
-	if(sess.getTestMode().equals("true")) poll.setCorrectChoice(rs.getString("correctchoice"));
+	poll.setCustomEnabled(chrs.getBoolean("customenabled")? "true" : "false");
+	if(sess.getTestMode().equals("true")) poll.setCorrectChoice(chrs.getString("correctchoice"));
 	logger.info(poll.getId()+poll.getName()+pollId);
 	List<Choice> choices=new ArrayList<Choice>();
-	chrs=stat.executeQuery("select choice_id from polls_choices where poll_id="+pollId);
+	Statement stater2 = conn.createStatement();
+	ResultSet	chrs3=stater2.executeQuery("select choice_id from polls_choices where poll_id="+pollId);
 	int choicenum=0;
 	
-	while(chrs.next()){
+	while(chrs3.next()){
 		logger.info("were in");
 		choicenum++;
-		try{
-		logger.info(chrs.getString("choice_id"));
-		chrs.last();
-		logger.info(chrs.getString("choice_id"));
-		
-		}catch(SQLException e){logger.info(e.getMessage());};
+		String choice_name=chrs3.getString("choice_id");
 		logger.info("CYCLE!");
 		Choice choice= new Choice();
 		choice.setId(Integer.toString(choicenum));
-		logger.info("select * from choices where id="+chrs.getString("choice_id"));
+		logger.info("select * from choices where id="+choice_name);
 		logger.info("CYCLE!2");
-		logger.info("select * from choices where id="+chrs.getString("choice_id"));
-		ResultSet chrs2=stat.executeQuery("select * from choices where id="+chrs.getString("choice_id"));
+		logger.info("select * from choices where id="+choice_name);
+		Statement stat2 = conn.createStatement();
+		ResultSet chrs2=stat2.executeQuery("select * from choices where id="+choice_name);
 		logger.info("CYCLE!3");
 		choice.setName(chrs2.getString("name"));
 		logger.info("CYCLE!4");
@@ -195,14 +194,14 @@ while(rs.next()){
 	polls.add(poll);
 		} 
 sess.setPolls(polls);
-try{
+
 JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
             Marshaller m = cont.createMarshaller();
             StringWriter os = new StringWriter();
             m.marshal(sess, os);
             m.setProperty("jaxb.formatted.output", true);
             xmlItself=os.toString();
-            logger.info(xmlItself);} catch(Exception e){logger.info("EXCEPtion");};
+            logger.info(xmlItself);} catch(Exception e){logger.info(e.getMessage());};
         }
         
         else {
