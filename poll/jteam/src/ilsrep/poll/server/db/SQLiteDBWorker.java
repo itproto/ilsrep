@@ -14,7 +14,7 @@ public class SQLiteDBWorker extends DBWorker {
     /**
      * File to load DB from.
      */
-    protected String dataFile = "..\\sql\\polls3.s3db";
+    protected String dataFile = "run/polls3.s3db";
 
     /**
      * SQLite's JDBC driver name.

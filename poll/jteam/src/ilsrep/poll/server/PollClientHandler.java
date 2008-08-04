@@ -73,7 +73,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 if (receivedPacket.getRequest() != null) {
                     if (receivedPacket.getRequest().getType().compareTo(
                             Request.TYPE_LIST) == 0) {
-	                            logger.info("Listing");
+                        logger.info("Listing");
                         Pollsessionlist list = serverInstance.getDB()
                                 .getPollsessionlist();
 
@@ -188,7 +188,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
      * @throws IOException
      *             On errors in stream(I/O errors).
      */
-    public static Pollpacket receivePacket(InputStream inStream)
+    public static synchronized Pollpacket receivePacket(InputStream inStream)
             throws JAXBException, IOException {
         JAXBContext pollPacketContext = JAXBContext
                 .newInstance(Pollpacket.class);

@@ -23,7 +23,6 @@ import ilsrep.poll.common.Choice;
 import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.server.PollServer;
-import ilsrep.poll.server.*;
 
 /**
  * This abstract class is utility for working with any DB.<br>
@@ -85,7 +84,9 @@ public abstract class DBWorker {
     public DBWorker(PollServer srvInstance) {
         this.srvInstance = srvInstance;
     }
+
     private static Logger logger = Logger.getLogger(DBWorker.class);
+
     /**
      * Initialises connection pool to concrete(should be overridden) DB.
      * 
@@ -130,88 +131,98 @@ public abstract class DBWorker {
      * @throws SQLException
      *             On some DB problems.
      */
-    public String getPollsessionById(String id) throws SQLException {
+    public Pollsession getPollsessionById(String id) throws SQLException {
         connect(); // If connection isn't established yet this connects to DB.
 
         Connection conn = dataSource.getConnection();
         Statement stat = conn.createStatement();
-logger.info("Started bullshit");
-        String xmlItself="";
+        logger.info("Started bullshit");
         ResultSet rs = stat
-                .executeQuery("select name,testmode,minscore from pollsession where id=" + id);
+                .executeQuery("select name,testmode,minscore from pollsession where id="
+                        + id);
+        Pollsession sess = null;
         if (rs.next()) {
-//code here
-try{
-logger.info("Started bullshit2");
-Pollsession sess=new Pollsession();
-sess.setId(id);
-sess.setName(rs.getString("name"));
-sess.setTestMode(rs.getBoolean("testmode")? "true" : "false");
-if(rs.getBoolean("testmode")) sess.setMinScore(rs.getString("minscore"));
-logger.info(sess.getId()+sess.getName());
-List<Poll> polls=new ArrayList<Poll>();
-rs=stat.executeQuery("select poll_id from pollsessions_polls where pollsession_id="+id);
-int pollnum=0;
-while(rs.next()){
-	pollnum++;
-	Poll poll=new Poll();
-	String pollId=rs.getString("poll_id");
-	poll.setId(Integer.toString(pollnum));
-	Statement stater = conn.createStatement();
-	ResultSet chrs=stater.executeQuery("select * from polls where id="+pollId);
-	poll.setName(chrs.getString("name"));
-	Description desc=new Description();
-	desc.setValue(chrs.getString("description"));
-	poll.setDescription(desc);
-	poll.setCustomEnabled(chrs.getBoolean("customenabled")? "true" : "false");
-	if(sess.getTestMode().equals("true")) poll.setCorrectChoice(chrs.getString("correctchoice"));
-	logger.info(poll.getId()+poll.getName()+pollId);
-	List<Choice> choices=new ArrayList<Choice>();
-	Statement stater2 = conn.createStatement();
-	ResultSet	chrs3=stater2.executeQuery("select choice_id from polls_choices where poll_id="+pollId);
-	int choicenum=0;
-	
-	while(chrs3.next()){
-		logger.info("were in");
-		choicenum++;
-		String choice_name=chrs3.getString("choice_id");
-		logger.info("CYCLE!");
-		Choice choice= new Choice();
-		choice.setId(Integer.toString(choicenum));
-		logger.info("select * from choices where id="+choice_name);
-		logger.info("CYCLE!2");
-		logger.info("select * from choices where id="+choice_name);
-		Statement stat2 = conn.createStatement();
-		ResultSet chrs2=stat2.executeQuery("select * from choices where id="+choice_name);
-		logger.info("CYCLE!3");
-		choice.setName(chrs2.getString("name"));
-		logger.info("CYCLE!4");
-		logger.info(choice.getId()+choice.getName());
-		logger.info("CYCLE!5");
-		choices.add(choice);
-				}
-	poll.setChoices(choices);
-	polls.add(poll);
-		} 
-sess.setPolls(polls);
+            // code here
+            try {
+                logger.info("Started bullshit2");
+                sess = new Pollsession();
+                sess.setId(id);
+                sess.setName(rs.getString("name"));
+                sess.setTestMode(rs.getBoolean("testmode") ? "true" : "false");
+                if (rs.getBoolean("testmode"))
+                    sess.setMinScore(rs.getString("minscore"));
+                logger.info(sess.getId() + sess.getName());
+                List<Poll> polls = new ArrayList<Poll>();
+                rs = stat
+                        .executeQuery("select poll_id from pollsessions_polls where pollsession_id="
+                                + id);
+                int pollnum = 0;
+                while (rs.next()) {
+                    pollnum++;
+                    Poll poll = new Poll();
+                    String pollId = rs.getString("poll_id");
+                    poll.setId(Integer.toString(pollnum));
+                    Statement stater = conn.createStatement();
+                    ResultSet chrs = stater
+                            .executeQuery("select * from polls where id="
+                                    + pollId);
+                    poll.setName(chrs.getString("name"));
+                    Description desc = new Description();
+                    desc.setValue(chrs.getString("description"));
+                    poll.setDescription(desc);
+                    poll
+                            .setCustomEnabled(chrs.getBoolean("customenabled") ? "true"
+                                    : "false");
+                    if (sess.getTestMode().equals("true"))
+                        poll.setCorrectChoice(chrs.getString("correctchoice"));
+                    logger.info(poll.getId() + poll.getName() + pollId);
+                    List<Choice> choices = new ArrayList<Choice>();
+                    Statement stater2 = conn.createStatement();
+                    ResultSet chrs3 = stater2
+                            .executeQuery("select choice_id from polls_choices where poll_id="
+                                    + pollId);
+                    int choicenum = 0;
 
-JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
-            Marshaller m = cont.createMarshaller();
-            StringWriter os = new StringWriter();
-            m.marshal(sess, os);
-            m.setProperty("jaxb.formatted.output", true);
-            xmlItself=os.toString();
-            logger.info(xmlItself);} catch(Exception e){logger.info(e.getMessage());};
+                    while (chrs3.next()) {
+                        logger.info("were in");
+                        choicenum++;
+                        String choiceId = chrs3.getString("choice_id");
+                        logger.info("CYCLE!");
+                        Choice choice = new Choice();
+                        choice.setId(choiceId);
+                        logger.info("select * from choices where id="
+                                + choiceId);
+                        logger.info("CYCLE!2");
+                        logger.info("select * from choices where id="
+                                + choiceId);
+                        Statement stat2 = conn.createStatement();
+                        ResultSet chrs2 = stat2
+                                .executeQuery("select * from choices where id="
+                                        + choiceId);
+                        logger.info("CYCLE!3");
+                        choice.setName(chrs2.getString("name"));
+                        logger.info("CYCLE!4");
+                        logger.info(choice.getId() + choice.getName());
+                        logger.info("CYCLE!5");
+                        choices.add(choice);
+                    }
+                    poll.setChoices(choices);
+                    polls.add(poll);
+                }
+                sess.setPolls(polls);
+            }
+            catch (Exception e) {
+                logger.info(e.getMessage());
+            }
         }
-        
         else {
-            xmlItself = null;
+            sess = null;
         }
 
         stat.close();
         conn.close();
 
-        return xmlItself;
+        return sess;
     }
 
     /**
@@ -231,7 +242,7 @@ JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         List<Item> lstItems = new ArrayList<Item>();
         ResultSet rs = stat.executeQuery("select id, name from pollsession");
         while (rs.next()) {
-	        logger.info(rs.getString("name"));
+            logger.info(rs.getString("name"));
             Item itm = new Item();
             itm.setId(Integer.toString(rs.getInt("id")));
             itm.setName(rs.getString("name"));

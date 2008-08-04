@@ -439,26 +439,12 @@ public class PollServer {
      * @return Pollsession with specified id or null if not found.
      */
     public synchronized Pollsession getPollsessionById(String id) {
-        String pollsessionAsString = null;
+        Pollsession pollsession = null;
         try {
-            pollsessionAsString = db.getPollsessionById(id);
+            pollsession = db.getPollsessionById(id);
         }
         catch (SQLException e) {
             // If error in DB.
-            return null;
-        }
-
-        if (pollsessionAsString == null)
-            return null;
-
-        Pollsession pollsession = null;
-        try {
-            StringReader reader = new StringReader(pollsessionAsString);
-            Unmarshaller um = getPollsessionContext().createUnmarshaller();
-            pollsession = (Pollsession) um.unmarshal(reader);
-        }
-        catch (JAXBException e) {
-            // If xml retrieved from DB is not valid.
             return null;
         }
 
