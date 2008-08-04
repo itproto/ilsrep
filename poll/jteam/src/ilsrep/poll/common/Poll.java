@@ -140,6 +140,12 @@ public class Poll {
         // reading input data
         selectionId = Integer.parseInt(PollClient.readFromConsole(
                 "Enter choice", PollClient.ANSWER_TYPE_INTEGER));
+
+        while (selectionId < 0 || selectionId > getChoices().size())
+            selectionId = Integer.parseInt(PollClient
+                    .readFromConsole("Wrong answer, enter again",
+                            PollClient.ANSWER_TYPE_INTEGER));
+
         // checking whether to output custom choice line
         if (checkCustomEnabled() && selectionId == 0) {
             selection = PollClient
