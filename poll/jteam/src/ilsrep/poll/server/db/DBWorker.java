@@ -1,15 +1,13 @@
 package ilsrep.poll.server.db;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.StringWriter;
 import org.apache.log4j.Logger;
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
@@ -156,12 +154,10 @@ public abstract class DBWorker {
                 rs = stat
                         .executeQuery("select poll_id from pollsessions_polls where pollsession_id="
                                 + id);
-                int pollnum = 0;
                 while (rs.next()) {
-                    pollnum++;
                     Poll poll = new Poll();
                     String pollId = rs.getString("poll_id");
-                    poll.setId(Integer.toString(pollnum));
+                    poll.setId(pollId);
                     Statement stater = conn.createStatement();
                     ResultSet chrs = stater
                             .executeQuery("select * from polls where id="
@@ -181,11 +177,9 @@ public abstract class DBWorker {
                     ResultSet chrs3 = stater2
                             .executeQuery("select choice_id from polls_choices where poll_id="
                                     + pollId);
-                    int choicenum = 0;
 
                     while (chrs3.next()) {
                         logger.info("were in");
-                        choicenum++;
                         String choiceId = chrs3.getString("choice_id");
                         logger.info("CYCLE!");
                         Choice choice = new Choice();
@@ -297,43 +291,152 @@ public abstract class DBWorker {
      *         added.
      */
     public int storePollsession(Pollsession sess) {
-        int i = 0;
+        int i = -1;
         try {
+            // Connection conn = dataSource.getConnection();
+            // Statement stat = conn.createStatement();
+            //
+            // // Calculating id for this pollsession.
+            // ResultSet rs = stat.executeQuery("select id from polls");
+            // List<String> list = new ArrayList<String>();
+            // while (rs.next())
+            // list.add(rs.getString("id"));
+            // while (true) {
+            // i++;
+            // if (!list.contains(Integer.toString(i)))
+            // break;
+            // }
+            // sess.setId(Integer.toString(i));
+            //
+            // // Preparing pollsession for writing into DB(marshalling from
+            // object
+            // // into stream).
+            // JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+            // Marshaller m = cont.createMarshaller();
+            // StringWriter os = new StringWriter();
+            // m.marshal(sess, os);
+            // m.setProperty("jaxb.formatted.output", true);
+            //
+            // // Writing pollsession into DB.
+            // stat.executeUpdate("insert into polls(id, name, xml) values ("
+            // + Integer.toString(i) + ",\"" + sess.getName() + "\",\'"
+            // + os.toString() + "\')");
+            //
+            // stat.close();
+            // conn.close();
+
             Connection conn = dataSource.getConnection();
-            Statement stat = conn.createStatement();
+            conn.setAutoCommit(false);
 
-            // Calculating id for this pollsession.
-            ResultSet rs = stat.executeQuery("select id from polls");
-            List<String> list = new ArrayList<String>();
-            while (rs.next())
-                list.add(rs.getString("id"));
-            while (true) {
-                i++;
-                if (!list.contains(Integer.toString(i)))
-                    break;
+            // Getting id for pollsession table.
+            int pollsessionLastId = -1;
+            Statement pollsessionLastIdSt = conn.createStatement();
+            ResultSet pollsessionLastIdRs = pollsessionLastIdSt
+                    .executeQuery("SELECT seq FROM sqlite_sequence where name=\"pollsession\"");
+
+            if (pollsessionLastIdRs.next()) {
+                pollsessionLastId = pollsessionLastIdRs.getInt("seq");
+
+                // Instering into
+                PreparedStatement pollsessionSt = conn
+                        .prepareStatement("insert into pollsession (id, name, testmode, minscore) values (?, ?, ?, ?)");
+                pollsessionSt.setInt(1, (pollsessionLastId + 1));
+                pollsessionSt.setString(2, sess.getName());
+
+                boolean testmode = sess.getTestMode().compareTo("true") == 0;
+                pollsessionSt.setBoolean(3, testmode);
+                if (testmode)
+                    pollsessionSt.setInt(4, Integer
+                            .parseInt(sess.getMinScore()));
+                else
+                    pollsessionSt.setNull(3, Types.INTEGER);
+
+                pollsessionSt.executeUpdate();
+                pollsessionSt.close();
+
+                for (Poll poll : sess.getPolls()) {
+                    Statement pollsLastIdSt = conn.createStatement();
+                    ResultSet pollsLastIdRs = pollsLastIdSt
+                            .executeQuery("SELECT seq FROM sqlite_sequence where name=\"polls\"");
+
+                    int pollsLastId = -1;
+
+                    if (pollsLastIdRs.next()) {
+                        pollsLastId = pollsLastIdRs.getInt("seq");
+
+                        PreparedStatement pollsSt = conn
+                                .prepareStatement("insert into polls (id, name, correctchoice, description, customenabled) values (?, ?, ?, ?, ?)");
+                        pollsSt.setInt(1, (pollsLastId + 1));
+                        pollsSt.setString(2, poll.getName());
+                        pollsSt.setInt(3, Integer.parseInt(poll
+                                .getCorrectChoice()));
+                        pollsSt.setString(4, poll.getDescription().getValue());
+
+                        if (poll.getCustomEnabled() != null
+                                && poll.getCustomEnabled().compareTo("true") == 0)
+                            pollsSt.setBoolean(5, true);
+                        else
+                            pollsSt.setNull(5, Types.BOOLEAN);
+
+                        pollsSt.executeUpdate();
+
+                        i = pollsLastId + 1;
+
+                        Statement pollsession_pollsSt = conn.createStatement();
+                        pollsession_pollsSt
+                                .executeUpdate("insert into pollsession_polls (pollsession_id, poll_id) values ("
+                                        + (pollsessionLastId + 1)
+                                        + ", "
+                                        + (pollsLastId + 1) + ")");
+                        pollsession_pollsSt.close();
+
+                        for (Choice choice : poll.getChoices()) {
+                            Statement choicesLastIdSt = conn.createStatement();
+                            ResultSet choicesLastIdRs = pollsLastIdSt
+                                    .executeQuery("SELECT seq FROM sqlite_sequence where name=\"choices\"");
+
+                            if (choicesLastIdRs.next()) {
+                                int choicesLastId = choicesLastIdRs
+                                        .getInt("seq");
+
+                                PreparedStatement choicesSt = conn
+                                        .prepareStatement("insert into choices (id, name) values (?, ?)");
+                                choicesSt.setInt(1, (choicesLastId + 1));
+                                choicesSt.setString(2, choice.getName());
+
+                                choicesSt.executeUpdate();
+
+                                Statement polls_choices = conn
+                                        .createStatement();
+                                polls_choices
+                                        .executeUpdate("insert into polls_choices (poll_id, choice_id) values ("
+                                                + (pollsLastId + 1)
+                                                + ", "
+                                                + (choicesLastId + 1) + ")");
+                            }
+                            else
+                                i = -1;
+
+                            choicesLastIdSt.close();
+                        }
+
+                        pollsLastIdSt.close();
+                    }
+                    else
+                        i = -1;
+                }
             }
-            sess.setId(Integer.toString(i));
+            else
+                i = -1;
+            pollsessionLastIdSt.close();
 
-            // Preparing pollsession for writing into DB(marshalling from object
-            // into stream).
-            JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
-            Marshaller m = cont.createMarshaller();
-            StringWriter os = new StringWriter();
-            m.marshal(sess, os);
-            m.setProperty("jaxb.formatted.output", true);
+            if (i == -1)
+                conn.rollback();
+            else
+                conn.commit();
 
-            // Writing pollsession into DB.
-            stat.executeUpdate("insert into polls(id, name, xml) values ("
-                    + Integer.toString(i) + ",\"" + sess.getName() + "\",\'"
-                    + os.toString() + "\')");
-
-            stat.close();
-            conn.close();
         }
         catch (SQLException e) {
-            i = -1;
-        }
-        catch (JAXBException e) {
             i = -1;
         }
 
