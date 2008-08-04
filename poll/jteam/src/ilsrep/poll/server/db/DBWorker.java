@@ -10,16 +10,20 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
-
+import org.apache.log4j.Logger;
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
 import ilsrep.poll.common.Pollsession;
+import ilsrep.poll.common.Poll;
+import ilsrep.poll.common.Description;
+import ilsrep.poll.common.Choice;
 import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.server.PollServer;
+import ilsrep.poll.server.*;
 
 /**
  * This abstract class is utility for working with any DB.<br>
@@ -81,7 +85,7 @@ public abstract class DBWorker {
     public DBWorker(PollServer srvInstance) {
         this.srvInstance = srvInstance;
     }
-
+    private static Logger logger = Logger.getLogger(DBWorker.class);
     /**
      * Initialises connection pool to concrete(should be overridden) DB.
      * 
@@ -131,13 +135,76 @@ public abstract class DBWorker {
 
         Connection conn = dataSource.getConnection();
         Statement stat = conn.createStatement();
-
-        String xmlItself;
+logger.info("Started bullshit");
+        String xmlItself="";
         ResultSet rs = stat
-                .executeQuery("select xml from polls where id=" + id);
+                .executeQuery("select name,testmode,minscore from pollsession where id=" + id);
         if (rs.next()) {
-            xmlItself = rs.getString("xml");
+//code here
+logger.info("Started bullshit2");
+Pollsession sess=new Pollsession();
+sess.setId(id);
+sess.setName(rs.getString("name"));
+sess.setTestMode(rs.getBoolean("testmode")? "true" : "false");
+if(rs.getBoolean("testmode")) sess.setMinScore(rs.getString("minscore"));
+logger.info(sess.getId()+sess.getName());
+List<Poll> polls=new ArrayList<Poll>();
+rs=stat.executeQuery("select poll_id from pollsessions_polls where pollsession_id="+id);
+int pollnum=0;
+while(rs.next()){
+	pollnum++;
+	Poll poll=new Poll();
+	String pollId=rs.getString("poll_id");
+	poll.setId(Integer.toString(pollnum));
+	ResultSet chrs=stat.executeQuery("select * from polls where id="+pollId);
+	poll.setName(chrs.getString("name"));
+	Description desc=new Description();
+	desc.setValue(chrs.getString("description"));
+	poll.setDescription(desc);
+	poll.setCustomEnabled(rs.getBoolean("customenabled")? "true" : "false");
+	if(sess.getTestMode().equals("true")) poll.setCorrectChoice(rs.getString("correctchoice"));
+	logger.info(poll.getId()+poll.getName()+pollId);
+	List<Choice> choices=new ArrayList<Choice>();
+	chrs=stat.executeQuery("select choice_id from polls_choices where poll_id="+pollId);
+	int choicenum=0;
+	
+	while(chrs.next()){
+		logger.info("were in");
+		choicenum++;
+		try{
+		logger.info(chrs.getString("choice_id"));
+		chrs.last();
+		logger.info(chrs.getString("choice_id"));
+		
+		}catch(SQLException e){logger.info(e.getMessage());};
+		logger.info("CYCLE!");
+		Choice choice= new Choice();
+		choice.setId(Integer.toString(choicenum));
+		logger.info("select * from choices where id="+chrs.getString("choice_id"));
+		logger.info("CYCLE!2");
+		logger.info("select * from choices where id="+chrs.getString("choice_id"));
+		ResultSet chrs2=stat.executeQuery("select * from choices where id="+chrs.getString("choice_id"));
+		logger.info("CYCLE!3");
+		choice.setName(chrs2.getString("name"));
+		logger.info("CYCLE!4");
+		logger.info(choice.getId()+choice.getName());
+		logger.info("CYCLE!5");
+		choices.add(choice);
+				}
+	poll.setChoices(choices);
+	polls.add(poll);
+		} 
+sess.setPolls(polls);
+try{
+JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+            Marshaller m = cont.createMarshaller();
+            StringWriter os = new StringWriter();
+            m.marshal(sess, os);
+            m.setProperty("jaxb.formatted.output", true);
+            xmlItself=os.toString();
+            logger.info(xmlItself);} catch(Exception e){logger.info("EXCEPtion");};
         }
+        
         else {
             xmlItself = null;
         }
@@ -163,8 +230,9 @@ public abstract class DBWorker {
 
         Pollsessionlist pollList = new Pollsessionlist();
         List<Item> lstItems = new ArrayList<Item>();
-        ResultSet rs = stat.executeQuery("select id, name from polls");
+        ResultSet rs = stat.executeQuery("select id, name from pollsession");
         while (rs.next()) {
+	        logger.info(rs.getString("name"));
             Item itm = new Item();
             itm.setId(Integer.toString(rs.getInt("id")));
             itm.setName(rs.getString("name"));
