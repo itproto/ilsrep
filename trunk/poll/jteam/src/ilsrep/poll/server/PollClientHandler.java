@@ -73,6 +73,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 if (receivedPacket.getRequest() != null) {
                     if (receivedPacket.getRequest().getType().compareTo(
                             Request.TYPE_LIST) == 0) {
+	                            logger.info("Listing");
                         Pollsessionlist list = serverInstance.getDB()
                                 .getPollsessionlist();
 
