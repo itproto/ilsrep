@@ -2,9 +2,7 @@ package ilsrep.poll.common;
 
 import ilsrep.poll.client.PollClient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -128,8 +126,11 @@ public class Poll {
         PollClient.consoleClearScreen();
         System.out.println("Name: " + this.getName());
         System.out.println("Desription: " + this.getDescription().getValue());
+
+        int pollNumber = 1;
         for (Choice cur : this.getChoices()) {
-            System.out.println("( " + cur.getId() + " ) " + cur.getName());
+            System.out.println("( " + pollNumber + " ) " + cur.getName());
+            pollNumber++;
         }
         if (checkCustomEnabled())
             System.out.println("( 0 ) for your choice");
@@ -137,20 +138,17 @@ public class Poll {
         String selection = null;
         int selectionId = -1;
         // reading input data
-        InputStreamReader converter = new InputStreamReader(System.in);
-        BufferedReader input = new BufferedReader(converter);
-        try {
-            selectionId = Integer.parseInt(input.readLine());
-        }
-        catch (NumberFormatException e) {
-        }
+        selectionId = Integer.parseInt(PollClient.readFromConsole(
+                "Enter choice", PollClient.ANSWER_TYPE_INTEGER));
         // checking whether to output custom choice line
         if (checkCustomEnabled() && selectionId == 0) {
-
-            System.out.print("Please enter your choice: ");
-            selection = input.readLine();
+            selection = PollClient
+                    .readFromConsole("Please enter your choice: ");
         }
-        else
+        else {
+            selectionId = Integer.parseInt(getChoices().get(selectionId - 1)
+                    .getId());
+
             for (Choice cur : this.getChoices()) {
                 // converting selection number to what it represents
 
@@ -158,6 +156,7 @@ public class Poll {
                     selection = cur.getName();
 
             }
+        }
         if (selectionId == Integer.parseInt(this.getCorrectChoice()))
             this.pass = "PASS";
 
