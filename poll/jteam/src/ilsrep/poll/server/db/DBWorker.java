@@ -279,7 +279,7 @@ public abstract class DBWorker {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
-            // Getting id for pollsession table.
+            // Getting id for next pollsession.
             int pollsessionLastId = -1;
             Statement pollsessionLastIdSt = conn.createStatement();
             ResultSet pollsessionLastIdRs = pollsessionLastIdSt
@@ -288,13 +288,14 @@ public abstract class DBWorker {
             if (pollsessionLastIdRs.next()) {
                 pollsessionLastId = pollsessionLastIdRs.getInt("seq");
 
-                // Instering into
+                // Inserting new pollsession.
                 PreparedStatement pollsessionSt = conn
                         .prepareStatement("insert into pollsession (id, name, testmode, minscore) values (?, ?, ?, ?)");
                 pollsessionSt.setInt(1, (pollsessionLastId + 1));
                 pollsessionSt.setString(2, sess.getName());
 
-                boolean testmode = sess.getTestMode().compareTo("true") == 0;
+                boolean testmode = sess.getTestMode() != null
+                        && sess.getTestMode().compareTo("true") == 0;
                 pollsessionSt.setBoolean(3, testmode);
                 if (testmode)
                     pollsessionSt.setFloat(4, Float.parseFloat(sess
@@ -307,7 +308,9 @@ public abstract class DBWorker {
 
                 i = pollsessionLastId + 1;
 
+                // Processing polls in pollsession.
                 for (Poll poll : sess.getPolls()) {
+                    // Getting id for next poll.
                     Statement pollsLastIdSt = conn.createStatement();
                     ResultSet pollsLastIdRs = pollsLastIdSt
                             .executeQuery("SELECT seq FROM sqlite_sequence where name=\"polls\"");
@@ -317,6 +320,7 @@ public abstract class DBWorker {
                     if (pollsLastIdRs.next()) {
                         pollsLastId = pollsLastIdRs.getInt("seq");
 
+                        // Inserting current poll.
                         PreparedStatement pollsSt = conn
                                 .prepareStatement("insert into polls (id, name, correctchoice, description, customenabled) values (?, ?, ?, ?, ?)");
                         pollsSt.setInt(1, (pollsLastId + 1));
@@ -334,6 +338,7 @@ public abstract class DBWorker {
                         pollsSt.executeUpdate();
                         pollsSt.close();
 
+                        // Updating pollsessions_polls many-to-many linker.
                         Statement pollsessions_pollsSt = conn.createStatement();
                         pollsessions_pollsSt
                                 .executeUpdate("insert into pollsessions_polls (pollsession_id, poll_id) values ("
@@ -342,7 +347,10 @@ public abstract class DBWorker {
                                         + (pollsLastId + 1) + ")");
                         pollsessions_pollsSt.close();
 
+                        int choiceCount = 1;
+
                         for (Choice choice : poll.getChoices()) {
+                            // Getting id for next choice.
                             Statement choicesLastIdSt = conn.createStatement();
                             ResultSet choicesLastIdRs = pollsLastIdSt
                                     .executeQuery("SELECT seq FROM sqlite_sequence where name=\"choices\"");
@@ -351,6 +359,7 @@ public abstract class DBWorker {
                                 int choicesLastId = choicesLastIdRs
                                         .getInt("seq");
 
+                                // Inserting next choice.
                                 PreparedStatement choicesSt = conn
                                         .prepareStatement("insert into choices (id, name) values (?, ?)");
                                 choicesSt.setInt(1, (choicesLastId + 1));
@@ -359,6 +368,7 @@ public abstract class DBWorker {
                                 choicesSt.executeUpdate();
                                 choicesSt.close();
 
+                                // Updating polls_choices many-to-many linker.
                                 Statement polls_choices = conn
                                         .createStatement();
                                 polls_choices
@@ -367,6 +377,24 @@ public abstract class DBWorker {
                                                 + ", "
                                                 + (choicesLastId + 1) + ")");
                                 polls_choices.close();
+
+                                // If testmode, setting correct id(aka real
+                                // choice id in db, not relative as editor sent)
+                                // for current poll.
+                                if (testmode
+                                        && choiceCount == Integer.parseInt(poll
+                                                .getCorrectChoice())) {
+                                    Statement correctChoiceUpdateSt = conn
+                                            .createStatement();
+                                    correctChoiceUpdateSt
+                                            .executeUpdate("UPDATE polls SET correctchoice=\""
+                                                    + (choicesLastId + 1)
+                                                    + "\" WHERE id=\""
+                                                    + (pollsLastId + 1) + "\"");
+                                    correctChoiceUpdateSt.close();
+                                }
+
+                                choiceCount++;
                             }
                             else
                                 i = -1;
@@ -385,9 +413,9 @@ public abstract class DBWorker {
             pollsessionLastIdSt.close();
 
             if (i == -1)
-                conn.rollback();
+                conn.rollback(); // On errors doing rollback.
             else
-                conn.commit();
+                conn.commit(); // Commiting if all proceed correctly.
         }
         catch (SQLException e) {
             i = -1;
@@ -395,6 +423,7 @@ public abstract class DBWorker {
         finally {
             if (conn != null)
                 try {
+                    // Closing connection and returning it to pool.
                     conn.close();
                 }
                 catch (SQLException e) {
