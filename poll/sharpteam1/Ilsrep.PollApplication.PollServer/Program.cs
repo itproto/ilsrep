@@ -57,6 +57,7 @@ namespace Ilsrep.PollApplication.PollServer
             if (commandLineParameters["data"] != null && commandLineParameters["data"] != String.Empty)
                 pathToDatabase = commandLineParameters["data"];
 
+            /*
             // Try to open data base
             SQLiteConnection dataBaseCon = new SQLiteConnection("data source=\"" + pathToDatabase + "\"");
             try
@@ -84,6 +85,7 @@ namespace Ilsrep.PollApplication.PollServer
                 log.Info("New data base created: " + pathToDatabase);
             }
             dataBaseCon.Close();
+            */
 
             // Start server
             log.Info("Server started on host: " + host.ToString() + ":" + port);
