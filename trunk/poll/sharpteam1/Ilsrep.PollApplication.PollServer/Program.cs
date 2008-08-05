@@ -21,7 +21,7 @@ namespace Ilsrep.PollApplication.PollServer
         private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
-        static public string pathToDatabase = "pollserver.db";
+        static public string pathToDatabase = "db/pollserver.db";
         static public int port = 3320;
         static public IPAddress host = IPAddress.Any;
 
