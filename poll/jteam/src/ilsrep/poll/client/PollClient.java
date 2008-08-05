@@ -47,12 +47,6 @@ public class PollClient {
         String yesNoChoice = readFromConsole(
                 "Use server?(1) or local file?(2) or print version and exit(3)",
                 answerSet123);
-        // while (repeater) {
-        // System.out.print("Use server?(1) or local file?(2): ");
-        // yesNoChoice = consoleInputReader.readLine();
-        // if (((yesNoChoice.equals("1")) || (yesNoChoice.equals("2"))))
-        // repeater = false;
-        // }
 
         if ((yesNoChoice.compareTo("3") == 0)) {
             Package[] allPackages = { PollClient.class.getPackage(),
@@ -72,8 +66,6 @@ public class PollClient {
             System.exit(0);
         }
         if ((yesNoChoice.compareTo("2") == 0)) {
-            // System.out.print("Please enter filename to read poll xml "
-            // + "from\n[press enter for default \"xml/Polls.xml\"]: ");
             String fileName = readFromConsole("Please enter filename to read"
                     + " poll xml from\n[press enter for default"
                     + " \"xml/Polls.xml\"]");
@@ -85,8 +77,6 @@ public class PollClient {
             polls = (Pollsession) um.unmarshal(pollFile);
         }
         else {
-            // System.out.print("Please enter server:port to read poll xml "
-            // + "from\n[press enter for default \"127.0.0.1:3320\"]: ");
             String serverPortString = readFromConsole("Please enter server:port"
                     + " to read poll xml from\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");

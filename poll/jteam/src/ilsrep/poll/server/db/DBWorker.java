@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 
@@ -83,7 +82,7 @@ public abstract class DBWorker {
         this.srvInstance = srvInstance;
     }
 
-    private static Logger logger = Logger.getLogger(DBWorker.class);
+    // private static Logger logger = Logger.getLogger(DBWorker.class);
 
     /**
      * Initialises connection pool to concrete(should be overridden) DB.
@@ -134,7 +133,6 @@ public abstract class DBWorker {
 
         Connection conn = dataSource.getConnection();
         Statement stat = conn.createStatement();
-        logger.info("Started bullshit");
         ResultSet rs = stat
                 .executeQuery("select name,testmode,minscore from pollsession where id="
                         + id);
@@ -142,14 +140,12 @@ public abstract class DBWorker {
         if (rs.next()) {
             // code here
             try {
-                logger.info("Started bullshit2");
                 sess = new Pollsession();
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
                 sess.setTestMode(rs.getBoolean("testmode") ? "true" : "false");
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
-                logger.info(sess.getId() + sess.getName());
                 List<Poll> polls = new ArrayList<Poll>();
                 rs = stat
                         .executeQuery("select poll_id from pollsessions_polls where pollsession_id="
@@ -171,7 +167,6 @@ public abstract class DBWorker {
                                     : "false");
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(chrs.getString("correctchoice"));
-                    logger.info(poll.getId() + poll.getName() + pollId);
                     List<Choice> choices = new ArrayList<Choice>();
                     Statement stater2 = conn.createStatement();
                     ResultSet chrs3 = stater2
@@ -179,25 +174,14 @@ public abstract class DBWorker {
                                     + pollId);
 
                     while (chrs3.next()) {
-                        logger.info("were in");
                         String choiceId = chrs3.getString("choice_id");
-                        logger.info("CYCLE!");
                         Choice choice = new Choice();
                         choice.setId(choiceId);
-                        logger.info("select * from choices where id="
-                                + choiceId);
-                        logger.info("CYCLE!2");
-                        logger.info("select * from choices where id="
-                                + choiceId);
                         Statement stat2 = conn.createStatement();
                         ResultSet chrs2 = stat2
                                 .executeQuery("select * from choices where id="
                                         + choiceId);
-                        logger.info("CYCLE!3");
                         choice.setName(chrs2.getString("name"));
-                        logger.info("CYCLE!4");
-                        logger.info(choice.getId() + choice.getName());
-                        logger.info("CYCLE!5");
                         choices.add(choice);
                     }
                     poll.setChoices(choices);
@@ -206,7 +190,6 @@ public abstract class DBWorker {
                 sess.setPolls(polls);
             }
             catch (Exception e) {
-                logger.info(e.getMessage());
             }
         }
         else {
@@ -236,7 +219,6 @@ public abstract class DBWorker {
         List<Item> lstItems = new ArrayList<Item>();
         ResultSet rs = stat.executeQuery("select id, name from pollsession");
         while (rs.next()) {
-            logger.info(rs.getString("name"));
             Item itm = new Item();
             itm.setId(Integer.toString(rs.getInt("id")));
             itm.setName(rs.getString("name"));
@@ -292,40 +274,9 @@ public abstract class DBWorker {
      */
     public int storePollsession(Pollsession sess) {
         int i = -1;
+        Connection conn = null;
         try {
-            // Connection conn = dataSource.getConnection();
-            // Statement stat = conn.createStatement();
-            //
-            // // Calculating id for this pollsession.
-            // ResultSet rs = stat.executeQuery("select id from polls");
-            // List<String> list = new ArrayList<String>();
-            // while (rs.next())
-            // list.add(rs.getString("id"));
-            // while (true) {
-            // i++;
-            // if (!list.contains(Integer.toString(i)))
-            // break;
-            // }
-            // sess.setId(Integer.toString(i));
-            //
-            // // Preparing pollsession for writing into DB(marshalling from
-            // object
-            // // into stream).
-            // JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
-            // Marshaller m = cont.createMarshaller();
-            // StringWriter os = new StringWriter();
-            // m.marshal(sess, os);
-            // m.setProperty("jaxb.formatted.output", true);
-            //
-            // // Writing pollsession into DB.
-            // stat.executeUpdate("insert into polls(id, name, xml) values ("
-            // + Integer.toString(i) + ",\"" + sess.getName() + "\",\'"
-            // + os.toString() + "\')");
-            //
-            // stat.close();
-            // conn.close();
-
-            Connection conn = dataSource.getConnection();
+            conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
             // Getting id for pollsession table.
@@ -346,13 +297,15 @@ public abstract class DBWorker {
                 boolean testmode = sess.getTestMode().compareTo("true") == 0;
                 pollsessionSt.setBoolean(3, testmode);
                 if (testmode)
-                    pollsessionSt.setInt(4, Integer
-                            .parseInt(sess.getMinScore()));
+                    pollsessionSt.setFloat(4, Float.parseFloat(sess
+                            .getMinScore()));
                 else
-                    pollsessionSt.setNull(3, Types.INTEGER);
+                    pollsessionSt.setNull(4, Types.INTEGER);
 
                 pollsessionSt.executeUpdate();
                 pollsessionSt.close();
+
+                i = pollsessionLastId + 1;
 
                 for (Poll poll : sess.getPolls()) {
                     Statement pollsLastIdSt = conn.createStatement();
@@ -379,16 +332,15 @@ public abstract class DBWorker {
                             pollsSt.setNull(5, Types.BOOLEAN);
 
                         pollsSt.executeUpdate();
+                        pollsSt.close();
 
-                        i = pollsLastId + 1;
-
-                        Statement pollsession_pollsSt = conn.createStatement();
-                        pollsession_pollsSt
-                                .executeUpdate("insert into pollsession_polls (pollsession_id, poll_id) values ("
+                        Statement pollsessions_pollsSt = conn.createStatement();
+                        pollsessions_pollsSt
+                                .executeUpdate("insert into pollsessions_polls (pollsession_id, poll_id) values ("
                                         + (pollsessionLastId + 1)
                                         + ", "
                                         + (pollsLastId + 1) + ")");
-                        pollsession_pollsSt.close();
+                        pollsessions_pollsSt.close();
 
                         for (Choice choice : poll.getChoices()) {
                             Statement choicesLastIdSt = conn.createStatement();
@@ -405,6 +357,7 @@ public abstract class DBWorker {
                                 choicesSt.setString(2, choice.getName());
 
                                 choicesSt.executeUpdate();
+                                choicesSt.close();
 
                                 Statement polls_choices = conn
                                         .createStatement();
@@ -413,6 +366,7 @@ public abstract class DBWorker {
                                                 + (pollsLastId + 1)
                                                 + ", "
                                                 + (choicesLastId + 1) + ")");
+                                polls_choices.close();
                             }
                             else
                                 i = -1;
@@ -434,10 +388,18 @@ public abstract class DBWorker {
                 conn.rollback();
             else
                 conn.commit();
-
         }
         catch (SQLException e) {
             i = -1;
+        }
+        finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                }
+                catch (SQLException e) {
+                    i = -1;
+                }
         }
 
         return i;

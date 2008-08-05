@@ -73,13 +73,16 @@ public class PollClientHandler implements ClientHandler, Runnable {
                 if (receivedPacket.getRequest() != null) {
                     if (receivedPacket.getRequest().getType().compareTo(
                             Request.TYPE_LIST) == 0) {
-                        logger.info("Listing");
                         Pollsessionlist list = serverInstance.getDB()
                                 .getPollsessionlist();
 
                         Pollpacket packetForSending = new Pollpacket();
                         packetForSending.setPollsessionList(list);
                         sendPacket(packetForSending);
+                        logger.info("Sent pollsession list("
+                                + list.getItems().size()
+                                + "elements) to client("
+                                + generateHostPortAsText(socket) + ").");
                     }
                     else
                         if (receivedPacket.getRequest().getType().compareTo(
@@ -99,8 +102,18 @@ public class PollClientHandler implements ClientHandler, Runnable {
 
                             // Sending empty packet if pollsession not found in
                             // DB.
-                            if (session != null)
+                            if (session != null) {
                                 packetForSending.setPollsession(session);
+                                logger
+                                        .info("Sent pollsession(id = "
+                                                + session.getId()
+                                                + ") to client("
+                                                + generateHostPortAsText(socket)
+                                                + ").");
+                            }
+                            else {
+                                logger.warn("Client asked for invalid id.");
+                            }
 
                             sendPacket(packetForSending);
                         }
@@ -108,8 +121,21 @@ public class PollClientHandler implements ClientHandler, Runnable {
                             if (receivedPacket.getRequest().getType()
                                     .compareTo(Request.TYPE_CREATE_POLLSESSION) == 0) {
                                 if (receivedPacket.getPollsession() != null) {
-                                    serverInstance.getDB().storePollsession(
-                                            receivedPacket.getPollsession());
+                                    int storedId = serverInstance.getDB()
+                                            .storePollsession(
+                                                    receivedPacket
+                                                            .getPollsession());
+                                    if (storedId != -1)
+                                        logger
+                                                .info("Editors("
+                                                        + generateHostPortAsText(socket)
+                                                        + ") xml stored with id = "
+                                                        + storedId + ".");
+                                    else
+                                        logger
+                                                .warn("Error while saving xml from editor("
+                                                        + generateHostPortAsText(socket)
+                                                        + ").");
                                 }
                             }
                 }
