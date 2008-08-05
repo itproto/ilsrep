@@ -42,18 +42,40 @@ namespace Ilsrep.PollApplication.PollServer
         /// <summary>
         /// The function search poll session by id
         /// </summary>
-        /// <param name="pollSessionIdStr">Id of needed poll session</param>
+        /// <param name="strPollSessionID">Id of needed poll session</param>
         /// <param name="curDataBaseCon">connection of current client to data base</param>
         /// <returns>Poll session</returns>
         /// <exception>null</exception>
-        private static PollSession GetPollSessionById(string pollSessionIdStr, SQLiteConnection curDataBaseCon)
+        private static PollSession GetPollSessionById(string strPollSessionID, SQLiteConnection curDataBaseCon)
         {
             try
             {
-                // Search patch to needed file by id
-                int pollSessionId = Convert.ToInt32(pollSessionIdStr);
-                string pollSessionXml = Query("SELECT * from " + POLLS_TABLE_NAME + " where id='" + pollSessionId + "'", curDataBaseCon)["xml"].ToString();
-                PollSession pollSession = PollSerializator.DeserializePollSession(pollSessionXml);
+                int pollSessionID = Convert.ToInt32(strPollSessionID);
+                SQLiteDataReader sqlPollSession = Query("SELECT * FROM pollsessions WHERE id=" + pollSessionID, curDataBaseCon);
+
+                PollSession pollSession = new PollSession();
+                pollSession.id = Convert.ToInt32(sqlPollSession["id"].ToString());
+                pollSession.name = sqlPollSession["name"].ToString();
+                pollSession.testMode = Convert.ToBoolean(sqlPollSession["testMode"].ToString());
+                pollSession.minScore = Convert.ToDouble(sqlPollSession["minScore"].ToString());
+                pollSession.polls = new List<Poll>();
+
+                SQLiteDataReader sqlPolls = Query("SELECT p.* FROM pollsessions_x_polls pxp LEFT JOIN polls p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=" + pollSessionID, curDataBaseCon);
+
+                while (sqlPolls.Read())
+                {
+                    Poll newPoll = new Poll();
+                    newPoll.id = Convert.ToInt32(sqlPolls["id"].ToString());
+                    newPoll.name = sqlPolls["name"].ToString();
+                    newPoll.description = sqlPolls["description"].ToString();
+                    newPoll.correctChoiceId = Convert.ToInt32(sqlPolls["correctChoice"].ToString());
+                    newPoll.customChoice = Convert.ToBoolean(sqlPolls["customChoice"].ToString());
+
+                    pollSession.polls.Add(newPoll);
+                }
+
+                //string pollSessionXml = Query("SELECT * from " + POLLS_TABLE_NAME + " where id='" + pollSessionId + "'", curDataBaseCon)["xml"].ToString();
+                //PollSession pollSession = PollSerializator.DeserializePollSession(pollSessionXml);
                 return pollSession;
             }
             catch (Exception exception)
@@ -181,6 +203,7 @@ namespace Ilsrep.PollApplication.PollServer
             PollSession newPollSession = new PollSession();
             newPollSession = receivedPacket.pollSession;
 
+            /*
             // Generate new id
             try
             {
@@ -191,12 +214,33 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 newPollSession.id = 1;
             }
+            */
 
             // Save newPollSession in data base
             try
             {
-                string newPollSessionString = PollSerializator.SerializePollSession(newPollSession);
-                Query("INSERT into " + POLLS_TABLE_NAME + " values ('" + newPollSession.id + "','" + newPollSession.name + "','" + newPollSessionString + "')", curDataBaseCon);
+                //string newPollSessionString = PollSerializator.SerializePollSession(newPollSession);
+                Query("INSERT INTO pollsessions(name, testMode, minScore) VALUES('"+newPollSession.name+"', '"+newPollSession.testMode.ToString()+"', '"+newPollSession.minScore.ToString()+"')", curDataBaseCon);
+
+                foreach (Poll curPoll in newPollSession.polls)
+                {
+                    String newCorrectID = String.Empty;
+
+                    foreach (Choice curChoice in curPoll.choices)
+                    {
+                        Query("INSERT INTO choices(name) VALUES('" + curChoice.name + "')", curDataBaseCon);
+
+                        /* Maybe better way? equivalent of mysql_last_id */
+                        if (curChoice.id == curPoll.correctChoiceId)
+                            newCorrectID = Query("SELECT id FROM choices ORDER BY id DESC LIMIT 1", curDataBaseCon)["id"].ToString();
+                    }
+
+                    Query("INSERT INTO polls(name, description, correctChoice, customChoice) VALUES('" + curPoll.name + "', '" + curPoll.description + "', '" + newCorrectID + "', '" + curPoll.customChoice.ToString() + "')", curDataBaseCon);
+                    //Query("INSERT INTO pollsessions_x_polls(name) VALUES('" + curChoice.name + "')", curDataBaseCon);
+                }
+                
+
+                //Query("INSERT into " + POLLS_TABLE_NAME + " values ('" + newPollSession.id + "','" + newPollSession.name + "','" + newPollSessionString + "')", curDataBaseCon);
                 log.Info("New PollSession has been added(name=\"" + newPollSession.name + "\" id=\"" + newPollSession.id + "\")");
             }
             catch (Exception exception)
@@ -217,7 +261,7 @@ namespace Ilsrep.PollApplication.PollServer
 
             try
             {
-                SQLiteDataReader sqliteReader = Query("SELECT * from " + POLLS_TABLE_NAME, curDataBaseCon);
+                SQLiteDataReader sqliteReader = Query("SELECT * FROM pollsessions", curDataBaseCon);
                 while(sqliteReader.Read())
                 {
                     Item curItem = new Item();
