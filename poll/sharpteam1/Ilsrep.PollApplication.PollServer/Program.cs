@@ -15,10 +15,16 @@ using System.Data.SQLite;
 
 namespace Ilsrep.PollApplication.PollServer
 {
+    /// <summary>
+    /// PollServer handles connections and creates new threads to work with them.
+    /// </summary>
     public class PollServer
     {
         // Initial declarations
         private static readonly ILog log = LogManager.GetLogger(typeof(PollServer));
+        /// <summary>
+        /// path to Logger configuration file
+        /// </summary>
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
         static public string pathToDatabase = "db/pollserver.db";
