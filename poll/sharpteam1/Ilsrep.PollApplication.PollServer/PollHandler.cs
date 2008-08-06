@@ -26,8 +26,8 @@ namespace Ilsrep.PollApplication.PollServer
         public const string POLLSESSIONS_TABLE = "pollsessions";
         public const string POLLS_TABLE = "polls";
         public const string CHOICES_TABLE = "choices";
-        public const string POLLSESSIONS_POLLS_TABLE = "pollsessions_polls";
-        public const string POLLS_CHOICES_TABLE = "polls_choices";
+        public const string POLLSESSION_POLLS_TABLE = "pollsessions_polls";
+        public const string POLL_CHOICES_TABLE = "polls_choices";
         public const string RESULTS_TABLE = "results";
 
 
@@ -65,7 +65,7 @@ namespace Ilsrep.PollApplication.PollServer
                 pollSession.minScore = Convert.ToDouble(sqlPollSession["min_score"].ToString());
                 pollSession.polls = new List<Poll>();
 
-                SQLiteDataReader sqlPolls = Query("SELECT p.* FROM " + POLLSESSIONS_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=" + pollSessionID, curDataBaseCon);
+                SQLiteDataReader sqlPolls = Query("SELECT p.* FROM " + POLLSESSION_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=" + pollSessionID, curDataBaseCon);
 
                 while (sqlPolls.Read())
                 {
@@ -76,7 +76,7 @@ namespace Ilsrep.PollApplication.PollServer
                     newPoll.correctChoiceId = Convert.ToInt32(sqlPolls["correct_choice_id"].ToString());
                     newPoll.customChoice = Convert.ToBoolean(sqlPolls["custom_choice_enabled"].ToString());
 
-                    SQLiteDataReader sqlChoices = Query("SELECT c.* FROM " + POLLS_CHOICES_TABLE + " pxc LEFT JOIN " + CHOICES_TABLE + " c ON (pxc.choice_id=c.id) WHERE pxc.poll_id=" + newPoll.id, curDataBaseCon);
+                    SQLiteDataReader sqlChoices = Query("SELECT c.* FROM " + POLL_CHOICES_TABLE + " pxc LEFT JOIN " + CHOICES_TABLE + " c ON (pxc.choice_id=c.id) WHERE pxc.poll_id=" + newPoll.id, curDataBaseCon);
 
                     while (sqlChoices.Read())
                     {
@@ -161,10 +161,28 @@ namespace Ilsrep.PollApplication.PollServer
                     case Request.SAVE_RESULT:
                         SavePollSessionResult(client, curDataBaseCon);
                         break;
+                    case Request.REMOVE_POLLSESSION:
+                        RemovePollSession(client, curDataBaseCon);
+                        break;
                     default:
                         log.Error("Invalid option sent by client");
                         break;
                 }
+            }
+        }
+
+        public void RemovePollSession(NetworkStream client, SQLiteConnection curDataBaseCon)
+        {
+            try
+            {
+                int pollSessionID = Convert.ToInt32(receivedPacket.request.id);
+                SQLiteDataReader sqliteReader = Query("DELETE FROM " + POLLSESSIONS_TABLE + " WHERE id='" + pollSessionID + "'", curDataBaseCon);
+                sqliteReader = Query("DELETE FROM " + POLLSESSION_POLLS_TABLE + " WHERE pollsession_id='" + pollSessionID + "'", curDataBaseCon);
+                log.Info("Pollsession deleted - " + pollSessionID);
+            }
+            catch (Exception exception)
+            {
+                log.Error(exception.Message);
             }
         }
 
@@ -264,9 +282,9 @@ namespace Ilsrep.PollApplication.PollServer
                     newPollID = Query("SELECT last_insert_rowid()", curDataBaseCon)[0].ToString();
 
                     foreach (Choice curChoice in curPoll.choices)
-                        Query("INSERT INTO " + POLLS_CHOICES_TABLE + "(poll_id, choice_id) VALUES('" + newPollID + "', '" + curChoice.id + "')", curDataBaseCon);
+                        Query("INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES('" + newPollID + "', '" + curChoice.id + "')", curDataBaseCon);
 
-                    Query("INSERT INTO " + POLLSESSIONS_POLLS_TABLE + "(pollsession_id, poll_id) VALUES('" + newPollSessionID + "', '" + newPollID + "')", curDataBaseCon);
+                    Query("INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES('" + newPollSessionID + "', '" + newPollID + "')", curDataBaseCon);
                 }
                 
 

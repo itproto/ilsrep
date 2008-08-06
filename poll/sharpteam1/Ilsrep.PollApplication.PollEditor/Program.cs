@@ -8,6 +8,9 @@ using Ilsrep.Common;
 
 namespace Ilsrep.PollApplication.PollEditor
 {
+    /// <summary>
+    /// Editor of pollsessions
+    /// </summary>
     public class PollEditor
     {
         private static System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
@@ -15,6 +18,7 @@ namespace Ilsrep.PollApplication.PollEditor
         private static PollSession pollSession = new PollSession();
         private const String HOST = "localhost";
         private const int PORT = 3320;
+        private static TcpServer server;
 
         /// <summary>
         /// Helper method to get answers on questions, with possibility of choosing what user can answer
@@ -60,11 +64,181 @@ namespace Ilsrep.PollApplication.PollEditor
         }
 
         /// <summary>
-        /// Makes conversation with user
+        /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+        /// </summary>
+        /// <param name="sendPacket">PollPacket with request to send</param>
+        /// <returns>PollPacket receivedPacket</returns>
+        public static PollPacket ReceivePollPacket(PollPacket sendPacket)
+        {
+            while (true)
+            {
+                try
+                {
+                    string sendString = PollSerializator.SerializePacket(sendPacket);
+                    server.Send(sendString);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
+
+                string receivedString = server.Receive();
+                PollPacket receivedPacket = new PollPacket();
+                receivedPacket = PollSerializator.DeserializePacket(receivedString);
+
+                // Check if received data is correct
+                if (receivedPacket == null)
+                {
+                    Console.WriteLine("Wrong data received");
+                    Console.WriteLine("Would you like to retry?[y/n]:");
+                    while (true)
+                    {
+                        string userInput;
+                        userInput = Console.ReadLine();
+                        if (userInput == "y")
+                        {
+                            server.Disconnect();
+                            ConnectToServer();
+                            break;
+                        }
+                        else if (userInput == "n")
+                        {
+                            Environment.Exit(-1);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid choice");
+                        }
+                    }
+                }
+                else
+                {
+                    return receivedPacket;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Run conversation with user
         /// </summary>
         public static void RunUserDialog()
         {
-            username = AskQuestion("Enter your username:", null);
+            // Get list of pollsessions from server and write they in console
+            PollPacket sendPacket = new PollPacket();
+            sendPacket.request.type = Request.GET_LIST;
+
+            PollPacket receivedPacket = new PollPacket();
+            receivedPacket = ReceivePollPacket(sendPacket);
+
+            // Check if list is not empty
+            if (receivedPacket.pollSessionList.items.Count == 0)
+            {
+                Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
+                server.Disconnect();
+                Console.WriteLine("Disconnected from server");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey(true);
+                Environment.Exit(-1);
+            }
+
+            // Output list of poll sessions
+            Console.WriteLine("Here is pollsessions list:");
+            int index = 0;
+            foreach (Item curItem in receivedPacket.pollSessionList.items)
+            {
+                index++;
+                Console.WriteLine(index + ". " + curItem.name);
+            }
+
+            Console.WriteLine("Please, select action:");
+            Console.WriteLine("1. Create new pollsession");
+            Console.WriteLine("2. Remove pollsession");
+            Console.WriteLine("3. Edit pollsession - NOT AVAILABLE");
+
+            // Read action
+            int action = 0;
+            while (true)
+            {
+                try
+                {
+                    action = Convert.ToInt32(Console.ReadLine());
+                    if (action < 1 || action > 3)
+                        throw new Exception("Invalid choice");
+                    break;
+                }
+                catch(Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
+            }
+
+            switch (action)
+            {
+                case 1:
+                    CreatePollsession();
+                    break;
+                case 2:
+                    RemovePollsession(receivedPacket);
+                    break;
+                case 3:
+                    Console.WriteLine("IN FUTURE HERE WILL BE EDITING POLLSESSION");
+                    break;
+                default:
+                    Console.WriteLine("Invalid action!");
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Remove pollsession
+        /// </summary>
+        public static void RemovePollsession(PollPacket receivedPacket)
+        {
+            // Let user input poll session id
+            while (true)
+            {
+                Console.Write("Please, input id of pollsession that you want to remove:");
+                string userAnswer = Console.ReadLine();
+
+                try
+                {
+                    int index = Convert.ToInt32(userAnswer);
+
+                    if (index > 0 && index <= receivedPacket.pollSessionList.items.Count)
+                    {
+                        string pollSessionID = receivedPacket.pollSessionList.items[index - 1].id;
+                        Console.Clear();
+
+                        // Ask if user is sure
+                        if (AskQuestion("Do you really want to remove pollsession \"" + receivedPacket.pollSessionList.items[index - 1].name + "\" [y/n]?", new String[] {"y", "n"}) == "n")
+                        {
+                            break;
+                        }
+
+                        PollPacket sendPacket = new PollPacket();
+                        sendPacket.request.type = Request.REMOVE_POLLSESSION;
+                        sendPacket.request.id = pollSessionID;
+                        string sendString = PollSerializator.SerializePacket(sendPacket);
+                        server.Send(sendString);
+                        break;
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid poll session id!");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create new pollsession and save it to server
+        /// </summary>
+        public static void CreatePollsession()
+        {
             pollSession.name = AskQuestion("Enter pollsession name:", null);
             pollSession.testMode = ToBoolean(AskQuestion("Test mode[y/n]?", new String[] { "y", "n" }));
 
@@ -118,8 +292,8 @@ namespace Ilsrep.PollApplication.PollEditor
                     newChoice.id = newPoll.choices.Count + 1;
                     newChoice.parent = newPoll;
                     newChoice.choice = AskQuestion("Choice name:", null);
-                    
-                    newPoll.choices.Add( newChoice );
+
+                    newPoll.choices.Add(newChoice);
                     Console.WriteLine("Choice added!");
                 }
 
@@ -169,6 +343,45 @@ namespace Ilsrep.PollApplication.PollEditor
                 pollSession.polls.Add(newPoll);
                 Console.WriteLine("Poll added!");
             }
+
+            // Save pollsession to server
+            bool savePollsession = ToBoolean(AskQuestion("Do you want to save pollsesion to server[y/n]?", new String[] { "y", "n" }));
+            if (savePollsession)
+            {
+                PollPacket sendPacket = new PollPacket();
+                sendPacket.request.type = Request.CREATE_POLLSESSION;
+                sendPacket.pollSession = pollSession;
+                string sendString = PollSerializator.SerializePacket(sendPacket);
+                server.Send(sendString);
+                Console.WriteLine("New pollsession successfully sent to server");
+            }
+        }
+
+        /// <summary>
+        /// Connect to server
+        /// </summary>
+        public static void ConnectToServer()
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Please wait, connection to server...");
+                    server = new TcpServer();
+                    server.Connect(HOST, PORT);
+                    break;
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                    if (AskQuestion("Would you like to retry[y/n]?", new String[] { "y", "n" }) == "n")
+                    {
+                        Console.WriteLine("Press any key to exit...");
+                        Console.ReadKey(true);
+                        Environment.Exit(0);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -177,29 +390,19 @@ namespace Ilsrep.PollApplication.PollEditor
         public static void Main()
         {
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
-            RunUserDialog();
+            username = AskQuestion("Enter your name:", null);
+            ConnectToServer();
 
-            // Save pollsession to server
-            bool connectToServer = ToBoolean(AskQuestion("Do you want to save pollsesion to server[y/n]?", new String[] { "y", "n" }));
-            if (connectToServer == true)
+            while (true)
             {
-                try
-                {
-                    TcpServer client = new TcpServer();
-                    client.Connect(HOST, PORT);
-                    PollPacket sendPacket = new PollPacket();
-                    sendPacket.request.type = Request.CREATE_POLLSESSION;
-                    sendPacket.pollSession = pollSession;
-                    string sendString = PollSerializator.SerializePacket(sendPacket);
-                    client.Send(sendString);
-                    client.Disconnect();
-                    Console.WriteLine("Pollsession successfully sent to server");
-                }
-                catch(Exception exception)
-                {
-                    Console.WriteLine("Couldn't connect to server!");
-                }
+                RunUserDialog();
+                if (AskQuestion("Do you want to execute another action[y/n]?", new String[] { "y", "n" }) == "n")                
+                    break;
             }
+
+            // Disconnect from server
+            server.Disconnect();
+
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey(true);
         }
