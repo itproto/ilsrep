@@ -183,15 +183,22 @@ namespace Ilsrep.PollApplication.PollEditor
             bool connectToServer = ToBoolean(AskQuestion("Do you want to save pollsesion to server[y/n]?", new String[] { "y", "n" }));
             if (connectToServer == true)
             {
-                TcpServer client = new TcpServer();
-                client.Connect(HOST, PORT);
-                PollPacket sendPacket = new PollPacket();
-                sendPacket.request.type = Request.CREATE_POLLSESSION;
-                sendPacket.pollSession = pollSession;
-                string sendString = PollSerializator.SerializePacket(sendPacket);
-                client.Send(sendString);
-                client.Disconnect();
-                Console.WriteLine("Pollsession successfully sent to server");
+                try
+                {
+                    TcpServer client = new TcpServer();
+                    client.Connect(HOST, PORT);
+                    PollPacket sendPacket = new PollPacket();
+                    sendPacket.request.type = Request.CREATE_POLLSESSION;
+                    sendPacket.pollSession = pollSession;
+                    string sendString = PollSerializator.SerializePacket(sendPacket);
+                    client.Send(sendString);
+                    client.Disconnect();
+                    Console.WriteLine("Pollsession successfully sent to server");
+                }
+                catch(Exception exception)
+                {
+                    Console.WriteLine("Couldn't connect to server!");
+                }
             }
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey(true);

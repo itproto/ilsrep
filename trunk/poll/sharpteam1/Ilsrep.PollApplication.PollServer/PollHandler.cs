@@ -61,11 +61,11 @@ namespace Ilsrep.PollApplication.PollServer
                 PollSession pollSession = new PollSession();
                 pollSession.id = Convert.ToInt32(sqlPollSession["id"].ToString());
                 pollSession.name = sqlPollSession["name"].ToString();
-                pollSession.testMode = Convert.ToBoolean(sqlPollSession["testMode"].ToString());
-                pollSession.minScore = Convert.ToDouble(sqlPollSession["minScore"].ToString());
+                pollSession.testMode = Convert.ToBoolean(sqlPollSession["test_mode"].ToString());
+                pollSession.minScore = Convert.ToDouble(sqlPollSession["min_score"].ToString());
                 pollSession.polls = new List<Poll>();
 
-                SQLiteDataReader sqlPolls = Query("SELECT p.* FROM " + POLLSESSIONS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=" + pollSessionID, curDataBaseCon);
+                SQLiteDataReader sqlPolls = Query("SELECT p.* FROM " + POLLSESSIONS_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=" + pollSessionID, curDataBaseCon);
 
                 while (sqlPolls.Read())
                 {
@@ -73,8 +73,19 @@ namespace Ilsrep.PollApplication.PollServer
                     newPoll.id = Convert.ToInt32(sqlPolls["id"].ToString());
                     newPoll.name = sqlPolls["name"].ToString();
                     newPoll.description = sqlPolls["description"].ToString();
-                    newPoll.correctChoiceId = Convert.ToInt32(sqlPolls["correctChoice"].ToString());
-                    newPoll.customChoice = Convert.ToBoolean(sqlPolls["customChoice"].ToString());
+                    newPoll.correctChoiceId = Convert.ToInt32(sqlPolls["correct_choice_id"].ToString());
+                    newPoll.customChoice = Convert.ToBoolean(sqlPolls["custom_choice_enabled"].ToString());
+
+                    SQLiteDataReader sqlChoices = Query("SELECT c.* FROM " + POLLS_CHOICES_TABLE + " pxc LEFT JOIN " + CHOICES_TABLE + " c ON (pxc.choice_id=c.id) WHERE pxc.poll_id=" + newPoll.id, curDataBaseCon);
+
+                    while (sqlChoices.Read())
+                    {
+                        Choice newChoice = new Choice();
+                        newChoice.id = Convert.ToInt32(sqlChoices["id"].ToString());
+                        newChoice.choice = sqlChoices["name"].ToString();
+
+                        newPoll.choices.Add(newChoice);
+                    }
 
                     pollSession.polls.Add(newPoll);
                 }
@@ -225,8 +236,9 @@ namespace Ilsrep.PollApplication.PollServer
             try
             {
                 //string newPollSessionString = PollSerializator.SerializePollSession(newPollSession);
-                Query("INSERT INTO " + POLLSESSIONS_TABLE + "(name, testMode, minScore) VALUES('"+newPollSession.name+"', '"+newPollSession.testMode.ToString()+"', '"+newPollSession.minScore.ToString()+"')", curDataBaseCon);
+                Query("INSERT INTO " + POLLSESSIONS_TABLE + "(name, test_mode, min_score) VALUES('"+newPollSession.name+"', '"+newPollSession.testMode.ToString()+"', '"+newPollSession.minScore.ToString()+"')", curDataBaseCon);
                 String newPollSessionID = Query("SELECT last_insert_rowid()", curDataBaseCon)[0].ToString();
+                newPollSession.id = Convert.ToInt32(newPollSessionID);
 
                 foreach (Poll curPoll in newPollSession.polls)
                 {
@@ -248,7 +260,7 @@ namespace Ilsrep.PollApplication.PollServer
                             //newCorrectID = Query("SELECT id FROM " + CHOICES_TABLE + " ORDER BY id DESC LIMIT 1", curDataBaseCon)["id"].ToString();
                     }
 
-                    Query("INSERT INTO " + POLLS_TABLE + "(name, description, correctChoice, customChoice) VALUES('" + curPoll.name + "', '" + curPoll.description + "', '" + newChoiceID + "', '" + curPoll.customChoice.ToString() + "')", curDataBaseCon);
+                    Query("INSERT INTO " + POLLS_TABLE + "(name, description, correct_choice_id, custom_choice_enabled) VALUES('" + curPoll.name + "', '" + curPoll.description + "', '" + newChoiceID + "', '" + curPoll.customChoice.ToString() + "')", curDataBaseCon);
                     newPollID = Query("SELECT last_insert_rowid()", curDataBaseCon)[0].ToString();
 
                     foreach (Choice curChoice in curPoll.choices)
