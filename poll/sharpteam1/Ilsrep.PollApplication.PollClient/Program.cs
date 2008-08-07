@@ -77,7 +77,7 @@ namespace Ilsrep.PollApplication.PollClient
                 }
 
                 // add option for customer choice
-                if ( curentPoll.customChoice )
+                if ( curentPoll.customChoiceEnabled )
                 {
                     Console.WriteLine("\t" + index + ". Custom Choice");
                 }
@@ -85,7 +85,7 @@ namespace Ilsrep.PollApplication.PollClient
                 // accept only correct choices
                 while ( true )
                 {
-                    int choiceCount = (curentPoll.customChoice ? curentPoll.choices.Count + 1 : curentPoll.choices.Count);
+                    int choiceCount = (curentPoll.customChoiceEnabled ? curentPoll.choices.Count + 1 : curentPoll.choices.Count);
                     Console.Write("Pick your choice: [1-" + choiceCount + "]:");
 
                     // Get user choice
@@ -95,7 +95,7 @@ namespace Ilsrep.PollApplication.PollClient
                         --index;
 
                         // check if input correct
-                        bool choiceInputIsAcceptable = (index >= 0 && index <= curentPoll.choices.Count - (curentPoll.customChoice ? 0 : 1));
+                        bool choiceInputIsAcceptable = (index >= 0 && index <= curentPoll.choices.Count - (curentPoll.customChoiceEnabled ? 0 : 1));
                         if (choiceInputIsAcceptable)
                             break;
                     }
@@ -150,11 +150,11 @@ namespace Ilsrep.PollApplication.PollClient
                     string correctChoice = "";
                     foreach (Choice curChoice in userChoice.parent.choices)
                     {
-                        if (curChoice.id == userChoice.parent.correctChoiceId)
+                        if (curChoice.id == userChoice.parent.correctChoiceID)
                             correctChoice = curChoice.choice;
                     }
 
-                    string isChoicePassed = (userChoice.parent.correctChoiceId == userChoice.id ? "+ Correct" : "- Wrong");
+                    string isChoicePassed = (userChoice.parent.correctChoiceID == userChoice.id ? "+ Correct" : "- Wrong");
                     Console.WriteLine("Correct choice: " + correctChoice);
                     Console.WriteLine(isChoicePassed + "\n");
                 }
@@ -166,7 +166,7 @@ namespace Ilsrep.PollApplication.PollClient
                 int correctAnswersCount = 0;
                 foreach (Choice userChoice in userChoices)
                 {
-                    if (userChoice.id == userChoice.parent.correctChoiceId)
+                    if (userChoice.id == userChoice.parent.correctChoiceID)
                         correctAnswersCount++;
                 }
 

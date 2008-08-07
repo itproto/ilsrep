@@ -273,7 +273,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 Poll newPoll = new Poll();
 
                 newPoll.id = pollSession.polls.Count + 1;
-                newPoll.correctChoiceId = 0;
+                newPoll.correctChoiceID = 0;
                 newPoll.name = AskQuestion("Poll name:", null);
                 newPoll.description = AskQuestion("Poll description:", null);
 
@@ -302,11 +302,11 @@ namespace Ilsrep.PollApplication.PollEditor
                     // Enable CustomChoice automaticly if user doesn't inputed any choice
                     if (newPoll.choices.Count == 0)
                     {
-                        newPoll.customChoice = true;
+                        newPoll.customChoiceEnabled = true;
                     }
                     else
                     {
-                        newPoll.customChoice = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
+                        newPoll.customChoiceEnabled = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
                     }
                 }
                 else
@@ -317,7 +317,7 @@ namespace Ilsrep.PollApplication.PollEditor
                         Console.WriteLine("\t" + choice.id + ". " + choice.choice);
                     while (true)
                     {
-                        newPoll.correctChoiceId = -1;
+                        newPoll.correctChoiceID = -1;
                         try
                         {
                             int correctId = Convert.ToInt32(Console.ReadLine());
@@ -325,11 +325,11 @@ namespace Ilsrep.PollApplication.PollEditor
                             {
                                 if (choice.id == correctId)
                                 {
-                                    newPoll.correctChoiceId = correctId;
+                                    newPoll.correctChoiceID = correctId;
                                     break;
                                 }
                             }
-                            if (newPoll.correctChoiceId != -1)
+                            if (newPoll.correctChoiceID != -1)
                                 break;
                             Console.WriteLine("Invalid id!");
                         }

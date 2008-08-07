@@ -11,9 +11,9 @@ namespace Ilsrep.PollApplication.Model
     {
         [XmlAttribute("id")] public int id;
         [XmlAttribute("name")] public string name;
-        [XmlAttribute("correctChoice")] public int correctChoiceId;
         [XmlElement("description")] public string description;
-        [XmlAttribute("customChoiceEnabled")]public bool customChoice;
+        [XmlAttribute("correctChoiceID")] public int correctChoiceID;
+        [XmlAttribute("customChoiceEnabled")] public bool customChoiceEnabled;
         
         [XmlArray("choices")] [XmlArrayItem("choice")] public List<Choice> choices = new List<Choice>();
     }
