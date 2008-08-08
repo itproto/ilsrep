@@ -27,7 +27,7 @@ namespace Ilsrep.PollApplication.PollServer
         /// </summary>
         public const string PATH_TO_LOG_CONFIG = "LogConfig.xml";
         public const int DATA_SIZE = 65536;
-        static public string pathToDatabase = "db/pollserver.db";
+        //static public string pathToDatabase = "AppData/pollserver.db";
         static public int port = 3320;
         static public IPAddress host = IPAddress.Any;
 
@@ -60,8 +60,8 @@ namespace Ilsrep.PollApplication.PollServer
                     log.Error("Invalid port. " + exception.Message);
                 }
             }
-            if (commandLineParameters["data"] != null && commandLineParameters["data"] != String.Empty)
-                pathToDatabase = commandLineParameters["data"];
+            //if (commandLineParameters["data"] != null && commandLineParameters["data"] != String.Empty)
+                //pathToDatabase = commandLineParameters["data"];
 
             /*
             // Try to open data base

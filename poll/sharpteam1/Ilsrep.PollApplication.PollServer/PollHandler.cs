@@ -24,7 +24,6 @@ namespace Ilsrep.PollApplication.PollServer
         private static int activeConnCount = 0;
         private static byte[] data = new byte[PollServer.DATA_SIZE];
 
-
         /// <summary>
         /// Receive data from client application
         /// </summary>
@@ -62,6 +61,7 @@ namespace Ilsrep.PollApplication.PollServer
                 {
                     return;
                 }
+
                 receivedPacket = PollSerializator.DeserializePacket(receivedString);
                 if (receivedPacket == null)
                 {
@@ -114,7 +114,6 @@ namespace Ilsrep.PollApplication.PollServer
         public void SavePollSessionResult(NetworkStream client)
         {
             PollDAL.SavePollSessionResult(receivedPacket.resultsList);
-
             log.Info("Poll results added. PollSession ID: " + receivedPacket.resultsList.pollsessionId + ", Username: " + receivedPacket.resultsList.userName);
         }
 

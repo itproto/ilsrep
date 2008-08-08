@@ -71,6 +71,7 @@ namespace Ilsrep.PollApplication.DAL
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.Parameters.AddRange(paramCollection.Values.ToArray());
+            sqliteCommand.CommandText = strQuery;
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
 
             return sqliteReader;
@@ -117,13 +118,13 @@ namespace Ilsrep.PollApplication.DAL
             //NameValueCollection paramCollection = new NameValueCollection();
             //List<SQLiteParameter> paramCollection = new List<SQLiteParameter>();
             paramCollection.Add("@ID", new SQLiteParameter("@ID", pollSessionID.ToString()));
-            SQLiteDataReader sqlitePollSession  = Query("SELECT * FROM " + POLLSESSIONS_TABLE + " WHERE id=@ID", paramCollection);
+            SQLiteDataReader sqlitePollSession = Query("SELECT * FROM " + POLLSESSIONS_TABLE + " WHERE id=@ID", paramCollection);
 
             PollSession pollSession = new PollSession();
-            pollSession.id = Convert.ToInt32(sqlitePollSession ["id"].ToString());
-            pollSession.name = sqlitePollSession ["name"].ToString();
-            pollSession.testMode = Convert.ToBoolean(sqlitePollSession ["test_mode"].ToString());
-            pollSession.minScore = Convert.ToDouble(sqlitePollSession ["min_score"].ToString());
+            pollSession.id = Convert.ToInt32(sqlitePollSession["id"].ToString());
+            pollSession.name = sqlitePollSession["name"].ToString();
+            pollSession.testMode = Convert.ToBoolean(sqlitePollSession["test_mode"].ToString());
+            pollSession.minScore = Convert.ToDouble(sqlitePollSession["min_score"].ToString());
             pollSession.polls = new List<Poll>();
 
             SQLiteDataReader sqlPolls = Query("SELECT p.* FROM " + POLLSESSION_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=@ID", paramCollection);
@@ -151,7 +152,6 @@ namespace Ilsrep.PollApplication.DAL
 
                 pollSession.polls.Add(newPoll);
             }
-
 
             return pollSession;
         }

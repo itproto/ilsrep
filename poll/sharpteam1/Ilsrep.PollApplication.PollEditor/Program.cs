@@ -134,11 +134,15 @@ namespace Ilsrep.PollApplication.PollEditor
             if (receivedPacket.pollSessionList.items.Count == 0)
             {
                 Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
-                server.Disconnect();
-                Console.WriteLine("Disconnected from server");
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey(true);
-                Environment.Exit(-1);
+                if (AskQuestion("Would you create new pollsession[y/n]?", new String[] { "y", "n" }) == "y")
+                {
+                    CreatePollsession();
+                }
+                else
+                {
+                    Environment.Exit(0);
+                }
+                return;
             }
 
             // Output list of poll sessions
