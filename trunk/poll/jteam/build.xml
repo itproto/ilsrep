@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="task7" default="run-dir">
+<project name="task7" default="release-dir">
 
 	<property name="basedir" value="." />
 	<property name="src.dir" value="${basedir}/src" />
@@ -9,7 +9,7 @@
 	<property name="data.dir" value="${basedir}/data" />
 	<property name="javadoc.dir" value="${basedir}/docs" />
 	<property name="lib.dir" value="${basedir}/lib" />
-	<property name="run.dir" value="${basedir}/run" />
+	<property name="release.dir" value="${basedir}/release" />
 	<property name="scripts.dir" value="${basedir}/scripts" />
 	<property name="db.dir" value="${basedir}/db" />
 
@@ -45,19 +45,19 @@
 		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" classpath="${class.path}" />
 	</target>
 
-	<target name="run-dir" depends="jar">
-		<copy todir="${run.dir}" file="${jar.file}" />
-		<copy todir="${run.dir}" file="configuration.xml" />
+	<target name="release-dir" depends="jar">
+		<copy todir="${release.dir}" file="${jar.file}" />
+		<copy todir="${release.dir}" file="configuration.xml" />
 
-		<copy todir="${run.dir}">
+		<copy todir="${release.dir}">
 			<fileset dir="${scripts.dir}">
 			</fileset>
 		</copy>
-		<copy todir="${run.dir}/lib">
+		<copy todir="${release.dir}/lib">
 			<fileset dir="${lib.dir}">
 			</fileset>
 		</copy>
-		<copy todir="${run.dir}/db">
+		<copy todir="${release.dir}/db">
 			<fileset dir="${db.dir}">
 			</fileset>
 		</copy>
@@ -68,7 +68,7 @@
 		<delete quiet="true" file="${jar.file}" />
 	</target>
 
-	<target name="commitclean" depends="run-dir, javadoc">
+	<target name="commitclean" depends="release-dir, javadoc">
 		<delete quiet="true" dir="${distr.dir}" />
 		<delete quiet="true" file="${jar.file}" />
 	</target>

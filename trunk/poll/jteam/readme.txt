@@ -1,1 +1,1 @@
-Use scripts in /run directory to lauch program(s).
+Use scripts in /release directory to launch program(s).
