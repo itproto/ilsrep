@@ -2,7 +2,9 @@ package ilsrep.poll.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
+import java.util.jar.Manifest;
+import java.util.jar.JarFile;
+import java.util.jar.Attributes;
 /**
  * Handles XML creation and uploading to server.
  * 
@@ -25,6 +27,12 @@ public class PollEditor {
     public static void main(String[] args) {
 
         try {
+	        JarFile jar = new JarFile("./poll.jar");
+		Manifest manifest = jar.getManifest();
+		Attributes attribs = manifest.getAttributes("ilsrep/poll/client/PollEditor.class");
+		System.out.println("Version: "+attribs.getValue("Specification-Version"));
+		
+		
             String yesNoChoice = "y";
             // BufferedReader consoleInputReader = new BufferedReader(
             // new InputStreamReader(System.in));
@@ -71,7 +79,13 @@ public class PollEditor {
                     genXml += " correctChoice=\"" + name + "\" ";
                     correct = Integer.parseInt(name);
                 }
-
+String yesNoChoice3 =PollClient.readFromConsole(
+                    "Allow custom choice for this poll?",
+                    PollClient.Y_N_ANSWER_SET);
+                if(yesNoChoice.indexOf("y") != -1) {
+	                genXml+=" customEnabled=\"true\" ";
+	                }
+                
                 genXml += " >\n";
                 // System.out.print("Enter poll description: ");
                 name = PollClient.readFromConsole("Enter poll description");

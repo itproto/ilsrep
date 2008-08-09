@@ -213,6 +213,7 @@ public class TcpCommunicator {
      * Retrieves and outputs XML IDs and names
      */
     public void listXml() {
+	    System.out.println("Getting List of pollsessions. Please wait.");
         // Forming request packet.
         Pollpacket requestPacket = new Pollpacket();
         Request request = new Request();
@@ -231,6 +232,8 @@ public class TcpCommunicator {
             // Processing.
             if (response.getPollsessionList() != null
                     && response.getPollsessionList().getItems() != null) {
+	                  System.out.println("List of pollsessions stored on server");    
+	                    
                 for (Item i : response.getPollsessionList().getItems()) {
                     System.out.println(i.getId() + ") " + i.getName());
                 }
