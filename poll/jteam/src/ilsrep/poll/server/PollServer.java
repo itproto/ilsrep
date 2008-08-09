@@ -29,6 +29,7 @@ import org.apache.log4j.PropertyConfigurator;
 import java.util.jar.Manifest;
 import java.util.jar.JarFile;
 import java.util.jar.Attributes;
+
 /**
  * Main class for poll server.
  * 
@@ -66,7 +67,7 @@ public class PollServer {
      */
     public static void main(String[] args) {
         // Loading log4j configuration.
-       
+
         PropertyConfigurator.configure(PollServer.class.getClassLoader()
                 .getResource(LOGGER_CONFIGURATION_FILE));
 
@@ -75,11 +76,17 @@ public class PollServer {
             logger.fatal("Configuration file not specified. Quitting!");
             System.exit(1);
         }
-   try {  JarFile jar = new JarFile("./poll.jar");
-		Manifest manifest = jar.getManifest();
-		Attributes attribs = manifest.getAttributes("ilsrep/poll/server/PollServer.class");
-		logger.info("Version: "+attribs.getValue("Specification-Version"));
-	} catch (Exception e){logger.warn("Failed to read manifest");}
+        try {
+            JarFile jar = new JarFile("./poll.jar");
+            Manifest manifest = jar.getManifest();
+            Attributes attribs = manifest
+                    .getAttributes("ilsrep/poll/server/PollServer.class");
+            logger.info("Poll Server - version: "
+                    + attribs.getValue("Specification-Version"));
+        }
+        catch (Exception e) {
+            logger.warn("Failed to read manifest");
+        }
         // Creating poll server instance and loading poll xml's.
         PollServer serverInstance = new PollServer(args[0]);
 
