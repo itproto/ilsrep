@@ -20,7 +20,7 @@ import ilsrep.poll.common.Choice;
 import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.server.PollServer;
-
+import org.apache.log4j.Logger;
 /**
  * This abstract class is utility for working with any DB.<br>
  * There should be concrete class, which works with concrete DB.
@@ -29,8 +29,10 @@ import ilsrep.poll.server.PollServer;
  * @author DRC
  * 
  */
+ 
 public abstract class DBWorker {
-
+	
+   private static Logger logger = Logger.getLogger(DBWorker.class);
     /**
      * Default minimal number of idle connections in pool.
      */
@@ -148,40 +150,34 @@ public abstract class DBWorker {
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
                 rs = stat
-                        .executeQuery("select poll_id from pollsessions_polls where pollsession_id="
+                        .executeQuery("select polls.* from polls left join pollsessions_polls on (polls.id=pollsessions_polls.poll_id) where pollsessions_polls.pollsession_id="
                                 + id);
+                                 logger.info("inside polls");
                 while (rs.next()) {
+	                logger.info("inside polls");
                     Poll poll = new Poll();
-                    String pollId = rs.getString("poll_id");
+                    String pollId = rs.getString("id");
                     poll.setId(pollId);
-                    Statement stater = conn.createStatement();
-                    ResultSet chrs = stater
-                            .executeQuery("select * from polls where id="
-                                    + pollId);
-                    poll.setName(chrs.getString("name"));
+                    poll.setName(rs.getString("name"));
                     Description desc = new Description();
-                    desc.setValue(chrs.getString("description"));
+                    desc.setValue(rs.getString("description"));
                     poll.setDescription(desc);
                     poll
-                            .setCustomEnabled(chrs.getBoolean("customenabled") ? "true"
+                            .setCustomEnabled(rs.getBoolean("customenabled") ? "true"
                                     : "false");
                     if (sess.getTestMode().equals("true"))
-                        poll.setCorrectChoice(chrs.getString("correctchoice"));
+                        poll.setCorrectChoice(rs.getString("correctchoice"));
                     List<Choice> choices = new ArrayList<Choice>();
                     Statement stater2 = conn.createStatement();
                     ResultSet chrs3 = stater2
-                            .executeQuery("select choice_id from polls_choices where poll_id="
+                            .executeQuery("select choices.* from choices left join polls_choices on (choices.id=polls_choices.choice_id) where polls_choices.poll_id="
                                     + pollId);
 
                     while (chrs3.next()) {
-                        String choiceId = chrs3.getString("choice_id");
-                        Choice choice = new Choice();
-                        choice.setId(choiceId);
-                        Statement stat2 = conn.createStatement();
-                        ResultSet chrs2 = stat2
-                                .executeQuery("select * from choices where id="
-                                        + choiceId);
-                        choice.setName(chrs2.getString("name"));
+	                    logger.info("inside choices");
+	                    Choice choice=new Choice();
+                        choice.setId(chrs3.getString("id"));
+                        choice.setName(chrs3.getString("name"));
                         choices.add(choice);
                     }
                     poll.setChoices(choices);
@@ -189,7 +185,7 @@ public abstract class DBWorker {
                 }
                 sess.setPolls(polls);
             }
-            catch (Exception e) {
+            catch (Exception e) { logger.info(e.getMessage());
             }
         }
         else {

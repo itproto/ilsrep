@@ -14,7 +14,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
+import java.util.jar.Manifest;
+import java.util.jar.JarFile;
+import java.util.jar.Attributes;
 /**
  * Main class for task 7 - Poll.
  * 
@@ -35,6 +37,11 @@ public class PollClient {
      *             When I/O exception occurs.
      */
     public static void main(String[] args) throws JAXBException, IOException {
+	       JarFile jar = new JarFile("./poll.jar");
+		Manifest manifest = jar.getManifest();
+		Attributes attribs = manifest.getAttributes("ilsrep/poll/client/PollClient.class");
+		System.out.println("Version: "+attribs.getValue("Specification-Version"));
+		
         // Greeting user and asking his name and filename of poll xml file.
         System.out.println("Welcome to polls client program!\n");
         // System.out.print("Please enter your name: ");
@@ -43,15 +50,15 @@ public class PollClient {
         Unmarshaller um = cont.createUnmarshaller();
         Pollsession polls = null;
         boolean repeater = true;
-        String[] answerSet123 = { "1", "2", "3" };
+        String[] answerSet123 = { "1", "2"};
         String yesNoChoice = readFromConsole(
-                "Use server?(1) or local file?(2) or print version and exit(3)",
+                "Use \n (1) server \n (2) local file \n",
                 answerSet123);
-
-        if ((yesNoChoice.compareTo("3") == 0)) {
-            Package[] allPackages = { PollClient.class.getPackage(),
-                    PollServer.class.getPackage(),
-                    Pollsession.class.getPackage() };
+/*
+       //if ((yesNoChoice.compareTo("3") == 0)) {
+          //  Package[] allPackages = { PollClient.class.getPackage(),
+            //        PollServer.class.getPackage(),
+              //      Pollsession.class.getPackage() };
 
             System.out.println("All loaded packages:");
             for (int i = 0; i < allPackages.length; i++) {
@@ -64,7 +71,7 @@ public class PollClient {
 
             }
             System.exit(0);
-        }
+        }*/
         if ((yesNoChoice.compareTo("2") == 0)) {
             String fileName = readFromConsole("Please enter filename to read"
                     + " poll xml from\n[press enter for default"
@@ -125,7 +132,7 @@ public class PollClient {
                     // TODO: BUG: This cause client hang when it can't connect
                     // to server.
                     System.out
-                            .println("Corrupted output from server. Possibly no such id or corrupted XML. RETRYING...");
+                            .println("Corrupted output from server.\nPossibly no such id or corrupted XML.\nPlease reenter id\n");
                 }
             }
             communicator.finalize();
