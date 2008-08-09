@@ -21,6 +21,7 @@ import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.server.PollServer;
 import org.apache.log4j.Logger;
+
 /**
  * This abstract class is utility for working with any DB.<br>
  * There should be concrete class, which works with concrete DB.
@@ -29,10 +30,14 @@ import org.apache.log4j.Logger;
  * @author DRC
  * 
  */
- 
+
 public abstract class DBWorker {
-	
-   private static Logger logger = Logger.getLogger(DBWorker.class);
+
+    /**
+     * Log4j Logger for this class.
+     */
+    private static Logger logger = Logger.getLogger(DBWorker.class);
+
     /**
      * Default minimal number of idle connections in pool.
      */
@@ -152,9 +157,7 @@ public abstract class DBWorker {
                 rs = stat
                         .executeQuery("select polls.* from polls left join pollsessions_polls on (polls.id=pollsessions_polls.poll_id) where pollsessions_polls.pollsession_id="
                                 + id);
-                                 logger.info("inside polls");
                 while (rs.next()) {
-	                logger.info("inside polls");
                     Poll poll = new Poll();
                     String pollId = rs.getString("id");
                     poll.setId(pollId);
@@ -174,8 +177,7 @@ public abstract class DBWorker {
                                     + pollId);
 
                     while (chrs3.next()) {
-	                    logger.info("inside choices");
-	                    Choice choice=new Choice();
+                        Choice choice = new Choice();
                         choice.setId(chrs3.getString("id"));
                         choice.setName(chrs3.getString("name"));
                         choices.add(choice);
@@ -184,15 +186,18 @@ public abstract class DBWorker {
                     polls.add(poll);
                 }
                 sess.setPolls(polls);
+
+                stat.close();
             }
-            catch (Exception e) { logger.info(e.getMessage());
+            catch (Exception e) {
+                logger.info("Exception occured while fetching pollsession: "
+                        + e.getMessage());
             }
         }
         else {
             sess = null;
         }
 
-        stat.close();
         conn.close();
 
         return sess;
@@ -222,8 +227,20 @@ public abstract class DBWorker {
         }
         pollList.setItems(lstItems);
 
-        stat.close();
-        conn.close();
+        try {
+            stat.close();
+        }
+        catch (SQLException e) {
+            throw e;
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+                throw e;
+            }
+        }
 
         return pollList;
     }

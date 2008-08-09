@@ -2,7 +2,6 @@ package ilsrep.poll.client;
 
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.server.PollServer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import java.util.jar.Manifest;
 import java.util.jar.JarFile;
 import java.util.jar.Attributes;
+
 /**
  * Main class for task 7 - Poll.
  * 
@@ -37,11 +37,13 @@ public class PollClient {
      *             When I/O exception occurs.
      */
     public static void main(String[] args) throws JAXBException, IOException {
-	       JarFile jar = new JarFile("./poll.jar");
-		Manifest manifest = jar.getManifest();
-		Attributes attribs = manifest.getAttributes("ilsrep/poll/client/PollClient.class");
-		System.out.println("Version: "+attribs.getValue("Specification-Version"));
-		
+        JarFile jar = new JarFile("./poll.jar");
+        Manifest manifest = jar.getManifest();
+        Attributes attribs = manifest
+                .getAttributes("ilsrep/poll/client/PollClient.class");
+        System.out.println("Poll Client\nVersion: "
+                + attribs.getValue("Specification-Version") + '\n');
+
         // Greeting user and asking his name and filename of poll xml file.
         System.out.println("Welcome to polls client program!\n");
         // System.out.print("Please enter your name: ");
@@ -50,30 +52,10 @@ public class PollClient {
         Unmarshaller um = cont.createUnmarshaller();
         Pollsession polls = null;
         boolean repeater = true;
-        String[] answerSet123 = { "1", "2"};
-        String yesNoChoice = readFromConsole(
-                "Use \n (1) server \n (2) local file \n",
-                answerSet123);
-/*
-       //if ((yesNoChoice.compareTo("3") == 0)) {
-          //  Package[] allPackages = { PollClient.class.getPackage(),
-            //        PollServer.class.getPackage(),
-              //      Pollsession.class.getPackage() };
+        String yesNoChoice = readFromConsole("\nUse \n (1) server \n (2) local file \n[press enter for default (1)]");
 
-            System.out.println("All loaded packages:");
-            for (int i = 0; i < allPackages.length; i++) {
-
-                System.out.println("" + (i + 1) + ": "
-                        + allPackages[i].getName() + ": "
-                        + allPackages[i].getImplementationTitle()
-                        + ", version: "
-                        + allPackages[i].getImplementationVersion());
-
-            }
-            System.exit(0);
-        }*/
         if ((yesNoChoice.compareTo("2") == 0)) {
-            String fileName = readFromConsole("Please enter filename to read"
+            String fileName = readFromConsole("\nPlease enter filename to read"
                     + " poll xml from\n[press enter for default"
                     + " \"xml/Polls.xml\"]");
             if (fileName.compareTo("") == 0)
@@ -84,7 +66,7 @@ public class PollClient {
             polls = (Pollsession) um.unmarshal(pollFile);
         }
         else {
-            String serverPortString = readFromConsole("Please enter server:port"
+            String serverPortString = readFromConsole("\nPlease enter server:port"
                     + " to read poll xml from\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
 
@@ -125,14 +107,15 @@ public class PollClient {
                     if (polls != null)
                         done = true;
                     else {
-                        System.out.println("No such id on server. RETRYING...");
+                        System.out
+                                .println("\nNo such id on server. Enter id again.");
                     }
                 }
                 catch (Exception m) {
                     // TODO: BUG: This cause client hang when it can't connect
                     // to server.
                     System.out
-                            .println("Corrupted output from server.\nPossibly no such id or corrupted XML.\nPlease reenter id\n");
+                            .println("\nCorrupted output from server.\nPossibly no such id or corrupted XML.\nTry again.\n");
                 }
             }
             communicator.finalize();

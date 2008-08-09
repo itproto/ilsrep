@@ -107,7 +107,7 @@ public class TcpCommunicator {
         this.serverIp = serverIP;
         this.port = port;
 
-        System.out.println("Connecting to " + serverIp + " on "
+        System.out.println("\nConnecting to " + serverIp + " on "
                 + Integer.toString(port));
         clientSocket = new Socket(serverIp, port);
         System.out.println("Connected!");
@@ -126,13 +126,11 @@ public class TcpCommunicator {
         }
         catch (Exception e) {
         }
-        ;
         try {
             super.finalize();
         }
         catch (Throwable e) {
         }
-        ;
     }
 
     /**
@@ -149,7 +147,7 @@ public class TcpCommunicator {
      */
     public Pollsession getXML() throws JAXBException, IOException {
         String id = PollClient
-                .readFromConsole("Enter ID number of the desired poll");
+                .readFromConsole("\nEnter ID number of the desired poll");
 
         // Forming request packet.
         Request pollxmlRequest = new Request();
@@ -213,7 +211,7 @@ public class TcpCommunicator {
      * Retrieves and outputs XML IDs and names
      */
     public void listXml() {
-	    System.out.println("Getting List of pollsessions. Please wait.");
+        System.out.println("\nGetting List of pollsessions. Please wait.");
         // Forming request packet.
         Pollpacket requestPacket = new Pollpacket();
         Request request = new Request();
@@ -232,14 +230,14 @@ public class TcpCommunicator {
             // Processing.
             if (response.getPollsessionList() != null
                     && response.getPollsessionList().getItems() != null) {
-	                  System.out.println("List of pollsessions stored on server");    
-	                    
+                System.out.println("\nList of pollsessions stored on server:");
+
                 for (Item i : response.getPollsessionList().getItems()) {
                     System.out.println(i.getId() + ") " + i.getName());
                 }
             }
             else {
-                System.out.println("Server sent no list or list is empty.");
+                System.out.println("\nList is empty or server sent no list.");
             }
         }
         catch (JAXBException e) {

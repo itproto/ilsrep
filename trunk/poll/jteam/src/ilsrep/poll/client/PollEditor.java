@@ -1,10 +1,12 @@
 package ilsrep.poll.client;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.jar.Manifest;
 import java.util.jar.JarFile;
 import java.util.jar.Attributes;
+
 /**
  * Handles XML creation and uploading to server.
  * 
@@ -23,16 +25,19 @@ public class PollEditor {
      * 
      * @param args
      *            Command line arguments.
+     * @throws IOException
+     *             On console input errors.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         try {
-	        JarFile jar = new JarFile("./poll.jar");
-		Manifest manifest = jar.getManifest();
-		Attributes attribs = manifest.getAttributes("ilsrep/poll/client/PollEditor.class");
-		System.out.println("Version: "+attribs.getValue("Specification-Version"));
-		
-		
+            JarFile jar = new JarFile("./poll.jar");
+            Manifest manifest = jar.getManifest();
+            Attributes attribs = manifest
+                    .getAttributes("ilsrep/poll/client/PollEditor.class");
+            System.out.println("Poll Editor\nVersion: "
+                    + attribs.getValue("Specification-Version"));
+
             String yesNoChoice = "y";
             // BufferedReader consoleInputReader = new BufferedReader(
             // new InputStreamReader(System.in));
@@ -40,7 +45,7 @@ public class PollEditor {
             String name = "1"; // default number
             genXml += "<pollsession id=\"" + name + "\" name=\"";
             // System.out.print("Enter pollsession name: ");
-            name = PollClient.readFromConsole("Enter pollsession name");
+            name = PollClient.readFromConsole("\nEnter pollsession name");
             genXml += name + "\" testMode=\"";
             // System.out.print("Will this poll run in testmode? [y/n]: ");
             System.out.println();
@@ -79,13 +84,13 @@ public class PollEditor {
                     genXml += " correctChoice=\"" + name + "\" ";
                     correct = Integer.parseInt(name);
                 }
-String yesNoChoice3 =PollClient.readFromConsole(
-                    "Allow custom choice for this poll?",
-                    PollClient.Y_N_ANSWER_SET);
-                if(yesNoChoice.indexOf("y") != -1) {
-	                genXml+=" customEnabled=\"true\" ";
-	                }
-                
+                String yesNoChoice3 = PollClient.readFromConsole(
+                        "Allow custom choice for this poll?",
+                        PollClient.Y_N_ANSWER_SET);
+                if (yesNoChoice3.indexOf("y") != -1) {
+                    genXml += " customEnabled=\"true\" ";
+                }
+
                 genXml += " >\n";
                 // System.out.print("Enter poll description: ");
                 name = PollClient.readFromConsole("Enter poll description");
@@ -99,15 +104,14 @@ String yesNoChoice3 =PollClient.readFromConsole(
                         || (yesNoChoice.indexOf("y") != -1)) {
 
                     // System.out.print("Enter choice option: ");
-                    name = PollClient.readFromConsole("Enter choice option");
+                    name = PollClient.readFromConsole("Enter next choice");
                     genXml += "<choice id=\"" + Integer.toString(n)
                             + "\"  name=\"" + name + "\" />\n";
                     if (correct <= n) {
                         // System.out.print("Add new choice option? [y/n]: ");
 
                         yesNoChoice = PollClient.readFromConsole(
-                                "Add new choice option?",
-                                PollClient.Y_N_ANSWER_SET);
+                                "Add new choice?", PollClient.Y_N_ANSWER_SET);
                     }
 
                     n++;
@@ -131,13 +135,13 @@ String yesNoChoice3 =PollClient.readFromConsole(
         catch (Exception e) {
             System.out.println("Invalid input or server is down");
             try {
-                BufferedReader consoleInputReader = new BufferedReader(
-                        new InputStreamReader(System.in));
-                consoleInputReader.readLine();
             }
             catch (Exception exception) {
             }
         }
+        BufferedReader consoleInputReader = new BufferedReader(
+                new InputStreamReader(System.in));
+        consoleInputReader.readLine();
     }
 
 }
