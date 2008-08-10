@@ -5,7 +5,7 @@ import ilsrep.poll.common.Pollpacket;
 import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.Request;
 import ilsrep.poll.server.PollClientHandler;
-
+import ilsrep.poll.common.Answers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -247,5 +247,14 @@ public class TcpCommunicator {
             return;
         }
     }
+    public void sendResult(Answers ans){
+	try {Pollpacket packet=new Pollpacket();
+	packet.setResultsList(ans);
+	  PollClientHandler.sendPacket(clientSocket.getOutputStream(),
+                    packet);
+} catch(Exception e){e.printStackTrace();};
+	
+	
+	}
 
 }

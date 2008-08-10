@@ -66,10 +66,15 @@ public class PollClientHandler implements ClientHandler, Runnable {
             while (true) {
                 if (socket.isClosed())
                     break;
-
+ logger.info("Got packet0");
                 Pollpacket receivedPacket = null;
                 receivedPacket = receivePacket();
+                ;                logger.info("Got packet");
+if(receivedPacket.getResultsList()!=null){
+	logger.info("Saving results");
+	}
 
+else
                 if (receivedPacket.getRequest() != null) {
                     if (receivedPacket.getRequest().getType().compareTo(
                             Request.TYPE_LIST) == 0) {
@@ -229,6 +234,9 @@ public class PollClientHandler implements ClientHandler, Runnable {
      */
     public static synchronized Pollpacket receivePacket(InputStream inStream)
             throws JAXBException, IOException {
+	            Pollpacket receivedPacket=null;
+	            try{
+		            
         JAXBContext pollPacketContext = JAXBContext
                 .newInstance(Pollpacket.class);
 
@@ -249,12 +257,12 @@ public class PollClientHandler implements ClientHandler, Runnable {
             if (inStream.available() == 0)
                 break;
         }
-
+logger.info(inputBuffer.toString().trim());
         Unmarshaller um = pollPacketContext.createUnmarshaller();
         StringReader reader = new StringReader(inputBuffer.toString().trim());
 
-        Pollpacket receivedPacket = (Pollpacket) um.unmarshal(reader);
-
+         receivedPacket = (Pollpacket) um.unmarshal(reader);
+} catch(Exception e){logger.info(e.getStackTrace().toString());}
         return receivedPacket;
     }
 

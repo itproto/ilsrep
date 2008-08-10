@@ -149,6 +149,7 @@ public int selectedId=0;
 
         // checking whether to output custom choice line
         if (checkCustomEnabled() && selectionId == 0) {
+	        selectedId=0;
             selection = PollClient
                     .readFromConsole("Please enter your choice");
                    
