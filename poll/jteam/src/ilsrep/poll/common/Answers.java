@@ -6,9 +6,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
 @XmlRootElement(name = "resultslist")
 public class Answers{
-	public String username;
- public String id;
-	public List<AnswerItem> answerlist;
+	protected String username;
+ protected String id;
+	protected List<AnswerItem> answerlist;
 	
 	
 	

@@ -21,7 +21,7 @@ public class Pollpacket {
      * Server's response for client's request of pollsession list stored on
      * server.
      */
-     public Answers answerlist=null;
+     protected Answers answerlist=null;
      
     protected Pollsessionlist pollsessionList = null;
 
