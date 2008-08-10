@@ -163,6 +163,8 @@ namespace Ilsrep.PollApplication.PollServer
             server.Close();
             foreach (StateObject worker in workers)
                 worker.workSocket.Close();
+
+            PollDAL.Close();
         }
 
         /// <summary>
