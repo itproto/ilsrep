@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  @XmlRootElement(name = "pollresult")
 public class AnswerItem {
 	protected String poll=null;
-	protected String choice=null;
+	protected String choice="-1";
 	protected String customChoice=null;
 	
 	public AnswerItem setItem(int poll_id,int choice_id){
