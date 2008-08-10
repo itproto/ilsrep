@@ -196,16 +196,18 @@ else answers.add(new AnswerItem(Integer.parseInt(cur.getId()),choice));
             }
         }
 Answers ans= new Answers();
-	ans.username=name;
-	ans.id=polls.getId();
-	ans.answerlist=answers;
+	ans.setusername(name);
+	ans.setPollSesionId(polls.getId());
+	ans.setPolls(answers);
 	Pollpacket packet=new Pollpacket();
-	packet.answerlist=ans;
+	packet.setResultsList(ans);
 try {
 		 JAXBContext pollPacketContext = JAXBContext.newInstance(Pollpacket.class);
         Marshaller mr2 = pollPacketContext.createMarshaller();
         StringWriter wr = new StringWriter();
         mr.marshal(packet, wr);
+        String request=wr.toString();
+        System.out.println(request);
  } catch(Exception e){System.out.println(e.getMessage());}   
         consoleClearScreen();
         System.out.println(resultingOutput);
