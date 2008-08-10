@@ -14,7 +14,7 @@ namespace Ilsrep.PollApplication.DAL
     /// </summary>
     public class PollDAL
     {
-        private const String connectionString = "Data Source=\"AppData/pollserver.db\"";
+        private const string connectionString = "Data Source=\"AppData/pollserver.db\"";
         static private SQLiteConnection dbConnection = null;
         /// <summary>
         /// Name of PollSessions table in database
@@ -58,7 +58,7 @@ namespace Ilsrep.PollApplication.DAL
             dbConnection.Open();
         }
 
-        static private SQLiteDataReader Query(String strQuery)
+        static private SQLiteDataReader Query(string strQuery)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.CommandText = strQuery;
@@ -67,11 +67,11 @@ namespace Ilsrep.PollApplication.DAL
             return sqliteReader;
         }
 
-        static private SQLiteDataReader Query(String strQuery, Dictionary<String, SQLiteParameter> paramCollection)
+        static private SQLiteDataReader Query(string strQuery, Dictionary<string, SQLiteParameter> paramCollection)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-            sqliteCommand.Parameters.AddRange(paramCollection.Values.ToArray());
             sqliteCommand.CommandText = strQuery;
+            sqliteCommand.Parameters.AddRange(paramCollection.Values.ToArray());
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
 
             return sqliteReader;
@@ -114,7 +114,7 @@ namespace Ilsrep.PollApplication.DAL
                 Init();
             }
 
-            Dictionary<String, SQLiteParameter> paramCollection = new Dictionary<String, SQLiteParameter>();
+            Dictionary<string, SQLiteParameter> paramCollection = new Dictionary<string, SQLiteParameter>();
             //NameValueCollection paramCollection = new NameValueCollection();
             //List<SQLiteParameter> paramCollection = new List<SQLiteParameter>();
             paramCollection.Add("@ID", new SQLiteParameter("@ID", pollSessionID.ToString()));
@@ -163,19 +163,19 @@ namespace Ilsrep.PollApplication.DAL
         /// <returns></returns>
         static public int CreatePollSession(PollSession newPollSession)
         {
-            Dictionary<String, SQLiteParameter> paramCollection = new Dictionary<String, SQLiteParameter>();
+            Dictionary<string, SQLiteParameter> paramCollection = new Dictionary<string, SQLiteParameter>();
             paramCollection.Add("@NAME", new SQLiteParameter("@NAME", newPollSession.name));
             paramCollection.Add("@TESTMODE", new SQLiteParameter("@TESTMODE", newPollSession.testMode.ToString()));
             paramCollection.Add("@MINSCORE", new SQLiteParameter("@MINSCORE", newPollSession.minScore.ToString()));
             Query("INSERT INTO " + POLLSESSIONS_TABLE + "(name, test_mode, min_score) VALUES('@NAME', '@TESTMODE', '@MINSCORE')", paramCollection);
             
-            String newPollSessionID = Query("SELECT last_insert_rowid()")[0].ToString();
+            string newPollSessionID = Query("SELECT last_insert_rowid()")[0].ToString();
             newPollSession.id = Convert.ToInt32(newPollSessionID);
 
             foreach (Poll curPoll in newPollSession.polls)
             {
-                String newChoiceID = String.Empty;
-                String newPollID = String.Empty;
+                string newChoiceID = String.Empty;
+                string newPollID = String.Empty;
 
                 paramCollection.Clear();
                 paramCollection.Add("@NAME", new SQLiteParameter("@NAME"));
@@ -229,9 +229,9 @@ namespace Ilsrep.PollApplication.DAL
         static public void SavePollSessionResult(ResultsList resultsList)
         {
             // Get current date
-            String currentDate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
+            string currentDate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
 
-            Dictionary<String, SQLiteParameter> paramCollection = new Dictionary<String, SQLiteParameter>();
+            Dictionary<string, SQLiteParameter> paramCollection = new Dictionary<string, SQLiteParameter>();
             paramCollection.Add("@USERNAME", new SQLiteParameter("@USERNAME", resultsList.userName));
             paramCollection.Add("@POLLSESSION", new SQLiteParameter("@POLLSESSION", resultsList.pollsessionId.ToString()));
             paramCollection.Add("@QUESTION", new SQLiteParameter("@QUESTION"));
@@ -254,9 +254,9 @@ namespace Ilsrep.PollApplication.DAL
         /// Removes PollSession from database
         /// </summary>
         /// <param name="pollSessionID">PollSession ID that is to be removed</param>
-        static public void RemovePollSession(String pollSessionID)
+        static public void RemovePollSession(string pollSessionID)
         {
-            Dictionary<String, SQLiteParameter> paramCollection = new Dictionary<String, SQLiteParameter>();
+            Dictionary<string, SQLiteParameter> paramCollection = new Dictionary<string, SQLiteParameter>();
             paramCollection.Add("@POLLSESSION", new SQLiteParameter("@POLLSESSION", pollSessionID));
 
             Query("DELETE FROM " + POLLSESSIONS_TABLE + " WHERE id='@POLLSESSION'", paramCollection);
