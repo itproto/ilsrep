@@ -69,7 +69,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
 
                 Pollpacket receivedPacket = null;
                 receivedPacket = receivePacket();
-                ;                logger.info("Got packet");
+               
 if(receivedPacket.getResultsList()!=null){
 	logger.info("Saving results");
 	serverInstance.getDB().saveResults(receivedPacket.getResultsList());
@@ -259,12 +259,12 @@ else
             if (inStream.available() == 0)
                 break;
         }
-logger.info(inputBuffer.toString().trim());
+
         Unmarshaller um = pollPacketContext.createUnmarshaller();
         StringReader reader = new StringReader(inputBuffer.toString().trim());
 
          receivedPacket = (Pollpacket) um.unmarshal(reader);
-} catch(Exception e){logger.info(e.getStackTrace().toString() +"FCK"	);}
+} catch(Exception e){logger.info(e.getStackTrace().toString() 	);}
         return receivedPacket;
     }
 
