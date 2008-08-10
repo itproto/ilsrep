@@ -2,21 +2,25 @@ package ilsrep.poll.client;
 
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsession;
-
+import ilsrep.poll.common.AnswerItem;
+import ilsrep.poll.common.Pollpacket;
+import ilsrep.poll.common.Answers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-
+import java.util.List;
+import java.util.ArrayList;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.util.jar.Manifest;
 import java.util.jar.JarFile;
+import java.util.jar.JarFile;
 import java.util.jar.Attributes;
-
+import java.io.StringWriter;
 /**
  * Main class for task 7 - Poll.
  * 
@@ -37,12 +41,13 @@ public class PollClient {
      *             When I/O exception occurs.
      */
     public static void main(String[] args) throws JAXBException, IOException {
+	    List<AnswerItem> answers=new ArrayList<AnswerItem>();
+	    
         JarFile jar = new JarFile("./poll.jar");
         Manifest manifest = jar.getManifest();
         Attributes attribs = manifest
                 .getAttributes("ilsrep/poll/client/PollClient.class");
-        System.out.println("Poll Client\nVersion: "
-                + attribs.getValue("Specification-Version") + '\n');
+ System.out.println("Poll Client\nVersion: " + attribs.getValue("Specification-Version") + '\n');
 
         // Greeting user and asking his name and filename of poll xml file.
         System.out.println("Welcome to polls client program!\n");
@@ -174,8 +179,10 @@ public class PollClient {
             if (cur.pass == "PASS")
                 i++;
             n++;
-
-            choice = null;
+if(cur.selectedId==0) {answers.add(new AnswerItem(Integer.parseInt(cur.getId()),cur.selectedId));}
+else answers.add(new AnswerItem(Integer.parseInt(cur.getId()),choice));
+	
+	            choice = null;
         }
         if (testMode.compareTo("true") == 0) {
             // BUG: May happen too long number after comma.
@@ -188,7 +195,18 @@ public class PollClient {
                 resultingOutput += "You fail.";
             }
         }
-
+Answers ans= new Answers();
+	ans.username=name;
+	ans.id=polls.getId();
+	ans.answerlist=answers;
+	Pollpacket packet=new Pollpacket();
+	packet.answerlist=ans;
+try {
+		 JAXBContext pollPacketContext = JAXBContext.newInstance(Pollpacket.class);
+        Marshaller mr2 = pollPacketContext.createMarshaller();
+        StringWriter wr = new StringWriter();
+        mr.marshal(packet, wr);
+ } catch(Exception e){System.out.println(e.getMessage());}   
         consoleClearScreen();
         System.out.println(resultingOutput);
 
