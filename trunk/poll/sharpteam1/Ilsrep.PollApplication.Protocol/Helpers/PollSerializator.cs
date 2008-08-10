@@ -55,7 +55,7 @@ namespace Ilsrep.PollApplication.Helpers
             }
             return XmlizedString;
         }
-
+        
         public static PollPacket DeserializePacket(string xmlString)
         {
             PollPacket pollPacket = new PollPacket();
@@ -67,18 +67,19 @@ namespace Ilsrep.PollApplication.Helpers
 
                 pollPacket = (PollPacket)xmlSerializer.Deserialize(memoryStream);
 
-                foreach (Poll poll in pollPacket.pollSession.polls)
+                /*foreach (Poll poll in pollPacket.pollSession.polls)
                 {
                     foreach (Choice choice in poll.choices)
                     {
                         choice.parent = poll;
                     }
-                }
+                }*/
             }
             catch (Exception exception)
             {
                 return null;
             }
+            
             return pollPacket;
         }
 
@@ -101,5 +102,6 @@ namespace Ilsrep.PollApplication.Helpers
             }
             return XmlizedString;
         }
+        
     }
 }

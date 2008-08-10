@@ -18,13 +18,37 @@ namespace Ilsrep.PollApplication.PollClient
 {
     public class PollClient
     {
+        /// <summary>
+        /// String that states yes
+        /// </summary>
         private const string CONSOLE_YES = "y";
+        /// <summary>
+        /// String that states no
+        /// </summary>
         private const string CONSOLE_NO = "n";
+        /// <summary>
+        /// host to which connect
+        /// </summary>
         private const string HOST = "localhost";
+        /// <summary>
+        /// port to which connect
+        /// </summary>
         private const int PORT = 3320;
+        /// <summary>
+        /// holds current user's username
+        /// </summary>
         static string userName = "";
+        /// <summary>
+        /// handles connection to server
+        /// </summary>
         static TcpServer server;
+        /// <summary>
+        /// holds pollsession that is read from server
+        /// </summary>
         static PollSession pollSession = new PollSession();
+        /// <summary>
+        /// holds user choices that he selects during poll session
+        /// </summary>
         static List<Choice> userChoices = new List<Choice>();
 
         public static void RunUserDialog()

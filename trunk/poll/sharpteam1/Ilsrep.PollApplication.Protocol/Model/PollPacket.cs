@@ -9,9 +9,16 @@ namespace Ilsrep.PollApplication.Model
     [XmlRoot("pollpacket"), Serializable]
     public class PollPacket
     {
-        [XmlElement("request")] public Request request = new Request();
+        [XmlIgnore] public const string GET_POLLSESSION_LIST = "getPollsessionList";
+        [XmlIgnore] public const string GET_POLLSESSION = "getPollsession";
+        [XmlIgnore] public const string CREATE_POLLSESSION = "createPollsession";
+        [XmlIgnore] public const string REMOVE_POLLSESSION = "removePollsession";
+        [XmlIgnore] public const string SAVE_RESULT = "saveResult";
+        [XmlElement("data")] public Object transferObject;
+        [XmlElement("type")] public string type;
+        /*[XmlElement("request")] public Request request = new Request();
         [XmlElement("pollsessionlist")] public PollSessionList pollSessionList = new PollSessionList();
         [XmlElement("pollsession")] public PollSession pollSession = new PollSession();
-        [XmlElement("resultslist")] public ResultsList resultsList = new ResultsList();
+        [XmlElement("resultslist")] public ResultsList resultsList = new ResultsList();*/
     }
 }
