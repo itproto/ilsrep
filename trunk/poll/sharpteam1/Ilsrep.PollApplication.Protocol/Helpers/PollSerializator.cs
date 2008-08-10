@@ -67,13 +67,13 @@ namespace Ilsrep.PollApplication.Helpers
 
                 pollPacket = (PollPacket)xmlSerializer.Deserialize(memoryStream);
 
-                /*foreach (Poll poll in pollPacket.pollSession.polls)
+                foreach (Poll poll in pollPacket.pollSession.polls)
                 {
                     foreach (Choice choice in poll.choices)
                     {
                         choice.parent = poll;
                     }
-                }*/
+                }
             }
             catch (Exception exception)
             {

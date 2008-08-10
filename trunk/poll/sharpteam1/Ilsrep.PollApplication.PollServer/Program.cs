@@ -209,6 +209,7 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 log.Info(String.Format("Client {0} disconnected", client.ipAddress));
                 client.workSocket.Close();
+                workers.RemoveAt(clientID);
 
                 return;
             }
@@ -218,6 +219,7 @@ namespace Ilsrep.PollApplication.PollServer
             if (receivedPacket == null)
             {
                 log.Error("Invalid data received");
+                client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
                 
                 return;
             }
@@ -226,25 +228,32 @@ namespace Ilsrep.PollApplication.PollServer
             PollPacket sendPacket = new PollPacket();
             
             // Select option
-            switch (receivedPacket.type)
+            switch (receivedPacket.request.type)
             {
                 case PollPacket.GET_POLLSESSION_LIST:
-                    List<Item> items = PollDAL.GetPollSessions();
-                    sendPacket.transferObject = items;
-                    sendPacket.type = PollPacket.GET_POLLSESSION_LIST;
+                    sendPacket.pollSessionList = new PollSessionList();
+                    sendPacket.pollSessionList.items = PollDAL.GetPollSessions();
+                    break;
+                case PollPacket.GET_POLLSESSION:
+                    sendPacket.pollSession = PollDAL.GetPollSession(Convert.ToInt32(receivedPacket.request.id));
+                    break;
+                case PollPacket.CREATE_POLLSESSION:
+                    receivedPacket.pollSession.id = PollDAL.CreatePollSession(receivedPacket.pollSession);
+                    break;
+                case PollPacket.REMOVE_POLLSESSION:
+                    PollDAL.RemovePollSession(Convert.ToInt32(receivedPacket.request.id));
+                    break;
+                case PollPacket.SAVE_RESULT:
+                    PollDAL.SavePollSessionResult(receivedPacket.resultsList);
                     break;
                 default:
                     log.Error("Invalid option sent by client");
                     break;
             }
 
-            if (sendPacket.type != String.Empty)
-            {
-                string sendString = PollSerializator.SerializePacket(sendPacket);
-                byte[] sendData = Encoding.ASCII.GetBytes(sendString);
-
-                client.workSocket.BeginSend(sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback(SendCallback), clientID);
-            }
+            string sendString = PollSerializator.SerializePacket(sendPacket);
+            byte[] sendData = Encoding.ASCII.GetBytes(sendString);
+            client.workSocket.BeginSend(sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback(SendCallback), clientID);
         }
 
         /// <summary>
@@ -257,7 +266,7 @@ namespace Ilsrep.PollApplication.PollServer
             StateObject client = workers[clientID];
 
             int bytesSent = client.workSocket.EndSend(iAsyncResult);
-            log.Info(String.Format("Sent {0} bytes to client {1}.", bytesSent, client.ipAddress));
+            //log.Info(String.Format("Sent {0} bytes to client {1}.", bytesSent, client.ipAddress));
 
             client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
         }
