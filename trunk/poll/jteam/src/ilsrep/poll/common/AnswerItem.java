@@ -10,14 +10,15 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
  @XmlRootElement(name = "pollresult")
 public class AnswerItem {
-	public String poll;
-	public String choice="-1";
-	public String customChoice=null;
+	protected String poll;
+	protected String choice="-1";
+	protected String customChoice=null;
 	
 	public AnswerItem(int poll_id,int choice_id){
 		poll=Integer.toString(poll_id);
 		choice=Integer.toString(choice_id);
 				}
+				public AnswerItem(){}
        public AnswerItem(int poll_id,String choice_id){
 		poll=Integer.toString(poll_id);
 		customChoice=choice_id;
