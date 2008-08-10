@@ -114,6 +114,7 @@ public class Poll {
     public void setName(String name) {
         this.name = name;
     }
+public int selectedId=0;
 
     /**
      * Polls user in console for selection.
@@ -150,11 +151,12 @@ public class Poll {
         if (checkCustomEnabled() && selectionId == 0) {
             selection = PollClient
                     .readFromConsole("Please enter your choice");
+                   
         }
         else {
             selectionId = Integer.parseInt(getChoices().get(selectionId - 1)
                     .getId());
-
+selectedId=selectionId;
             for (Choice cur : this.getChoices()) {
                 // converting selection number to what it represents
 
