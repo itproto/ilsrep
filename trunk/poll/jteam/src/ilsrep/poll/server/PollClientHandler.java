@@ -138,6 +138,19 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                                         + ").");
                                 }
                             }
+                            else
+                                if (receivedPacket
+                                        .getRequest()
+                                        .getType()
+                                        .compareTo(
+                                                Request.TYPE_REMOVE_POLLSESSION) == 0) {
+                                    if (receivedPacket.getRequest().getId() != null)
+                                        serverInstance.getDB()
+                                                .removePollsession(
+                                                        receivedPacket
+                                                                .getRequest()
+                                                                .getId());
+                                }
                 }
             }
         }

@@ -2,6 +2,7 @@ package ilsrep.poll.common;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * The "request" element.
@@ -15,17 +16,26 @@ public class Request {
     /**
      * Indicates of type of request: get list of xml's stored on server.
      */
+    @XmlTransient
     public static final String TYPE_LIST = "getList";
 
     /**
      * Indicates of type of request: get pollxml by id.
      */
+    @XmlTransient
     public static final String TYPE_POLLXML = "getPollsession";
 
     /**
      * Indicates of type of request: add new pollsession.
      */
-    public static final String TYPE_CREATE_POLLSESSION = "createPollsession";;
+    @XmlTransient
+    public static final String TYPE_CREATE_POLLSESSION = "createPollsession";
+
+    /**
+     * Indicates of type of request: add remove existing pollsession at server.
+     */
+    @XmlTransient
+    public static final String TYPE_REMOVE_POLLSESSION = "removePollsession";
 
     /**
      * Type of request:
