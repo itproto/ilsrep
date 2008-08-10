@@ -448,6 +448,95 @@ public abstract class DBManager {
     }
 
     /**
+     * Removes pollsession from DB.
+     * 
+     * @param id
+     *            Id of pollsession to remove.
+     */
+    public void removePollsession(String id) {
+        Connection conn = null;
+        boolean commit = false;
+
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+
+            // Getting all polls for this pollsession to remove.
+            Statement pollsSelectSt = conn.createStatement();
+            ResultSet pollsRs = pollsSelectSt
+                    .executeQuery("select poll_id from pollsessions_polls where id="
+                            + id);
+
+            while (pollsRs.next()) {
+                commit = true;
+
+                int poll_id = pollsRs.getInt("poll_id");
+
+                // Getting all choices for current poll.
+                Statement choicesSelectSt = conn.createStatement();
+                ResultSet choicesRs = choicesSelectSt
+                        .executeQuery("select choice_id from polls_choices where poll_id="
+                                + poll_id);
+
+                while (choicesRs.next()) {
+                    int choice_id = choicesRs.getInt("choice_id");
+
+                    // Removing choice from choices table.
+                    Statement removeChoiceSt = conn.createStatement();
+                    removeChoiceSt
+                            .executeUpdate("delete from choices where id="
+                                    + choice_id);
+                    removeChoiceSt.close();
+                }
+
+                // Removing all links to choices for current poll.
+                Statement polls_choicesRemoveSt = conn.createStatement();
+                polls_choicesRemoveSt
+                        .executeUpdate("delete from polls_choices where poll_id="
+                                + poll_id);
+                polls_choicesRemoveSt.close();
+
+                // Removing current poll.
+                Statement pollsRemoveSt = conn.createStatement();
+                pollsRemoveSt.executeUpdate("delete from polls where id="
+                        + poll_id);
+                pollsRemoveSt.close();
+
+                choicesSelectSt.close();
+            }
+
+            pollsSelectSt.close();
+
+            // Removing all links to polls for this pollsession.
+            Statement pollsessions_pollsRemoveSt = conn.createStatement();
+            pollsessions_pollsRemoveSt
+                    .executeUpdate("delete from pollsession_polls where pollsession+id="
+                            + id);
+            pollsessions_pollsRemoveSt.close();
+
+            // Removing pollsession.
+            Statement pollsessionRemoveSt = conn.createStatement();
+            pollsessionRemoveSt
+                    .executeUpdate("delete from pollsession where id=" + id);
+            pollsessionRemoveSt.close();
+
+            if (commit)
+                conn.commit();
+            else
+                conn.rollback();
+        }
+        catch (SQLException e) {
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (SQLException e) {
+            }
+        }
+    }
+
+    /**
      * Stops connections to DB.
      * 
      * @throws SQLException
