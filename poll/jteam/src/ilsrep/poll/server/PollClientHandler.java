@@ -66,12 +66,14 @@ public class PollClientHandler implements ClientHandler, Runnable {
             while (true) {
                 if (socket.isClosed())
                     break;
- logger.info("Got packet0");
+
                 Pollpacket receivedPacket = null;
                 receivedPacket = receivePacket();
                 ;                logger.info("Got packet");
 if(receivedPacket.getResultsList()!=null){
 	logger.info("Saving results");
+	serverInstance.getDB().saveResults(receivedPacket.getResultsList());
+	
 	}
 
 else

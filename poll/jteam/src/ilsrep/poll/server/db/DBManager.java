@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
-
+import ilsrep.poll.common.Answers;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import ilsrep.poll.common.Pollsession;
@@ -150,7 +150,7 @@ public abstract class DBManager {
                 sess = new Pollsession();
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
-                sess.setTestMode(rs.getBoolean("testmode") ? "true" : "false");
+                sess.setTestMode(rs.getString("testmode").equals("Y") ? "true" : "false");
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
@@ -166,8 +166,10 @@ public abstract class DBManager {
                     desc.setValue(rs.getString("description"));
                     poll.setDescription(desc);
                     poll
-                            .setCustomEnabled(rs.getBoolean("customenabled") ? "true"
+                            .setCustomEnabled(rs.getString("customenabled").equals("Y") ? "true"
                                     : "false");
+                                     
+                                    
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(rs.getString("correctchoice"));
                     List<Choice> choices = new ArrayList<Choice>();
@@ -245,6 +247,11 @@ public abstract class DBManager {
         return pollList;
     }
 
+    public void saveResults(Answers ans){
+	    String id=ans.getPollSesionId();
+	    String name=ans.getUsername();
+	    
+	    }
     /**
      * `Cos of XPilotPanel lib's functionality lack this is used to read "int"
      * option and if option in configuration file is corrupted use default value
