@@ -10,19 +10,19 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
  @XmlRootElement(name = "pollresult")
 public class AnswerItem {
-	protected String poll;
-	protected String choice="-1";
+	protected String poll=null;
+	protected String choice=null;
 	protected String customChoice=null;
 	
-	public AnswerItem(int poll_id,int choice_id){
+	public AnswerItem setItem(int poll_id,int choice_id){
 		poll=Integer.toString(poll_id);
 		choice=Integer.toString(choice_id);
-				}
-				public AnswerItem(){}
-       public AnswerItem(int poll_id,String choice_id){
+				return this;}
+			
+       public AnswerItem setItem(int poll_id,String choice_id){
 		poll=Integer.toString(poll_id);
 		customChoice=choice_id;
-				}
+			return this;	}
 	//
 	@XmlAttribute(name = "questionid")
     public String getQuestionId() {

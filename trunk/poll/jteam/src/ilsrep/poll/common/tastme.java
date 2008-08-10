@@ -25,14 +25,14 @@ import java.io.StringWriter;
 public class tastme{
 	   public static void main(String[] args) throws JAXBException, IOException {
 		try{String a="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pollpacket><resultslist username=\"1\" pollsessionid=\"1\"></resultslist></pollpacket>";
-		a="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pollpacket><resultslist username=\"1\" pollsessionid=\"1\"><pollresult questionid=\"1\" answerid=\"1\"/><pollresult questionid=\"2\" answerid=\"5\"/></resultslist></pollpacket>";
+		a="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pollpacket><resultslist username=\"1\" pollsessionid=\"1\"><pollresult questionid=\"1\" answerid=\"1\" customchoice=\"sdfsdf\" /><pollresult questionid=\"2\" answerid=\"2\" customchoice=\"sdfsdf\"/></resultslist></pollpacket>";
 		      
 		   JAXBContext cont = JAXBContext.newInstance(Pollpacket.class);
         Unmarshaller um = cont.createUnmarshaller();
 		    StringReader reader = new StringReader(a.toString().trim());
 
     Pollpacket     receivedPacket = (Pollpacket) um.unmarshal(reader); 
-    System.out.println("Helo");}catch(Exception e){System.out.println(e.getMessage());};
+    System.out.println("Helo");}catch(Exception e){e.printStackTrace();};
          
          
 	   }

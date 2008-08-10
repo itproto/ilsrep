@@ -262,7 +262,7 @@ logger.info(inputBuffer.toString().trim());
         StringReader reader = new StringReader(inputBuffer.toString().trim());
 
          receivedPacket = (Pollpacket) um.unmarshal(reader);
-} catch(Exception e){logger.info(e.getStackTrace().toString());}
+} catch(Exception e){logger.info(e.getStackTrace().toString() +"FCK"	);}
         return receivedPacket;
     }
 

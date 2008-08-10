@@ -182,8 +182,10 @@ public class PollClient {
             if (cur.pass == "PASS")
                 i++;
             n++;
-if(cur.selectedId!=0) {answers.add(new AnswerItem(Integer.parseInt(cur.getId()),cur.selectedId));}
-else answers.add(new AnswerItem(Integer.parseInt(cur.getId()),choice));
+            AnswerItem itm= new AnswerItem();
+if(cur.selectedId!=0) {
+		answers.add(itm.setItem(Integer.parseInt(cur.getId()),cur.selectedId));}
+else answers.add(itm.setItem(Integer.parseInt(cur.getId()),choice));
 
 	
 	            choice = null;
@@ -205,9 +207,9 @@ else answers.add(new AnswerItem(Integer.parseInt(cur.getId()),choice));
         System.out.println(resultingOutput);
      TcpCommunicator  communicator = new TcpCommunicator(serverName, port);
 Answers ans= new Answers();
-	ans.setusername(name);
+	ans.setUsername(name);
 	ans.setPollSesionId(polls.getId());
-	ans.setPolls(answers);
+	ans.setAnswers(answers);
 	communicator.sendResult(ans);
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
