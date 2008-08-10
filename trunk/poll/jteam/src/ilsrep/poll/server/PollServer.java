@@ -1,8 +1,8 @@
 package ilsrep.poll.server;
 
 import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.server.db.DBWorker;
-import ilsrep.poll.server.db.SQLiteDBWorker;
+import ilsrep.poll.server.db.DBManager;
+import ilsrep.poll.server.db.SQLiteDBManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +113,7 @@ public class PollServer {
     /**
      * DB for server.
      */
-    protected DBWorker db = null;
+    protected DBManager db = null;
 
     /**
      * Port to start server on.
@@ -251,7 +251,7 @@ public class PollServer {
         // DB initialisation(should be moved somewhere if DB can be other that
         // SQLite).
         try {
-            db = new SQLiteDBWorker(this, configuration.get("dbFile"));
+            db = new SQLiteDBManager(this, configuration.get("dbFile"));
             db.connect();
         }
         catch (ClassNotFoundException e) {
@@ -541,7 +541,7 @@ public class PollServer {
      * 
      * @return Initialised <code>DBWorker</code>.
      */
-    public DBWorker getDB() {
+    public DBManager getDB() {
         return db;
     }
 

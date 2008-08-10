@@ -9,7 +9,7 @@ import ilsrep.poll.server.PollServer;
  * @author DRC
  * 
  */
-public class SQLiteDBWorker extends DBWorker {
+public class SQLiteDBManager extends DBManager {
 
     /**
      * File to load DB from.
@@ -30,7 +30,7 @@ public class SQLiteDBWorker extends DBWorker {
      * @throws ClassNotFoundException
      *             If DB driver not found.
      */
-    public SQLiteDBWorker(PollServer srvInstance, String dataFile)
+    public SQLiteDBManager(PollServer srvInstance, String dataFile)
             throws ClassNotFoundException {
         super(srvInstance);
 
