@@ -41,7 +41,10 @@ public class PollClient {
      *             When I/O exception occurs.
      */
     public static void main(String[] args) throws JAXBException, IOException {
+	    
 	    List<AnswerItem> answers=new ArrayList<AnswerItem>();
+	    String serverName="localhost";
+	    int port=3320;
 	    
         JarFile jar = new JarFile("./poll.jar");
         Manifest manifest = jar.getManifest();
@@ -81,9 +84,9 @@ public class PollClient {
                 int separatorIndex = serverPortString.indexOf(':');
                 if (separatorIndex != 1) {
                     try {
-                        String serverName = serverPortString.substring(0,
+                         serverName = serverPortString.substring(0,
                                 separatorIndex);
-                        int port = Integer.parseInt(serverPortString
+                         port = Integer.parseInt(serverPortString
                                 .substring(separatorIndex + 1));
 
                         communicator = new TcpCommunicator(serverName, port);
@@ -179,8 +182,9 @@ public class PollClient {
             if (cur.pass == "PASS")
                 i++;
             n++;
-if(cur.selectedId==0) {answers.add(new AnswerItem(Integer.parseInt(cur.getId()),cur.selectedId));}
+if(cur.selectedId!=0) {answers.add(new AnswerItem(Integer.parseInt(cur.getId()),cur.selectedId));}
 else answers.add(new AnswerItem(Integer.parseInt(cur.getId()),choice));
+
 	
 	            choice = null;
         }
@@ -195,23 +199,16 @@ else answers.add(new AnswerItem(Integer.parseInt(cur.getId()),choice));
                 resultingOutput += "You fail.";
             }
         }
+        
+  
+        consoleClearScreen();
+        System.out.println(resultingOutput);
+     TcpCommunicator  communicator = new TcpCommunicator(serverName, port);
 Answers ans= new Answers();
 	ans.setusername(name);
 	ans.setPollSesionId(polls.getId());
 	ans.setPolls(answers);
-	Pollpacket packet=new Pollpacket();
-	packet.setResultsList(ans);
-try {
-		 JAXBContext pollPacketContext = JAXBContext.newInstance(Pollpacket.class);
-        Marshaller mr2 = pollPacketContext.createMarshaller();
-        StringWriter wr = new StringWriter();
-        mr.marshal(packet, wr);
-        String request=wr.toString();
-        System.out.println(request);
- } catch(Exception e){System.out.println(e.getMessage());}   
-        consoleClearScreen();
-        System.out.println(resultingOutput);
-
+	communicator.sendResult(ans);
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
                 new InputStreamReader(System.in));
