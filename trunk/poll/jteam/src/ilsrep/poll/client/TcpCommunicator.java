@@ -240,10 +240,10 @@ public class TcpCommunicator {
                 System.out.println("\nList is empty or server sent no list.");
             }
         }
-        catch (JAXBException e) {
+        catch (JAXBException e) { System.out.println(e.getMessage());
             return;
         }
-        catch (IOException e) {
+        catch (IOException e) { System.out.println(e.getMessage());
             return;
         }
     }
