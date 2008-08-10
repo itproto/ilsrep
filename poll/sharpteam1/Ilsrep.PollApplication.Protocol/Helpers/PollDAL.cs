@@ -51,6 +51,11 @@ namespace Ilsrep.PollApplication.DAL
                 return (dbConnection != null && dbConnection.State == System.Data.ConnectionState.Open);
             }
         }
+
+        static public void Close()
+        {
+            dbConnection.Close();
+        }
         
         static private void Init()
         {
@@ -69,12 +74,21 @@ namespace Ilsrep.PollApplication.DAL
 
         static private SQLiteDataReader Query(string strQuery, Dictionary<string, SQLiteParameter> paramCollection)
         {
-            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-            sqliteCommand.CommandText = strQuery;
-            sqliteCommand.Parameters.AddRange(paramCollection.Values.ToArray());
-            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            try
+            {
+                SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+                sqliteCommand.CommandText = strQuery;
+                sqliteCommand.Parameters.AddRange(paramCollection.Values.ToArray());
+                SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
 
-            return sqliteReader;
+                return sqliteReader;
+            }
+            catch (SQLiteException e)
+            {
+                Console.WriteLine(e.Message);
+
+                return null;
+            }
         }
 
         /// <summary>
@@ -167,10 +181,12 @@ namespace Ilsrep.PollApplication.DAL
             paramCollection.Add("@NAME", new SQLiteParameter("@NAME", newPollSession.name));
             paramCollection.Add("@TESTMODE", new SQLiteParameter("@TESTMODE", newPollSession.testMode.ToString()));
             paramCollection.Add("@MINSCORE", new SQLiteParameter("@MINSCORE", newPollSession.minScore.ToString()));
-            Query("INSERT INTO " + POLLSESSIONS_TABLE + "(name, test_mode, min_score) VALUES('@NAME', '@TESTMODE', '@MINSCORE')", paramCollection);
-            
+            Query(@"INSERT INTO " + POLLSESSIONS_TABLE + "(name, test_mode, min_score) VALUES('@NAME', '@TESTMODE', '@MINSCORE')", paramCollection);
+
             string newPollSessionID = Query("SELECT last_insert_rowid()")[0].ToString();
             newPollSession.id = Convert.ToInt32(newPollSessionID);
+
+            SQLiteDataReader sqlPollSession = Query("SELECT * FROM pollsessions");
 
             foreach (Poll curPoll in newPollSession.polls)
             {
@@ -219,6 +235,8 @@ namespace Ilsrep.PollApplication.DAL
                 Query("INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES('@POLLSESSID', '@POLLID')", paramCollection);
             }
 
+            dbConnection.Close();
+
             return Convert.ToInt32(newPollSessionID);
         }
 
@@ -254,7 +272,7 @@ namespace Ilsrep.PollApplication.DAL
         /// Removes PollSession from database
         /// </summary>
         /// <param name="pollSessionID">PollSession ID that is to be removed</param>
-        static public void RemovePollSession(string pollSessionID)
+        static public void RemovePollSession(int pollSessionID)
         {
             Dictionary<string, SQLiteParameter> paramCollection = new Dictionary<string, SQLiteParameter>();
             paramCollection.Add("@POLLSESSION", new SQLiteParameter("@POLLSESSION", pollSessionID));
