@@ -250,6 +250,13 @@ public abstract class DBManager {
     public void saveResults(Answers ans){
 	    String id=ans.getPollSesionId();
 	    String name=ans.getUsername();
+	  try{   for (int i=0;i<ans.getAnswers().size();i++){
+		  Connection conn = dataSource.getConnection();
+        Statement stat = conn.createStatement();
+       stat.executeUpdate("insert into results (pollsession_id, user_name, poll_id, choice_id, custom_choice, date) VALUES"+ " ("+id+", \""+name+"\", "+ans.getAnswers().get(i).getQuestionId()+", "+ans.getAnswers().get(i).getAnswerId()+", \""+ans.getAnswers().get(i).getCustomChoice()+"\", datetime('now'))" );  
+   }
+	 }catch(Exception e){logger.info(e.getMessage());}   
+		    
 	    
 	    }
     /**
