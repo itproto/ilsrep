@@ -149,7 +149,7 @@ public class Poll {
         // checking whether to output custom choice line
         if (checkCustomEnabled() && selectionId == 0) {
             selection = PollClient
-                    .readFromConsole("Please enter your choice: ");
+                    .readFromConsole("Please enter your choice");
         }
         else {
             selectionId = Integer.parseInt(getChoices().get(selectionId - 1)

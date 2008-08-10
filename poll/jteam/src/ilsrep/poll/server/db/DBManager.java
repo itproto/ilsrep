@@ -31,12 +31,12 @@ import org.apache.log4j.Logger;
  * 
  */
 
-public abstract class DBWorker {
+public abstract class DBManager {
 
     /**
      * Log4j Logger for this class.
      */
-    private static Logger logger = Logger.getLogger(DBWorker.class);
+    private static Logger logger = Logger.getLogger(DBManager.class);
 
     /**
      * Default minimal number of idle connections in pool.
@@ -85,7 +85,7 @@ public abstract class DBWorker {
      * @param srvInstance
      *            Server instance.
      */
-    public DBWorker(PollServer srvInstance) {
+    public DBManager(PollServer srvInstance) {
         this.srvInstance = srvInstance;
     }
 
