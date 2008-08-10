@@ -6,19 +6,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
 @XmlRootElement(name = "resultslist")
 public class Answers{
-	protected String username;
- protected String id;
-	protected List<AnswerItem> answerlist;
+	protected String username=null;
+ protected String id=null;
+	protected List<AnswerItem> answerlist=null;
 	
 	
 	
 	//
 	@XmlAttribute(name = "username")
-    public String getusername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setusername(String name) {
+    public void setUsername(String name) {
         this.username = name;
     }	
 	//
@@ -40,10 +40,7 @@ public class Answers{
         return answerlist;
     }
 
-    /**
-     * @see #polls
-     */
-    public void setPolls(List<AnswerItem> polls) {
+        public void setAnswers(List<AnswerItem> polls) {
         this.answerlist = polls;
     }
     
