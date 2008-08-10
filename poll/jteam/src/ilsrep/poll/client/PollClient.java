@@ -205,12 +205,14 @@ else answers.add(itm.setItem(Integer.parseInt(cur.getId()),choice));
   
         consoleClearScreen();
         System.out.println(resultingOutput);
+        System.out.println("Sending results to server...");
      TcpCommunicator  communicator = new TcpCommunicator(serverName, port);
 Answers ans= new Answers();
 	ans.setUsername(name);
 	ans.setPollSesionId(polls.getId());
 	ans.setAnswers(answers);
 	communicator.sendResult(ans);
+	  System.out.println("Results sent. Press any key to exit...");
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
                 new InputStreamReader(System.in));
