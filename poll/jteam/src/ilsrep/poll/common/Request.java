@@ -38,6 +38,12 @@ public class Request {
     public static final String TYPE_REMOVE_POLLSESSION = "removePollsession";
 
     /**
+     * Indicates of type of request: save pollsession seance results.
+     */
+    @XmlTransient
+    public static final String TYPE_SAVE_RESULT = "saveResult";
+
+    /**
      * Type of request:
      * <ul>
      * <li>list {@link Request#TYPE_LIST}</li>

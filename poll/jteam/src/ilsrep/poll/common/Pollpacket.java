@@ -1,5 +1,6 @@
 package ilsrep.poll.common;
-import  ilsrep.poll.common.Answers;
+
+import ilsrep.poll.common.Answers;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,8 +22,8 @@ public class Pollpacket {
      * Server's response for client's request of pollsession list stored on
      * server.
      */
-     protected Answers answerlist=null;
-     
+    protected Answers answerlist = null;
+
     protected Pollsessionlist pollsessionList = null;
 
     /**
@@ -73,17 +74,18 @@ public class Pollpacket {
     /**
      * @see #pollsession
      */
-    
-     public void setPollsession(Pollsession pollsession) {
+
+    public void setPollsession(Pollsession pollsession) {
         this.pollsession = pollsession;
-     }
-        @XmlElement(name = "resultslist")
-         public void setResultsList(Answers answer) {
+    }
+
+    @XmlElement(name = "resultslist")
+    public void setResultsList(Answers answer) {
         this.answerlist = answer;
-    }    public Answers getResultsList() {
+    }
+
+    public Answers getResultsList() {
         return answerlist;
     }
-        
-    
 
 }
