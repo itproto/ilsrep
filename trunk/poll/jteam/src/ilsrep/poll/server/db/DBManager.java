@@ -160,16 +160,14 @@ public abstract class DBManager {
                         .executeQuery("select polls.* from polls left join pollsessions_polls on (polls.id=pollsessions_polls.poll_id) where pollsessions_polls.pollsession_id="
                                 + id);
                 while (rs.next()) {
-	                logger.info("INSIDE");
-                    Poll poll = new Poll();
+	                                Poll poll = new Poll();
                     String pollId = rs.getString("id");
                     poll.setId(pollId);
                     poll.setName(rs.getString("name"));
                     Description desc = new Description();
                     desc.setValue(rs.getString("description"));
                     poll.setDescription(desc);
-                    poll.setCustomEnabled(rs.getString("customenabled").equals(
-                            "Y") ? "true" : "false");
+                    poll.setCustomEnabled(rs.getBoolean("customenabled")? "true" : "false");
 //if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(rs.getString("correctchoice"));
@@ -394,12 +392,15 @@ public abstract class DBManager {
                         pollsSt.setInt(3, Integer.parseInt(poll
                                 .getCorrectChoice()));
                         pollsSt.setString(4, poll.getDescription().getValue());
-
-                        if (poll.getCustomEnabled() != null
-                                && poll.getCustomEnabled().compareTo("true") == 0)
+                         if (poll.getCustomEnabled() != null
+                                && poll.getCustomEnabled().compareTo("true") == 0){
                             pollsSt.setBoolean(5, true);
-                        else
+                         
+                        }
+                        else{
+	                      
                             pollsSt.setBoolean(5, false);
+                        }
 
                         pollsSt.executeUpdate();
                         pollsSt.close();
