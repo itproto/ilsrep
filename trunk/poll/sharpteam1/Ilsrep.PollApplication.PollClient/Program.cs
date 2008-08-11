@@ -16,6 +16,9 @@ using Ilsrep.Common;
 
 namespace Ilsrep.PollApplication.PollClient
 {
+    /// <summary>
+    /// Poll Client that interacts with user
+    /// </summary>
     public class PollClient
     {
         /// <summary>
@@ -41,7 +44,7 @@ namespace Ilsrep.PollApplication.PollClient
         /// <summary>
         /// handles connection to server
         /// </summary>
-        static TcpServer server;
+        static TcpClient client;
         /// <summary>
         /// holds pollsession that is read from server
         /// </summary>
@@ -51,6 +54,9 @@ namespace Ilsrep.PollApplication.PollClient
         /// </summary>
         static List<Choice> userChoices = new List<Choice>();
 
+        /// <summary>
+        /// Interaction with user. Gets basic details
+        /// </summary>
         public static void RunUserDialog()
         {
             // Read user name
@@ -84,6 +90,9 @@ namespace Ilsrep.PollApplication.PollClient
             }
         }
 
+        /// <summary>
+        /// Interaction with user. Gets answers to pollsession
+        /// </summary>
         public static void RunUserPoll()
         {
             foreach (Poll curentPoll in pollSession.polls)
@@ -219,11 +228,11 @@ namespace Ilsrep.PollApplication.PollClient
             {
                 // connect to server
                 Console.WriteLine("Please wait. Connecting to poll server...");
-                server = new TcpServer();
-                server.Connect(HOST, PORT);
+                client = new TcpClient();
+                client.Connect(HOST, PORT);
                 
                 // if all ok inform
-                if (server.isConnected)
+                if (client.isConnected)
                 {
                     Console.WriteLine("+ Connection established.");
                 }
@@ -245,7 +254,7 @@ namespace Ilsrep.PollApplication.PollClient
         /// </summary>
         public static void DisconnectFromServer()
         {
-            server.Disconnect();
+            client.Disconnect();
             Console.WriteLine("- Disconnected from server");
         }
 
@@ -261,14 +270,14 @@ namespace Ilsrep.PollApplication.PollClient
                 try
                 {
                     string sendString = PollSerializator.SerializePacket(sendPacket);
-                    server.Send(sendString);
+                    client.Send(sendString);
                 }
                 catch (Exception exception)
                 {
                     Console.WriteLine("! " + exception.Message);
                 }
 
-                string receivedString = server.Receive();
+                string receivedString = client.Receive();
                 PollPacket receivedPacket = new PollPacket();
                 receivedPacket = PollSerializator.DeserializePacket(receivedString);
 
@@ -320,7 +329,7 @@ namespace Ilsrep.PollApplication.PollClient
             if (receivedPacket.pollSessionList.items.Count == 0)
             {
                 Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
-                server.Disconnect();
+                client.Disconnect();
                 Console.WriteLine("- Disconnected from server");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey(true);
@@ -398,10 +407,13 @@ namespace Ilsrep.PollApplication.PollClient
                 sendPacket.resultsList.results.Add(curPollSessionResult);
             }
             string sendString = PollSerializator.SerializePacket(sendPacket);
-            server.Send(sendString);
+            client.Send(sendString);
             Console.WriteLine("-> Result of pollsession successfully sent to server");
         }
 
+        /// <summary>
+        /// Main method of Poll Client
+        /// </summary>
         public static void Main()
         {
             ConnectToServer();

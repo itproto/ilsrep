@@ -18,7 +18,7 @@ namespace Ilsrep.PollApplication.PollEditor
         private static PollSession pollSession = new PollSession();
         private const String HOST = "localhost";
         private const int PORT = 3320;
-        private static TcpServer server;
+        private static TcpClient client;
 
         /// <summary>
         /// Helper method to get answers on questions, with possibility of choosing what user can answer
@@ -75,14 +75,14 @@ namespace Ilsrep.PollApplication.PollEditor
                 try
                 {
                     string sendString = PollSerializator.SerializePacket(sendPacket);
-                    server.Send(sendString);
+                    client.Send(sendString);
                 }
                 catch (Exception exception)
                 {
                     Console.WriteLine(exception.Message);
                 }
 
-                string receivedString = server.Receive();
+                string receivedString = client.Receive();
                 PollPacket receivedPacket = new PollPacket();
                 receivedPacket = PollSerializator.DeserializePacket(receivedString);
 
@@ -97,7 +97,7 @@ namespace Ilsrep.PollApplication.PollEditor
                         userInput = Console.ReadLine();
                         if (userInput == "y")
                         {
-                            server.Disconnect();
+                            client.Disconnect();
                             ConnectToServer();
                             break;
                         }
@@ -225,7 +225,7 @@ namespace Ilsrep.PollApplication.PollEditor
                         sendPacket.request.type = Request.REMOVE_POLLSESSION;
                         sendPacket.request.id = pollSessionID;
                         string sendString = PollSerializator.SerializePacket(sendPacket);
-                        server.Send(sendString);
+                        client.Send(sendString);
                         break;
                     }
                     else
@@ -359,7 +359,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 sendPacket.request.type = Request.CREATE_POLLSESSION;
                 sendPacket.pollSession = pollSession;
                 string sendString = PollSerializator.SerializePacket(sendPacket);
-                server.Send(sendString);
+                client.Send(sendString);
                 Console.WriteLine("New pollsession successfully sent to server");
             }
         }
@@ -374,8 +374,8 @@ namespace Ilsrep.PollApplication.PollEditor
                 try
                 {
                     Console.WriteLine("Please wait, connection to server...");
-                    server = new TcpServer();
-                    server.Connect(HOST, PORT);
+                    client = new TcpClient();
+                    client.Connect(HOST, PORT);
                     break;
                 }
                 catch (Exception exception)
@@ -408,7 +408,7 @@ namespace Ilsrep.PollApplication.PollEditor
             }
 
             // Disconnect from server
-            server.Disconnect();
+            client.Disconnect();
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey(true);

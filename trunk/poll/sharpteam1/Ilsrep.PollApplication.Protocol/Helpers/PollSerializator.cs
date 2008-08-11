@@ -8,8 +8,16 @@ using Ilsrep.PollApplication.Model;
 
 namespace Ilsrep.PollApplication.Helpers
 {
+    /// <summary>
+    /// Class that serializes objects concering poll
+    /// </summary>
     public class PollSerializator
     {
+        /// <summary>
+        /// Deserializes poll session from XML string into PollSession object
+        /// </summary>
+        /// <param name="xmlString">XML string, which holds serialized PollSession object</param>
+        /// <returns>Deserialized PollSession object</returns>
         public static PollSession DeserializePollSession(string xmlString)
         {
             PollSession pollSession = new PollSession();
@@ -29,13 +37,18 @@ namespace Ilsrep.PollApplication.Helpers
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
             return pollSession;
         }
 
+        /// <summary>
+        /// Serializes poll session from PollSession object into XML string
+        /// </summary>
+        /// <param name="pollSession">Poll Session oject</param>
+        /// <returns>XML string, which holds serialized PollSession object</returns>
         public static String SerializePollSession(PollSession pollSession)
         {
             String XmlizedString = null;
@@ -49,13 +62,18 @@ namespace Ilsrep.PollApplication.Helpers
                 memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
                 XmlizedString = Encoding.ASCII.GetString(memoryStream.ToArray());
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
             return XmlizedString;
         }
         
+        /// <summary>
+        /// Deserializes poll packet from XML string into PollPacket object 
+        /// </summary>
+        /// <param name="xmlString">XML string, which holds serialized PollPacket object</param>
+        /// <returns>Deserialized PollPacket object</returns>
         public static PollPacket DeserializePacket(string xmlString)
         {
             PollPacket pollPacket = new PollPacket();
@@ -78,7 +96,7 @@ namespace Ilsrep.PollApplication.Helpers
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
@@ -86,6 +104,11 @@ namespace Ilsrep.PollApplication.Helpers
             return pollPacket;
         }
 
+        /// <summary>
+        /// Serializes poll packet from PollPacket object into XML string
+        /// </summary>
+        /// <param name="pollPacket">PollPacket object</param>
+        /// <returns>XML string, which holds serialized PollPacket object</returns>
         public static String SerializePacket(PollPacket pollPacket)
         {
             String XmlizedString = null;
@@ -99,7 +122,7 @@ namespace Ilsrep.PollApplication.Helpers
                 memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
                 XmlizedString = Encoding.ASCII.GetString(memoryStream.ToArray());   
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
