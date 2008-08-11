@@ -160,6 +160,7 @@ public abstract class DBManager {
                         .executeQuery("select polls.* from polls left join pollsessions_polls on (polls.id=pollsessions_polls.poll_id) where pollsessions_polls.pollsession_id="
                                 + id);
                 while (rs.next()) {
+	                logger.info("INSIDE");
                     Poll poll = new Poll();
                     String pollId = rs.getString("id");
                     poll.setId(pollId);
@@ -169,7 +170,7 @@ public abstract class DBManager {
                     poll.setDescription(desc);
                     poll.setCustomEnabled(rs.getString("customenabled").equals(
                             "Y") ? "true" : "false");
-if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
+//if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(rs.getString("correctchoice"));
                     List<Choice> choices = new ArrayList<Choice>();
@@ -179,6 +180,7 @@ if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                                     + pollId);
 
                     while (chrs3.next()) {
+	                    logger.info("INSIDE2");
                         Choice choice = new Choice();
                         choice.setId(chrs3.getString("id"));
                         choice.setName(chrs3.getString("name"));
@@ -397,7 +399,7 @@ if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                                 && poll.getCustomEnabled().compareTo("true") == 0)
                             pollsSt.setBoolean(5, true);
                         else
-                            pollsSt.setNull(5, Types.BOOLEAN);
+                            pollsSt.setBoolean(5, false);
 
                         pollsSt.executeUpdate();
                         pollsSt.close();
