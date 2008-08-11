@@ -127,8 +127,8 @@ namespace Ilsrep.PollApplication.DAL
 
             pollSession.id = Convert.ToInt32(sqlitePollSession["id"]);
             pollSession.name = sqlitePollSession["name"].ToString();
-            pollSession.testMode = Convert.ToBoolean(sqlitePollSession["test_mode"]);
-            pollSession.minScore = Convert.ToDouble(sqlitePollSession["min_score"]);
+            pollSession.testMode = Convert.ToBoolean(sqlitePollSession["testmode"]);
+            pollSession.minScore = Convert.ToDouble(sqlitePollSession["minscore"]);
             pollSession.polls = new List<Poll>();
             sqlitePollSession.Close();
 
@@ -145,8 +145,8 @@ namespace Ilsrep.PollApplication.DAL
                 newPoll.id = Convert.ToInt32(sqlPolls["id"]);
                 newPoll.name = sqlPolls["name"].ToString();
                 newPoll.description = sqlPolls["description"].ToString();
-                newPoll.correctChoiceID = Convert.ToInt32(sqlPolls["correct_choice_id"]);
-                newPoll.customChoiceEnabled = Convert.ToBoolean(sqlPolls["custom_choice_enabled"]);
+                newPoll.correctChoiceID = Convert.ToInt32(sqlPolls["correctchoice"]);
+                newPoll.customChoiceEnabled = Convert.ToBoolean(sqlPolls["customenabled"]);
 
                 sqliteCommand2.Parameters[":id"].Value = newPoll.id;
                 SQLiteDataReader sqlChoices = sqliteCommand2.ExecuteReader();
@@ -180,7 +180,7 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.Parameters.Add(new SQLiteParameter(":name", newPollSession.name));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", newPollSession.testMode));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", newPollSession.minScore));
-            sqliteCommand.CommandText = "INSERT INTO " + POLLSESSIONS_TABLE + "(name, test_mode, min_score) VALUES(:name, :testmode, :minscore)";
+            sqliteCommand.CommandText = "INSERT INTO " + POLLSESSIONS_TABLE + "(name, testmode, minscore) VALUES(:name, :testmode, :minscore)";
             sqliteCommand.ExecuteNonQuery();
 
             sqliteCommand.CommandText = "SELECT last_insert_rowid()";
@@ -217,7 +217,7 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.AddWithValue(":desc", curPoll.description);
                 sqliteCommand.Parameters.AddWithValue(":choice", newChoiceID);
                 sqliteCommand.Parameters.AddWithValue(":custom", curPoll.customChoiceEnabled);
-                sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correct_choice_id, custom_choice_enabled) VALUES(:name, :desc, :choice, :custom)";
+                sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correctchoice, customenabled) VALUES(:name, :desc, :choice, :custom)";
                 sqliteCommand.ExecuteNonQuery();
                 
                 sqliteCommand.CommandText = "SELECT last_insert_rowid()";
