@@ -520,7 +520,7 @@ public abstract class DBManager {
             // Getting all polls for this pollsession to remove.
             Statement pollsSelectSt = conn.createStatement();
             ResultSet pollsRs = pollsSelectSt
-                    .executeQuery("select poll_id from pollsessions_polls where id="
+                    .executeQuery("select poll_id from pollsessions_polls where pollsession_id="
                             + id);
 
             while (pollsRs.next()) {
@@ -566,7 +566,7 @@ public abstract class DBManager {
             // Removing all links to polls for this pollsession.
             Statement pollsessions_pollsRemoveSt = conn.createStatement();
             pollsessions_pollsRemoveSt
-                    .executeUpdate("delete from pollsession_polls where pollsession+id="
+                    .executeUpdate("delete from pollsessions_polls where pollsession_id="
                             + id);
             pollsessions_pollsRemoveSt.close();
 
@@ -582,6 +582,7 @@ public abstract class DBManager {
                 conn.rollback();
         }
         catch (SQLException e) {
+            e.printStackTrace();
         }
         finally {
             try {
