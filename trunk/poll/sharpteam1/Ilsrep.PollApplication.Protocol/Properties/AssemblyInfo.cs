@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Ilsrep.PollApplication.PollClient.Properties")]
+[assembly: AssemblyTitle("Ilsrep.PollApplication.PollProtocol")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Ilsrep.PollApplication.PollClient.Properties")]
+[assembly: AssemblyProduct("Ilsrep.PollApplication.PollProtocol")]
 [assembly: AssemblyCopyright("Copyright © SharpTeam 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e8731bf4-3d70-45bb-aa2f-ae5e9fc04b98")]
+[assembly: Guid("85a84e9b-5004-4129-b659-36db6a7cbce1")]
 
 // Version information for an assembly consists of the following four values:
 //

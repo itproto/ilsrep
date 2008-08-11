@@ -66,6 +66,7 @@
   -->
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -103,8 +104,5 @@
       <Project>{97BFC9FF-DB20-4465-8FF0-6FB8CD4B0080}</Project>
       <Name>Ilsrep.PollApplication.PollProtocol</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
