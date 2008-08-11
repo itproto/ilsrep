@@ -37,7 +37,7 @@ public class PollEditor {
                     + attribs.getValue("Specification-Version"));
 
             String actionChoice = PollClient
-                    .readFromConsole("\nSelect action:\n(1) create new xml\n(2) delete xml from server"
+                    .readFromConsole("\nSelect action:\n(1) Create new Poll session\n(2) Delete existing Poll session from server"
                             + "\n[press enter for default (1)]");
             if (actionChoice.compareTo("2") == 0) {
                 TcpCommunicator communicator = new TcpCommunicator();
@@ -48,9 +48,9 @@ public class PollEditor {
                         "\nChoose pollsession to delete",
                         PollClient.ANSWER_TYPE_INTEGER);
 
-//                communicator.finalize();
-//
-//                communicator = new TcpCommunicator();
+                // communicator.finalize();
+                //
+                // communicator = new TcpCommunicator();
                 communicator.deleteXml(pollsessToDeleteChoice);
 
                 communicator.finalize();
