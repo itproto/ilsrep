@@ -125,6 +125,7 @@ namespace Ilsrep.PollApplication.PollEditor
         {
             // Get list of pollsessions from server and write they in console
             PollPacket sendPacket = new PollPacket();
+            sendPacket.request = new Request();
             sendPacket.request.type = Request.GET_LIST;
 
             PollPacket receivedPacket = new PollPacket();
@@ -220,6 +221,7 @@ namespace Ilsrep.PollApplication.PollEditor
                         }
 
                         PollPacket sendPacket = new PollPacket();
+                        sendPacket.request = new Request();
                         sendPacket.request.type = Request.REMOVE_POLLSESSION;
                         sendPacket.request.id = pollSessionID;
                         string sendString = PollSerializator.SerializePacket(sendPacket);
@@ -353,6 +355,7 @@ namespace Ilsrep.PollApplication.PollEditor
             if (savePollsession)
             {
                 PollPacket sendPacket = new PollPacket();
+                sendPacket.request = new Request();
                 sendPacket.request.type = Request.CREATE_POLLSESSION;
                 sendPacket.pollSession = pollSession;
                 string sendString = PollSerializator.SerializePacket(sendPacket);

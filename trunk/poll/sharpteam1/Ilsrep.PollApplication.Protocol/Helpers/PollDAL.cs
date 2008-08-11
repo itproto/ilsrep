@@ -118,41 +118,52 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.CommandText = "SELECT * FROM " + POLLSESSIONS_TABLE + " WHERE id=:id";
             sqliteCommand.Parameters.AddWithValue(":id", pollSessionID.ToString());
             SQLiteDataReader sqlitePollSession = sqliteCommand.ExecuteReader();
-
             PollSession pollSession = new PollSession();
-            pollSession.id = Convert.ToInt32(sqlitePollSession["id"].ToString());
+
+            if (!sqlitePollSession.HasRows)
+            {
+                return pollSession;
+            }
+
+            pollSession.id = Convert.ToInt32(sqlitePollSession["id"]);
             pollSession.name = sqlitePollSession["name"].ToString();
-            pollSession.testMode = Convert.ToBoolean(sqlitePollSession["test_mode"].ToString());
-            pollSession.minScore = Convert.ToDouble(sqlitePollSession["min_score"].ToString());
+            pollSession.testMode = Convert.ToBoolean(sqlitePollSession["test_mode"]);
+            pollSession.minScore = Convert.ToDouble(sqlitePollSession["min_score"]);
             pollSession.polls = new List<Poll>();
+            sqlitePollSession.Close();
 
             sqliteCommand.CommandText = "SELECT p.* FROM " + POLLSESSION_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=:id";
             SQLiteDataReader sqlPolls = sqliteCommand.ExecuteReader();
 
+            SQLiteCommand sqliteCommand2 = dbConnection.CreateCommand();
+            sqliteCommand2.CommandText = "SELECT c.* FROM " + POLL_CHOICES_TABLE + " pxc LEFT JOIN " + CHOICES_TABLE + " c ON (pxc.choice_id=c.id) WHERE pxc.poll_id=:id";
+            sqliteCommand2.Parameters.Add(new SQLiteParameter(":id"));
+
             while (sqlPolls.Read())
             {
                 Poll newPoll = new Poll();
-                newPoll.id = Convert.ToInt32(sqlPolls["id"].ToString());
+                newPoll.id = Convert.ToInt32(sqlPolls["id"]);
                 newPoll.name = sqlPolls["name"].ToString();
                 newPoll.description = sqlPolls["description"].ToString();
-                newPoll.correctChoiceID = Convert.ToInt32(sqlPolls["correct_choice_id"].ToString());
-                newPoll.customChoiceEnabled = Convert.ToBoolean(sqlPolls["custom_choice_enabled"].ToString());
+                newPoll.correctChoiceID = Convert.ToInt32(sqlPolls["correct_choice_id"]);
+                newPoll.customChoiceEnabled = Convert.ToBoolean(sqlPolls["custom_choice_enabled"]);
 
-                sqliteCommand.CommandText = "SELECT c.* FROM " + POLL_CHOICES_TABLE + " pxc LEFT JOIN " + CHOICES_TABLE + " c ON (pxc.choice_id=c.id) WHERE pxc.poll_id=:id";
-                sqliteCommand.Parameters[":id"].Value = newPoll.id;
-                SQLiteDataReader sqlChoices = sqliteCommand.ExecuteReader();
+                sqliteCommand2.Parameters[":id"].Value = newPoll.id;
+                SQLiteDataReader sqlChoices = sqliteCommand2.ExecuteReader();
 
                 while (sqlChoices.Read())
                 {
                     Choice newChoice = new Choice();
-                    newChoice.id = Convert.ToInt32(sqlChoices["id"].ToString());
+                    newChoice.id = Convert.ToInt32(sqlChoices["id"]);
                     newChoice.choice = sqlChoices["name"].ToString();
 
                     newPoll.choices.Add(newChoice);
                 }
+                sqlChoices.Close();
 
                 pollSession.polls.Add(newPoll);
             }
+            sqlPolls.Close();
 
             return pollSession;
         }
@@ -167,7 +178,7 @@ namespace Ilsrep.PollApplication.DAL
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
             sqliteCommand.Parameters.Add(new SQLiteParameter(":name", newPollSession.name));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", newPollSession.testMode.ToString()));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", newPollSession.testMode));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", newPollSession.minScore));
             sqliteCommand.CommandText = "INSERT INTO " + POLLSESSIONS_TABLE + "(name, test_mode, min_score) VALUES(:name, :testmode, :minscore)";
             sqliteCommand.ExecuteNonQuery();
@@ -177,8 +188,7 @@ namespace Ilsrep.PollApplication.DAL
 
             foreach (Poll curPoll in newPollSession.polls)
             {
-                string newChoiceID = String.Empty;
-                string newPollID = String.Empty;
+                int newChoiceID = 0;
 
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
@@ -192,8 +202,8 @@ namespace Ilsrep.PollApplication.DAL
                     if (curChoice.id == curPoll.correctChoiceID)
                     {
                         sqliteCommand.CommandText = "SELECT last_insert_rowid()";
-                        newChoiceID = sqliteCommand.ExecuteScalar().ToString();
-                        curChoice.id = Convert.ToInt32(newChoiceID);
+                        newChoiceID = Convert.ToInt32(sqliteCommand.ExecuteScalar());
+                        curChoice.id = newChoiceID;
                     }
                     else
                     {
@@ -206,7 +216,7 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.AddWithValue(":name", curPoll.name);
                 sqliteCommand.Parameters.AddWithValue(":desc", curPoll.description);
                 sqliteCommand.Parameters.AddWithValue(":choice", newChoiceID);
-                sqliteCommand.Parameters.AddWithValue(":custom", curPoll.customChoiceEnabled.ToString());
+                sqliteCommand.Parameters.AddWithValue(":custom", curPoll.customChoiceEnabled);
                 sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correct_choice_id, custom_choice_enabled) VALUES(:name, :desc, :choice, :custom)";
                 sqliteCommand.ExecuteNonQuery();
                 
@@ -216,7 +226,7 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.CommandText = "INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES(:pollid, :choiceid)";
                 sqliteCommand.Parameters.AddWithValue(":pollid", curPoll.id);
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":choiceid", System.Data.DbType.Int32));
+                sqliteCommand.Parameters.Add(new SQLiteParameter(":choiceid"));
 
                 foreach (Choice curChoice in curPoll.choices)
                 {
@@ -226,7 +236,7 @@ namespace Ilsrep.PollApplication.DAL
 
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.AddWithValue(":pollsessid", newPollSession.id);
-                sqliteCommand.Parameters.AddWithValue(":pollid", newPollID);
+                sqliteCommand.Parameters.AddWithValue(":pollid", curPoll.id);
                 sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsessid, :pollid)";
                 sqliteCommand.ExecuteNonQuery();
             }
@@ -282,7 +292,7 @@ namespace Ilsrep.PollApplication.DAL
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.Parameters.Add(new SQLiteParameter(":pollsession", pollSessionID));
 
-            sqliteCommand.CommandText = "DELETE FROM " + POLLSESSIONS_TABLE + " WHERE id=:pollsession'";
+            sqliteCommand.CommandText = "DELETE FROM " + POLLSESSIONS_TABLE + " WHERE id=:pollsession";
             sqliteCommand.ExecuteNonQuery();
             sqliteCommand.CommandText = "DELETE FROM " + POLLSESSION_POLLS_TABLE + " WHERE pollsession_id=:pollsession";
             sqliteCommand.ExecuteNonQuery();

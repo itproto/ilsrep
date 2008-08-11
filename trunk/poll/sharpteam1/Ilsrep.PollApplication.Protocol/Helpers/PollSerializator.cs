@@ -67,11 +67,14 @@ namespace Ilsrep.PollApplication.Helpers
 
                 pollPacket = (PollPacket)xmlSerializer.Deserialize(memoryStream);
 
-                foreach (Poll poll in pollPacket.pollSession.polls)
+                if (pollPacket.pollSession != null)
                 {
-                    foreach (Choice choice in poll.choices)
+                    foreach (Poll poll in pollPacket.pollSession.polls)
                     {
-                        choice.parent = poll;
+                        foreach (Choice choice in poll.choices)
+                        {
+                            choice.parent = poll;
+                        }
                     }
                 }
             }

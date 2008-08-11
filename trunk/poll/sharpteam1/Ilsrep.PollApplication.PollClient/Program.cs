@@ -310,6 +310,7 @@ namespace Ilsrep.PollApplication.PollClient
         public static void GetPollSession()
         {
             PollPacket sendPacket = new PollPacket();
+            sendPacket.request = new Request();
             sendPacket.request.type = Request.GET_LIST;
 
             PollPacket receivedPacket = new PollPacket();
@@ -327,7 +328,7 @@ namespace Ilsrep.PollApplication.PollClient
             }
 
             // Output list of poll sessions
-            Console.WriteLine("Please select poll session:");
+            Console.WriteLine("List of pollsessions");
             int index = 0;
             foreach (Item curItem in receivedPacket.pollSessionList.items)
             {
@@ -337,6 +338,7 @@ namespace Ilsrep.PollApplication.PollClient
             
             while (true)
             {
+                Console.WriteLine("Please select poll session[1-{0}]:", receivedPacket.pollSessionList.items.Count);
                 // Let user input poll session id
                 string userAnswer = Console.ReadLine();
 
@@ -374,7 +376,9 @@ namespace Ilsrep.PollApplication.PollClient
         public static void SavePollSessionResults()
         {
             PollPacket sendPacket = new PollPacket();
+            sendPacket.request = new Request();
             sendPacket.request.type = Request.SAVE_RESULT;
+            sendPacket.resultsList = new ResultsList();
             sendPacket.resultsList.userName = userName;
             sendPacket.resultsList.pollsessionId = pollSession.id;
 
