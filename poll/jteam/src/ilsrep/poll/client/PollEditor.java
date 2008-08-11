@@ -48,9 +48,9 @@ public class PollEditor {
                         "\nChoose pollsession to delete",
                         PollClient.ANSWER_TYPE_INTEGER);
 
-                communicator.finalize();
-
-                communicator = new TcpCommunicator();
+//                communicator.finalize();
+//
+//                communicator = new TcpCommunicator();
                 communicator.deleteXml(pollsessToDeleteChoice);
 
                 communicator.finalize();

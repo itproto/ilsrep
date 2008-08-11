@@ -154,13 +154,19 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                             .getType()
                                             .compareTo(
                                                     Request.TYPE_REMOVE_POLLSESSION) == 0) {
-                                        if (receivedPacket.getRequest().getId() != null)
+                                        if (receivedPacket.getRequest().getId() != null) {
                                             serverInstance
                                                     .getDB()
                                                     .removePollsession(
                                                             receivedPacket
                                                                     .getRequest()
                                                                     .getId());
+                                            logger.info("Pollsession id = "
+                                                    + receivedPacket
+                                                            .getRequest()
+                                                            .getId()
+                                                    + " deleted.");
+                                        }
                                     }
                 }
             }
