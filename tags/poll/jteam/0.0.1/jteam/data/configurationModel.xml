@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<XPilotPanelPreferencesModel>
+    <preferences>
+        <preference name="dbFile" defaultValue="sql/pollserver.s3db"/>
+        <preference name="port" defaultValue="3320"/>
+        <preference name="maxConnections" defaultValue="16"/>
+        <preference name="useAlternativeIPAddress" type="boolean" defaultValue="false"/>
+        <preference name="alternativeIPAddress"/>
+
+        <preference name="poolMinIdle" defaultValue="1"/>
+        <preference name="poolInitialSize" defaultValue="1"/>
+        <preference name="poolMaxIdle" defaultValue="4"/>
+        <preference name="poolMaxActive" defaultValue="16"/>
+    </preferences>
+
+    <tabs>
+        <tab name="General">
+	        <preference name="dbFile"/>
+            <preference name="port"/>
+            <preference name="maxConnections"/>
+	        <preference name="useAlternativeIPAddress"/>
+	        <preference name="alternativeIPAddress"/>
+        </tab>
+        <tab name="dbPool">
+            <preference name="poolInitialSize"/>
+	        <preference name="poolMinIdle"/>
+            <preference name="poolMaxIdle"/>
+	        <preference name="poolMaxActive"/>
+        </tab>
+    </tabs>
+</XPilotPanelPreferencesModel>
