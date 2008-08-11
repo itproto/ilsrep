@@ -205,13 +205,31 @@ namespace Ilsrep.PollApplication.PollServer
         {
             int clientID = (int)iAsyncResult.AsyncState;
             StateObject client = workers[clientID];
+            int countReceived = 0;
 
-            int countReceived = client.workSocket.EndReceive(iAsyncResult);
-            if (countReceived == 0)
+            try
             {
-                log.Info(String.Format("Client {0} disconnected", client.ipAddress));
-                client.workSocket.Close();
-                workers.RemoveAt(clientID);
+                countReceived = client.workSocket.EndReceive(iAsyncResult);
+                if (countReceived == 0)
+                {
+                    log.Info(String.Format("Client {0} disconnected", client.ipAddress));
+                    client.workSocket.Close();
+                    workers.RemoveAt(clientID);
+
+                    return;
+                }
+            }
+            catch (SocketException e)
+            {
+                if (e.ErrorCode == 10054)
+                {
+                    log.Info(String.Format("Client {0} disconnected", client.ipAddress));
+                    workers.RemoveAt(clientID);
+                }
+                else
+                {
+                    log.Error(String.Format("Socket Exception on client {0}: {1}", client.ipAddress, e.Message));
+                }
 
                 return;
             }
@@ -232,21 +250,26 @@ namespace Ilsrep.PollApplication.PollServer
             // Select option
             switch (receivedPacket.request.type)
             {
-                case PollPacket.GET_POLLSESSION_LIST:
+                case Request.GET_LIST:
                     sendPacket.pollSessionList = new PollSessionList();
                     sendPacket.pollSessionList.items = PollDAL.GetPollSessions();
+                    log.Info(String.Format("Pollsession List sent to {0}", client.ipAddress));
                     break;
-                case PollPacket.GET_POLLSESSION:
+                case Request.GET_POLLSESSION:
                     sendPacket.pollSession = PollDAL.GetPollSession(Convert.ToInt32(receivedPacket.request.id));
+                    log.Info(String.Format("Pollsession {0} sent to {1}", sendPacket.pollSession.id, client.ipAddress));
                     break;
-                case PollPacket.CREATE_POLLSESSION:
+                case Request.CREATE_POLLSESSION:
                     receivedPacket.pollSession.id = PollDAL.CreatePollSession(receivedPacket.pollSession);
+                    log.Info(String.Format("Pollsession {0} created by {1}", receivedPacket.pollSession.id, client.ipAddress));
                     break;
-                case PollPacket.REMOVE_POLLSESSION:
+                case Request.REMOVE_POLLSESSION:
                     PollDAL.RemovePollSession(Convert.ToInt32(receivedPacket.request.id));
+                    log.Info(String.Format("Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress));
                     break;
-                case PollPacket.SAVE_RESULT:
+                case Request.SAVE_RESULT:
                     PollDAL.SavePollSessionResult(receivedPacket.resultsList);
+                    log.Info(String.Format("Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress));
                     break;
                 default:
                     log.Error("Invalid option sent by client");
@@ -255,7 +278,24 @@ namespace Ilsrep.PollApplication.PollServer
 
             string sendString = PollSerializator.SerializePacket(sendPacket);
             byte[] sendData = Encoding.ASCII.GetBytes(sendString);
-            client.workSocket.BeginSend(sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback(SendCallback), clientID);
+            try
+            {
+                client.workSocket.BeginSend(sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback(SendCallback), clientID);
+            }
+            catch (SocketException e)
+            {
+                if (e.ErrorCode == 10054)
+                {
+                    log.Info(String.Format("Client {0} disconnected", client.ipAddress));
+                    workers.RemoveAt(clientID);
+                }
+                else
+                {
+                    log.Error(String.Format("Socket Exception on client {0}: {1}", client.ipAddress, e.Message));
+                }
+
+                return;
+            }
         }
 
         /// <summary>
@@ -267,10 +307,27 @@ namespace Ilsrep.PollApplication.PollServer
             int clientID = (int)iAsyncResult.AsyncState;
             StateObject client = workers[clientID];
 
-            int bytesSent = client.workSocket.EndSend(iAsyncResult);
-            //log.Info(String.Format("Sent {0} bytes to client {1}.", bytesSent, client.ipAddress));
+            try
+            {
+                int bytesSent = client.workSocket.EndSend(iAsyncResult);
+                //log.Info(String.Format("Sent {0} bytes to client {1}.", bytesSent, client.ipAddress));
 
-            client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
+                client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
+            }
+            catch (SocketException e)
+            {
+                if (e.ErrorCode == 10054)
+                {
+                    log.Info(String.Format("Client {0} disconnected", client.ipAddress));
+                    workers.RemoveAt(clientID);
+                }
+                else
+                {
+                    log.Error(String.Format("Socket Exception on client {0}: {1}", client.ipAddress, e.Message));
+                }
+
+                return;
+            }
         }
     }
 }
