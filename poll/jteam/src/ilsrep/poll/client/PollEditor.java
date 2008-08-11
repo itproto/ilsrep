@@ -88,7 +88,7 @@ public class PollEditor {
                         "Allow custom choice for this poll?",
                         PollClient.Y_N_ANSWER_SET);
                 if (yesNoChoice3.indexOf("y") != -1) {
-                    genXml += " customEnabled=\"true\" ";
+                    genXml += " customChoiceEnabled=\"true\" ";
                 }
 
                 genXml += " >\n";
