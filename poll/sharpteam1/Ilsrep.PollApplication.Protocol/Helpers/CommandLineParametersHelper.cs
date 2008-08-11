@@ -5,8 +5,16 @@ using System.Text;
 
 namespace Ilsrep.PollApplication.Helpers
 {
+    /// <summary>
+    /// Helper that parses command line parameters
+    /// </summary>
     public class CommandLineParametersHelper
     {
+        /// <summary>
+        /// Parse command line parameters from -var1 value1 -var2 value2 to NameValueCollection
+        /// </summary>
+        /// <param name="args">list of arguments in Array as passed to Main method ("-var1", "value1", "-var2", "value2")</param>
+        /// <returns>NameValueCollection of arguments as NameValueCollection["var1"]="value1"</returns>
         public static NameValueCollection Parse(string[] args)
         {
             String key = String.Empty;

@@ -63,7 +63,8 @@ namespace Ilsrep.PollApplication.DAL
         /// </summary>
         static public void Close()
         {
-            dbConnection.Close();
+            if (isConnected)
+                dbConnection.Close();
         }
         
         /// <summary>
