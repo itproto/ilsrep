@@ -115,6 +115,7 @@ public class Poll {
         this.name = name;
     }
 
+    @XmlTransient
     public int selectedId = 0;
 
     /**
