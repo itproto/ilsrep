@@ -150,9 +150,8 @@ public abstract class DBManager {
                 sess = new Pollsession();
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
-                sess.setTestMode(rs.getBoolean("testmode") ? "true"
-                        : "false");
-                       
+                sess.setTestMode(rs.getBoolean("testmode") ? "true" : "false");
+
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
@@ -160,15 +159,18 @@ public abstract class DBManager {
                         .executeQuery("select polls.* from polls left join pollsessions_polls on (polls.id=pollsessions_polls.poll_id) where pollsessions_polls.pollsession_id="
                                 + id);
                 while (rs.next()) {
-	                                Poll poll = new Poll();
+                    Poll poll = new Poll();
                     String pollId = rs.getString("id");
                     poll.setId(pollId);
                     poll.setName(rs.getString("name"));
                     Description desc = new Description();
                     desc.setValue(rs.getString("description"));
                     poll.setDescription(desc);
-                    poll.setCustomEnabled(rs.getBoolean("customenabled")? "true" : "false");
-//if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
+                    poll
+                            .setCustomEnabled(rs.getBoolean("customenabled") ? "true"
+                                    : "false");
+                    // if((rs.getBoolean("customenabled")))
+                    // {logger.info("TRUE");}
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(rs.getString("correctchoice"));
                     List<Choice> choices = new ArrayList<Choice>();
@@ -178,7 +180,7 @@ public abstract class DBManager {
                                     + pollId);
 
                     while (chrs3.next()) {
-	                    logger.info("INSIDE2");
+                        logger.info("INSIDE2");
                         Choice choice = new Choice();
                         choice.setId(chrs3.getString("id"));
                         choice.setName(chrs3.getString("name"));
@@ -377,7 +379,8 @@ public abstract class DBManager {
                 for (Poll poll : sess.getPolls()) {
                     // Getting id for next poll.
                     Statement pollsLastIdSt = conn.createStatement();
-                    ResultSet pollsLastIdRs = pollsLastIdSt.executeQuery("select id from polls order by id desc     limit 1" );
+                    ResultSet pollsLastIdRs = pollsLastIdSt
+                            .executeQuery("select id from polls order by id desc     limit 1");
 
                     int pollsLastId = -1;
 
@@ -392,15 +395,10 @@ public abstract class DBManager {
                         pollsSt.setInt(3, Integer.parseInt(poll
                                 .getCorrectChoice()));
                         pollsSt.setString(4, poll.getDescription().getValue());
-                         if (poll.getCustomEnabled() != null
-                                && poll.getCustomEnabled().compareTo("true") == 0){
-                            pollsSt.setBoolean(5, true);
-                         
-                        }
-                        else{
-	                      
-                            pollsSt.setBoolean(5, false);
-                        }
+                        pollsSt.setBoolean(5,
+                                poll.getCustomEnabled() != null
+                                        && poll.getCustomEnabled().compareTo(
+                                                "true") == 0);
 
                         pollsSt.executeUpdate();
                         pollsSt.close();
@@ -419,7 +417,8 @@ public abstract class DBManager {
                         for (Choice choice : poll.getChoices()) {
                             // Getting id for next choice.
                             Statement choicesLastIdSt = conn.createStatement();
-                            ResultSet choicesLastIdRs = pollsLastIdSt.executeQuery("select id from choices order by id desc     limit 1 ");
+                            ResultSet choicesLastIdRs = pollsLastIdSt
+                                    .executeQuery("select id from choices order by id desc     limit 1 ");
 
                             if (choicesLastIdRs.next()) {
                                 int choicesLastId = choicesLastIdRs
@@ -429,17 +428,18 @@ public abstract class DBManager {
                                 PreparedStatement choicesSt = conn
                                         .prepareStatement("insert into choices (id, name) values (?, ?)");
                                 choicesSt.setInt(1, (choicesLastId + 1));
-                              
+
                                 choicesSt.setString(2, choice.getName());
 
                                 choicesSt.executeUpdate();
                                 choicesSt.close();
 
                                 // Updating polls_choices many-to-many linker.
-                                
+
                                 Statement polls_choices = conn
                                         .createStatement();
-                                polls_choices.executeUpdate("insert into polls_choices (poll_id, choice_id) values ("
+                                polls_choices
+                                        .executeUpdate("insert into polls_choices (poll_id, choice_id) values ("
                                                 + (pollsLastId + 1)
                                                 + ", "
                                                 + (choicesLastId + 1) + ")");
@@ -485,7 +485,7 @@ public abstract class DBManager {
                 conn.commit(); // Commiting if all proceed correctly.
         }
         catch (SQLException e) {
-	        logger.info(e.getMessage());
+            logger.info(e.getMessage());
             i = -1;
         }
         finally {
