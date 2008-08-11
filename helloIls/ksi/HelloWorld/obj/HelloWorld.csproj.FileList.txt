@@ -1,5 +1,0 @@
-obj\Debug\ResolveAssemblyReference.cache
-bin\Debug\HelloWorld.exe
-bin\Debug\HelloWorld.pdb
-obj\Debug\HelloWorld.exe
-obj\Debug\HelloWorld.pdb
