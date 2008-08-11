@@ -268,4 +268,23 @@ public class TcpCommunicator {
         }
     }
 
+    public void deleteXml(String id) {
+        Request deleteRequest = new Request();
+        deleteRequest.setType(Request.TYPE_REMOVE_POLLSESSION);
+        deleteRequest.setId(id);
+
+        Pollpacket deletePacket = new Pollpacket();
+        deletePacket.setRequest(deleteRequest);
+
+        try {
+            PollClientHandler.sendPacket(clientSocket.getOutputStream(),
+                    deletePacket);
+
+            clientSocket.getOutputStream().flush();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
