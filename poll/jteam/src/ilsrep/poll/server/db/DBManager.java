@@ -150,8 +150,9 @@ public abstract class DBManager {
                 sess = new Pollsession();
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
-                sess.setTestMode(rs.getString("testmode").equals("Y") ? "true"
+                sess.setTestMode(rs.getBoolean("testmode") ? "true"
                         : "false");
+                       
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
@@ -168,7 +169,7 @@ public abstract class DBManager {
                     poll.setDescription(desc);
                     poll.setCustomEnabled(rs.getString("customenabled").equals(
                             "Y") ? "true" : "false");
-
+if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(rs.getString("correctchoice"));
                     List<Choice> choices = new ArrayList<Choice>();
