@@ -348,10 +348,10 @@ if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
             int pollsessionLastId = -1;
             Statement pollsessionLastIdSt = conn.createStatement();
             ResultSet pollsessionLastIdRs = pollsessionLastIdSt
-                    .executeQuery("SELECT seq FROM sqlite_sequence where name=\"pollsession\"");
+                    .executeQuery("select id from pollsession order by id desc     limit 1 ");
 
             if (pollsessionLastIdRs.next()) {
-                pollsessionLastId = pollsessionLastIdRs.getInt("seq");
+                pollsessionLastId = pollsessionLastIdRs.getInt("id");
 
                 // Inserting new pollsession.
                 PreparedStatement pollsessionSt = conn
@@ -377,13 +377,12 @@ if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                 for (Poll poll : sess.getPolls()) {
                     // Getting id for next poll.
                     Statement pollsLastIdSt = conn.createStatement();
-                    ResultSet pollsLastIdRs = pollsLastIdSt
-                            .executeQuery("SELECT seq FROM sqlite_sequence where name=\"polls\"");
+                    ResultSet pollsLastIdRs = pollsLastIdSt.executeQuery("select id from polls order by id desc     limit 1" );
 
                     int pollsLastId = -1;
 
                     if (pollsLastIdRs.next()) {
-                        pollsLastId = pollsLastIdRs.getInt("seq");
+                        pollsLastId = pollsLastIdRs.getInt("id");
 
                         // Inserting current poll.
                         PreparedStatement pollsSt = conn
@@ -417,27 +416,27 @@ if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                         for (Choice choice : poll.getChoices()) {
                             // Getting id for next choice.
                             Statement choicesLastIdSt = conn.createStatement();
-                            ResultSet choicesLastIdRs = pollsLastIdSt
-                                    .executeQuery("SELECT seq FROM sqlite_sequence where name=\"choices\"");
+                            ResultSet choicesLastIdRs = pollsLastIdSt.executeQuery("select id from choices order by id desc     limit 1 ");
 
                             if (choicesLastIdRs.next()) {
                                 int choicesLastId = choicesLastIdRs
-                                        .getInt("seq");
+                                        .getInt("id");
 
                                 // Inserting next choice.
                                 PreparedStatement choicesSt = conn
                                         .prepareStatement("insert into choices (id, name) values (?, ?)");
                                 choicesSt.setInt(1, (choicesLastId + 1));
+                              
                                 choicesSt.setString(2, choice.getName());
 
                                 choicesSt.executeUpdate();
                                 choicesSt.close();
 
                                 // Updating polls_choices many-to-many linker.
+                                
                                 Statement polls_choices = conn
                                         .createStatement();
-                                polls_choices
-                                        .executeUpdate("insert into polls_choices (poll_id, choice_id) values ("
+                                polls_choices.executeUpdate("insert into polls_choices (poll_id, choice_id) values ("
                                                 + (pollsLastId + 1)
                                                 + ", "
                                                 + (choicesLastId + 1) + ")");
@@ -483,6 +482,7 @@ if((rs.getBoolean("customenabled"))) {logger.info("TRUE");}
                 conn.commit(); // Commiting if all proceed correctly.
         }
         catch (SQLException e) {
+	        logger.info(e.getMessage());
             i = -1;
         }
         finally {
