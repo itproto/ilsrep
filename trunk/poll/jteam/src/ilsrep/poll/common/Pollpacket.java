@@ -22,9 +22,14 @@ public class Pollpacket {
      * Server's response for client's request of pollsession list stored on
      * server.
      */
-    protected Answers answerlist = null;
+  
 
     protected Pollsessionlist pollsessionList = null;
+     /**
+     * A set of answer data
+     */
+    
+      protected Answers answerlist = null;
 
     /**
      * Used when:
@@ -78,12 +83,16 @@ public class Pollpacket {
     public void setPollsession(Pollsession pollsession) {
         this.pollsession = pollsession;
     }
-
+/**
+     * @see #answerlist
+     */
     @XmlElement(name = "resultslist")
     public void setResultsList(Answers answer) {
         this.answerlist = answer;
     }
-
+/**
+     * @see #answerlist
+     */
     public Answers getResultsList() {
         return answerlist;
     }

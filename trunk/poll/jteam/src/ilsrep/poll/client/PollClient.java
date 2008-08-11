@@ -194,7 +194,7 @@ public class PollClient {
         communicator.sendResult(ans);
         communicator.finalize();
 
-        System.out.println("\nResults sent. Press any key to exit.");
+        System.out.println("\nResults sent. Press ENTER key to exit.");
 
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
