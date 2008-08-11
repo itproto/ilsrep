@@ -69,95 +69,99 @@ public class PollClientHandler implements ClientHandler, Runnable {
 
                 Pollpacket receivedPacket = null;
                 receivedPacket = receivePacket();
-               
-if(receivedPacket.getResultsList()!=null){
-	logger.info("Saving results");
-	serverInstance.getDB().saveResults(receivedPacket.getResultsList());
-	
-	}
 
-else
                 if (receivedPacket.getRequest() != null) {
                     if (receivedPacket.getRequest().getType().compareTo(
-                            Request.TYPE_LIST) == 0) {
-                        Pollsessionlist list = serverInstance.getDB()
-                                .getPollsessionlist();
-
-                        Pollpacket packetForSending = new Pollpacket();
-                        packetForSending.setPollsessionList(list);
-                        sendPacket(packetForSending);
-                        logger.info("Sent pollsession list("
-                                + list.getItems().size()
-                                + "elements) to client("
-                                + generateHostPortAsText(socket) + ").");
+                            Request.TYPE_SAVE_RESULT) == 0) {
+                        if (receivedPacket.getResultsList() != null)
+                            serverInstance.getDB().saveResults(
+                                    receivedPacket.getResultsList());
                     }
                     else
                         if (receivedPacket.getRequest().getType().compareTo(
-                                Request.TYPE_POLLXML) == 0) {
-                            Pollsession session = null;
-                            try {
-                                session = serverInstance
-                                        .getPollsessionById(receivedPacket
-                                                .getRequest().getId());
-                            }
-                            catch (NullPointerException e) {
-                                // This should be fixed in protocol.
-                                session = null;
-                            }
+                                Request.TYPE_LIST) == 0) {
+                            Pollsessionlist list = serverInstance.getDB()
+                                    .getPollsessionlist();
 
                             Pollpacket packetForSending = new Pollpacket();
-
-                            // Sending empty packet if pollsession not found in
-                            // DB.
-                            if (session != null) {
-                                packetForSending.setPollsession(session);
-                                logger
-                                        .info("Sent pollsession(id = "
-                                                + session.getId()
-                                                + ") to client("
-                                                + generateHostPortAsText(socket)
-                                                + ").");
-                            }
-                            else {
-                                logger.warn("Client asked for invalid id.");
-                            }
-
+                            packetForSending.setPollsessionList(list);
                             sendPacket(packetForSending);
+                            logger.info("Sent pollsession list("
+                                    + list.getItems().size()
+                                    + "elements) to client("
+                                    + generateHostPortAsText(socket) + ").");
                         }
                         else
                             if (receivedPacket.getRequest().getType()
-                                    .compareTo(Request.TYPE_CREATE_POLLSESSION) == 0) {
-                                if (receivedPacket.getPollsession() != null) {
-                                    int storedId = serverInstance.getDB()
-                                            .storePollsession(
-                                                    receivedPacket
-                                                            .getPollsession());
-                                    if (storedId != -1)
-                                        logger
-                                                .info("Editors("
-                                                        + generateHostPortAsText(socket)
-                                                        + ") xml stored with id = "
-                                                        + storedId + ".");
-                                    else
-                                        logger
-                                                .warn("Error while saving xml from editor("
-                                                        + generateHostPortAsText(socket)
-                                                        + ").");
+                                    .compareTo(Request.TYPE_POLLXML) == 0) {
+                                Pollsession session = null;
+                                try {
+                                    session = serverInstance
+                                            .getPollsessionById(receivedPacket
+                                                    .getRequest().getId());
                                 }
+                                catch (NullPointerException e) {
+                                    // This should be fixed in protocol.
+                                    session = null;
+                                }
+
+                                Pollpacket packetForSending = new Pollpacket();
+
+                                // Sending empty packet if pollsession not found
+                                // in
+                                // DB.
+                                if (session != null) {
+                                    packetForSending.setPollsession(session);
+                                    logger.info("Sent pollsession(id = "
+                                            + session.getId() + ") to client("
+                                            + generateHostPortAsText(socket)
+                                            + ").");
+                                }
+                                else {
+                                    logger.warn("Client asked for invalid id.");
+                                }
+
+                                sendPacket(packetForSending);
                             }
                             else
                                 if (receivedPacket
                                         .getRequest()
                                         .getType()
                                         .compareTo(
-                                                Request.TYPE_REMOVE_POLLSESSION) == 0) {
-                                    if (receivedPacket.getRequest().getId() != null)
-                                        serverInstance.getDB()
-                                                .removePollsession(
+                                                Request.TYPE_CREATE_POLLSESSION) == 0) {
+                                    if (receivedPacket.getPollsession() != null) {
+                                        int storedId = serverInstance
+                                                .getDB()
+                                                .storePollsession(
                                                         receivedPacket
-                                                                .getRequest()
-                                                                .getId());
+                                                                .getPollsession());
+                                        if (storedId != -1)
+                                            logger
+                                                    .info("Editors("
+                                                            + generateHostPortAsText(socket)
+                                                            + ") xml stored with id = "
+                                                            + storedId + ".");
+                                        else
+                                            logger
+                                                    .warn("Error while saving xml from editor("
+                                                            + generateHostPortAsText(socket)
+                                                            + ").");
+                                    }
                                 }
+                                else
+                                    if (receivedPacket
+                                            .getRequest()
+                                            .getType()
+                                            .compareTo(
+                                                    Request.TYPE_REMOVE_POLLSESSION) == 0) {
+                                        if (receivedPacket.getRequest().getId() != null)
+                                            serverInstance
+                                                    .getDB()
+                                                    .removePollsession(
+                                                            receivedPacket
+                                                                    .getRequest()
+                                                                    .getId());
+                                    }
                 }
             }
         }
@@ -236,9 +240,8 @@ else
      */
     public static synchronized Pollpacket receivePacket(InputStream inStream)
             throws JAXBException, IOException {
-	            Pollpacket receivedPacket=null;
-	            try{
-		            
+        Pollpacket receivedPacket = null;
+
         JAXBContext pollPacketContext = JAXBContext
                 .newInstance(Pollpacket.class);
 
@@ -263,8 +266,8 @@ else
         Unmarshaller um = pollPacketContext.createUnmarshaller();
         StringReader reader = new StringReader(inputBuffer.toString().trim());
 
-         receivedPacket = (Pollpacket) um.unmarshal(reader);
-} catch(Exception e){logger.info(e.getStackTrace().toString() 	);}
+        receivedPacket = (Pollpacket) um.unmarshal(reader);
+
         return receivedPacket;
     }
 

@@ -71,7 +71,7 @@ public class TcpCommunicator {
      * @see TcpCommunicator
      * 
      */
-    Socket clientSocket;
+    Socket clientSocket = null;
 
     /**
      * Constructs <code>TcpCommunicator</code>, that connects to
@@ -240,21 +240,32 @@ public class TcpCommunicator {
                 System.out.println("\nList is empty or server sent no list.");
             }
         }
-        catch (JAXBException e) { System.out.println(e.getMessage());
+        catch (JAXBException e) {
+            System.out.println(e.getMessage());
             return;
         }
-        catch (IOException e) { System.out.println(e.getMessage());
+        catch (IOException e) {
+            System.out.println(e.getMessage());
             return;
         }
     }
-    public void sendResult(Answers ans){
-	try {Pollpacket packet=new Pollpacket();
-	packet.setResultsList(ans);
-	  PollClientHandler.sendPacket(clientSocket.getOutputStream(),
-                    packet);
-} catch(Exception e){e.printStackTrace();};
-	
-	
-	}
+
+    public void sendResult(Answers ans) {
+        try {
+            Pollpacket packet = new Pollpacket();
+
+            Request saveRequest = new Request();
+            saveRequest.setType(Request.TYPE_SAVE_RESULT);
+
+            packet.setRequest(saveRequest);
+            packet.setResultsList(ans);
+
+            PollClientHandler
+                    .sendPacket(clientSocket.getOutputStream(), packet);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

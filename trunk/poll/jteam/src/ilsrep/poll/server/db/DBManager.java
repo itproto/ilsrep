@@ -150,7 +150,8 @@ public abstract class DBManager {
                 sess = new Pollsession();
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
-                sess.setTestMode(rs.getString("testmode").equals("Y") ? "true" : "false");
+                sess.setTestMode(rs.getString("testmode").equals("Y") ? "true"
+                        : "false");
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
@@ -165,11 +166,9 @@ public abstract class DBManager {
                     Description desc = new Description();
                     desc.setValue(rs.getString("description"));
                     poll.setDescription(desc);
-                    poll
-                            .setCustomEnabled(rs.getString("customenabled").equals("Y") ? "true"
-                                    : "false");
-                                     
-                                    
+                    poll.setCustomEnabled(rs.getString("customenabled").equals(
+                            "Y") ? "true" : "false");
+
                     if (sess.getTestMode().equals("true"))
                         poll.setCorrectChoice(rs.getString("correctchoice"));
                     List<Choice> choices = new ArrayList<Choice>();
@@ -200,7 +199,12 @@ public abstract class DBManager {
             sess = null;
         }
 
-        conn.close();
+        try {
+            if (conn != null)
+                conn.close();
+        }
+        catch (SQLException e) {
+        }
 
         return sess;
     }
@@ -237,7 +241,8 @@ public abstract class DBManager {
         }
         finally {
             try {
-                conn.close();
+                if (conn != null)
+                    conn.close();
             }
             catch (SQLException e) {
                 throw e;
@@ -247,18 +252,50 @@ public abstract class DBManager {
         return pollList;
     }
 
-    public void saveResults(Answers ans){
-	    String id=ans.getPollSesionId();
-	    String name=ans.getUsername();
-	  try{   for (int i=0;i<ans.getAnswers().size();i++){
-		  Connection conn = dataSource.getConnection();
-        Statement stat = conn.createStatement();
-       stat.executeUpdate("insert into results (pollsession_id, user_name, poll_id, choice_id, custom_choice, date) VALUES"+ " ("+id+", \""+name+"\", "+ans.getAnswers().get(i).getQuestionId()+", "+ans.getAnswers().get(i).getAnswerId()+", \""+ans.getAnswers().get(i).getCustomChoice()+"\", datetime('now'))" );  
-   }
-	 }catch(Exception e){logger.info(e.getMessage());}   
-		    
-	    
-	    }
+    /**
+     * Stores pollsession results in DB.
+     * 
+     * @param ans
+     *            Results to store.
+     */
+    public void saveResults(Answers ans) {
+        String id = ans.getPollSesionId();
+        String name = ans.getUsername();
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+
+            PreparedStatement stat = conn
+                    .prepareStatement("insert into results (pollsession_id, user_name, poll_id, choice_id, custom_choice, date) VALUES (?, ?, ?, ?, ?, datetime('now'))");
+            for (int i = 0; i < ans.getAnswers().size(); i++) {
+                stat.setInt(1, Integer.parseInt(id));
+                stat.setString(2, name);
+                stat.setInt(3, Integer.parseInt(ans.getAnswers().get(i)
+                        .getQuestionId()));
+                stat.setInt(4, Integer.parseInt(ans.getAnswers().get(i)
+                        .getAnswerId()));
+                stat.setString(5, ans.getAnswers().get(i).getCustomChoice());
+                stat.addBatch();
+            }
+
+            stat.executeBatch();
+
+            conn.commit();
+        }
+        catch (SQLException e) {
+        }
+        finally {
+            try {
+                if (conn != null)
+                    conn.close();
+            }
+            catch (SQLException e) {
+            }
+        }
+
+    }
+
     /**
      * `Cos of XPilotPanel lib's functionality lack this is used to read "int"
      * option and if option in configuration file is corrupted use default value
@@ -451,7 +488,8 @@ public abstract class DBManager {
             if (conn != null)
                 try {
                     // Closing connection and returning it to pool.
-                    conn.close();
+                    if (conn != null)
+                        conn.close();
                 }
                 catch (SQLException e) {
                     i = -1;
@@ -543,7 +581,8 @@ public abstract class DBManager {
         }
         finally {
             try {
-                conn.close();
+                if (conn != null)
+                    conn.close();
             }
             catch (SQLException e) {
             }

@@ -3,7 +3,6 @@ package ilsrep.poll.client;
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.AnswerItem;
-import ilsrep.poll.common.Pollpacket;
 import ilsrep.poll.common.Answers;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,9 +17,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.util.jar.Manifest;
 import java.util.jar.JarFile;
-import java.util.jar.JarFile;
 import java.util.jar.Attributes;
-import java.io.StringWriter;
+
 /**
  * Main class for task 7 - Poll.
  * 
@@ -41,16 +39,16 @@ public class PollClient {
      *             When I/O exception occurs.
      */
     public static void main(String[] args) throws JAXBException, IOException {
-	    
-	    List<AnswerItem> answers=new ArrayList<AnswerItem>();
-	    String serverName="localhost";
-	    int port=3320;
-	    
+        List<AnswerItem> answers = new ArrayList<AnswerItem>();
+
+        String serverPortString = null;
+
         JarFile jar = new JarFile("./poll.jar");
         Manifest manifest = jar.getManifest();
         Attributes attribs = manifest
                 .getAttributes("ilsrep/poll/client/PollClient.class");
- System.out.println("Poll Client\nVersion: " + attribs.getValue("Specification-Version") + '\n');
+        System.out.println("Poll Client\nVersion: "
+                + attribs.getValue("Specification-Version") + '\n');
 
         // Greeting user and asking his name and filename of poll xml file.
         System.out.println("Welcome to polls client program!\n");
@@ -74,37 +72,14 @@ public class PollClient {
             polls = (Pollsession) um.unmarshal(pollFile);
         }
         else {
-            String serverPortString = readFromConsole("\nPlease enter server:port"
+            serverPortString = readFromConsole("\nPlease enter server:port"
                     + " to read poll xml from\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
 
             TcpCommunicator communicator = null;
 
-            if (serverPortString.compareTo("") != 0) {
-                int separatorIndex = serverPortString.indexOf(':');
-                if (separatorIndex != 1) {
-                    try {
-                         serverName = serverPortString.substring(0,
-                                separatorIndex);
-                         port = Integer.parseInt(serverPortString
-                                .substring(separatorIndex + 1));
+            communicator = initTcpCommunicator(serverPortString);
 
-                        communicator = new TcpCommunicator(serverName, port);
-                    }
-                    catch (NumberFormatException e) {
-                        communicator = null;
-                    }
-                    catch (UnknownHostException e) {
-                        communicator = null;
-                    }
-                    catch (IOException e) {
-                        communicator = null;
-                    }
-                }
-            }
-
-            if (communicator == null)
-                communicator = new TcpCommunicator();
             communicator.listXml();
 
             boolean done = false;
@@ -182,13 +157,15 @@ public class PollClient {
             if (cur.pass == "PASS")
                 i++;
             n++;
-            AnswerItem itm= new AnswerItem();
-if(cur.selectedId!=0) {
-		answers.add(itm.setItem(Integer.parseInt(cur.getId()),cur.selectedId));}
-else answers.add(itm.setItem(Integer.parseInt(cur.getId()),choice));
+            AnswerItem itm = new AnswerItem();
+            if (cur.selectedId != 0) {
+                answers.add(itm.setItem(Integer.parseInt(cur.getId()),
+                        cur.selectedId));
+            }
+            else
+                answers.add(itm.setItem(Integer.parseInt(cur.getId()), choice));
 
-	
-	            choice = null;
+            choice = null;
         }
         if (testMode.compareTo("true") == 0) {
             // BUG: May happen too long number after comma.
@@ -201,22 +178,67 @@ else answers.add(itm.setItem(Integer.parseInt(cur.getId()),choice));
                 resultingOutput += "You fail.";
             }
         }
-        
-  
+
         consoleClearScreen();
         System.out.println(resultingOutput);
-        System.out.println("Sending results to server...");
-     TcpCommunicator  communicator = new TcpCommunicator(serverName, port);
-Answers ans= new Answers();
-	ans.setUsername(name);
-	ans.setPollSesionId(polls.getId());
-	ans.setAnswers(answers);
-	communicator.sendResult(ans);
-	  System.out.println("Results sent. Press any key to exit...");
+
+        System.out.println("\nSending results to server.");
+
+        TcpCommunicator communicator = initTcpCommunicator(serverPortString);
+
+        Answers ans = new Answers();
+        ans.setUsername(name);
+        ans.setPollSesionId(polls.getId());
+        ans.setAnswers(answers);
+
+        communicator.sendResult(ans);
+        communicator.finalize();
+
+        System.out.println("\nResults sent. Press any key to exit.");
+
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
                 new InputStreamReader(System.in));
         consoleInputReader.readLine();
+    }
+
+    private static TcpCommunicator initTcpCommunicator(String serverPortString) {
+        TcpCommunicator communicator = null;
+        if (serverPortString.compareTo("") != 0) {
+            int separatorIndex = serverPortString.indexOf(':');
+            if (separatorIndex != 1) {
+                try {
+                    String serverName = serverPortString.substring(0,
+                            separatorIndex);
+                    int port = Integer.parseInt(serverPortString
+                            .substring(separatorIndex + 1));
+
+                    communicator = new TcpCommunicator(serverName, port);
+                }
+                catch (NumberFormatException e) {
+                    communicator = null;
+                }
+                catch (UnknownHostException e) {
+                    communicator = null;
+                }
+                catch (IOException e) {
+                    communicator = null;
+                }
+            }
+        }
+
+        if (communicator == null)
+            try {
+                communicator = new TcpCommunicator();
+            }
+            catch (UnknownHostException e) {
+                communicator = null;
+            }
+            catch (IOException e) {
+                communicator = null;
+            }
+
+        return communicator;
     }
 
     /**
