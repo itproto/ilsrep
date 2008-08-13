@@ -52,6 +52,11 @@
             Connect to server
             </summary>
         </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.DisconnectFromServer">
+            <summary>
+            Disconnect from server
+            </summary>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.Main">
             <summary>
             Main method
