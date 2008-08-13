@@ -49,6 +49,15 @@
             holds user choices that he selects during poll session
             </summary>
         </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.AskQuestion(System.String,System.String[])">
+            <summary>
+            Helper method to get answers on questions, with possibility of choosing what user can answer
+            Empty answer is not allowed
+            </summary>
+            <param name="question">Question to be asked</param>
+            <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
+            <returns>Answer from user</returns>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.RunUserDialog">
             <summary>
             Interaction with user. Gets basic details
@@ -61,7 +70,7 @@
         </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.ConnectToServer">
             <summary>
-            Connect to Poll Server to begin transaction. If connection fails quit application as it is essential.
+            Connect to server
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.DisconnectFromServer">

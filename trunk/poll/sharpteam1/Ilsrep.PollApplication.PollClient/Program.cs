@@ -55,6 +55,36 @@ namespace Ilsrep.PollApplication.PollClient
         static List<Choice> userChoices = new List<Choice>();
 
         /// <summary>
+        /// Helper method to get answers on questions, with possibility of choosing what user can answer
+        /// Empty answer is not allowed
+        /// </summary>
+        /// <param name="question">Question to be asked</param>
+        /// <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
+        /// <returns>Answer from user</returns>
+        public static string AskQuestion(String question, String[] allowedAnswers)
+        {
+            String inputLine = String.Empty;
+
+            while (true)
+            {
+                Console.Write(question);
+                inputLine = Console.ReadLine();
+
+                if (inputLine != String.Empty)
+                {
+                    if (allowedAnswers == null || allowedAnswers.Length == 0)
+                        return inputLine;
+
+                    foreach (String allowedAnswer in allowedAnswers)
+                        if (inputLine == allowedAnswer)
+                            return inputLine;
+                }
+
+                Console.WriteLine("Wrong input!");
+            }
+        }
+
+        /// <summary>
         /// Interaction with user. Gets basic details
         /// </summary>
         public static void RunUserDialog()
@@ -220,32 +250,33 @@ namespace Ilsrep.PollApplication.PollClient
         }
 
         /// <summary>
-        /// Connect to Poll Server to begin transaction. If connection fails quit application as it is essential.
+        /// Connect to server
         /// </summary>
         public static void ConnectToServer()
         {
-            try
+            while (true)
             {
-                // connect to server
-                Console.WriteLine("Please wait. Connecting to poll server...");
-                client = new TcpClient();
-                client.Connect(HOST, PORT);
-                
-                // if all ok inform
-                if (client.isConnected)
+                try
                 {
-                    Console.WriteLine("+ Connection established.");
+                    Console.WriteLine("Please wait, connecting to server...");
+                    client = new TcpClient();
+                    client.Connect(HOST, PORT);
+                    if (client.isConnected)
+                    {
+                        Console.WriteLine("+ Connection established");
+                    }
+                    break;
                 }
-                else
-                    throw new Exception("Not connected");
-            }
-            catch (Exception exception)
-            {
-                // if any error occurs - exit
-                Console.WriteLine("! " + exception.Message);
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey(true);
-                Environment.Exit(-1);
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                    if (AskQuestion("Would you like to retry[y/n]?", new String[] { "y", "n" }) == "n")
+                    {
+                        Console.WriteLine("Press any key to exit...");
+                        Console.ReadKey(true);
+                        Environment.Exit(0);
+                    }
+                }
             }
         }
 
@@ -328,7 +359,7 @@ namespace Ilsrep.PollApplication.PollClient
             // Check if list is not empty
             if (receivedPacket.pollSessionList.items.Count == 0)
             {
-                Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
+                Console.WriteLine("Sorry, but data base is empty, no pollsessions...");
                 client.Disconnect();
                 Console.WriteLine("- Disconnected from server");
                 Console.WriteLine("Press any key to exit...");
@@ -337,7 +368,7 @@ namespace Ilsrep.PollApplication.PollClient
             }
 
             // Output list of poll sessions
-            Console.WriteLine("List of pollsessions");
+            Console.WriteLine("List of pollsessions:");
             int index = 0;
             foreach (Item curItem in receivedPacket.pollSessionList.items)
             {

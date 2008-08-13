@@ -134,13 +134,15 @@ namespace Ilsrep.PollApplication.PollEditor
             // Check if list is not empty
             if (receivedPacket.pollSessionList.items.Count == 0)
             {
-                Console.WriteLine("Sorry, but data base is is empty, no pollsessions...");
+                Console.WriteLine("Sorry, but data base is empty, no pollsessions...");
                 if (AskQuestion("Would you create new pollsession[y/n]?", new String[] { "y", "n" }) == "y")
                 {
                     CreatePollsession();
                 }
                 else
                 {
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey(true);
                     Environment.Exit(0);
                 }
                 return;
@@ -168,7 +170,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 {
                     action = Convert.ToInt32(Console.ReadLine());
                     if (action < 1 || action > 3)
-                        throw new Exception("Invalid choice");
+                        throw new Exception("Invalid action!");
                     break;
                 }
                 catch(Exception exception)
@@ -245,6 +247,7 @@ namespace Ilsrep.PollApplication.PollEditor
         /// </summary>
         public static void CreatePollsession()
         {
+            pollSession = new PollSession();
             pollSession.name = AskQuestion("Enter pollsession name:", null);
             pollSession.testMode = ToBoolean(AskQuestion("Test mode[y/n]?", new String[] { "y", "n" }));
 
@@ -373,7 +376,7 @@ namespace Ilsrep.PollApplication.PollEditor
             {
                 try
                 {
-                    Console.WriteLine("Please wait, connection to server...");
+                    Console.WriteLine("Please wait, connecting to server...");
                     client = new TcpClient();
                     client.Connect(HOST, PORT);
                     break;
@@ -392,23 +395,29 @@ namespace Ilsrep.PollApplication.PollEditor
         }
 
         /// <summary>
+        /// Disconnect from server
+        /// </summary>
+        private static void DisconnectFromServer()
+        {
+            client.Disconnect();
+        }
+
+        /// <summary>
         /// Main method
         /// </summary>
         public static void Main()
         {
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
             username = AskQuestion("Enter your name:", null);
-            ConnectToServer();
 
             while (true)
             {
+                ConnectToServer();
                 RunUserDialog();
+                DisconnectFromServer();
                 if (AskQuestion("Do you want to execute another action[y/n]?", new String[] { "y", "n" }) == "n")                
                     break;
             }
-
-            // Disconnect from server
-            client.Disconnect();
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey(true);
