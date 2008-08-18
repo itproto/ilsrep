@@ -55,8 +55,7 @@ public class PollClient {
         System.out.println("Welcome to polls client program!\n");
         // System.out.print("Please enter your name: ");
         String name = readFromConsole("Please enter your name");
-        
-        
+
         JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller um = cont.createUnmarshaller();
         Pollsession polls = null;
@@ -78,45 +77,49 @@ public class PollClient {
             serverPortString = readFromConsole("\nPlease enter server:port"
                     + " to read poll xml from\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
-      TcpCommunicator communicator = null;
-            
+            TcpCommunicator communicator = null;
 
             communicator = initTcpCommunicator(serverPortString);
-        User user = new User();
-        user.setUserName(name);
-        user=communicator.sendUser(user);
-       //   comm2.finalize();
-        if(user.getExist().equals("true")) {System.out.println("User Exists. Enter password:");
-        Boolean notLogged=true;
-        while(notLogged){
-         String password=readFromConsole(">");
-      user.setPass(password);
-         user=communicator.sendUser(user);
-           if(user.getAuth().equals("true")) {System.out.println("Logged in. Welcome");
-          notLogged=false;
-          }
-          else System.out.println("Wrong password. Try again");
-      }
-        }
+            User user = new User();
+            user.setUserName(name);
+            user = communicator.sendUser(user);
+            // comm2.finalize();
+            if (user.getExist().equals("true")) {
+                System.out.println("User Exists. Enter password:");
+                Boolean notLogged = true;
+                while (notLogged) {
+                    String password = readFromConsole(">");
+                    user.setPass(password);
+                    user = communicator.sendUser(user);
+                    if (user.getAuth().equals("true")) {
+                        System.out.println("Logged in. Welcome");
+                        notLogged = false;
+                    }
+                    else
+                        System.out.println("Wrong password. Try again");
+                }
+            }
             else {
-	            String password="";
-	            System.out.println("User Doesnt Exist. Creating user. Enter new password:");
-	             Boolean notSame=true;
-	             while(notSame){
-		           password=readFromConsole(">");
-		           System.out.println("Confirm assword:");
-		           if (password.equals(readFromConsole(">")) ) {notSame=false;
-	          } else {
-		          System.out.println("Passwords dont match. Try again"); 
-          }
-		           	             
-		             }
-	            user.setPass(password);
-	            user.setNew("true");
-	            user=communicator.sendUser(user);
-	              System.out.println("User created. Welcome");
-	            }        
-                   
+                String password = "";
+                System.out
+                        .println("User Doesnt Exist. Creating user. Enter new password:");
+                Boolean notSame = true;
+                while (notSame) {
+                    password = readFromConsole(">");
+                    System.out.println("Confirm assword:");
+                    if (password.equals(readFromConsole(">"))) {
+                        notSame = false;
+                    }
+                    else {
+                        System.out.println("Passwords dont match. Try again");
+                    }
+
+                }
+                user.setPass(password);
+                user.setNew("true");
+                user = communicator.sendUser(user);
+                System.out.println("User created. Welcome");
+            }
 
             communicator.listXml();
 

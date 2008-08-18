@@ -288,9 +288,8 @@ public class TcpCommunicator {
         }
     }
 
-    
-        public User sendUser(User user) {
-	       
+    public User sendUser(User user) {
+
         try {
             Pollpacket packet = new Pollpacket();
 
@@ -303,15 +302,14 @@ public class TcpCommunicator {
                     .sendPacket(clientSocket.getOutputStream(), packet);
             Pollpacket response = PollClientHandler.receivePacket(clientSocket
                     .getInputStream());
-             user=response.getUser();
-     
+            user = response.getUser();
+
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-         
-          
-    return user; 
-        }
-    
+
+        return user;
+    }
+
 }

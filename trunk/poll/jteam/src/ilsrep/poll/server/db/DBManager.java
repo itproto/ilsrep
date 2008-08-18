@@ -216,7 +216,7 @@ sess.setDate(rs.getString("date"));
 
         Connection conn = dataSource.getConnection();
         Statement stat = conn.createStatement();
-	    ResultSet rs = stat.executeQuery("insert into users (userName, password) Values (\""+name+"\",\""+pass+"\")");
+	    /*ResultSet rs = */stat.executeQuery("insert into users (userName, password) Values (\""+name+"\",\""+pass+"\")");
 		   conn.close();
 	   
 	   } catch(Exception e){logger.info(e.getMessage()); }
