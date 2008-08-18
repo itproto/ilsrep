@@ -141,7 +141,7 @@ public abstract class DBManager {
         Connection conn = dataSource.getConnection();
         Statement stat = conn.createStatement();
         ResultSet rs = stat
-                .executeQuery("select name,testmode,minscore from pollsession where id="
+                .executeQuery("select name,testmode,minscore,date from pollsession where id="
                         + id);
         Pollsession sess = null;
         if (rs.next()) {
@@ -151,7 +151,7 @@ public abstract class DBManager {
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
                 sess.setTestMode(rs.getBoolean("testmode") ? "true" : "false");
-
+sess.setDate(rs.getString("date"));
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
@@ -406,7 +406,7 @@ public abstract class DBManager {
 
                 // Inserting new pollsession.
                 PreparedStatement pollsessionSt = conn
-                        .prepareStatement("insert into pollsession (id, name, testmode, minscore) values (?, ?, ?, ?)");
+                        .prepareStatement("insert into pollsession (id, name, testmode, minscore, date) values (?, ?, ?, ?, datetime('now'))");
                 pollsessionSt.setInt(1, (pollsessionLastId + 1));
                 pollsessionSt.setString(2, sess.getName());
 

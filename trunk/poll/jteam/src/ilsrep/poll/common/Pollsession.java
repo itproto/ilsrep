@@ -37,6 +37,11 @@ public class Pollsession {
     protected String minScore = null;
 
     /**
+     * Date of creation.
+     */
+    protected String date = "";
+    
+    /**
      * "True" indicates of test mode.
      */
     protected String testMode = null;
@@ -87,7 +92,17 @@ public class Pollsession {
     public void setId(String id) {
         this.id = id;
     }
+ @XmlAttribute(name = "date")
+    public String getDate() {
+        return date;
+    }
 
+    /**
+     * @see #id
+     */
+    public void setDate(String date) {
+        this.date = date;
+    }
     /**
      * @see #testMode
      */
