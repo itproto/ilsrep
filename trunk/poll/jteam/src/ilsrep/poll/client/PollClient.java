@@ -75,14 +75,19 @@ public class PollClient {
         }
         else {
             serverPortString = readFromConsole("\nPlease enter server:port"
-                    + " to read poll xml from\n[press enter for"
+                    + " to connect to\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
             TcpCommunicator communicator = null;
 
             communicator = initTcpCommunicator(serverPortString);
+
             User user = new User();
             user.setUserName(name);
+
+            System.out.println("Please wait.");
+
             user = communicator.sendUser(user);
+
             // comm2.finalize();
             if (user.getExist().equals("true")) {
                 boolean notLogged = true;
