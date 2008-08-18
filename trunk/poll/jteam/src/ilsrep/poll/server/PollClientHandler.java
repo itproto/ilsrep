@@ -87,7 +87,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                         sendPacket(packetForSending);
                         logger.info("Sent pollsession list("
                                 + list.getItems().size()
-                                + "elements) to client("
+                                + " elements) to client("
                                 + generateHostPortAsText(socket) + ").");
                     }
                     else if (receivedPacket.getRequest().getType()
@@ -198,7 +198,10 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                             .setUser(receivedPacket
                                                     .getUser());
                                     sendPacket(packetForSending);
-                                    logger.info("User request");
+                                    logger.info("Client asked if user(name = " +
+                                            packetForSending.getUser().getUserName() +
+                                            ") exist. Result sent: " +
+                                            packetForSending.getUser().getExist());
                                 }
                                 else {
                                     receivedPacket
@@ -218,7 +221,19 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                             .setUser(receivedPacket
                                                     .getUser());
                                     sendPacket(packetForSending);
-                                    logger.info("User logged");
+                                    logger
+                                        .info("User(name = "
+                                                + packetForSending
+                                                        .getUser()
+                                                        .getUserName()
+                                                + ") login "
+                                                + ((packetForSending
+                                                        .getUser()
+                                                        .getAuth()
+                                                        .compareTo(
+                                                                "true") == 0) ? "successed"
+                                                        : "failed")
+                                                + ".");
                                 }
                             }
                         }

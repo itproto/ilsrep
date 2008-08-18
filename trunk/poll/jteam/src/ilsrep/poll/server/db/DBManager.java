@@ -151,7 +151,7 @@ public abstract class DBManager {
                 sess.setId(id);
                 sess.setName(rs.getString("name"));
                 sess.setTestMode(rs.getBoolean("testmode") ? "true" : "false");
-sess.setDate(rs.getString("date"));
+                sess.setDate(rs.getString("date"));
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
                 List<Poll> polls = new ArrayList<Poll>();
@@ -180,7 +180,7 @@ sess.setDate(rs.getString("date"));
                                     + pollId);
 
                     while (chrs3.next()) {
-                        
+
                         Choice choice = new Choice();
                         choice.setId(chrs3.getString("id"));
                         choice.setName(chrs3.getString("name"));
@@ -211,56 +211,78 @@ sess.setDate(rs.getString("date"));
 
         return sess;
     }
-        public void createUser(String name, String pass) {
-	       try {connect(); 
 
-        Connection conn = dataSource.getConnection();
-        Statement stat = conn.createStatement();
-	    /*ResultSet rs = */stat.executeQuery("insert into users (userName, password) Values (\""+name+"\",\""+pass+"\")");
-		   conn.close();
-	   
-	   } catch(Exception e){logger.info(e.getMessage()); }
-	    
-	    }
+    public void createUser(String name, String pass) {
+        try {
+            connect();
+
+            Connection conn = dataSource.getConnection();
+            Statement stat = conn.createStatement();
+            /* ResultSet rs = */stat
+                    .executeQuery("insert into users (userName, password) Values (\""
+                            + name + "\",\"" + pass + "\")");
+            conn.close();
+
+        }
+        catch (Exception e) {
+            logger.warn(e.getMessage());
+        }
+
+    }
+
     public String checkUser(String name) {
-	       try {connect(); 
+        try {
+            connect();
 
-        Connection conn = dataSource.getConnection();
-        Statement stat = conn.createStatement();
-	    ResultSet rs = stat.executeQuery("select * from users where userName=\""+name+"\"");
-	   if (rs.next()){ logger.info("User Exists");
-	   conn.close();
-	    return "true";
-	   
-		   		   }
-	    else {logger.info("No such user");
-	    conn.close();
-	    return "false";
-		    
-		    
-		    }
-	   } catch(Exception e){logger.info(e.getMessage());  return "false";}
-	    
-	    }
-   public String authUser(String name, String pass) {
-	       try {connect(); 
+            Connection conn = dataSource.getConnection();
+            Statement stat = conn.createStatement();
+            ResultSet rs = stat
+                    .executeQuery("select * from users where userName=\""
+                            + name + "\"");
+            if (rs.next()) { // logger.info("User Exists");
+                conn.close();
+                return "true";
 
-        Connection conn = dataSource.getConnection();
-        Statement stat = conn.createStatement();
-	    ResultSet rs = stat.executeQuery("select * from users where userName=\""+name+"\" and password=\""+pass+"\"");
-	      if (rs.next()){ logger.info("User Logged");
-	    conn.close();
-	      return "true";
-		   		   }
-	    else {logger.info("Wrong pass");
-	    conn.close();
-	    return "false";
-		    
-		    
-		    }
-	   } catch(Exception e){logger.info(e.getMessage());; return "false";}
-	    
-	    }
+            }
+            else {// logger.info("No such user");
+                conn.close();
+                return "false";
+
+            }
+        }
+        catch (Exception e) {
+            logger.info(e.getMessage());
+            return "false";
+        }
+
+    }
+
+    public String authUser(String name, String pass) {
+        try {
+            connect();
+
+            Connection conn = dataSource.getConnection();
+            Statement stat = conn.createStatement();
+            ResultSet rs = stat
+                    .executeQuery("select * from users where userName=\""
+                            + name + "\" and password=\"" + pass + "\"");
+            if (rs.next()) { // logger.info("User Logged");
+                conn.close();
+                return "true";
+            }
+            else {// logger.info("Wrong pass");
+                conn.close();
+                return "false";
+
+            }
+        }
+        catch (Exception e) {
+            logger.warn(e.getMessage());
+            return "false";
+        }
+
+    }
+
     /**
      * Fetches pollsession list from DB.
      * 

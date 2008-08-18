@@ -85,40 +85,39 @@ public class PollClient {
             user = communicator.sendUser(user);
             // comm2.finalize();
             if (user.getExist().equals("true")) {
-                System.out.println("User Exists. Enter password:");
-                Boolean notLogged = true;
+                boolean notLogged = true;
                 while (notLogged) {
-                    String password = readFromConsole(">");
+                    System.out.println("\nUser Exists.");
+                    String password = readFromConsole("Enter password");
                     user.setPass(password);
                     user = communicator.sendUser(user);
                     if (user.getAuth().equals("true")) {
-                        System.out.println("Logged in. Welcome");
+                        System.out.println("\nLogged in. Welcome!");
                         notLogged = false;
                     }
                     else
-                        System.out.println("Wrong password. Try again");
+                        System.out.println("\nWrong password. Try again.");
                 }
             }
             else {
                 String password = "";
-                System.out
-                        .println("User Doesnt Exist. Creating user. Enter new password:");
-                Boolean notSame = true;
+                boolean notSame = true;
+                System.out.println("\nUser doesn't exist. Creating user.");
                 while (notSame) {
-                    password = readFromConsole(">");
-                    System.out.println("Confirm assword:");
-                    if (password.equals(readFromConsole(">"))) {
+                    password = readFromConsole("Enter new password");
+                    if (password.equals(readFromConsole("Confirm password"))) {
                         notSame = false;
                     }
                     else {
-                        System.out.println("Passwords dont match. Try again");
+                        System.out
+                                .println("\nPasswords don't match. Try again.");
                     }
 
                 }
                 user.setPass(password);
                 user.setNew("true");
                 user = communicator.sendUser(user);
-                System.out.println("User created. Welcome");
+                System.out.println("\nUser created. Welcome!");
             }
 
             communicator.listXml();
@@ -235,7 +234,7 @@ public class PollClient {
         communicator.sendResult(ans);
         communicator.finalize();
 
-        System.out.println("\nResults sent. Press ENTER key to exit.");
+        System.out.println("\nResults sent.\nPress ENTER key to exit.");
 
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
