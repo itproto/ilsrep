@@ -1,7 +1,8 @@
 package ilsrep.poll.common;
-import javax.xml.bind.annotation.XmlElement;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
+
 /**
  * The User management class
  * 

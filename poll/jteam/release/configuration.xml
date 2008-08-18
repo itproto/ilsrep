@@ -9,5 +9,5 @@
 <entry key="poolInitialSize">1</entry>
 <entry key="poolMaxActive">16</entry>
 <entry key="poolMaxIdle">4</entry>
-<entry key="dbFile">db/polls3.s3db</entry>
+<entry key="dbFile">db/pollserver.db</entry>
 </properties>
