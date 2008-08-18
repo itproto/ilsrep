@@ -8,8 +8,8 @@ cls
 IF ERRORLEVEL ==2 GOTO TWO
 IF ERRORLEVEL ==1 GOTO ONE
 :TWO
-java -cp poll.jar;lib\xpilotpanel-lib.jar;lib\log4j-1.2.15.jar ilsrep.poll.client.PollEditor
+editor.bat
 GOTO END
 :ONE
-java -cp poll.jar;lib\xpilotpanel-lib.jar;lib\log4j-1.2.15.jar ilsrep.poll.client.PollClient
+client.bat
 :END

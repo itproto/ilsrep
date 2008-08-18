@@ -180,7 +180,7 @@ public abstract class DBManager {
                                     + pollId);
 
                     while (chrs3.next()) {
-                        logger.info("INSIDE2");
+                        
                         Choice choice = new Choice();
                         choice.setId(chrs3.getString("id"));
                         choice.setName(chrs3.getString("name"));
@@ -211,7 +211,56 @@ public abstract class DBManager {
 
         return sess;
     }
+        public void createUser(String name, String pass) {
+	       try {connect(); 
 
+        Connection conn = dataSource.getConnection();
+        Statement stat = conn.createStatement();
+	    ResultSet rs = stat.executeQuery("insert into users (userName, password) Values (\""+name+"\",\""+pass+"\")");
+		   conn.close();
+	   
+	   } catch(Exception e){logger.info(e.getMessage()); }
+	    
+	    }
+    public String checkUser(String name) {
+	       try {connect(); 
+
+        Connection conn = dataSource.getConnection();
+        Statement stat = conn.createStatement();
+	    ResultSet rs = stat.executeQuery("select * from users where userName=\""+name+"\"");
+	   if (rs.next()){ logger.info("User Exists");
+	   conn.close();
+	    return "true";
+	   
+		   		   }
+	    else {logger.info("No such user");
+	    conn.close();
+	    return "false";
+		    
+		    
+		    }
+	   } catch(Exception e){logger.info(e.getMessage());  return "false";}
+	    
+	    }
+   public String authUser(String name, String pass) {
+	       try {connect(); 
+
+        Connection conn = dataSource.getConnection();
+        Statement stat = conn.createStatement();
+	    ResultSet rs = stat.executeQuery("select * from users where userName=\""+name+"\" and password=\""+pass+"\"");
+	      if (rs.next()){ logger.info("User Logged");
+	    conn.close();
+	      return "true";
+		   		   }
+	    else {logger.info("Wrong pass");
+	    conn.close();
+	    return "false";
+		    
+		    
+		    }
+	   } catch(Exception e){logger.info(e.getMessage());; return "false";}
+	    
+	    }
     /**
      * Fetches pollsession list from DB.
      * 

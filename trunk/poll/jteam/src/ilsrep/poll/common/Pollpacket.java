@@ -3,7 +3,7 @@ package ilsrep.poll.common;
 import ilsrep.poll.common.Answers;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import ilsrep.poll.common.User;
 /**
  * The "pollpacket" element.
  * 
@@ -30,6 +30,8 @@ public class Pollpacket {
      */
     
       protected Answers answerlist = null;
+      
+      protected User user=null;
 
     /**
      * Used when:
@@ -97,4 +99,15 @@ public class Pollpacket {
         return answerlist;
     }
 
+/**
+     * @see #user
+     */
+    @XmlElement(name = "user")
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
 }

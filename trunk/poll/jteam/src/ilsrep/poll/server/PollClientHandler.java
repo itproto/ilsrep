@@ -4,6 +4,7 @@ import ilsrep.poll.common.Pollpacket;
 import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Request;
+import ilsrep.poll.common.User;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -168,6 +169,40 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                                     + " deleted.");
                                         }
                                     }
+                                else
+                                    if (receivedPacket
+                                            .getRequest()
+                                            .getType()
+                                            .compareTo(
+                                                    Request.TYPE_USER) == 0) {
+	                    if((receivedPacket.getUser().getNew().equals("true"))){
+                                           serverInstance.getDB().createUser(receivedPacket.getUser().getUserName(),receivedPacket.getUser().getPass());
+                                           Pollpacket packetForSending = new Pollpacket();
+                                    packetForSending.setUser(receivedPacket.getUser());
+                                    sendPacket(packetForSending);
+                                            logger.info("User created");
+                                    }else{       
+                                       if(!(receivedPacket.getUser().getExist().equals("true"))){
+                                           receivedPacket.getUser().setExist(serverInstance.getDB().checkUser(receivedPacket.getUser().getUserName()));
+                                           Pollpacket packetForSending = new Pollpacket();
+                                    packetForSending.setUser(receivedPacket.getUser());
+                                    sendPacket(packetForSending);
+                                            logger.info("User request");
+                                    }
+                                    else {
+	                                         receivedPacket.getUser().setAuth(serverInstance.getDB().authUser(receivedPacket.getUser().getUserName(),receivedPacket.getUser().getPass()));
+                                           Pollpacket packetForSending = new Pollpacket();
+                                    packetForSending.setUser(receivedPacket.getUser());
+                                    sendPacket(packetForSending);
+                                            logger.info("User logged");
+	                                    
+	                                    
+	                                    
+	                                    
+	                                    }
+                                    }
+                                    }
+                                    
                 }
             }
         }
@@ -311,7 +346,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
         // outStream));
         // writer.newLine();
         //
-        // outStream.flush();
+       //  outStream.flush();
     }
 
 }
