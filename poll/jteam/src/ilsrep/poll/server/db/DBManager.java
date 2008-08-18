@@ -666,6 +666,39 @@ public abstract class DBManager {
     }
 
     /**
+     * Updates existing pollsession in DB.<br>
+     * In fact removes old and inserts new.
+     * 
+     * @param id
+     *            Id of pollsession to update.
+     * @param sess
+     *            New pollsession data.
+     */
+    public void updatePollsession(String id, Pollsession sess) {
+        try {
+            Pollsessionlist existingSessionsList = getPollsessionlist();
+
+            boolean idExist = false;
+            for (Item i : existingSessionsList.getItems()) {
+                if (i.getId().compareTo(id) == 0) {
+                    idExist = true;
+                    break;
+                }
+            }
+
+            if (!idExist)
+                return;
+
+            int newId = storePollsession(sess);
+
+            if (newId > 0)
+                removePollsession(id);
+        }
+        catch (SQLException e) {
+        }
+    }
+
+    /**
      * Stops connections to DB.
      * 
      * @throws SQLException

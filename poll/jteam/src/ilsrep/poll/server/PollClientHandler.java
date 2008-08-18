@@ -158,83 +158,92 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                     + " deleted.");
                         }
                     }
-                    else
-                        if (receivedPacket.getRequest().getType().compareTo(
-                                        Request.TYPE_USER) == 0) {
-                            if ((receivedPacket.getUser()
-                                    .getNew().equals("true"))) {
-                                serverInstance
-                                        .getDB()
-                                        .createUser(
-                                                receivedPacket
-                                                        .getUser()
-                                                        .getUserName(),
-                                                receivedPacket
-                                                        .getUser()
-                                                        .getPass());
+                    else if (receivedPacket.getRequest().getType().compareTo(
+                                    Request.TYPE_USER) == 0) {
+                        if ((receivedPacket.getUser()
+                                .getNew().equals("true"))) {
+                            serverInstance
+                                    .getDB()
+                                    .createUser(
+                                            receivedPacket
+                                                    .getUser()
+                                                    .getUserName(),
+                                            receivedPacket
+                                                    .getUser()
+                                                    .getPass());
+                            Pollpacket packetForSending = new Pollpacket();
+                            packetForSending
+                                    .setUser(receivedPacket
+                                            .getUser());
+                            sendPacket(packetForSending);
+                            logger.info("User created. Name = " +
+                                    receivedPacket.getUser().getUserName());
+                        }
+                        else {
+                            if (!(receivedPacket.getUser()
+                                    .getExist()
+                                    .equals("true"))) {
+                                receivedPacket
+                                        .getUser()
+                                        .setExist(
+                                                serverInstance
+                                                        .getDB()
+                                                        .checkUser(
+                                                                receivedPacket
+                                                                        .getUser()
+                                                                        .getUserName()));
                                 Pollpacket packetForSending = new Pollpacket();
                                 packetForSending
                                         .setUser(receivedPacket
                                                 .getUser());
                                 sendPacket(packetForSending);
-                                logger.info("User created. Name = " +
-                                        receivedPacket.getUser().getUserName());
+                                logger.info("Client asked if user(name = " +
+                                        packetForSending.getUser().getUserName() +
+                                        ") exist. Result sent: " +
+                                        packetForSending.getUser().getExist());
                             }
                             else {
-                                if (!(receivedPacket.getUser()
-                                        .getExist()
-                                        .equals("true"))) {
-                                    receivedPacket
-                                            .getUser()
-                                            .setExist(
-                                                    serverInstance
-                                                            .getDB()
-                                                            .checkUser(
-                                                                    receivedPacket
-                                                                            .getUser()
-                                                                            .getUserName()));
-                                    Pollpacket packetForSending = new Pollpacket();
-                                    packetForSending
-                                            .setUser(receivedPacket
-                                                    .getUser());
-                                    sendPacket(packetForSending);
-                                    logger.info("Client asked if user(name = " +
-                                            packetForSending.getUser().getUserName() +
-                                            ") exist. Result sent: " +
-                                            packetForSending.getUser().getExist());
-                                }
-                                else {
-                                    receivedPacket
-                                            .getUser()
-                                            .setAuth(
-                                                    serverInstance
-                                                            .getDB()
-                                                            .authUser(
-                                                                    receivedPacket
-                                                                            .getUser()
-                                                                            .getUserName(),
-                                                                    receivedPacket
-                                                                            .getUser()
-                                                                            .getPass()));
-                                    Pollpacket packetForSending = new Pollpacket();
-                                    packetForSending
-                                            .setUser(receivedPacket
-                                                    .getUser());
-                                    sendPacket(packetForSending);
-                                    logger
-                                        .info("User(name = "
-                                                + packetForSending
-                                                        .getUser()
-                                                        .getUserName()
-                                                + ") login "
-                                                + ((packetForSending
-                                                        .getUser()
-                                                        .getAuth()
-                                                        .compareTo(
-                                                                "true") == 0) ? "successed"
-                                                        : "failed")
-                                                + ".");
-                                }
+                                receivedPacket
+                                        .getUser()
+                                        .setAuth(
+                                                serverInstance
+                                                        .getDB()
+                                                        .authUser(
+                                                                receivedPacket
+                                                                        .getUser()
+                                                                        .getUserName(),
+                                                                receivedPacket
+                                                                        .getUser()
+                                                                        .getPass()));
+                                Pollpacket packetForSending = new Pollpacket();
+                                packetForSending
+                                        .setUser(receivedPacket
+                                                .getUser());
+                                sendPacket(packetForSending);
+                                logger
+                                    .info("User(name = "
+                                            + packetForSending
+                                                    .getUser()
+                                                    .getUserName()
+                                            + ") login "
+                                            + ((packetForSending
+                                                    .getUser()
+                                                    .getAuth()
+                                                    .compareTo(
+                                                            "true") == 0) ? "successed"
+                                                    : "failed")
+                                            + ".");
+                            }
+                        }
+                    }
+                    else
+                        if (receivedPacket.getRequest().getType().compareTo(
+                                        Request.TYPE_UPDATE_POLLSESSION) == 0) {
+                            if (receivedPacket.getRequest().getId() != null &&
+                                    receivedPacket.getPollsession() != null) {
+                                serverInstance.getDB().updatePollsession(
+                                        receivedPacket.getRequest().getId(),
+                                        receivedPacket.getPollsession());
                             }
                         }
 

@@ -42,11 +42,18 @@ public class Request {
      */
     @XmlTransient
     public static final String TYPE_SAVE_RESULT = "saveResult";
-     /**
+
+    /**
      * Indicates of type of request: user management
      */
     @XmlTransient
     public static final String TYPE_USER = "user";
+
+    /**
+     * Indicates of type of request: update existing pollsession.
+     */
+    @XmlTransient
+    public static final String TYPE_UPDATE_POLLSESSION = "updatePollsession";
 
     /**
      * Type of request:
