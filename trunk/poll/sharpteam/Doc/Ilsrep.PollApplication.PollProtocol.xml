@@ -4,47 +4,38 @@
         <name>Ilsrep.PollApplication.PollProtocol</name>
     </assembly>
     <members>
-        <member name="T:Ilsrep.PollApplication.Model.PollResult">
+        <member name="T:Ilsrep.PollApplication.Helpers.PollSerializator">
             <summary>
-            Holds results of user answer
+            Class that serializes objects concering poll
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollResult.questionId">
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePollSession(System.String)">
             <summary>
-            Poll id
+            Deserializes poll session from XML string into PollSession object
             </summary>
+            <param name="xmlString">XML string, which holds serialized PollSession object</param>
+            <returns>Deserialized PollSession object</returns>
         </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollResult.answerId">
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePollSession(Ilsrep.PollApplication.Model.PollSession)">
             <summary>
-            Choice id
+            Serializes poll session from PollSession object into XML string
             </summary>
+            <param name="pollSession">Poll Session oject</param>
+            <returns>XML string, which holds serialized PollSession object</returns>
         </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollResult.customChoice">
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePacket(System.String)">
             <summary>
-            If user answered using custom choice then this is used instead of answerId
+            Deserializes poll packet from XML string into PollPacket object 
             </summary>
+            <param name="xmlString">XML string, which holds serialized PollPacket object</param>
+            <returns>Deserialized PollPacket object</returns>
         </member>
-        <member name="T:Ilsrep.PollApplication.Model.PollSessionList">
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePacket(Ilsrep.PollApplication.Model.PollPacket)">
             <summary>
-            Holds a list of poll session ids and names
+            Serializes poll packet from PollPacket object into XML string
             </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollSessionList.items">
-            <summary>
-            a list of items that holds ids and names
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper">
-            <summary>
-            Helper that parses command line parameters
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper.Parse(System.String[])">
-            <summary>
-            Parse command line parameters from -var1 value1 -var2 value2 to NameValueCollection
-            </summary>
-            <param name="args">list of arguments in Array as passed to Main method ("-var1", "value1", "-var2", "value2")</param>
-            <returns>NameValueCollection of arguments as NameValueCollection["var1"]="value1"</returns>
+            <param name="pollPacket">PollPacket object</param>
+            <returns>XML string, which holds serialized PollPacket object</returns>
         </member>
         <member name="T:Ilsrep.PollApplication.Model.PollPacket">
             <summary>
@@ -69,26 +60,6 @@
         <member name="F:Ilsrep.PollApplication.Model.PollPacket.resultsList">
             <summary>
             Results list is sent when user finishes poll in poll client
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Model.Choice">
-            <summary>
-            Object that holds choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice.id">
-            <summary>
-            Choice id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice.choice">
-            <summary>
-            Choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice.parent">
-            <summary>
-            Poll that choice belongs to
             </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.DAL.PollDAL">
@@ -183,69 +154,6 @@
             Property that tells if database connection is active
             </summary>
         </member>
-        <member name="T:Ilsrep.PollApplication.Model.PollSession">
-            <summary>
-            Object that holds poll session
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollSession.id">
-            <summary>
-            poll session id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollSession.name">
-            <summary>
-            poll session name
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollSession.testMode">
-            <summary>
-            if this poll session is a test
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollSession.minScore">
-            <summary>
-            if in test mode how much is needed to pass the test
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.PollSession.polls">
-            <summary>
-            list of polls that this poll session holds
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Helpers.PollSerializator">
-            <summary>
-            Class that serializes objects concering poll
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePollSession(System.String)">
-            <summary>
-            Deserializes poll session from XML string into PollSession object
-            </summary>
-            <param name="xmlString">XML string, which holds serialized PollSession object</param>
-            <returns>Deserialized PollSession object</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePollSession(Ilsrep.PollApplication.Model.PollSession)">
-            <summary>
-            Serializes poll session from PollSession object into XML string
-            </summary>
-            <param name="pollSession">Poll Session oject</param>
-            <returns>XML string, which holds serialized PollSession object</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePacket(System.String)">
-            <summary>
-            Deserializes poll packet from XML string into PollPacket object 
-            </summary>
-            <param name="xmlString">XML string, which holds serialized PollPacket object</param>
-            <returns>Deserialized PollPacket object</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePacket(Ilsrep.PollApplication.Model.PollPacket)">
-            <summary>
-            Serializes poll packet from PollPacket object into XML string
-            </summary>
-            <param name="pollPacket">PollPacket object</param>
-            <returns>XML string, which holds serialized PollPacket object</returns>
-        </member>
         <member name="T:Ilsrep.PollApplication.Model.Request">
             <summary>
             Request object is used to query server
@@ -336,6 +244,86 @@
             list of choices for this poll
             </summary>
         </member>
+        <member name="T:Ilsrep.PollApplication.Model.Choice">
+            <summary>
+            Object that holds choice
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Choice.id">
+            <summary>
+            Choice id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Choice.choice">
+            <summary>
+            Choice
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Choice.parent">
+            <summary>
+            Poll that choice belongs to
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.PollSession">
+            <summary>
+            Object that holds poll session
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSession.id">
+            <summary>
+            poll session id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSession.name">
+            <summary>
+            poll session name
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSession.testMode">
+            <summary>
+            if this poll session is a test
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSession.minScore">
+            <summary>
+            if in test mode how much is needed to pass the test
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSession.polls">
+            <summary>
+            list of polls that this poll session holds
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.PollSessionList">
+            <summary>
+            Holds a list of poll session ids and names
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSessionList.items">
+            <summary>
+            a list of items that holds ids and names
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.PollResult">
+            <summary>
+            Holds results of user answer
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollResult.questionId">
+            <summary>
+            Poll id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollResult.answerId">
+            <summary>
+            Choice id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollResult.customChoice">
+            <summary>
+            If user answered using custom choice then this is used instead of answerId
+            </summary>
+        </member>
         <member name="T:Ilsrep.PollApplication.Model.ResultsList">
             <summary>
             Result list after poll session
@@ -355,6 +343,18 @@
             <summary>
             Poll session id, to which the results are related
             </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper">
+            <summary>
+            Helper that parses command line parameters
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper.Parse(System.String[])">
+            <summary>
+            Parse command line parameters from -var1 value1 -var2 value2 to NameValueCollection
+            </summary>
+            <param name="args">list of arguments in Array as passed to Main method ("-var1", "value1", "-var2", "value2")</param>
+            <returns>NameValueCollection of arguments as NameValueCollection["var1"]="value1"</returns>
         </member>
     </members>
 </doc>
