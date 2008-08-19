@@ -27,9 +27,9 @@ namespace Ilsrep.PollApplication.PollEditor
         /// <param name="question">Question to be asked</param>
         /// <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
         /// <returns>Answer from user</returns>
-        public static string AskQuestion(String question, String[] allowedAnswers)
+        public static string AskQuestion(string question, string[] allowedAnswers)
         {
-            String inputLine = String.Empty;
+            string inputLine = String.Empty;
 
             while (true)
             {
@@ -41,7 +41,7 @@ namespace Ilsrep.PollApplication.PollEditor
                     if (allowedAnswers == null || allowedAnswers.Length == 0)
                         return inputLine;
                     
-                    foreach (String allowedAnswer in allowedAnswers)
+                    foreach (string allowedAnswer in allowedAnswers)
                         if (inputLine == allowedAnswer)
                             return inputLine;
                 }
@@ -51,16 +51,77 @@ namespace Ilsrep.PollApplication.PollEditor
         }
 
         /// <summary>
+        /// Helper method to get answers on questions with default answer, with possibility of choosing what user can answer
+        /// Empty answer is not allowed
+        /// </summary>
+        /// <param name="question">Question to be asked</param>
+        /// <param name="defaultAnswer">Default answer that gets filled in</param>
+        /// <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
+        /// <returns>Answer from user</returns>
+        public static string AskQuestion(string question, string defaultAnswer, string[] allowedAnswers)
+        {
+            string inputLine = defaultAnswer;
+
+            while (true)
+            {
+                Console.Write(question + defaultAnswer);
+
+                for (ConsoleKeyInfo cki = Console.ReadKey(); cki.Key != ConsoleKey.Enter; cki = Console.ReadKey())
+                {
+                    //rollback the cursor and write a space so it looks backspaced to the user
+                    if (cki.Key == ConsoleKey.Backspace)
+                    {
+                        if (inputLine.Length == 0)
+                            continue;
+
+                        Console.Write(" ");
+                        Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+                        inputLine = inputLine.Substring(0, inputLine.Length - 1);
+                    }
+                    else
+                    {
+                        inputLine += cki.KeyChar;
+                    }
+                }
+
+                if (inputLine != String.Empty)
+                {
+                    if (allowedAnswers == null || allowedAnswers.Length == 0)
+                        return inputLine;
+
+                    foreach (string allowedAnswer in allowedAnswers)
+                        if (inputLine == allowedAnswer)
+                            return inputLine;
+                }
+
+                Console.WriteLine("Wrong input!");
+            }
+        }
+
+        /// <summary>
         /// Converts string to boolean
         /// </summary>
         /// <param name="boolString">string containing either "y" or "n"</param>
         /// <returns>true - when string equals to "y", false - otherwise</returns>
-        public static bool ToBoolean(String boolString)
+        public static bool ToBoolean(string boolString)
         {
             if (boolString == "y")
                 return true;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Convery boolean to string
+        /// </summary>
+        /// <param name="boolValue">boolean value</param>
+        /// <returns>string "y" if boolValue is true, else "n"</returns>
+        public static string ToString(bool boolValue)
+        {
+            if (boolValue)
+                return "y";
+            else
+                return "n";
         }
 
         /// <summary>
@@ -188,7 +249,32 @@ namespace Ilsrep.PollApplication.PollEditor
                     RemovePollsession(receivedPacket);
                     break;
                 case 3:
-                    Console.WriteLine("IN FUTURE HERE WILL BE EDITING POLLSESSION");
+                    int pollSessionIndex = 0;
+                    while(true)
+                    {
+                        try
+                        {
+                            Console.Write("Choose pollsesion [1-{0}]:", index);
+                            pollSessionIndex = Convert.ToInt32(Console.ReadLine());
+
+                            if (pollSessionIndex > 0 && pollSessionIndex <= index)
+                            {
+                                --pollSessionIndex;
+                                break;
+                            }
+                            else
+                            {
+                                throw new Exception();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Wrong choice!");
+                        }
+                    }
+
+                    EditPollsession(Convert.ToInt32(receivedPacket.pollSessionList.items[pollSessionIndex].id));
+                    //Console.WriteLine("IN FUTURE HERE WILL BE EDITING POLLSESSION");
                     break;
                 default:
                     Console.WriteLine("Invalid action!");
@@ -240,6 +326,130 @@ namespace Ilsrep.PollApplication.PollEditor
                     Console.WriteLine(exception.Message);
                 }
             }
+        }
+
+        /// <summary>
+        /// Edits current session and saves it to server
+        /// </summary>
+        /// <param name="pollSessionID">id of session to edit</param>
+        public static void EditPollsession(int pollSessionID)
+        {
+            PollPacket sendPacket = new PollPacket();
+            sendPacket.request = new Request();
+            sendPacket.request.type = Request.GET_POLLSESSION;
+            sendPacket.request.id = pollSessionID.ToString();
+            PollPacket receivedPacket = ReceivePollPacket(sendPacket);
+            string sendString = PollSerializator.SerializePacket(sendPacket);
+            pollSession = receivedPacket.pollSession;
+
+            pollSession.name = AskQuestion("Enter pollsession name:", pollSession.name, null);
+            pollSession.testMode = ToBoolean(AskQuestion("Test mode[y/n]?", ToString(pollSession.testMode), new String[] { "y", "n" }));
+
+
+            if (pollSession.testMode == true)
+            {
+                while (true)
+                {
+                    try
+                    {
+                        pollSession.minScore = Convert.ToDouble(AskQuestion("Min score to pass test:", pollSession.minScore.ToString(), null), cultureInfo);
+                        if (pollSession.minScore > 1 || pollSession.minScore < 0)
+                            throw new Exception("minScore must be between 0 and 1");
+                        break;
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine("Error: {0}", exception.Message);
+                        Console.WriteLine("Please, input correct minScore(example: 0.5)");
+                    }
+                }
+            }
+
+            /*
+            while (true)
+            {
+                if (pollSession.polls.Count > 0)
+                {
+                    bool addNewPoll = ToBoolean(AskQuestion("Add new poll[y/n]?", new String[] { "y", "n" }));
+                    if (addNewPoll == false)
+                        break;
+                }
+
+                Poll newPoll = new Poll();
+
+                newPoll.id = pollSession.polls.Count + 1;
+                newPoll.correctChoiceID = 0;
+                newPoll.name = AskQuestion("Poll name:", null);
+                newPoll.description = AskQuestion("Poll description:", null);
+
+                while (true)
+                {
+                    bool isTestMode = pollSession.testMode;
+                    if (newPoll.choices.Count >= (isTestMode ? 2 : 0))
+                    {
+                        bool addNewChoice = ToBoolean(AskQuestion("Add new choice[y/n]?", new String[] { "y", "n" }));
+                        if (addNewChoice == false)
+                            break;
+                    }
+
+                    Choice newChoice = new Choice();
+
+                    newChoice.id = newPoll.choices.Count + 1;
+                    newChoice.parent = newPoll;
+                    newChoice.choice = AskQuestion("Choice name:", null);
+
+                    newPoll.choices.Add(newChoice);
+                    Console.WriteLine("Choice added!");
+                }
+
+                if (pollSession.testMode == false)
+                {
+                    // Enable CustomChoice automaticly if user doesn't inputed any choice
+                    if (newPoll.choices.Count == 0)
+                    {
+                        newPoll.customChoiceEnabled = true;
+                    }
+                    else
+                    {
+                        newPoll.customChoiceEnabled = ToBoolean(AskQuestion("Enable custom choice for this poll[y/n]?", new String[] { "y", "n" }));
+                    }
+                }
+                else
+                {
+                    // Ask correct choice
+                    Console.WriteLine("Please, enter id of correct choice:");
+                    foreach (Choice choice in newPoll.choices)
+                        Console.WriteLine("\t" + choice.id + ". " + choice.choice);
+                    while (true)
+                    {
+                        newPoll.correctChoiceID = -1;
+                        try
+                        {
+                            int correctId = Convert.ToInt32(Console.ReadLine());
+                            foreach (Choice choice in newPoll.choices)
+                            {
+                                if (choice.id == correctId)
+                                {
+                                    newPoll.correctChoiceID = correctId;
+                                    break;
+                                }
+                            }
+                            if (newPoll.correctChoiceID != -1)
+                                break;
+                            Console.WriteLine("Invalid id!");
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid id!");
+                        }
+                    }
+                }
+
+                pollSession.polls.Add(newPoll);
+                Console.WriteLine("Poll added!");
+            }
+             * */
+
         }
 
         /// <summary>

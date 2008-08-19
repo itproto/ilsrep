@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ilsrep.PollApplication.PollClient</name>
+    </assembly>
+    <members>
+        <member name="T:Ilsrep.PollApplication.PollClient.PollClient">
+            <summary>
+            Poll Client that interacts with user
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.CONSOLE_YES">
+            <summary>
+            String that states yes
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.CONSOLE_NO">
+            <summary>
+            String that states no
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.HOST">
+            <summary>
+            host to which connect
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.PORT">
+            <summary>
+            port to which connect
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.userName">
+            <summary>
+            holds current user's username
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.client">
+            <summary>
+            handles connection to server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.pollSession">
+            <summary>
+            holds pollsession that is read from server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.userChoices">
+            <summary>
+            holds user choices that he selects during poll session
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.AskQuestion(System.String,System.String[])">
+            <summary>
+            Helper method to get answers on questions, with possibility of choosing what user can answer
+            Empty answer is not allowed
+            </summary>
+            <param name="question">Question to be asked</param>
+            <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
+            <returns>Answer from user</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.RunUserDialog">
+            <summary>
+            Interaction with user. Gets basic details
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.RunUserPoll">
+            <summary>
+            Interaction with user. Gets answers to pollsession
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.ConnectToServer">
+            <summary>
+            Connect to server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.DisconnectFromServer">
+            <summary>
+            Disconnect from server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.ReceivePollPacket(Ilsrep.PollApplication.Model.PollPacket)">
+            <summary>
+            Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+            </summary>
+            <param name="sendPacket">PollPacket with request to send</param>
+            <returns>PollPacket receivedPacket</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.GetPollSession">
+            <summary>
+            Server sends list of available poll sessions. User picks one and client gets that poll session from server.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.SavePollSessionResults">
+            <summary>
+            Send results of pollsession to server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.Main">
+            <summary>
+            Main method of Poll Client
+            </summary>
+        </member>
+    </members>
+</doc>
