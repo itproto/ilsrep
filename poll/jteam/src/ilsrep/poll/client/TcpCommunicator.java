@@ -135,8 +135,9 @@ public class TcpCommunicator {
     }
 
     /**
-     * Retreives XML from server. Asks for the poll id, sends XML request,
-     * receives byte data from server and converts it to a Reader object.
+     * Retreives XML from server(for console usage). Asks for the poll id, sends
+     * XML request, receives byte data from server and converts it to a Reader
+     * object.
      * 
      * @return xmlBuffered received XML from server
      * @throws IOException
@@ -150,6 +151,23 @@ public class TcpCommunicator {
         String id = PollClient
                 .readFromConsole("\nEnter ID number of the desired poll");
 
+        return getPollsession(id);
+    }
+
+    /**
+     * Retrieves pollsession from server by id.
+     * 
+     * @param id
+     *            Id of pollsession to retrieve.
+     * 
+     * @return Received XML from server.
+     * @throws IOException
+     *             On network I/O errors.
+     * @throws JAXBException
+     *             On corrupted output from server.
+     */
+    public Pollsession getPollsession(String id) throws JAXBException,
+            IOException {
         // Forming request packet.
         Request pollxmlRequest = new Request();
         pollxmlRequest.setType(Request.TYPE_POLLXML);
@@ -185,14 +203,7 @@ public class TcpCommunicator {
 
             Pollsession sessionToSend = (Pollsession) um.unmarshal(xmlReader);
 
-            Pollpacket packetToSend = new Pollpacket();
-            Request saveRequest = new Request();
-            saveRequest.setType(Request.TYPE_CREATE_POLLSESSION);
-            packetToSend.setRequest(saveRequest);
-            packetToSend.setPollsession(sessionToSend);
-
-            PollClientHandler.sendPacket(clientSocket.getOutputStream(),
-                    packetToSend);
+            sendPollsession(sessionToSend);
         }
         catch (Exception e) {
             System.out.println("Error while sending xml to server.");
@@ -206,6 +217,26 @@ public class TcpCommunicator {
             }
         }
 
+    }
+
+    /**
+     * Sends pollsession to server.
+     * 
+     * @param sessToSend
+     *            Pollsession as object to send.
+     * @throws IOException
+     * @throws JAXBException
+     */
+    public void sendPollsession(Pollsession sessToSend) throws JAXBException,
+            IOException {
+        Pollpacket packetToSend = new Pollpacket();
+        Request saveRequest = new Request();
+        saveRequest.setType(Request.TYPE_CREATE_POLLSESSION);
+        packetToSend.setRequest(saveRequest);
+        packetToSend.setPollsession(sessToSend);
+
+        PollClientHandler.sendPacket(clientSocket.getOutputStream(),
+                packetToSend);
     }
 
     /**
@@ -289,7 +320,6 @@ public class TcpCommunicator {
     }
 
     public User sendUser(User user) {
-
         try {
             Pollpacket packet = new Pollpacket();
 
@@ -310,6 +340,33 @@ public class TcpCommunicator {
         }
 
         return user;
+    }
+
+    /**
+     * Edits pollsession on server.
+     * 
+     * @param id
+     *            Id of pollsession to edit.
+     * @param session
+     *            New session data.
+     */
+    public void editPollsession(String id, Pollsession session) {
+        try {
+            Pollpacket packet = new Pollpacket();
+
+            Request editRequest = new Request();
+            editRequest.setType(Request.TYPE_UPDATE_POLLSESSION);
+            editRequest.setId(id);
+
+            packet.setRequest(editRequest);
+            packet.setPollsession(session);
+
+            PollClientHandler
+                    .sendPacket(clientSocket.getOutputStream(), packet);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

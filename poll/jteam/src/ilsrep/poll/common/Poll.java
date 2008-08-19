@@ -40,7 +40,7 @@ public class Poll {
     protected List<Choice> choices = null;
 
     /**
-     * Shows if custom choice is enabled("true" if enbled).
+     * Shows if custom choice is enabled("true" if enabled).
      */
     protected String customEnabled = null;
 
