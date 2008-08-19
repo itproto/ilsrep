@@ -80,6 +80,11 @@
             Disconnect from server
             </summary>
         </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.AuthorizeUser">
+            <summary>
+            Authorize user
+            </summary>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.Main">
             <summary>
             Main method

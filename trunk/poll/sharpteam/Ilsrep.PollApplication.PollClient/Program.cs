@@ -85,42 +85,6 @@ namespace Ilsrep.PollApplication.PollClient
         }
 
         /// <summary>
-        /// Interaction with user. Gets basic details
-        /// </summary>
-        public static void RunUserDialog()
-        {
-            // Read user name
-            Console.WriteLine("Welcome to polls client program.");
-            while (true)
-            { 
-                Console.Write("Please enter your name:");
-                userName = Console.ReadLine();
-                if (userName != String.Empty)
-                {
-                    break;
-                }
-                else
-                {
-                    //Console.Clear();
-                    Console.WriteLine("! You didn't enter your name.");
-                }
-            }
-
-            Console.Clear();
-            Console.WriteLine("Glad to meet you, " + userName);
-            Console.WriteLine(userName + ", let's start the poll session?[y/n]");
-
-            // Ask user if he want to start the poll session
-            while (true)
-            {
-                string userInput = Console.ReadLine();
-                if (userInput == CONSOLE_YES) break;
-                if (userInput == CONSOLE_NO) Environment.Exit(0);
-                Console.WriteLine("! Wrong choice, please, choose [y/n]:");
-            }
-        }
-
-        /// <summary>
         /// Interaction with user. Gets answers to pollsession
         /// </summary>
         public static void RunUserPoll()
@@ -442,19 +406,71 @@ namespace Ilsrep.PollApplication.PollClient
             Console.WriteLine("-> Result of pollsession successfully sent to server");
         }
 
+        public static void AuthorizeUser()
+        {
+            // Read user name
+            Console.WriteLine("Welcome to polls client program.");
+            while (true)
+            {
+                Console.Write("Please enter your name:");
+                userName = Console.ReadLine();
+                if (userName != String.Empty)
+                {
+                    break;
+                }
+                else
+                {
+                    //Console.Clear();
+                    Console.WriteLine("! You didn't enter your name.");
+                }
+            }
+
+            PollPacket pollPacket = new PollPacket();
+            pollPacket.user = new User();
+            pollPacket.user.username = userName;
+            while (true)
+            {
+                pollPacket = ReceivePollPacket(pollPacket);
+                if (pollPacket.user.auth)
+                    break;
+                if (pollPacket.user.exist)
+                {
+                    Console.WriteLine("{0}, please, enter your password:", userName);
+                    pollPacket.user.password = Console.ReadLine();
+                }
+                else
+                {
+                    Console.WriteLine("{0}, please, set your password:", userName);
+                    pollPacket.user.password = Console.ReadLine();
+                    pollPacket.user.isNew = true;
+                }
+            }
+
+            Console.Clear();
+            Console.WriteLine("Glad to meet you, " + userName);
+            Console.WriteLine(userName + ", let's start the poll session?[y/n]");
+
+            // Ask user if he want to start the poll session
+            while (true)
+            {
+                string userInput = Console.ReadLine();
+                if (userInput == CONSOLE_YES) break;
+                if (userInput == CONSOLE_NO) Environment.Exit(0);
+                Console.WriteLine("! Wrong choice, please, choose [y/n]:");
+            }
+        }
+
         /// <summary>
         /// Main method of Poll Client
         /// </summary>
         public static void Main()
         {
             ConnectToServer();
-            GetPollSession();
-            DisconnectFromServer();
+            AuthorizeUser();
 
-            RunUserDialog();
+            GetPollSession();
             RunUserPoll();
 
-            ConnectToServer();
             SavePollSessionResults();
             DisconnectFromServer();
 

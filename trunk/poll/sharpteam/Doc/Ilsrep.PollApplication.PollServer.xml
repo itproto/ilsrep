@@ -46,9 +46,9 @@
         </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Main(System.String[])">
             <summary>
-            
+            Main function
             </summary>
-            <param name="args"></param>
+            <param name="args">arguments</param>
         </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Start">
             <summary>
@@ -96,6 +96,16 @@
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.sb">
             <summary>
             Received data string
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.isAuthorized">
+            <summary>
+            Shows is user authorized or not
+            </summary>
+        </member>
+        <member name="P:Ilsrep.PollApplication.PollServer.PollServer.StateObject.ipAddress">
+            <summary>
+            get ip address
             </summary>
         </member>
     </members>
