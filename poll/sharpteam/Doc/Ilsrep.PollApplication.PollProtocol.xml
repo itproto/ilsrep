@@ -62,6 +62,11 @@
             Results list is sent when user finishes poll in poll client
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollPacket.user">
+            <summary>
+            User information is sent in the beginning of session to identify user
+            </summary>
+        </member>
         <member name="T:Ilsrep.PollApplication.DAL.PollDAL">
             <summary>
             PollDAL is Poll Database Abstraction Layer for Poll Application. It handles all database connection
@@ -100,6 +105,11 @@
         <member name="F:Ilsrep.PollApplication.DAL.PollDAL.RESULTS_TABLE">
             <summary>
             Name of Results table in database
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.DAL.PollDAL.USERS_TABLE">
+            <summary>
+            Name of Users table in database
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.DAL.PollDAL.dbConnection">
@@ -322,6 +332,36 @@
         <member name="F:Ilsrep.PollApplication.Model.PollResult.customChoice">
             <summary>
             If user answered using custom choice then this is used instead of answerId
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.User">
+            <summary>
+            Object that holds user information
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.username">
+            <summary>
+            user name
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.password">
+            <summary>
+            password
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.auth">
+            <summary>
+            Is allowed access
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.exist">
+            <summary>
+            Does username already exists
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.isNew">
+            <summary>
+            If true - server creates new user
             </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.Model.ResultsList">

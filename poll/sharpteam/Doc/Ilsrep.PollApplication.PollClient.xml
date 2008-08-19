@@ -58,11 +58,6 @@
             <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
             <returns>Answer from user</returns>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.RunUserDialog">
-            <summary>
-            Interaction with user. Gets basic details
-            </summary>
-        </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.RunUserPoll">
             <summary>
             Interaction with user. Gets answers to pollsession

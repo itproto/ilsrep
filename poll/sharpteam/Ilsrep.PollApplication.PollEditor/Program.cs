@@ -14,7 +14,8 @@ namespace Ilsrep.PollApplication.PollEditor
     public class PollEditor
     {
         private static System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
-        private static String username = String.Empty;
+        private static String userName = String.Empty;
+        private static String userPassword = String.Empty;
         private static PollSession pollSession = new PollSession();
         private const String HOST = "localhost";
         private const int PORT = 3320;
@@ -613,20 +614,73 @@ namespace Ilsrep.PollApplication.PollEditor
         }
 
         /// <summary>
+        /// Authorize user
+        /// </summary>
+        public static void AuthorizeUser()
+        {
+            // Read user name
+            Console.WriteLine("Welcome to polls editor program.");
+            while (true)
+            {
+                Console.Write("Please enter your name:");
+                userName = Console.ReadLine();
+                if (userName != String.Empty)
+                {
+                    break;
+                }
+                else
+                {
+                    //Console.Clear();
+                    Console.WriteLine("! You didn't enter your name.");
+                }
+            }
+
+            PollPacket pollPacket = new PollPacket();
+            pollPacket.user = new User();
+            pollPacket.user.username = userName;
+            while (true)
+            {
+                pollPacket = ReceivePollPacket(pollPacket);
+                if (pollPacket.user.auth)
+                    break;
+                if (pollPacket.user.exist)
+                {
+                    Console.WriteLine("{0}, please, enter your password:", userName);
+                    userPassword = Console.ReadLine();
+                    pollPacket.user.password = userPassword;
+                }
+                else
+                {
+                    Console.WriteLine("{0}, please, set your password:", userName);
+                    userPassword = Console.ReadLine();
+                    pollPacket.user.password = userPassword;
+                    pollPacket.user.isNew = true;
+                }
+            }
+        }
+
+        /// <summary>
         /// Main method
         /// </summary>
         public static void Main()
         {
             cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
-            username = AskQuestion("Enter your name:", null);
 
+            ConnectToServer();
+            AuthorizeUser();
             while (true)
             {
-                ConnectToServer();
                 RunUserDialog();
                 DisconnectFromServer();
                 if (AskQuestion("Do you want to execute another action[y/n]?", new String[] { "y", "n" }) == "n")                
                     break;
+                ConnectToServer();
+                PollPacket pollPacket = new PollPacket();
+                pollPacket.user = new User();
+                pollPacket.user.username = userName;
+                pollPacket.user.password = userPassword;
+                pollPacket.user.auth = true;
+                pollPacket = ReceivePollPacket(pollPacket);
             }
 
             Console.WriteLine("Press any key to exit...");

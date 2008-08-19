@@ -28,5 +28,9 @@ namespace Ilsrep.PollApplication.Model
         /// Results list is sent when user finishes poll in poll client
         /// </summary>
         [XmlElement("resultslist")] public ResultsList resultsList = null;
+        /// <summary>
+        /// User information is sent in the beginning of session to identify user
+        /// </summary>
+        [XmlElement("user")] public User user = null;
     }
 }

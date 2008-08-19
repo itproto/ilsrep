@@ -74,6 +74,7 @@
     <Compile Include="Model\PollSessionsList.cs" />
     <Compile Include="Model\Request.cs" />
     <Compile Include="Model\ResultsList.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
