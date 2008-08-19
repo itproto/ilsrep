@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ilsrep.PollApplication.PollServer</name>
+    </assembly>
+    <members>
+        <member name="T:Ilsrep.PollApplication.PollServer.PollServer">
+            <summary>
+            PollServer handles connections and creates new threads to work with them.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.PATH_TO_LOG_CONFIG">
+            <summary>
+            path to Logger configuration file
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.host">
+            <summary>
+            IP Address to which bind the server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.port">
+            <summary>
+            Port to which bind the server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
+            <summary>
+            Logger
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.server">
+            <summary>
+            Main socket that will accept connections
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.workers">
+            <summary>
+            Worker sockets that will handle clients individually
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.allDone">
+            <summary>
+            Thread signal
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Main(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Start">
+            <summary>
+            Start Server. Inits socket and starts listening. Sets async accept callback.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Stop">
+            <summary>
+            Stop server. Close main listening socket and all the clients' sockets.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnClientConnect(System.IAsyncResult)">
+            <summary>
+            Method is exetuted when new client connects
+            </summary>
+            <param name="iAsyncResult"></param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.ProcessClient(System.IAsyncResult)">
+            <summary>
+            Method is executed when data is received
+            </summary>
+            <param name="iAsyncResult"></param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.SendCallback(System.IAsyncResult)">
+            <summary>
+            Method is executed when data has been sent
+            </summary>
+            <param name="iAsyncResult"></param>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.BUFFERSIZE">
+            <summary>
+            Size of receive buffer
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.workSocket">
+            <summary>
+            Client  socket
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.buffer">
+            <summary>
+            Receive buffer
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.sb">
+            <summary>
+            Received data string
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ilsrep.PollApplication.PollEditor</name>
+    </assembly>
+    <members>
+        <member name="T:Ilsrep.PollApplication.PollEditor.PollEditor">
+            <summary>
+            Editor of pollsessions
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.AskQuestion(System.String,System.String[])">
+            <summary>
+            Helper method to get answers on questions, with possibility of choosing what user can answer
+            Empty answer is not allowed
+            </summary>
+            <param name="question">Question to be asked</param>
+            <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
+            <returns>Answer from user</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.AskQuestion(System.String,System.String,System.String[])">
+            <summary>
+            Helper method to get answers on questions with default answer, with possibility of choosing what user can answer
+            Empty answer is not allowed
+            </summary>
+            <param name="question">Question to be asked</param>
+            <param name="defaultAnswer">Default answer that gets filled in</param>
+            <param name="allowedAnswers">Allowed answers that user can input. Set to null if any</param>
+            <returns>Answer from user</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ToBoolean(System.String)">
+            <summary>
+            Converts string to boolean
+            </summary>
+            <param name="boolString">string containing either "y" or "n"</param>
+            <returns>true - when string equals to "y", false - otherwise</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ToString(System.Boolean)">
+            <summary>
+            Convery boolean to string
+            </summary>
+            <param name="boolValue">boolean value</param>
+            <returns>string "y" if boolValue is true, else "n"</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ReceivePollPacket(Ilsrep.PollApplication.Model.PollPacket)">
+            <summary>
+            Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+            </summary>
+            <param name="sendPacket">PollPacket with request to send</param>
+            <returns>PollPacket receivedPacket</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RunUserDialog">
+            <summary>
+            Run conversation with user
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RemovePollsession(Ilsrep.PollApplication.Model.PollPacket)">
+            <summary>
+            Remove pollsession
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.EditPollsession(System.Int32)">
+            <summary>
+            Edits current session and saves it to server
+            </summary>
+            <param name="pollSessionID">id of session to edit</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.CreatePollsession">
+            <summary>
+            Create new pollsession and save it to server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ConnectToServer">
+            <summary>
+            Connect to server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.DisconnectFromServer">
+            <summary>
+            Disconnect from server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.Main">
+            <summary>
+            Main method
+            </summary>
+        </member>
+    </members>
+</doc>

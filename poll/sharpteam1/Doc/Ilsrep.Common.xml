@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ilsrep.Common</name>
+    </assembly>
+    <members>
+        <member name="T:Ilsrep.Common.TcpClient">
+            <summary>
+            Tcp Client that is used to connect to server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.Common.TcpClient.DATA_SIZE">
+            <summary>
+            Max size of the data sent
+            </summary>
+        </member>
+        <member name="F:Ilsrep.Common.TcpClient.m_client">
+            <summary>
+            Socket that will do all transfers
+            </summary>
+        </member>
+        <member name="M:Ilsrep.Common.TcpClient.#ctor">
+            <summary>
+            Contructor
+            </summary>
+        </member>
+        <member name="M:Ilsrep.Common.TcpClient.Connect(System.String,System.Int32)">
+            <summary>
+            Connects to server using address and port
+            </summary>
+            <param name="address">address of server</param>
+            <param name="port">port to which to connect</param>
+        </member>
+        <member name="M:Ilsrep.Common.TcpClient.Disconnect">
+            <summary>
+            Disconnects from server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.Common.TcpClient.Send(System.String)">
+            <summary>
+            Sends data to server
+            </summary>
+            <param name="data">data that is to be sent</param>
+        </member>
+        <member name="M:Ilsrep.Common.TcpClient.Receive">
+            <summary>
+            Receives data from server
+            </summary>
+            <returns>data that was received</returns>
+        </member>
+        <member name="P:Ilsrep.Common.TcpClient.isConnected">
+            <summary>
+            checks if client is connected
+            </summary>
+        </member>
+    </members>
+</doc>
