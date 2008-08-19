@@ -3,7 +3,7 @@ package ilsrep.poll.client;
 import ilsrep.poll.common.Choice;
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsession;
-
+import ilsrep.poll.common.Description;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,6 +32,28 @@ public class PollEditor {
      * @throws IOException
      *             On console input errors.
      */
+public static Choice createChoice(int id){
+Choice choice=new Choice();
+choice.setId(Integer.toString(id));
+choice.setName(PollClient.readFromConsole(Integer.toString(id) +")>"));
+return choice;
+}
+public static Poll createPoll(int id, Boolean testmode) {
+Poll poll=new Poll();
+poll.setId(Integer.toString(id));
+poll.setName(PollClient.readFromConsole("Enter poll name"));
+Description desc= new Description();
+desc.setValue(PollClient.readFromConsole("Enter poll description"));
+poll.setDescription(desc);
+poll.setCustomEnabled(PollClient.readFromConsole("Allow custom choice?",PollClient.Y_N_ANSWER_SET).equals("y")?" true" : "false");
+int choiceNum=Integer.parseInt(PollClient.readFromConsole("How many options will the poll have?"));
+ArrayList<Choice> choices=new ArrayList<Choice>();
+for (int i=1;i<=choiceNum;i++) choices.add(createChoice(i));
+poll.setChoices(choices);
+if(testmode) poll.setCorrectChoice(PollClient.readFromConsole("Enter correct choice number"));
+return poll;           
+}
+
     public static void main(String[] args) throws IOException {
         try {
             JarFile jar = new JarFile("./poll.jar");
@@ -89,109 +111,27 @@ public class PollEditor {
                     communicator.finalize();
                 }
                 else {
-                    String yesNoChoice = "y";
-                    // BufferedReader consoleInputReader = new BufferedReader(
-                    // new InputStreamReader(System.in));
-                    String genXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-                    String name = "1"; // default number
-                    genXml += "<pollsession id=\"" + name + "\" name=\"";
-                    // System.out.print("Enter pollsession name: ");
-                    name = PollClient
-                            .readFromConsole("\nEnter pollsession name");
-                    genXml += name + "\" testMode=\"";
-                    // System.out.print("Will this poll run in testmode? [y/n]:
-                    // ");
-                    System.out.println();
-                    yesNoChoice = PollClient.readFromConsole(
-                            "Will this poll run in testmode?",
-                            PollClient.Y_N_ANSWER_SET);
-                    name = (yesNoChoice.indexOf("y") != -1) ? "true" : "false";
-                    genXml += name + "\" ";
-                    String testMode = name;
-                    if (testMode.indexOf("true") != -1) {
-                        // System.out.print("Enter minimum score: ");
-                        System.out.println();
-                        name = PollClient.readFromConsole(
-                                "Enter minimum score",
-                                PollClient.ANSWER_TYPE_DOUBLE);
-                        genXml += "minScore=\"" + name + "\" ";
-                    }
-                    genXml += "> \n";
+Pollsession sess=new Pollsession();
+sess.setName(PollClient.readFromConsole("Enter pollsession name"));
+ sess.setTestMode(((PollClient.readFromConsole(
+                    "Will this poll run in testmode?",
+                    PollClient.Y_N_ANSWER_SET).compareTo("y") == 0) ? "true"
+                    : "false"));
+ if (sess.getTestMode().equals("true")) {
+                sess.setMinScore(PollClient.readFromConsole(
+                        "Enter minimum score", PollClient.ANSWER_TYPE_DOUBLE));
+            }
+int pollNum=Integer.parseInt(PollClient.readFromConsole("How many polls will the session have?"));
+ArrayList<Poll> polls=new ArrayList<Poll>();
+for (int i=1;i<=pollNum;i++) polls.add(createPoll(i,sess.getTestMode().equals("true")? true : false ));
+sess.setPolls(polls);
+TcpCommunicator communicator = new TcpCommunicator();
 
-                    yesNoChoice = "y";
-                    String yesNoChoice2 = "y";
-                    int i = 1;
-                    int correct = 0;
-                    // This cycle serves to enter polls
-                    while (yesNoChoice2.indexOf("y") != -1) {
-                        // System.out.print("Enter poll name: ");
-                        System.out.println();
-                        name = PollClient.readFromConsole("Enter poll name");
-                        genXml += " <poll id=\"" + Integer.toString(i)
-                                + "\" name=\"" + name + "\"";
-                        if (testMode.indexOf("true") != -1) {
-                            // System.out
-                            // .print("Enter number of the correct choice in
-                            // poll:
-                            // ");
-                            name = PollClient
-                                    .readFromConsole(
-                                            "Enter number of the correct choice in poll",
-                                            PollClient.ANSWER_TYPE_INTEGER);
-                            genXml += " correctChoice=\"" + name + "\" ";
-                            correct = Integer.parseInt(name);
-                        }
-                        String yesNoChoice3 = PollClient.readFromConsole(
-                                "Allow custom choice for this poll?",
-                                PollClient.Y_N_ANSWER_SET);
-                        if (yesNoChoice3.indexOf("y") != -1) {
-                            genXml += " customChoiceEnabled=\"true\" ";
-                        }
+                    communicator.sendPollsession(sess);
 
-                        genXml += " >\n";
-                        // System.out.print("Enter poll description: ");
-                        name = PollClient
-                                .readFromConsole("Enter poll description");
-                        genXml += " <description>" + name
-                                + "</description>\n<choices>\n";
-                        int n = 1;
+                    communicator.finalize();
 
-                        yesNoChoice = "y";
-                        // this cycle is for entering options
-                        while (((correct >= n) && (testMode.indexOf("true") != -1))
-                                || (yesNoChoice.indexOf("y") != -1)) {
 
-                            // System.out.print("Enter choice option: ");
-                            name = PollClient
-                                    .readFromConsole("Enter next choice");
-                            genXml += "<choice id=\"" + Integer.toString(n)
-                                    + "\"  name=\"" + name + "\" />\n";
-                            if (correct <= n) {
-                                // System.out.print("Add new choice option?
-                                // [y/n]:
-                                // ");
-
-                                yesNoChoice = PollClient.readFromConsole(
-                                        "Add new choice?",
-                                        PollClient.Y_N_ANSWER_SET);
-                            }
-
-                            n++;
-                        }
-
-                        genXml += "</choices>\n</poll>\n";
-
-                        // System.out.print("Add new Poll? [y/n]: ");
-
-                        yesNoChoice2 = PollClient.readFromConsole(
-                                "Add new Poll?", PollClient.Y_N_ANSWER_SET);
-
-                        i++;
-                    }
-                    genXml += "</pollsession>\n\n";
-                    System.out.println("\n" + genXml);
-                    TcpCommunicator communicator = new TcpCommunicator();
-                    communicator.sendXml(genXml);
                 }
         }
         catch (Exception e) {
