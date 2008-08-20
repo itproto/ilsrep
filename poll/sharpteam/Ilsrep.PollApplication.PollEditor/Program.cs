@@ -14,12 +14,14 @@ namespace Ilsrep.PollApplication.PollEditor
     public class PollEditor
     {
         private static System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
-        private static String userName = String.Empty;
-        private static String userPassword = String.Empty;
+        private static string userName = String.Empty;
+        private static string userPassword = String.Empty;
         private static PollSession pollSession = new PollSession();
-        private const String HOST = "localhost";
+        private const string HOST = "localhost";
         private const int PORT = 3320;
         private static TcpClient client;
+        private const string STRING_YES = "y";
+        private const string STRING_NO = "n";
 
         /// <summary>
         /// Run conversation with user
@@ -38,7 +40,7 @@ namespace Ilsrep.PollApplication.PollEditor
             if (receivedPacket.pollSessionList.items.Count == 0)
             {
                 Console.WriteLine("Sorry, but data base is empty, no pollsessions...");
-                if (InputHelper.AskQuestion("Would you create new pollsession[y/n]?", new string[] { "y", "n" }) == "y")
+                if (InputHelper.AskQuestion(String.Format("Would you create new pollsession[{0}/{1}]?", STRING_YES, STRING_NO), new string[] { STRING_YES, STRING_NO }) == STRING_YES)
                 {
                     EditPollsession(0);
                 }
@@ -82,7 +84,7 @@ namespace Ilsrep.PollApplication.PollEditor
         public static void RemovePollsession( Item item )
         {
             // Ask if user is sure
-            if ( InputHelper.AskQuestion( "Do you really want to remove pollsession \"" + item.name + "\" [y/n]?", new string[] { "y", "n" } ) == "n" )
+            if ( InputHelper.AskQuestion( "Do you really want to remove pollsession \"" + item.name + "\" [y/n]?", new string[] { STRING_YES, STRING_NO } ) == "n" )
             {
                 return;
             }
@@ -118,7 +120,7 @@ namespace Ilsrep.PollApplication.PollEditor
             }
 
             pollSession.name = InputHelper.AskQuestion("Enter pollsession name:", pollSession.name, null);
-            pollSession.testMode = InputHelper.ToBoolean(InputHelper.AskQuestion("Test mode[y/n]?", InputHelper.ToString(pollSession.testMode), new string[] { "y", "n" }));
+            pollSession.testMode = InputHelper.ToBoolean(InputHelper.AskQuestion("Test mode[y/n]?", InputHelper.ToString(pollSession.testMode), new string[] { STRING_YES, STRING_NO }));
 
             if (pollSession.testMode == true)
             {
@@ -195,8 +197,8 @@ namespace Ilsrep.PollApplication.PollEditor
         /// <summary>
         /// Adds or edits a poll
         /// </summary>
-        /// <param name="editedPoll">Poll which is edited</param>
-        /// <returns>returns added or edited poll</returns>
+        /// <param name="pollSession">Poll session conected to poll</param>
+        /// <param name="index">index of poll in poll session poll list</param>
         public static void EditPoll( ref PollSession pollSession, int index )
         {
             Poll newPoll;
@@ -266,7 +268,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 {
                     if ( newPoll.choices.Count >= (pollSession.testMode ? 2 : 0) )
                     {
-                        bool addNewChoice = InputHelper.ToBoolean( InputHelper.AskQuestion( "Add new choice[y/n]?", new string[] { "y", "n" } ) );
+                        bool addNewChoice = InputHelper.ToBoolean( InputHelper.AskQuestion( "Add new choice[y/n]?", new string[] { STRING_YES, STRING_NO } ) );
                         if ( addNewChoice == false )
                             break;
                     }
@@ -290,7 +292,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 }
                 else
                 {
-                    newPoll.customChoiceEnabled = InputHelper.ToBoolean( InputHelper.AskQuestion( "Enable custom choice for this poll[y/n]?", InputHelper.ToString( newPoll.customChoiceEnabled ), new string[] { "y", "n" } ) );
+                    newPoll.customChoiceEnabled = InputHelper.ToBoolean( InputHelper.AskQuestion( "Enable custom choice for this poll[y/n]?", InputHelper.ToString( newPoll.customChoiceEnabled ), new string[] { STRING_YES, STRING_NO } ) );
                 }
             }
             else
@@ -320,7 +322,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 catch (Exception exception)
                 {
                     Console.WriteLine(exception.Message);
-                    if ( InputHelper.AskQuestion( "Would you like to retry[y/n]?", new string[] { "y", "n" } ) == "n" )
+                    if ( InputHelper.AskQuestion( "Would you like to retry[y/n]?", new string[] { STRING_YES, STRING_NO } ) == "n" )
                     {
                         Console.WriteLine("Press any key to exit...");
                         Console.ReadKey(true);
@@ -416,13 +418,13 @@ namespace Ilsrep.PollApplication.PollEditor
                     {
                         string userInput;
                         userInput = Console.ReadLine();
-                        if ( userInput == "y" )
+                        if ( userInput == STRING_YES )
                         {
                             client.Disconnect();
                             ConnectToServer();
                             break;
                         }
-                        else if ( userInput == "n" )
+                        else if ( userInput == STRING_NO )
                         {
                             Environment.Exit( -1 );
                         }
@@ -452,7 +454,7 @@ namespace Ilsrep.PollApplication.PollEditor
             {
                 RunUserDialog();
                 DisconnectFromServer();
-                if ( InputHelper.AskQuestion( "Do you want to execute another action[y/n]?", new string[] { "y", "n" } ) == "n" )                
+                if ( InputHelper.AskQuestion( "Do you want to execute another action[y/n]?", new string[] { STRING_YES, STRING_NO } ) == STRING_NO )                
                     break;
                 ConnectToServer();
                 PollPacket pollPacket = new PollPacket();
