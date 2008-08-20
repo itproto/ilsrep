@@ -20,7 +20,31 @@ import java.util.jar.Attributes;
  * 
  */
 public class PollEditor {
+public static final String YES="y";
 
+public static String getScore(){
+Boolean input=true;
+Double score=null;
+while(input){
+  score=Double.parseDouble(PollClient.readFromConsole("Enter minimum Score", PollClient.ANSWER_TYPE_DOUBLE));
+if (score<1) input=false; else System.out.println("Score has to be less then 1. Try again");
+}
+    return Double.toString(score);      
+
+
+}
+
+public static String getCorrect(int max){
+String correct="";
+Boolean input=true;
+while(input){
+correct=PollClient.readFromConsole("Enter correct choice number",PollClient.ANSWER_TYPE_INTEGER);
+if (Integer.parseInt(correct)<max) input=false; else System.out.println("You entered a number outside choice scope. Try again");
+}
+return correct;
+
+
+}
     // each parameter of XML is being promted to user. After entering number of
     // the correct choice the user is required to enter
     // minumum the number of choices that equals it
@@ -45,12 +69,12 @@ poll.setName(PollClient.readFromConsole("Enter poll name"));
 Description desc= new Description();
 desc.setValue(PollClient.readFromConsole("Enter poll description"));
 poll.setDescription(desc);
-poll.setCustomEnabled(PollClient.readFromConsole("Allow custom choice?",PollClient.Y_N_ANSWER_SET).equals("y")?" true" : "false");
+poll.setCustomEnabled(PollClient.readFromConsole("Allow custom choice?",PollClient.Y_N_ANSWER_SET).equals(YES)?" true" : "false");
 int choiceNum=Integer.parseInt(PollClient.readFromConsole("How many options will the poll have?"));
 ArrayList<Choice> choices=new ArrayList<Choice>();
 for (int i=1;i<=choiceNum;i++) choices.add(createChoice(i));
 poll.setChoices(choices);
-if(testmode) poll.setCorrectChoice(PollClient.readFromConsole("Enter correct choice number"));
+if(testmode) poll.setCorrectChoice(getCorrect(choiceNum));
 return poll;           
 }
 
@@ -111,23 +135,22 @@ return poll;
                     communicator.finalize();
                 }
                 else {
-Pollsession sess=new Pollsession();
-sess.setName(PollClient.readFromConsole("Enter pollsession name"));
- sess.setTestMode(((PollClient.readFromConsole(
+Pollsession pollSession=new Pollsession();
+pollSession.setName(PollClient.readFromConsole("Enter pollsession name"));
+ pollSession.setTestMode(((PollClient.readFromConsole(
                     "Will this poll run in testmode?",
-                    PollClient.Y_N_ANSWER_SET).compareTo("y") == 0) ? "true"
+                    PollClient.Y_N_ANSWER_SET).compareTo(YES) == 0) ? "true"
                     : "false"));
- if (sess.getTestMode().equals("true")) {
-                sess.setMinScore(PollClient.readFromConsole(
-                        "Enter minimum score", PollClient.ANSWER_TYPE_DOUBLE));
+ if (pollSession.getTestMode().equals("true")) {
+                pollSession.setMinScore(getScore());
             }
 int pollNum=Integer.parseInt(PollClient.readFromConsole("How many polls will the session have?"));
 ArrayList<Poll> polls=new ArrayList<Poll>();
-for (int i=1;i<=pollNum;i++) polls.add(createPoll(i,sess.getTestMode().equals("true")? true : false ));
-sess.setPolls(polls);
+for (int i=1;i<=pollNum;i++) polls.add(createPoll(i,pollSession.getTestMode().equals("true")? true : false ));
+pollSession.setPolls(polls);
 TcpCommunicator communicator = new TcpCommunicator();
 
-                    communicator.sendPollsession(sess);
+                    communicator.sendPollsession(pollSession);
 
                     communicator.finalize();
 
@@ -163,7 +186,7 @@ TcpCommunicator communicator = new TcpCommunicator();
         if (askYesNo("Change test mode value")) {
             source.setTestMode(((PollClient.readFromConsole(
                     "Will this poll run in testmode?",
-                    PollClient.Y_N_ANSWER_SET).compareTo("y") == 0) ? "true"
+                    PollClient.Y_N_ANSWER_SET).compareTo(YES) == 0) ? "true"
                     : "false"));
 
         }
@@ -172,8 +195,7 @@ TcpCommunicator communicator = new TcpCommunicator();
             System.out.println();
 
             if (source.getTestMode() == null) {
-                source.setMinScore(PollClient.readFromConsole(
-                        "Enter minimum score", PollClient.ANSWER_TYPE_DOUBLE));
+                source.setMinScore(getScore());
             }
             else {
                 System.out.println("Current minimum score: "
@@ -207,7 +229,7 @@ TcpCommunicator communicator = new TcpCommunicator();
                 poll
                         .setCustomEnabled((((PollClient.readFromConsole(
                                 "Allow custom choice for this poll?",
-                                PollClient.Y_N_ANSWER_SET).compareTo("y") == 0) ? "true"
+                                PollClient.Y_N_ANSWER_SET).compareTo(YES) == 0) ? "true"
                                 : "false")));
             }
 
@@ -271,7 +293,7 @@ TcpCommunicator communicator = new TcpCommunicator();
      * @return
      */
     public static boolean askYesNo(String question) {
-        return PollClient.readFromConsole(question + "? [y/N]").compareTo("y") == 0;
+        return PollClient.readFromConsole(question + "? [y/N]").compareTo(YES) == 0;
     }
 
 }
