@@ -35,7 +35,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Releases\</OutputPath>
+    <OutputPath>..\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\CommandLineParametersHelper.cs" />
+    <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Helpers\PollDAL.cs" />
     <Compile Include="Helpers\PollSerializator.cs" />
     <Compile Include="Model\Choice.cs" />
