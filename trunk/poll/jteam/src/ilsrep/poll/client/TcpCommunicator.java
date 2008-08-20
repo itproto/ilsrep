@@ -3,6 +3,7 @@ package ilsrep.poll.client;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.common.Pollpacket;
 import ilsrep.poll.common.Pollsession;
+import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Request;
 import ilsrep.poll.server.PollClientHandler;
 import ilsrep.poll.common.Answers;
@@ -260,25 +261,15 @@ public class TcpCommunicator {
                     .getInputStream());
 
             // Processing.
-            if (response.getPollsessionList() != null
-                    && response.getPollsessionList().getItems() != null) {
-                System.out.println("\nList of pollsessions stored on server:");
-
-                for (Item i : response.getPollsessionList().getItems()) {
-                    System.out.println(i.getId() + ") " + i.getName());
-                }
-            }
-            else {
-                System.out.println("\nList is empty or server sent no list.");
-            }
+           return response.getPollsessionList();
         }
         catch (JAXBException e) {
             System.out.println(e.getMessage());
-            return;
+            return null;
         }
         catch (IOException e) {
             System.out.println(e.getMessage());
-            return;
+            return null;
         }
     }
 

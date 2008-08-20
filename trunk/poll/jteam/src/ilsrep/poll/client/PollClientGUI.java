@@ -1,7 +1,9 @@
 package ilsrep.poll.client;
-
-import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsession;
+
+import ilsrep.poll.common.Item;
+import ilsrep.poll.common.Poll;
+import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.AnswerItem;
 import ilsrep.poll.common.Answers;
 import ilsrep.poll.common.User;
@@ -97,7 +99,18 @@ if (reply==0){
                 user = communicator.sendUser(user);
                 win.alert("\nUser created. Welcome!");
             }
-
+Pollsessionlist lst=communicator.listXml();
+ArrayList<String> list= new ArrayList<String>();
+ if (lst!= null
+                    && lst.getItems() != null) {
+             
+                for (Item i : lst.getItems()) {
+                    list.add(i.getId() + ") " + i.getName());
+                }
+            }
+            else {
+                win.alert("\nList is empty or server sent no list.");
+            }
             
 
 
