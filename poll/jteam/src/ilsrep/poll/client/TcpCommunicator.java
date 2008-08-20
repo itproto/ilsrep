@@ -242,7 +242,7 @@ public class TcpCommunicator {
     /**
      * Retrieves and outputs XML IDs and names
      */
-    public void listXml() {
+    public Pollsessionlist listXml() {
         System.out.println("\nGetting list of pollsessions. Please wait.");
         // Forming request packet.
         Pollpacket requestPacket = new Pollpacket();
