@@ -1,9 +1,10 @@
 package ilsrep.poll.client;
-
+import ilsrep.poll.common.Pollsessionlist;
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsession;
 import ilsrep.poll.common.AnswerItem;
 import ilsrep.poll.common.Answers;
+import ilsrep.poll.common.Item;
 import ilsrep.poll.common.User;
 import java.io.BufferedReader;
 import java.io.File;
@@ -125,8 +126,19 @@ public class PollClient {
                 System.out.println("\nUser created. Welcome!");
             }
 
-            communicator.listXml();
+        //    communicator.listXml();
+Pollsessionlist lst=communicator.listXml();
+ if (lst!= null
+                    && lst.getItems() != null) {
+                System.out.println("\nList of pollsessions stored on server:");
 
+                for (Item i : lst.getItems()) {
+                    System.out.println(i.getId() + ") " + i.getName());
+                }
+            }
+            else {
+                System.out.println("\nList is empty or server sent no list.");
+            }
             boolean done = false;
             while (!done) {
                 try {
