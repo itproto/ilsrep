@@ -9,7 +9,7 @@ JLabel jlbHelloWorld = new JLabel("Poll");
 		this.add(jlbHelloWorld);
 		this.setSize(300, 300);
 		// pack();
-		this.setVisible(true);
+		this.setVisible(false);
 }
 public String askUser(String query){
  String s = JOptionPane.showInputDialog(query);
