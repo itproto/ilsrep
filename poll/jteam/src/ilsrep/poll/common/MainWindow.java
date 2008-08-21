@@ -11,10 +11,10 @@ import java.awt.event.*;
 import java.util.Enumeration;
 public class MainWindow extends JFrame  {
 public MainWindow(){
-JLabel jlbHelloWorld = new JLabel("Poll");
 
-		this.setSize(1000, 1000);
-		 
+
+		
+	 this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	 
 		//this.setVisible(true);
 
 }
@@ -39,9 +39,25 @@ public void alert(String alertion){
 
 }
 
+public Boolean askYesNo(String query){
+Object[] options = {"Yes",
+                    "No"};
+ int s = JOptionPane.showOptionDialog(this,
+    query,
+    "Please choose",
+    JOptionPane.YES_NO_CANCEL_OPTION,
+    JOptionPane.QUESTION_MESSAGE,
+    null,
+    options,
+    options[0]);
+return (s==0)?true : false;
+
+
+}
+
 public String getChoice(ButtonGroup group, String query){
-this.setTitle(query);
- RadioPanel newContentPane = new RadioPanel(group);
+this.setTitle("Please choose");
+ RadioPanel newContentPane = new RadioPanel(group,query);
         newContentPane.setOpaque(true); //content panes must be opaque
         setContentPane(newContentPane);
 

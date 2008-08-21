@@ -10,21 +10,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 public class RadioPanel extends JPanel implements ActionListener {
-WaitThread waiter=null;
+
 public String reply="-1";
-public class WaitThread extends Thread {
-public String reply="-1";
-public void run() {
-Boolean a=true;
-while(reply.equals("-1")){
-try{sleep(250);} catch(Exception arg) {System.out.println(arg.getMessage());}
-}
-System.out.println("lol");
-}
-}
+
 
 private Enumeration e;
-RadioPanel(ButtonGroup group){
+RadioPanel(ButtonGroup group, String query){
   super(new BorderLayout());
  JPanel radioPanel = new JPanel(new GridLayout(0, 1));
  e=group.getElements();
@@ -35,6 +26,9 @@ RadioPanel(ButtonGroup group){
  e=group.getElements();
 add(radioPanel, BorderLayout.LINE_START);
 JButton b2 = new JButton("OK");
+JLabel jlb=new JLabel(query);
+jlb.setToolTipText(query);
+add(jlb,BorderLayout.NORTH);
 add(b2, BorderLayout.CENTER);
 b2.setActionCommand("Go");
 b2.addActionListener(this);
@@ -54,10 +48,7 @@ System.out.println(jrb.getActionCommand());
 
 }   
 } 
-public void startme(){
-waiter=new WaitThread();
-waiter.start();
-}
+
 }
 
 

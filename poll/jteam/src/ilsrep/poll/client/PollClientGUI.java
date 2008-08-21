@@ -2,6 +2,7 @@ package ilsrep.poll.client;
 import ilsrep.poll.common.Pollsession;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsessionlist;
@@ -25,6 +26,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Attributes;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JFileChooser;
 /**
  * Main class for task 7 - Poll.
  * 
@@ -48,12 +50,33 @@ public class PollClientGUI {
 
 
  public static void main(String[] args)  throws JAXBException, IOException {
+List<AnswerItem> answers = new ArrayList<AnswerItem>();
 String serverPortString = null;
 MainWindow win=new MainWindow();
+Pollsession polls=null;
 String name=win.askUser("Enter Name");
 Object[] options = {"Use Server",
                     "Use local file"};
 int reply=win.askUserChoice("Please choose poll source",options);
+
+ if (reply==1) {
+File pollFile=null;
+JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+        Unmarshaller um = cont.createUnmarshaller();
+       JFileChooser chooser = new JFileChooser();
+
+
+
+
+    int returnVal = chooser.showOpenDialog(win);
+    if(returnVal == JFileChooser.APPROVE_OPTION) {
+       pollFile=chooser.getSelectedFile();
+    }
+
+            // Serialising xml file into object model.
+            
+            polls = (Pollsession) um.unmarshal(pollFile);
+        }
 if (reply==0){
       serverPortString = win.askUser("\nPlease enter server:port"
                     + " to connect to\n[press enter for"
@@ -118,13 +141,100 @@ jrb.setActionCommand(i.getId());
             }
 
     
-Pollsession sess=communicator.getPollsession(win.getChoice(group,"Choose pollsession"));
-if (sess!=null) win.alert("Pollsession aquired");
-
-
-
-
+polls=communicator.getPollsession(win.getChoice(group,"Choose pollsession"));
 }
+if (polls!=null) win.alert("Pollsession aquired");
+  String testMode = "false";
+        if (polls.getTestMode() != null)
+            testMode = polls.getTestMode();
+        float minScore = -1;
+        try {
+            if (polls.getMinScore() != null)
+                minScore = Float.parseFloat(polls.getMinScore());
+        }
+        catch (NumberFormatException e) {
+            // If it is wrong in xml - it stays "-1".
+        }
+ String resultingOutput = "Results\n\n"; // here we will store everything
+        // we will need to output
+        
+Boolean res=null;
+        res = win.askYesNo("\nOk, " + name + ", are you ready for poll?");
+        if (!res)return;
+    String choice = null;
+   
+     float i = 0, n = 0;
+        for (Poll cur : polls.getPolls()) {
+            while (choice == null)
+                choice = cur.queryUserGUI(win);
+            // saveElement.pushAnswer(cur.getName(), choice, cur.pass);
+            if (testMode.compareTo("true") == 0) {
+                resultingOutput += cur.getName() + " => " + choice + " ("
+                        + cur.pass + ")" + "\n";
+            }
+            else {
+                resultingOutput += cur.getName() + " => " + choice + "\n";
+            }
+            if (cur.pass == "PASS")
+                i++;
+            n++;
+            AnswerItem itm = new AnswerItem();
+            if (cur.selectedId != 0) {
+                answers.add(itm.setItem(Integer.parseInt(cur.getId()),
+                        cur.selectedId));
+            }
+            else
+                answers.add(itm.setItem(Integer.parseInt(cur.getId()), choice));
+
+            choice = null;
+        }
+
+ 
+        if (testMode.compareTo("true") == 0) {
+            // BUG: May happen too long number after comma.
+            resultingOutput += "\nYour score " + Float.toString(i / n) + "\n";
+
+            if ((i / n) >= minScore) {
+                resultingOutput += "You pass!";
+            }
+            else {
+                resultingOutput += "You fail.";
+            }
+        }
+
+        win.setVisible(false);
+win.alert(resultingOutput);        
+if(reply==1){
+        
+
+        TcpCommunicator communicator = initTcpCommunicator(serverPortString);
+
+        Answers ans = new Answers();
+        ans.setUsername(name);
+        ans.setPollSesionId(polls.getId());
+        ans.setAnswers(answers);
+
+        communicator.sendResult(ans);
+        communicator.finalize();
+
+        win.alert("\nResults sent");
+}
+return;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
