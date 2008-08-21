@@ -1,6 +1,7 @@
 package ilsrep.poll.client;
 import ilsrep.poll.common.Pollsession;
-
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 import ilsrep.poll.common.Item;
 import ilsrep.poll.common.Poll;
 import ilsrep.poll.common.Pollsessionlist;
@@ -22,7 +23,8 @@ import javax.xml.bind.Unmarshaller;
 import java.util.jar.Manifest;
 import java.util.jar.JarFile;
 import java.util.jar.Attributes;
-
+import java.awt.*;
+import java.awt.event.*;
 /**
  * Main class for task 7 - Poll.
  * 
@@ -100,26 +102,37 @@ if (reply==0){
                 win.alert("\nUser created. Welcome!");
             }
 Pollsessionlist lst=communicator.listXml();
-ArrayList<String> list= new ArrayList<String>();
+ ButtonGroup group = new ButtonGroup();
  if (lst!= null
                     && lst.getItems() != null) {
              
                 for (Item i : lst.getItems()) {
-                    list.add(i.getId() + ") " + i.getName());
+JRadioButton jrb= new JRadioButton(i.getName());
+System.out.println(i.getName()+"\n");
+jrb.setActionCommand(i.getId());
+                   group.add(jrb);
                 }
             }
             else {
                 win.alert("\nList is empty or server sent no list.");
             }
-            
+
+    
+Pollsession sess=communicator.getPollsession(win.getChoice(group,"Choose pollsession"));
+if (sess!=null) win.alert("Pollsession aquired");
 
 
 
 
 }
 
+
+
+
 }
 
+
+    
     private static TcpCommunicator initTcpCommunicator(String serverPortString) {
         TcpCommunicator communicator = null;
         if (serverPortString.compareTo("") != 0) {

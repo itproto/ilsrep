@@ -1,15 +1,22 @@
 package ilsrep.poll.common;
+import ilsrep.poll.common.RadioPanel;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
-public class MainWindow extends JFrame{
+import javax.swing.JRadioButton;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Enumeration;
+public class MainWindow extends JFrame  {
 public MainWindow(){
 JLabel jlbHelloWorld = new JLabel("Poll");
-		this.add(jlbHelloWorld);
-		this.setSize(300, 300);
-		// pack();
-		this.setVisible(false);
+
+		this.setSize(1000, 1000);
+		 
+		//this.setVisible(true);
+
 }
 public String askUser(String query){
  String s = JOptionPane.showInputDialog(query);
@@ -31,4 +38,22 @@ public void alert(String alertion){
 
 
 }
+
+public String getChoice(ButtonGroup group, String query){
+this.setTitle(query);
+ RadioPanel newContentPane = new RadioPanel(group);
+        newContentPane.setOpaque(true); //content panes must be opaque
+        setContentPane(newContentPane);
+
+        //Display the window.
+        pack();
+        setVisible(true);
+while (newContentPane.reply.equals("-1")){
+try{Thread.sleep(250);} catch(Exception arg) {System.out.println(arg.getMessage());}
+}
+
+return newContentPane.reply;
+	
+}
+
 }
