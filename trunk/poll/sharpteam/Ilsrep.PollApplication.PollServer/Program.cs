@@ -11,6 +11,7 @@ using log4net;
 using log4net.Config;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Communication;
 using Ilsrep.PollApplication.DAL;
 using System.Data.SQLite;
 

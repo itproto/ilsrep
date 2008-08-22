@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Helpers;
 
-namespace Ilsrep.PollApplication.Model
+namespace Ilsrep.PollApplication.Communication
 {
     /// <summary>
     /// Holds a list of poll session ids and names

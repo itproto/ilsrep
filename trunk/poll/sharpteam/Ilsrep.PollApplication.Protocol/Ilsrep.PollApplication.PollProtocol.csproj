@@ -60,21 +60,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\Item.cs" />
+    <Compile Include="Communication\PollPacket.cs" />
+    <Compile Include="Communication\PollSessionsList.cs" />
+    <Compile Include="Communication\Request.cs" />
+    <Compile Include="Communication\ResultsList.cs" />
     <Compile Include="Helpers\CommandLineParametersHelper.cs" />
     <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Helpers\PollDAL.cs" />
     <Compile Include="Helpers\PollSerializator.cs" />
     <Compile Include="Model\Choice.cs" />
-    <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Poll.cs" />
-    <Compile Include="Model\PollPacket.cs" />
     <Compile Include="Model\PollResult.cs" />
     <Compile Include="Model\PollSession.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\PollSessionsList.cs" />
-    <Compile Include="Model\Request.cs" />
-    <Compile Include="Model\ResultsList.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
