@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Ilsrep.PollApplication.Model;
 
-namespace Ilsrep.PollApplication.Model
+namespace Ilsrep.PollApplication.Communication
 {
     /// <summary>
     /// Root elements that is transfered between poll client, editor and server

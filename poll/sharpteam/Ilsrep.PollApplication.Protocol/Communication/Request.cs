@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Ilsrep.PollApplication.Model
+namespace Ilsrep.PollApplication.Communication
 {
     /// <summary>
     /// Request object is used to query server

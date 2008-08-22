@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Communication;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.Common;
 

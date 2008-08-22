@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Communication;
 
 namespace Ilsrep.PollApplication.Helpers
 {

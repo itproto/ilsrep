@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Data.SQLite;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Communication;
 
 namespace Ilsrep.PollApplication.DAL
 {

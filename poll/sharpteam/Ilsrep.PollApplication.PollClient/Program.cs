@@ -7,6 +7,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.Communication;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.Common;
 
