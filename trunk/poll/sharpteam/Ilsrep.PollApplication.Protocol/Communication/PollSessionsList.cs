@@ -32,13 +32,13 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// List poll sessions
         /// </summary>
-        public int GetPollSession()
+        public int GetPollSessionId()
         {
-            int index = 1;
+            int index = 0;
             Console.WriteLine( "Poll Sessions:" );
             foreach (Item curItem in items)
             {
-                ++ index;
+                index++;
                 Console.WriteLine(index + ". " + curItem.name);
             }
             int pollSessionIndex = InputHelper.AskQuestion( String.Format( "Choose pollsession [1-{0}]:", index ), 1, index );

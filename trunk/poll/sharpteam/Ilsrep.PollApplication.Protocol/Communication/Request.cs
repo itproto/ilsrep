@@ -25,6 +25,10 @@ namespace Ilsrep.PollApplication.Communication
         /// </summary>
         [XmlIgnore] public const string CREATE_POLLSESSION = "createPollsession";
         /// <summary>
+        /// Request type that is used to edit a poll session
+        /// </summary>
+        [XmlIgnore] public const string EDIT_POLLSESSION = "editPollsession";
+        /// <summary>
         /// Request type that is used to remove a poll session by id
         /// </summary>
         [XmlIgnore] public const string REMOVE_POLLSESSION = "removePollsession";

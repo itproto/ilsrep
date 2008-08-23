@@ -38,14 +38,14 @@ namespace Ilsrep.PollApplication.Model
         /// </summary>
         [XmlArray("choices")] [XmlArrayItem("choice")] public List<Choice> choices = new List<Choice>();
 
-        public int GetChoice()
+        public int GetChoiceId()
         {
-            int index = 1;
+            int index = 0;
             
             Console.WriteLine( "Poll Choices:" );
             foreach ( Choice curChoice in choices )
             {
-                ++ index;
+                index++;
                 Console.WriteLine( index + ". " + curChoice.choice );
             }
             int choiceIndex = InputHelper.AskQuestion( String.Format( "Choose choice [1-{0}]:", index ), 1, index );
