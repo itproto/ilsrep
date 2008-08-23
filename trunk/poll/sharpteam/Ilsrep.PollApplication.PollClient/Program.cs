@@ -169,13 +169,16 @@ namespace Ilsrep.PollApplication.PollClient
             Console.Clear();
             Console.WriteLine(userName + ", here is your PollSession results:");
             bool isTestMode = pollSession.testMode;
+
+            int index1 = 0;
             foreach(Choice userChoice in userChoices)
             {
-                Console.WriteLine(userChoice.parent.id + ". " + userChoice.parent.name + ": " + userChoice.choice);
+                index1++;
+                Console.WriteLine(index1 + ". " + userChoice.parent.name + ": " + userChoice.choice);
                 if (isTestMode)
                 {
                     // Get correctChoice by id
-                    string correctChoice = "";
+                    string correctChoice = String.Empty;
                     foreach (Choice curChoice in userChoice.parent.choices)
                     {
                         if (curChoice.id == userChoice.parent.correctChoiceID)

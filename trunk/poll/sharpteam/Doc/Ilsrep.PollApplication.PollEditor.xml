@@ -14,7 +14,7 @@
             Run conversation with user
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RemovePollsession(Ilsrep.PollApplication.Model.Item)">
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RemovePollsession(Ilsrep.PollApplication.Communication.Item)">
             <summary>
             Remove pollsession
             </summary>
@@ -29,8 +29,8 @@
             <summary>
             Adds or edits a poll
             </summary>
-            <param name="editedPoll">Poll which is edited</param>
-            <returns>returns added or edited poll</returns>
+            <param name="pollSession">Poll session conected to poll</param>
+            <param name="index">index of poll in poll session poll list</param>
         </member>
         <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ConnectToServer">
             <summary>
@@ -47,7 +47,7 @@
             Authorize user
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ReceivePollPacket(Ilsrep.PollApplication.Model.PollPacket)">
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
             <summary>
             Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
             </summary>
