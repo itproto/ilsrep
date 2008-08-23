@@ -79,20 +79,20 @@ namespace Ilsrep.PollApplication.Helpers
         /// <returns>Answer from user</returns>
         public static string AskQuestion( string question, string defaultAnswer, string[] allowedAnswers )
         {
-            string inputLine = defaultAnswer;
-
             while ( true )
             {
+                string inputLine = defaultAnswer;
                 Console.Write( question + defaultAnswer );
 
-                for ( ConsoleKeyInfo cki = Console.ReadKey(); cki.Key != ConsoleKey.Enter; cki = Console.ReadKey() )
+                for ( ConsoleKeyInfo cki = Console.ReadKey(true); cki.Key != ConsoleKey.Enter; cki = Console.ReadKey(true) )
                 {
                     //rollback the cursor and write a space so it looks backspaced to the user
                     if ( cki.Key == ConsoleKey.Backspace )
                     {
-                        if ( inputLine.Length == 0 )
+                        if (inputLine.Length == 0)
                             continue;
 
+                        Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
                         Console.Write( " " );
                         Console.SetCursorPosition( Console.CursorLeft - 1, Console.CursorTop );
                         inputLine = inputLine.Substring( 0, inputLine.Length - 1 );
@@ -100,9 +100,11 @@ namespace Ilsrep.PollApplication.Helpers
                     else
                     {
                         inputLine += cki.KeyChar;
+                        Console.Write(cki.KeyChar);
                     }
                 }
 
+                Console.WriteLine();
                 if ( inputLine != String.Empty )
                 {
                     if ( allowedAnswers == null || allowedAnswers.Length == 0 )
