@@ -71,7 +71,7 @@ namespace Ilsrep.PollApplication.PollEditor
                     break;
                 case 3:
                     pollSessionIndex = receivedPacket.pollSessionList.GetPollSessionId();
-                    RemovePollsession( receivedPacket.pollSessionList[pollSessionIndex] );                    
+                    RemovePollsession( receivedPacket.pollSessionList[pollSessionIndex-1] );                    
                     break;
                 default:
                     Console.WriteLine("Invalid action!");
@@ -212,10 +212,6 @@ namespace Ilsrep.PollApplication.PollEditor
                 sendPacket.request.id = pollSessionID.ToString();
                 sendPacket.pollSession = pollSession;
                 string sendString = PollSerializator.SerializePacket(sendPacket);
-
-                Console.WriteLine(sendString);
-                Console.ReadKey(true);
-
                 client.Send(sendString);
             }
         }

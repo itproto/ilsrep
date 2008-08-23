@@ -194,66 +194,71 @@ namespace Ilsrep.PollApplication.DAL
 
             foreach (Poll curPoll in newPollSession.polls)
             {
-                int newChoiceID = 0;
-
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
-                
+
+                int index = 0;
                 foreach (Choice curChoice in curPoll.choices)
                 {
+                    index++;
                     sqliteCommand.Parameters[":name"].Value = curChoice.choice;
                     sqliteCommand.CommandText = "INSERT INTO " + CHOICES_TABLE + "(name) VALUES(:name)";
                     sqliteCommand.ExecuteNonQuery();
 
-                    if (curChoice.id == curPoll.correctChoiceID)
+                    sqliteCommand.CommandText = "SELECT last_insert_rowid()";
+                    curChoice.id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
+
+                    if (index == curPoll.correctChoiceID)
                     {
-                        sqliteCommand.CommandText = "SELECT last_insert_rowid()";
-                        newChoiceID = Convert.ToInt32(sqliteCommand.ExecuteScalar());
-                        curChoice.id = newChoiceID;
-                    }
-                    else
-                    {
-                        sqliteCommand.CommandText = "SELECT last_insert_rowid()";
-                        curChoice.id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
+                        curPoll.correctChoiceID = curChoice.id;
                     }
                 }
 
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.AddWithValue(":name", curPoll.name);
-                sqliteCommand.Parameters.AddWithValue(":desc", curPoll.description);
-                sqliteCommand.Parameters.AddWithValue(":choice", newChoiceID);
-                sqliteCommand.Parameters.AddWithValue(":custom", curPoll.customChoiceEnabled);
-                sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correctchoice, customenabled) VALUES(:name, :desc, :choice, :custom)";
+                sqliteCommand.Parameters.AddWithValue(":description", curPoll.description);
+                sqliteCommand.Parameters.AddWithValue(":correctchoice", curPoll.correctChoiceID);
+                sqliteCommand.Parameters.AddWithValue(":customenabled", curPoll.customChoiceEnabled);
+                sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correctchoice, customenabled) VALUES(:name, :description, :correctchoice, :customenabled)";
                 sqliteCommand.ExecuteNonQuery();
                 
                 sqliteCommand.CommandText = "SELECT last_insert_rowid()";
                 curPoll.id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
 
                 sqliteCommand.Parameters.Clear();
-                sqliteCommand.CommandText = "INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES(:pollid, :choiceid)";
-                sqliteCommand.Parameters.AddWithValue(":pollid", curPoll.id);
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":choiceid"));
+                sqliteCommand.CommandText = "INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES(:poll_id, :choice_id)";
+                sqliteCommand.Parameters.AddWithValue(":poll_id", curPoll.id);
+                sqliteCommand.Parameters.Add(new SQLiteParameter(":choice_id"));
 
                 foreach (Choice curChoice in curPoll.choices)
                 {
-                    sqliteCommand.Parameters[":choiceid"].Value = curChoice.id;
+                    sqliteCommand.Parameters[":choice_id"].Value = curChoice.id;
                     sqliteCommand.ExecuteNonQuery();
                 }
 
                 sqliteCommand.Parameters.Clear();
-                sqliteCommand.Parameters.AddWithValue(":pollsessid", newPollSession.id);
-                sqliteCommand.Parameters.AddWithValue(":pollid", curPoll.id);
-                sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsessid, :pollid)";
+                sqliteCommand.Parameters.AddWithValue(":pollsession_id", newPollSession.id);
+                sqliteCommand.Parameters.AddWithValue(":poll_id", curPoll.id);
+                sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsession_id, :poll_id)";
                 sqliteCommand.ExecuteNonQuery();
             }
 
             return Convert.ToInt32(newPollSession.id);
         }
 
+        /// <summary>
+        /// Save changed pollsession to database
+        /// </summary>
+        /// <param name="pollSession">PollSession object that is to be changed in database</param>
         static public void EditPollSession(PollSession pollSession)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
+            sqliteCommand.Parameters.AddWithValue(":pollsession_id", pollSession.id);
+            sqliteCommand.CommandText = "DELETE FROM " + POLLSESSION_POLLS_TABLE + " WHERE pollsession_id=:pollsession_id";
+            sqliteCommand.ExecuteNonQuery();
+
+            sqliteCommand.Parameters.Clear();
             sqliteCommand.Parameters.Add(new SQLiteParameter(":id", pollSession.id));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":name", pollSession.name));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", pollSession.testMode));
@@ -312,23 +317,27 @@ namespace Ilsrep.PollApplication.DAL
                     sqliteCommand.CommandText = "UPDATE " + POLLS_TABLE + " SET name=:name, description=:description, correctchoice=:correctchoice, customenabled=:customenabled WHERE id=:id";
                     sqliteCommand.ExecuteNonQuery();
                 }
-                /*
+                
                 sqliteCommand.Parameters.Clear();
-                sqliteCommand.CommandText = "INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES(:pollid, :choiceid)";
-                sqliteCommand.Parameters.AddWithValue(":pollid", curPoll.id);
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":choiceid"));
+                sqliteCommand.Parameters.AddWithValue(":poll_id", curPoll.id);
+                sqliteCommand.Parameters.Add(new SQLiteParameter(":choice_id"));
 
+                sqliteCommand.CommandText = "DELETE FROM " + POLL_CHOICES_TABLE + " WHERE poll_id=:poll_id";
+                sqliteCommand.ExecuteNonQuery();
+
+                sqliteCommand.CommandText = "INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES(:poll_id, :choice_id)";
                 foreach (Choice curChoice in curPoll.choices)
                 {
-                    sqliteCommand.Parameters[":choiceid"].Value = curChoice.id;
+                    sqliteCommand.Parameters[":choice_id"].Value = curChoice.id;
                     sqliteCommand.ExecuteNonQuery();
                 }
 
                 sqliteCommand.Parameters.Clear();
-                sqliteCommand.Parameters.AddWithValue(":pollsessid", newPollSession.id);
-                sqliteCommand.Parameters.AddWithValue(":pollid", curPoll.id);
-                sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsessid, :pollid)";
-                sqliteCommand.ExecuteNonQuery();*/
+                sqliteCommand.Parameters.AddWithValue(":pollsession_id", pollSession.id);
+                sqliteCommand.Parameters.AddWithValue(":poll_id", curPoll.id);
+
+                sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsession_id, :poll_id)";
+                sqliteCommand.ExecuteNonQuery();
             }
         }
 
