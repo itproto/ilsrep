@@ -81,6 +81,7 @@ if (reply==0){
       serverPortString = win.askUser("\nPlease enter server:port"
                     + " to connect to\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
+//if(serverPortString==null)serverPortString="127.0.0.1:3320";
             TcpCommunicator communicator = null;
 
             communicator = initTcpCommunicator(serverPortString);
@@ -204,7 +205,7 @@ Boolean res=null;
 
         win.setVisible(false);
 win.alert(resultingOutput);        
-if(reply==1){
+if(reply==0){
         
 
         TcpCommunicator communicator = initTcpCommunicator(serverPortString);
