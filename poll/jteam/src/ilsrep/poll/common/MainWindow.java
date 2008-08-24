@@ -9,7 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
-public class MainWindow extends JFrame  {
+public class MainWindow extends JFrame  implements ActionListener{
+private String passwordtest=null;
+private JDialog dialog=new JDialog(this,"New Password",true);
+private JLabel jjb1=new JLabel("Enter password");
+private JLabel jjb2=new JLabel("Confirm password");
+private JTextField jtxt1 =new JTextField(10);
+private JTextField jtxt2 =new JTextField(10);
+private JButton bb1 = new JButton("Ok");
 public MainWindow(){
 
 
@@ -25,6 +32,7 @@ pane.setMessageType(JOptionPane.QUESTION_MESSAGE);
 pane.setMessage(query);
 Object[] a= {"OK"};
 pane.setOptions(a);
+pane.setInitialValue("OK");
 pane.setOptionType(JOptionPane.DEFAULT_OPTION);
 pane.setWantsInput(true);
 JDialog dialog = pane.createDialog(this, query);
@@ -66,7 +74,24 @@ return (s==0)?true : false;
 
 
 }
-
+public String createPass(){
+FlowLayout layout = new FlowLayout();
+dialog.getContentPane().setLayout(layout);
+dialog.getContentPane().add(jjb1);
+dialog.getContentPane().add(jtxt1);
+dialog.getContentPane().add(jjb2);
+dialog.getContentPane().add(jtxt2);
+ bb1.setActionCommand("trypass");
+bb1.addActionListener(this);
+dialog.getContentPane().add(bb1);
+dialog.getContentPane().doLayout();
+dialog.pack();
+dialog.show();
+ while (passwordtest==null){
+try{Thread.sleep(250);} catch(Exception arg) {System.out.println(arg.getMessage());}
+}
+return passwordtest;
+}
 public String getChoice(ButtonGroup group, String query){
 this.setTitle("Please choose");
  RadioPanel newContentPane = new RadioPanel(group,query);
@@ -83,5 +108,13 @@ try{Thread.sleep(250);} catch(Exception arg) {System.out.println(arg.getMessage(
 return newContentPane.reply;
 	
 }
+public void actionPerformed(ActionEvent e) {
+    if ("trypass".equals(e.getActionCommand())){
+if(jtxt1.getText().equals(jtxt2.getText())) {passwordtest=jtxt1.getText();
 
+dialog.dispose();
+} else this.alert("Passwords dont match");
+
+}
+}
 }
