@@ -110,16 +110,7 @@ if (reply==0){
                 String password = "";
                 boolean notSame = true;
                 win.alert("\nUser doesn't exist. Creating user.");
-                while (notSame) {
-                    password = win.askUser("Enter new password");
-                    if (password.equals(win.askUser("Confirm password"))) {
-                        notSame = false;
-                    }
-                    else {
-                        win.alert("\nPasswords don't match. Try again.");
-                    }
-
-                }
+                password=win.createPass();
                 user.setPass(password);
                 user.setNew("true");
                 user = communicator.sendUser(user);
