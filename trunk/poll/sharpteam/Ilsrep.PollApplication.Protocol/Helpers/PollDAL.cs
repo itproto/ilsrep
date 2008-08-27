@@ -402,7 +402,7 @@ namespace Ilsrep.PollApplication.DAL
                 Init();
             }
 
-            if (!user.auth && !user.exist && !user.isNew)
+            if (!user.isNew)
             {
                 SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", user.username));
@@ -410,29 +410,21 @@ namespace Ilsrep.PollApplication.DAL
                 SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
                 if (sqliteReader.HasRows)
                 {
-                    user.exist = true;
+                    if (sqliteReader["password"].ToString() == user.password)
+                    {
+                        user.auth = true;
+                    }
+                    else
+                    {
+                        user.auth = false;
+                    }
                 }
                 else
                 {
-                    user.exist = false;
+                    user.isNew = true;
                 }
             }
-            else if (!user.auth && user.exist && !user.isNew)
-            {
-                SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", user.username));
-                sqliteCommand.CommandText = "SELECT * FROM " + USERS_TABLE + " WHERE userName=:userName";
-                SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
-                if (sqliteReader["password"].ToString() == user.password)
-                {
-                    user.auth = true;
-                }
-                else
-                {
-                    user.auth = false;
-                }
-            }
-            else if (!user.auth && !user.exist && user.isNew)
+            else
             {
                 SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", user.username));

@@ -24,10 +24,7 @@ namespace Ilsrep.PollApplication.Model
         /// Is allowed access
         /// </summary>
         [XmlAttribute("auth")] public bool auth = false;
-        /// <summary>
-        /// Does username already exists
-        /// </summary>
-        [XmlAttribute("exist")]public bool exist = false;
+        [XmlAttribute("exist")] public bool exist = false; //temporary
         /// <summary>
         /// If true - server creates new user
         /// </summary>
