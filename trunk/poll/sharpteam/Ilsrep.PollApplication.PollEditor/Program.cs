@@ -249,7 +249,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 int choiceIndex;
                 Console.WriteLine( "Poll contains {0} choices.", newPoll.choices.Count );
 
-                if ( newPoll.choices.Count > 0 )
+                if ( newPoll.choices.Count >= (pollSession.testMode ? 2 : 0) )
                 {
                     Console.WriteLine( "Actions:" );
                     Console.WriteLine( "1. Add new choice" );
@@ -288,12 +288,9 @@ namespace Ilsrep.PollApplication.PollEditor
                 }
                 else
                 {
-                    if ( newPoll.choices.Count >= (pollSession.testMode ? 2 : 0) )
-                    {
-                        bool addNewChoice = InputHelper.ToBoolean( InputHelper.AskQuestion( "Add new choice[y/n]?", new string[] { STRING_YES, STRING_NO } ) );
-                        if ( addNewChoice == false )
-                            break;
-                    }
+/*                    bool addNewChoice = InputHelper.ToBoolean( InputHelper.AskQuestion( "Add new choice[y/n]?", new string[] { STRING_YES, STRING_NO } ) );
+                    if ( addNewChoice == false )
+                        break;*/
 
                     choiceIndex = newPoll.choices.Count;
                     newPoll.choices.Add( new Choice() );
@@ -319,6 +316,11 @@ namespace Ilsrep.PollApplication.PollEditor
             }
             else
             {
+                /*
+                foreach ( Choice choice in newPoll.choices )
+                    Console.WriteLine( "\t" + choice.id + ". " + choice.choice );
+                */
+
                 // Ask correct choice
                 Console.WriteLine("Which one is correct?");
                 newPoll.correctChoiceID = newPoll.GetChoiceId();
