@@ -13,10 +13,6 @@ using System.Threading;
 using System.Text;
 using System.Xml;
 using System.IO;
-/*
-using log4net;
-using log4net.Config;
-*/
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Communication;
@@ -24,7 +20,7 @@ using Ilsrep.PollApplication.DAL;
 
 namespace Ilsrep.PollApplication.PollServer
 {
-    partial class Program : ServiceBase
+    partial class PollServer : ServiceBase
     {
         private class StateObject
         {
@@ -65,7 +61,7 @@ namespace Ilsrep.PollApplication.PollServer
         /// <summary>
         /// Event Log
         /// </summary>
-        EventLog log = new EventLog();
+        EventLog log = null;
         /// <summary>
         /// IP Address to which bind the server
         /// </summary>
@@ -86,8 +82,12 @@ namespace Ilsrep.PollApplication.PollServer
         /// Thread signal
         /// </summary>
         private static ManualResetEvent allDone = new ManualResetEvent( false );
+        /// <summary>
+        /// Main thread that server will run on
+        /// </summary>
+        private Thread serverThread = null;
 
-        public Program()
+        public PollServer()
         {
             InitializeComponent();
         }
@@ -98,7 +98,15 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="args">arguments</param>
         public static void Main( string[] args )
         {
-            ServiceBase.Run( new Program() );
+            if ( args[0] == "debug" )
+            {
+                PollServer pollServer = new PollServer();
+                pollServer.Run();
+            }
+            else
+            {
+                ServiceBase.Run( new PollServer() );
+            }
         }
 
         protected override void OnStart( string[] args )
@@ -106,56 +114,9 @@ namespace Ilsrep.PollApplication.PollServer
             // Configure logger
             //XmlConfigurator.Configure( new System.IO.FileInfo( PATH_TO_LOG_CONFIG ) );
 
-            // Create the source, if it does not already exist.
-            if ( !EventLog.SourceExists( "PollServer" ) )
-            {
-                //An event log source should not be created and immediately used.
-                //There is a latency time to enable the source, it should be created
-                //prior to executing the application that uses the source.
-                //Execute this sample a second time to use the new source.
-                EventLog.CreateEventSource( "PollServer", "Application" );
-
-                return;
-            }
-
-            log.Source = "PollServer";
-            log.Log = "Application";
-
-            host = IPAddress.Parse( ConfigurationManager.AppSettings.Get( "host" ) );
-            port = Convert.ToInt32( ConfigurationManager.AppSettings.Get( "port" ) );
-
-            /*
-            // Parse command line
-            NameValueCollection commandLineParameters = CommandLineParametersHelper.Parse( args );
-            if ( commandLineParameters["host"] != null && commandLineParameters["host"] != String.Empty )
-            {
-                try
-                {
-                    host = IPAddress.Parse( commandLineParameters["host"] );
-                }
-                catch ( Exception exception )
-                {
-                    log.Error( "Invalid host. " + exception.Message );
-                }
-            }
-            if ( commandLineParameters["port"] != null && commandLineParameters["port"] != String.Empty )
-            {
-                try
-                {
-                    port = Convert.ToInt32( commandLineParameters["port"] );
-                }
-                catch ( Exception exception )
-                {
-                    log.Error( "Invalid port. " + exception.Message );
-                }
-            }
-            //if ( commandLineParameters["data"] != null && commandLineParameters["data"] != String.Empty )
-                //pathToDatabase = commandLineParameters["data"];
-            */
-            
-            Run();
+            serverThread = new Thread( new ThreadStart( Run ) );
+            serverThread.Start();
         }
-
 
         /// <summary>
         /// Stop server. Close main listening socket and all the clients' sockets.
@@ -177,13 +138,36 @@ namespace Ilsrep.PollApplication.PollServer
         /// </summary>
         public void Run()
         {
+            // Create the source, if it does not already exist.
+            if ( !EventLog.SourceExists( "PollServer" ) )
+            {
+                //An event log source should not be created and immediately used.
+                //There is a latency time to enable the source, it should be created
+                //prior to executing the application that uses the source.
+                //Execute this sample a second time to use the new source.
+                EventLog.CreateEventSource( "PollServer", "Application" );
+
+                return;
+            }
+
+            log = this.EventLog;
+            log.Source = "PollServer";
+            log.Log = "Application";
+
+            if ( ConfigurationManager.AppSettings.Get( "host" ) == "any" )
+                host = IPAddress.Any;
+            else
+                host = IPAddress.Parse( ConfigurationManager.AppSettings.Get( "host" ) );
+            port = Convert.ToInt32( ConfigurationManager.AppSettings.Get( "port" ) );
+            PollDAL.connectionString = ConfigurationManager.AppSettings.Get( "connectionString" );
+
             server = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
 
             try
             {
                 server.Bind( new IPEndPoint( host, port ) );
                 server.Listen( 5 );
-
+                
                 log.WriteEntry( "Server started on host: " + host.ToString() + ":" + port, EventLogEntryType.Information );
 
                 while ( true )

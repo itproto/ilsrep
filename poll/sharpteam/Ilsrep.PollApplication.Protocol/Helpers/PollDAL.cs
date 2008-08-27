@@ -18,7 +18,7 @@ namespace Ilsrep.PollApplication.DAL
         /// <summary>
         /// Connection string specifying path to database file among other connection parameters
         /// </summary>
-        private const string connectionString = "Data Source=\"AppData/pollserver.db\"";
+        static public string connectionString = "Data Source=\"AppData/pollserver.db\"";
         /// <summary>
         /// Database connection
         /// </summary>
@@ -71,7 +71,7 @@ namespace Ilsrep.PollApplication.DAL
             if (isConnected)
                 dbConnection.Close();
         }
-        
+
         /// <summary>
         /// Open database connection
         /// </summary>

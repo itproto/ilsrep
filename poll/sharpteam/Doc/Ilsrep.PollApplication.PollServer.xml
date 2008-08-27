@@ -4,14 +4,43 @@
         <name>Ilsrep.PollApplication.PollServer</name>
     </assembly>
     <members>
-        <member name="T:Ilsrep.PollApplication.PollServer.PollServer">
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServerInstaller.components">
             <summary>
-            PollServer handles connections and creates new threads to work with them.
+            Required designer variable.
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.PATH_TO_LOG_CONFIG">
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServerInstaller.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServerInstaller.InitializeComponent">
             <summary>
-            path to Logger configuration file
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
+            <summary>
+            Event Log
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.host">
@@ -22,11 +51,6 @@
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.port">
             <summary>
             Port to which bind the server
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
-            <summary>
-            Logger
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.server">
@@ -44,20 +68,25 @@
             Thread signal
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.serverThread">
+            <summary>
+            Main thread that server will run on
+            </summary>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Main(System.String[])">
             <summary>
             Main function
             </summary>
             <param name="args">arguments</param>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Start">
-            <summary>
-            Start Server. Inits socket and starts listening. Sets async accept callback.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Stop">
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStop">
             <summary>
             Stop server. Close main listening socket and all the clients' sockets.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Run">
+            <summary>
+            Start Server. Inits socket and starts listening. Sets async accept callback.
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnClientConnect(System.IAsyncResult)">
