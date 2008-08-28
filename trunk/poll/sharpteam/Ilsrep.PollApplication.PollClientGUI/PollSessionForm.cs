@@ -14,6 +14,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
     {
         public static Poll poll = new Poll();
         public static List<Poll> polls = new List<Poll>();
+        public static bool isTestModeEnabled = false;
         
         public PollSessionForm()
         {
@@ -52,10 +53,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             if (isTestMode.Checked)
             {
+                isTestModeEnabled = true;
                 minScoreField.Enabled = true;
             }
             else
             {
+                isTestModeEnabled = false;
                 minScoreField.Enabled = false;
             }
         }
@@ -127,6 +130,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 MessageBox.Show("No polls in PollSession...", "Info");
                 addButton_Click(null, EventArgs.Empty);
+                return;
             }
 
             if (nameField.Text == String.Empty)

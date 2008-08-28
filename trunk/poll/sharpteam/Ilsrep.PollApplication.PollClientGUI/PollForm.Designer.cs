@@ -75,6 +75,7 @@
             // isCustomChoiceEnabled
             // 
             this.isCustomChoiceEnabled.AutoSize = true;
+            this.isCustomChoiceEnabled.Enabled = false;
             this.isCustomChoiceEnabled.Location = new System.Drawing.Point(77, 63);
             this.isCustomChoiceEnabled.Name = "isCustomChoiceEnabled";
             this.isCustomChoiceEnabled.Size = new System.Drawing.Size(131, 17);
