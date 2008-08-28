@@ -98,7 +98,7 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="args">arguments</param>
         public static void Main( string[] args )
         {
-            if ( args[0] == "debug" )
+            if ( args.Length !=0 && args[0] == "debug" )
             {
                 PollServer pollServer = new PollServer();
                 pollServer.Run();
