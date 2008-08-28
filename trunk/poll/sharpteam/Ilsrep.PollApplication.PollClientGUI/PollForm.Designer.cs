@@ -89,6 +89,7 @@
             this.choicesListBox.Name = "choicesListBox";
             this.choicesListBox.Size = new System.Drawing.Size(262, 173);
             this.choicesListBox.TabIndex = 5;
+            this.choicesListBox.SelectedIndexChanged += new System.EventHandler(this.choicesListBox_SelectedIndexChanged);
             // 
             // addButton
             // 
@@ -98,6 +99,7 @@
             this.addButton.TabIndex = 6;
             this.addButton.Text = "Add new choice";
             this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
             // editButton
             // 
@@ -107,6 +109,7 @@
             this.editButton.TabIndex = 7;
             this.editButton.Text = "Edit choice";
             this.editButton.UseVisualStyleBackColor = true;
+            this.editButton.Click += new System.EventHandler(this.editButton_Click);
             // 
             // removeButton
             // 
@@ -116,6 +119,7 @@
             this.removeButton.TabIndex = 8;
             this.removeButton.Text = "Remove choice";
             this.removeButton.UseVisualStyleBackColor = true;
+            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
             // 
             // submitButton
             // 
@@ -125,6 +129,7 @@
             this.submitButton.TabIndex = 9;
             this.submitButton.Text = "Submit";
             this.submitButton.UseVisualStyleBackColor = true;
+            this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
             // 
             // PollForm
             // 
@@ -141,6 +146,9 @@
             this.Controls.Add(this.nameField);
             this.Controls.Add(this.descriptionLabel);
             this.Controls.Add(this.nameLabel);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(294, 393);
+            this.MinimumSize = new System.Drawing.Size(294, 393);
             this.Name = "PollForm";
             this.Text = "Poll";
             this.ResumeLayout(false);

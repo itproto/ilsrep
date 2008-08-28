@@ -92,6 +92,7 @@
             this.pollsListBox.Name = "pollsListBox";
             this.pollsListBox.Size = new System.Drawing.Size(247, 173);
             this.pollsListBox.TabIndex = 7;
+            this.pollsListBox.SelectedIndexChanged += new System.EventHandler(this.pollsListBox_SelectedIndexChanged);
             // 
             // addButton
             // 
@@ -101,6 +102,7 @@
             this.addButton.TabIndex = 8;
             this.addButton.Text = "Add new poll";
             this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
             // editButton
             // 
@@ -110,6 +112,7 @@
             this.editButton.TabIndex = 9;
             this.editButton.Text = "Edit poll";
             this.editButton.UseVisualStyleBackColor = true;
+            this.editButton.Click += new System.EventHandler(this.editButton_Click);
             // 
             // removeButton
             // 
@@ -119,6 +122,7 @@
             this.removeButton.TabIndex = 10;
             this.removeButton.Text = "Remove poll";
             this.removeButton.UseVisualStyleBackColor = true;
+            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
             // 
             // submitButton
             // 
@@ -128,6 +132,7 @@
             this.submitButton.TabIndex = 11;
             this.submitButton.Text = "Submit";
             this.submitButton.UseVisualStyleBackColor = true;
+            this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
             // 
             // PollSessionForm
             // 

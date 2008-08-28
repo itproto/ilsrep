@@ -102,6 +102,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
 
             pollPacket = ReceivePollPacket(pollPacket);
+
             if (pollPacket == null)
                 return;
 
