@@ -1,32 +1,29 @@
-package ilsrep.poll.client;
-import ilsrep.poll.common.Pollsession;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import ilsrep.poll.common.Item;
-import ilsrep.poll.common.Poll;
-import ilsrep.poll.common.Pollsessionlist;
-import ilsrep.poll.common.AnswerItem;
-import ilsrep.poll.common.Answers;
-import ilsrep.poll.common.User;
-import ilsrep.poll.common.MainWindow;
+package ilsrep.poll.client.gui;
+
+import ilsrep.poll.client.TcpCommunicator;
+import ilsrep.poll.common.model.Item;
+import ilsrep.poll.common.model.Poll;
+import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.AnswerItem;
+import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Pollsessionlist;
+import ilsrep.poll.common.protocol.User;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JRadioButton;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.util.jar.Manifest;
-import java.util.jar.JarFile;
-import java.util.jar.Attributes;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.JFileChooser;
+
 /**
  * Main class for task 7 - Poll.
  * 
@@ -47,41 +44,35 @@ public class PollClientGUI {
      *             When I/O exception occurs.
      */
 
+    public static void main(String[] args) throws JAXBException, IOException {
+        List<AnswerItem> answers = new ArrayList<AnswerItem>();
+        String serverPortString = null;
+        MainWindow win = new MainWindow();
+        Pollsession polls = null;
+        String name = win.askUser("Enter Name");
+        Object[] options = { "Use Server", "Use local file" };
+        int reply = win.askUserChoice("Please choose poll source", options);
 
+        if (reply == 1) {
+            File pollFile = null;
+            JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
+            Unmarshaller um = cont.createUnmarshaller();
+            JFileChooser chooser = new JFileChooser();
 
- public static void main(String[] args)  throws JAXBException, IOException {
-List<AnswerItem> answers = new ArrayList<AnswerItem>();
-String serverPortString = null;
-MainWindow win=new MainWindow();
-Pollsession polls=null;
-String name=win.askUser("Enter Name");
-Object[] options = {"Use Server",
-                    "Use local file"};
-int reply=win.askUserChoice("Please choose poll source",options);
-
- if (reply==1) {
-File pollFile=null;
-JAXBContext cont = JAXBContext.newInstance(Pollsession.class);
-        Unmarshaller um = cont.createUnmarshaller();
-       JFileChooser chooser = new JFileChooser();
-
-
-
-
-    int returnVal = chooser.showOpenDialog(win);
-    if(returnVal == JFileChooser.APPROVE_OPTION) {
-       pollFile=chooser.getSelectedFile();
-    }
+            int returnVal = chooser.showOpenDialog(win);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                pollFile = chooser.getSelectedFile();
+            }
 
             // Serialising xml file into object model.
-            
+
             polls = (Pollsession) um.unmarshal(pollFile);
         }
-if (reply==0){
-      serverPortString = win.askUser("\nPlease enter server:port"
+        if (reply == 0) {
+            serverPortString = win.askUser("\nPlease enter server:port"
                     + " to connect to\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
-//if(serverPortString==null)serverPortString="127.0.0.1:3320";
+            // if(serverPortString==null)serverPortString="127.0.0.1:3320";
             TcpCommunicator communicator = null;
 
             communicator = initTcpCommunicator(serverPortString);
@@ -89,7 +80,7 @@ if (reply==0){
             User user = new User();
             user.setUserName(name);
 
-           user = communicator.sendUser(user);
+            user = communicator.sendUser(user);
 
             // comm2.finalize();
             if (user.getExist().equals("true")) {
@@ -108,35 +99,35 @@ if (reply==0){
             }
             else {
                 String password = "";
-                boolean notSame = true;
+                // boolean notSame = true;
                 win.alert("\nUser doesn't exist. Creating user.");
-                password=win.createPass();
+                password = win.createPass();
                 user.setPass(password);
                 user.setNew("true");
                 user = communicator.sendUser(user);
                 win.alert("\nUser created. Welcome!");
             }
-Pollsessionlist lst=communicator.listXml();
- ButtonGroup group = new ButtonGroup();
- if (lst!= null
-                    && lst.getItems() != null) {
-             
+            Pollsessionlist lst = communicator.listXml();
+            ButtonGroup group = new ButtonGroup();
+            if (lst != null && lst.getItems() != null) {
+
                 for (Item i : lst.getItems()) {
-JRadioButton jrb= new JRadioButton(i.getName());
-System.out.println(i.getName()+"\n");
-jrb.setActionCommand(i.getId());
-                   group.add(jrb);
+                    JRadioButton jrb = new JRadioButton(i.getName());
+                    System.out.println(i.getName() + "\n");
+                    jrb.setActionCommand(i.getId());
+                    group.add(jrb);
                 }
             }
             else {
                 win.alert("\nList is empty or server sent no list.");
             }
 
-    
-polls=communicator.getPollsession(win.getChoice(group,"Choose pollsession"));
-}
-if (polls!=null) win.alert("Pollsession aquired");
-  String testMode = "false";
+            polls = communicator.getPollsession(win.getChoice(group,
+                    "Choose pollsession"));
+        }
+        if (polls != null)
+            win.alert("Pollsession aquired");
+        String testMode = "false";
         if (polls.getTestMode() != null)
             testMode = polls.getTestMode();
         float minScore = -1;
@@ -147,15 +138,16 @@ if (polls!=null) win.alert("Pollsession aquired");
         catch (NumberFormatException e) {
             // If it is wrong in xml - it stays "-1".
         }
- String resultingOutput = "Results\n\n"; // here we will store everything
+        String resultingOutput = "Results\n\n"; // here we will store everything
         // we will need to output
-        
-Boolean res=null;
+
+        Boolean res = null;
         res = win.askYesNo("\nOk, " + name + ", are you ready for poll?");
-        if (!res)return;
-    String choice = null;
-   
-     float i = 0, n = 0;
+        if (!res)
+            return;
+        String choice = null;
+
+        float i = 0, n = 0;
         for (Poll cur : polls.getPolls()) {
             while (choice == null)
                 choice = cur.queryUserGUI(win);
@@ -181,7 +173,6 @@ Boolean res=null;
             choice = null;
         }
 
- 
         if (testMode.compareTo("true") == 0) {
             // BUG: May happen too long number after comma.
             resultingOutput += "\nYour score " + Float.toString(i / n) + "\n";
@@ -195,46 +186,25 @@ Boolean res=null;
         }
 
         win.setVisible(false);
-win.alert(resultingOutput);        
-if(reply==0){
-        
+        win.alert(resultingOutput);
+        if (reply == 0) {
 
-        TcpCommunicator communicator = initTcpCommunicator(serverPortString);
+            TcpCommunicator communicator = initTcpCommunicator(serverPortString);
 
-        Answers ans = new Answers();
-        ans.setUsername(name);
-        ans.setPollSesionId(polls.getId());
-        ans.setAnswers(answers);
+            Answers ans = new Answers();
+            ans.setUsername(name);
+            ans.setPollSesionId(polls.getId());
+            ans.setAnswers(answers);
 
-        communicator.sendResult(ans);
-        communicator.finalize();
+            communicator.sendResult(ans);
+            communicator.finalize();
 
-        win.alert("\nResults sent");
-}
-return;
+            win.alert("\nResults sent");
+        }
+        return;
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-    
     private static TcpCommunicator initTcpCommunicator(String serverPortString) {
         TcpCommunicator communicator = null;
         if (serverPortString.compareTo("") != 0) {

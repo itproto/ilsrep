@@ -1,11 +1,13 @@
 package ilsrep.poll.client;
-import ilsrep.poll.common.Pollsessionlist;
-import ilsrep.poll.common.Poll;
-import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.common.AnswerItem;
-import ilsrep.poll.common.Answers;
-import ilsrep.poll.common.Item;
-import ilsrep.poll.common.User;
+
+import ilsrep.poll.common.model.Item;
+import ilsrep.poll.common.model.Poll;
+import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.AnswerItem;
+import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Pollsessionlist;
+import ilsrep.poll.common.protocol.User;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -126,10 +128,9 @@ public class PollClient {
                 System.out.println("\nUser created. Welcome!");
             }
 
-        //    communicator.listXml();
-Pollsessionlist lst=communicator.listXml();
- if (lst!= null
-                    && lst.getItems() != null) {
+            // communicator.listXml();
+            Pollsessionlist lst = communicator.listXml();
+            if (lst != null && lst.getItems() != null) {
                 System.out.println("\nList of pollsessions stored on server:");
 
                 for (Item i : lst.getItems()) {

@@ -1,9 +1,10 @@
 package ilsrep.poll.client;
 
-import ilsrep.poll.common.Choice;
-import ilsrep.poll.common.Poll;
-import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.common.Description;
+import ilsrep.poll.common.model.Choice;
+import ilsrep.poll.common.model.Description;
+import ilsrep.poll.common.model.Poll;
+import ilsrep.poll.common.model.Pollsession;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,34 +21,69 @@ import java.util.jar.Attributes;
  * 
  */
 public class PollEditor {
-public static final String YES="y";
 
-public static String getScore(){
-Boolean input=true;
-Double score=null;
-while(input){
-  score=Double.parseDouble(PollClient.readFromConsole("Enter minimum Score", PollClient.ANSWER_TYPE_DOUBLE));
-if (score<1) input=false; else System.out.println("Score has to be less then 1. Try again");
-}
-    return Double.toString(score);      
+    public static final String YES = "y";
 
+    public static String getScore() {
+        Boolean input = true;
+        Double score = null;
+        while (input) {
+            score = Double.parseDouble(PollClient.readFromConsole(
+                    "Enter minimum Score", PollClient.ANSWER_TYPE_DOUBLE));
+            if (score < 1)
+                input = false;
+            else
+                System.out.println("Score has to be less then 1. Try again");
+        }
+        return Double.toString(score);
 
-}
+    }
 
-public static String getCorrect(int max){
-String correct="";
-Boolean input=true;
-while(input){
-correct=PollClient.readFromConsole("Enter correct choice number",PollClient.ANSWER_TYPE_INTEGER);
-if (Integer.parseInt(correct)<max) input=false; else System.out.println("You entered a number outside choice scope. Try again");
-}
-return correct;
+    public static String getCorrect(int max) {
+        String correct = "";
+        Boolean input = true;
+        while (input) {
+            correct = PollClient.readFromConsole("Enter correct choice number",
+                    PollClient.ANSWER_TYPE_INTEGER);
+            if (Integer.parseInt(correct) < max)
+                input = false;
+            else
+                System.out
+                        .println("You entered a number outside choice scope. Try again");
+        }
+        return correct;
 
+    }
 
-}
-    // each parameter of XML is being promted to user. After entering number of
-    // the correct choice the user is required to enter
-    // minumum the number of choices that equals it
+    public static Choice createChoice(int id) {
+        Choice choice = new Choice();
+        choice.setId(Integer.toString(id));
+        choice.setName(PollClient.readFromConsole(Integer.toString(id) + ")>"));
+        return choice;
+    }
+
+    public static Poll createPoll(int id, Boolean testmode) {
+        Poll poll = new Poll();
+        poll.setId(Integer.toString(id));
+        poll.setName(PollClient.readFromConsole("Enter poll name"));
+        Description desc = new Description();
+        desc.setValue(PollClient.readFromConsole("Enter poll description"));
+        poll.setDescription(desc);
+        poll
+                .setCustomEnabled(PollClient.readFromConsole(
+                        "Allow custom choice?", PollClient.Y_N_ANSWER_SET)
+                        .equals(YES) ? " true" : "false");
+        int choiceNum = Integer.parseInt(PollClient
+                .readFromConsole("How many options will the poll have?"));
+        ArrayList<Choice> choices = new ArrayList<Choice>();
+        for (int i = 1; i <= choiceNum; i++)
+            choices.add(createChoice(i));
+        poll.setChoices(choices);
+        if (testmode)
+            poll.setCorrectChoice(getCorrect(choiceNum));
+        return poll;
+    }
+
     /**
      * Main method for poll editor. <br>
      * 
@@ -56,28 +92,6 @@ return correct;
      * @throws IOException
      *             On console input errors.
      */
-public static Choice createChoice(int id){
-Choice choice=new Choice();
-choice.setId(Integer.toString(id));
-choice.setName(PollClient.readFromConsole(Integer.toString(id) +")>"));
-return choice;
-}
-public static Poll createPoll(int id, Boolean testmode) {
-Poll poll=new Poll();
-poll.setId(Integer.toString(id));
-poll.setName(PollClient.readFromConsole("Enter poll name"));
-Description desc= new Description();
-desc.setValue(PollClient.readFromConsole("Enter poll description"));
-poll.setDescription(desc);
-poll.setCustomEnabled(PollClient.readFromConsole("Allow custom choice?",PollClient.Y_N_ANSWER_SET).equals(YES)?" true" : "false");
-int choiceNum=Integer.parseInt(PollClient.readFromConsole("How many options will the poll have?"));
-ArrayList<Choice> choices=new ArrayList<Choice>();
-for (int i=1;i<=choiceNum;i++) choices.add(createChoice(i));
-poll.setChoices(choices);
-if(testmode) poll.setCorrectChoice(getCorrect(choiceNum));
-return poll;           
-}
-
     public static void main(String[] args) throws IOException {
         try {
             JarFile jar = new JarFile("./poll.jar");
@@ -135,25 +149,30 @@ return poll;
                     communicator.finalize();
                 }
                 else {
-Pollsession pollSession=new Pollsession();
-pollSession.setName(PollClient.readFromConsole("Enter pollsession name"));
- pollSession.setTestMode(((PollClient.readFromConsole(
-                    "Will this poll run in testmode?",
-                    PollClient.Y_N_ANSWER_SET).compareTo(YES) == 0) ? "true"
-                    : "false"));
- if (pollSession.getTestMode().equals("true")) {
-                pollSession.setMinScore(getScore());
-            }
-int pollNum=Integer.parseInt(PollClient.readFromConsole("How many polls will the session have?"));
-ArrayList<Poll> polls=new ArrayList<Poll>();
-for (int i=1;i<=pollNum;i++) polls.add(createPoll(i,pollSession.getTestMode().equals("true")? true : false ));
-pollSession.setPolls(polls);
-TcpCommunicator communicator = new TcpCommunicator();
+                    Pollsession pollSession = new Pollsession();
+                    pollSession.setName(PollClient
+                            .readFromConsole("Enter pollsession name"));
+                    pollSession
+                            .setTestMode(((PollClient.readFromConsole(
+                                    "Will this poll run in testmode?",
+                                    PollClient.Y_N_ANSWER_SET).compareTo(YES) == 0) ? "true"
+                                    : "false"));
+                    if (pollSession.getTestMode().equals("true")) {
+                        pollSession.setMinScore(getScore());
+                    }
+                    int pollNum = Integer
+                            .parseInt(PollClient
+                                    .readFromConsole("How many polls will the session have?"));
+                    ArrayList<Poll> polls = new ArrayList<Poll>();
+                    for (int i = 1; i <= pollNum; i++)
+                        polls.add(createPoll(i, pollSession.getTestMode()
+                                .equals("true") ? true : false));
+                    pollSession.setPolls(polls);
+                    TcpCommunicator communicator = new TcpCommunicator();
 
                     communicator.sendPollsession(pollSession);
 
                     communicator.finalize();
-
 
                 }
         }
@@ -287,10 +306,10 @@ TcpCommunicator communicator = new TcpCommunicator();
     /**
      * Promts user in console question given and accepts answer <code>y</code>
      * or <code>n</code>.<br>
-     * Returns <code>true</code> only if users answers <code>yes</code>.
+     * Returns <code>true</code> only if users answers <code>y</code>.
      * 
      * @param question
-     * @return
+     * @return True, if user answers <code>y</code>, false otherwise.
      */
     public static boolean askYesNo(String question) {
         return PollClient.readFromConsole(question + "? [y/N]").compareTo(YES) == 0;

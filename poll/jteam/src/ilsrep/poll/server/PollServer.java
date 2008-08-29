@@ -1,6 +1,6 @@
 package ilsrep.poll.server;
 
-import ilsrep.poll.common.Pollsession;
+import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.server.db.DBManager;
 import ilsrep.poll.server.db.SQLiteDBManager;
 

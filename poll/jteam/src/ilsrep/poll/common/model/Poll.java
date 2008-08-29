@@ -1,17 +1,19 @@
-package ilsrep.poll.common;
+package ilsrep.poll.common.model;
 
 import ilsrep.poll.client.PollClient;
+import ilsrep.poll.client.gui.MainWindow;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.*;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
+
 /**
  * The "poll" element.
  * 
@@ -177,31 +179,33 @@ public class Poll {
 
         return selection;
     }
-public String queryUserGUI(MainWindow win) throws IOException {
+
+    public String queryUserGUI(MainWindow win) throws IOException {
         PollClient.consoleClearScreen();
-        String query="<html>Name: " + this.getName()+"<br>Desription: " + this.getDescription().getValue()+"<html>";
+        String query = "<html>Name: " + this.getName() + "<br>Desription: "
+                + this.getDescription().getValue() + "<html>";
 
         int pollNumber = 1;
- ButtonGroup group = new ButtonGroup();
+        ButtonGroup group = new ButtonGroup();
         for (Choice cur : this.getChoices()) {
-JRadioButton jrb= new JRadioButton(cur.getName());
-System.out.println(cur.getName()+"\n");
-jrb.setActionCommand(Integer.toString(pollNumber));
-group.add(jrb);
-                pollNumber++;
+            JRadioButton jrb = new JRadioButton(cur.getName());
+            System.out.println(cur.getName() + "\n");
+            jrb.setActionCommand(Integer.toString(pollNumber));
+            group.add(jrb);
+            pollNumber++;
         }
-        if (checkCustomEnabled()){
-JRadioButton jrb= new JRadioButton("your choice");
-jrb.setActionCommand("0");
-group.add(jrb);
-}
+        if (checkCustomEnabled()) {
+            JRadioButton jrb = new JRadioButton("your choice");
+            jrb.setActionCommand("0");
+            group.add(jrb);
+        }
         String selection = null;
         int selectionId = -1;
         // reading input data
-        selectionId = Integer.parseInt( win.getChoice(group,query));
+        selectionId = Integer.parseInt(win.getChoice(group, query));
 
         while (selectionId < 0 || selectionId > getChoices().size())
-            selectionId = Integer.parseInt(win.getChoice(group,query));
+            selectionId = Integer.parseInt(win.getChoice(group, query));
 
         // checking whether to output custom choice line
         if (checkCustomEnabled() && selectionId == 0) {
@@ -224,12 +228,11 @@ group.add(jrb);
         if (selectionId == Integer.parseInt(this.getCorrectChoice()))
             this.pass = "PASS";
 
-      //  System.out.println();
+        // System.out.println();
         // return the selected element
 
         return selection;
     }
-
 
     /**
      * @see #customEnabled

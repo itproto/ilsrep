@@ -1,3 +1,6 @@
 ilsrep.poll.client
-ilsrep.poll.common
+ilsrep.poll.client.gui
+ilsrep.poll.common.model
+ilsrep.poll.common.protocol
 ilsrep.poll.server
+ilsrep.poll.server.db

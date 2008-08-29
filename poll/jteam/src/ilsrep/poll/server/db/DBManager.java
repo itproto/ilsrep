@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.xpilotpanel.preferences.Preferences;
 import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
-import ilsrep.poll.common.Answers;
 import org.apache.commons.dbcp.BasicDataSource;
 
-import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.common.Poll;
-import ilsrep.poll.common.Description;
-import ilsrep.poll.common.Choice;
-import ilsrep.poll.common.Pollsessionlist;
-import ilsrep.poll.common.Item;
+import ilsrep.poll.common.model.Choice;
+import ilsrep.poll.common.model.Description;
+import ilsrep.poll.common.model.Item;
+import ilsrep.poll.common.model.Poll;
+import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.server.PollServer;
 import org.apache.log4j.Logger;
 
