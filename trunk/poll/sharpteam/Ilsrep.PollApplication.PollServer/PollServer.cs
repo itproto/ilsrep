@@ -119,6 +119,24 @@ namespace Ilsrep.PollApplication.PollServer
         /// <param name="args">passed arguments</param>
         protected override void OnStart( string[] args )
         {
+            System.IO.Directory.SetCurrentDirectory( System.AppDomain.CurrentDomain.BaseDirectory );
+
+            // Create the source, if it does not already exist.
+            if ( !EventLog.SourceExists( "PollServer" ) )
+            {
+                //An event log source should not be created and immediately used.
+                //There is a latency time to enable the source, it should be created
+                //prior to executing the application that uses the source.
+                //Execute this sample a second time to use the new source.
+                EventLog.CreateEventSource( "PollServer", "Application" );
+
+                return;
+            }
+
+            log = this.EventLog;
+            log.Source = "PollServer";
+            log.Log = "Application";
+
             serverThread = new Thread( new ThreadStart( Run ) );
             serverThread.Start();
         }
@@ -138,22 +156,6 @@ namespace Ilsrep.PollApplication.PollServer
         /// </summary>
         public void Run()
         {
-            // Create the source, if it does not already exist.
-            if ( !EventLog.SourceExists( "PollServer" ) )
-            {
-                //An event log source should not be created and immediately used.
-                //There is a latency time to enable the source, it should be created
-                //prior to executing the application that uses the source.
-                //Execute this sample a second time to use the new source.
-                EventLog.CreateEventSource( "PollServer", "Application" );
-
-                return;
-            }
-
-            log = this.EventLog;
-            log.Source = "PollServer";
-            log.Log = "Application";
-
             if ( ConfigurationManager.AppSettings.Get( "host" ) == "any" )
                 host = IPAddress.Any;
             else
