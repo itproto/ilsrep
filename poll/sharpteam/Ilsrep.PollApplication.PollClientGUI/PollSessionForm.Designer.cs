@@ -149,6 +149,9 @@
             this.Controls.Add(this.minScoreLabel);
             this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.nameField);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(280, 365);
+            this.MinimumSize = new System.Drawing.Size(280, 365);
             this.Name = "PollSessionForm";
             this.Text = "PollSession";
             this.ResumeLayout(false);
