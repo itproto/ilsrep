@@ -73,15 +73,26 @@
             Main thread that server will run on
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.serviceRunning">
+            <summary>
+            Flag to see if service is still running
+            </summary>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Main(System.String[])">
             <summary>
             Main function
             </summary>
             <param name="args">arguments</param>
         </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStart(System.String[])">
+            <summary>
+            Start server
+            </summary>
+            <param name="args">passed arguments</param>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStop">
             <summary>
-            Stop server. Close main listening socket and all the clients' sockets.
+            Stop server.
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Run">
