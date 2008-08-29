@@ -20,7 +20,7 @@ namespace Ilsrep.PollApplication.PollServer
 
             //# Service Account Information
 
-            serviceProcessInstaller.Account = ServiceAccount.NetworkService;
+            serviceProcessInstaller.Account = ServiceAccount.LocalSystem;
 
             //# Service Information
 

@@ -86,6 +86,10 @@ namespace Ilsrep.PollApplication.PollServer
         /// Main thread that server will run on
         /// </summary>
         private Thread serverThread = null;
+        /// <summary>
+        /// Flag to see if service is still running
+        /// </summary>
+        private bool serviceRunning = true;
 
         public PollServer()
         {
@@ -109,28 +113,24 @@ namespace Ilsrep.PollApplication.PollServer
             }
         }
 
+        /// <summary>
+        /// Start server
+        /// </summary>
+        /// <param name="args">passed arguments</param>
         protected override void OnStart( string[] args )
         {
-            // Configure logger
-            //XmlConfigurator.Configure( new System.IO.FileInfo( PATH_TO_LOG_CONFIG ) );
-
             serverThread = new Thread( new ThreadStart( Run ) );
             serverThread.Start();
         }
 
         /// <summary>
-        /// Stop server. Close main listening socket and all the clients' sockets.
+        /// Stop server.
         /// </summary>
         protected override void OnStop()
         {
-            log.WriteEntry( "Stopping server...", EventLogEntryType.Information );
-
-            // Close all connections
-            server.Close();
-            foreach ( StateObject worker in workers )
-                worker.workSocket.Close();
-
-            PollDAL.Close();
+            serviceRunning = false;
+            allDone.Set();
+            serverThread.Join( new TimeSpan( 0, 2, 0 ) );
         }
 
         /// <summary>
@@ -168,14 +168,14 @@ namespace Ilsrep.PollApplication.PollServer
                 server.Bind( new IPEndPoint( host, port ) );
                 server.Listen( 5 );
                 
-                log.WriteEntry( "Server started on host: " + host.ToString() + ":" + port, EventLogEntryType.Information );
+                EventLog.WriteEntry( "Server started on " + host.ToString() + ":" + port, EventLogEntryType.Information );
 
-                while ( true )
+                while ( serviceRunning )
                 {
                     allDone.Reset();
 
                     // Main loop
-                    log.WriteEntry( "Waiting for a connection...", EventLogEntryType.Information );
+                    //EventLog.WriteEntry( "Waiting for a connection...", EventLogEntryType.Information );
                     server.BeginAccept( new AsyncCallback( OnClientConnect ), null );
 
                     allDone.WaitOne();
@@ -183,8 +183,21 @@ namespace Ilsrep.PollApplication.PollServer
             }
             catch ( Exception e )
             {
-                log.WriteEntry( e.Message, EventLogEntryType.Error );
+                EventLog.WriteEntry( e.Message, EventLogEntryType.Error );
             }
+
+            EventLog.WriteEntry( "Stopping server...", EventLogEntryType.Information );
+
+            // Close all connections
+            server.Close();
+            foreach ( StateObject worker in workers )
+                worker.workSocket.Close();
+            
+            // Disconnect from DB
+            PollDAL.Close();
+
+            // Close the thread
+            Thread.CurrentThread.Abort();
         }
 
         /// <summary>
@@ -199,7 +212,7 @@ namespace Ilsrep.PollApplication.PollServer
                 newClient.workSocket = server.EndAccept( iAsyncResult );
                 workers.Add( newClient );
 
-                log.WriteEntry( String.Format( "Client {0} connected", newClient.ipAddress ), EventLogEntryType.Information );
+                EventLog.WriteEntry( String.Format( "Client {0} connected", newClient.ipAddress ), EventLogEntryType.Information );
 
                 newClient.workSocket.BeginReceive( newClient.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback( ProcessClient ), workers.Count - 1 );
 
@@ -207,11 +220,11 @@ namespace Ilsrep.PollApplication.PollServer
             }
             catch ( ObjectDisposedException )
             {
-                log.WriteEntry( "OnClientConnection: Socket has been closed", EventLogEntryType.Information );
+                //EventLog.WriteEntry( "OnClientConnection: Socket has been closed", EventLogEntryType.Information );
             }
             catch ( SocketException se )
             {
-                log.WriteEntry( se.Message, EventLogEntryType.Error );
+                EventLog.WriteEntry( se.Message, EventLogEntryType.Error );
             }
         }
 
@@ -230,7 +243,7 @@ namespace Ilsrep.PollApplication.PollServer
                 countReceived = client.workSocket.EndReceive( iAsyncResult );
                 if ( countReceived == 0 )
                 {
-                    log.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
+                    EventLog.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
                     client.workSocket.Close();
                     workers.RemoveAt( clientID );
 
@@ -241,12 +254,12 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 if ( e.ErrorCode == 10054 )
                 {
-                    log.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
+                    EventLog.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
                     workers.RemoveAt( clientID );
                 }
                 else
                 {
-                    log.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
+                    EventLog.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
                 }
 
                 return;
@@ -256,7 +269,7 @@ namespace Ilsrep.PollApplication.PollServer
             PollPacket receivedPacket = PollSerializator.DeserializePacket( receivedData );
             if ( receivedPacket == null )
             {
-                log.WriteEntry( "Invalid data received", EventLogEntryType.Error );
+                EventLog.WriteEntry( "Invalid data received", EventLogEntryType.Error );
                 client.workSocket.BeginReceive( client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback( ProcessClient ), clientID );
 
                 return;
@@ -273,11 +286,11 @@ namespace Ilsrep.PollApplication.PollServer
                     client.isAuthorized = true;
                     if ( sendPacket.user.isNew )
                     {
-                        log.WriteEntry( "New user created: " + sendPacket.user.username, EventLogEntryType.Information );
+                        EventLog.WriteEntry( "New user created: " + sendPacket.user.username, EventLogEntryType.Information );
                     }
                     else
                     {
-                        log.WriteEntry( "User accepted: " + sendPacket.user.username, EventLogEntryType.Information );
+                        EventLog.WriteEntry( "User accepted: " + sendPacket.user.username, EventLogEntryType.Information );
                     }
                 }
             }
@@ -289,30 +302,30 @@ namespace Ilsrep.PollApplication.PollServer
                     case Request.GET_LIST:
                         sendPacket.pollSessionList = new PollSessionList();
                         sendPacket.pollSessionList.items = PollDAL.GetPollSessions();
-                        log.WriteEntry( String.Format( "Pollsession List sent to {0}", client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession List sent to {0}", client.ipAddress ), EventLogEntryType.Information );
                         break;
                     case Request.GET_POLLSESSION:
                         sendPacket.pollSession = PollDAL.GetPollSession( Convert.ToInt32( receivedPacket.request.id ) );
-                        log.WriteEntry( String.Format( "Pollsession {0} sent to {1}", sendPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} sent to {1}", sendPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
                         break;
 					case Request.EDIT_POLLSESSION:
 						PollDAL.EditPollSession(receivedPacket.pollSession);
-                        log.WriteEntry( String.Format( "Pollsession {0} changed by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} changed by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
 						break;
                     case Request.CREATE_POLLSESSION:
                         receivedPacket.pollSession.id = PollDAL.CreatePollSession( receivedPacket.pollSession );
-                        log.WriteEntry( String.Format( "Pollsession {0} created by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} created by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     case Request.REMOVE_POLLSESSION:
                         PollDAL.RemovePollSession( Convert.ToInt32( receivedPacket.request.id ) );
-                        log.WriteEntry( String.Format( "Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     case Request.SAVE_RESULT:
                         PollDAL.SavePollSessionResult( receivedPacket.resultsList );
-                        log.WriteEntry( String.Format( "Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     default:
-                        log.WriteEntry( String.Format( "Invalid option sent by {0}", client.ipAddress ), EventLogEntryType.Error );
+                        EventLog.WriteEntry( String.Format( "Invalid option sent by {0}", client.ipAddress ), EventLogEntryType.Error );
                         break;
                 }
             }
@@ -327,12 +340,12 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 if ( e.ErrorCode == 10054 )
                 {
-                    log.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
+                    EventLog.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
                     workers.RemoveAt( clientID );
                 }
                 else
                 {
-                    log.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
+                    EventLog.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
                 }
 
                 return;
@@ -359,12 +372,12 @@ namespace Ilsrep.PollApplication.PollServer
             {
                 if ( e.ErrorCode == 10054 )
                 {
-                    log.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
+                    EventLog.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
                     workers.RemoveAt( clientID );
                 }
                 else
                 {
-                    log.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
+                    EventLog.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
                 }
 
                 return;

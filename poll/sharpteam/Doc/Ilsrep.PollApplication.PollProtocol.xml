@@ -44,11 +44,6 @@
             Is allowed access
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Model.User.exist">
-            <summary>
-            Does username already exists
-            </summary>
-        </member>
         <member name="F:Ilsrep.PollApplication.Model.User.isNew">
             <summary>
             If true - server creates new user
