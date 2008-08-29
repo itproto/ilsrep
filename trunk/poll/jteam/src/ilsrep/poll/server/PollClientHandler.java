@@ -1,9 +1,9 @@
 package ilsrep.poll.server;
 
-import ilsrep.poll.common.Pollpacket;
-import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.common.Pollsessionlist;
-import ilsrep.poll.common.Request;
+import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Pollpacket;
+import ilsrep.poll.common.protocol.Pollsessionlist;
+import ilsrep.poll.common.protocol.Request;
 
 import java.io.IOException;
 import java.io.InputStream;

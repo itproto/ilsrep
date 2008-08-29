@@ -1,4 +1,6 @@
-package ilsrep.poll.common;
+package ilsrep.poll.common.protocol;
+
+import ilsrep.poll.common.model.Item;
 
 import java.util.List;
 

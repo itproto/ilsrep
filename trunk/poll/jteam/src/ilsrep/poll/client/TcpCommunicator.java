@@ -1,13 +1,13 @@
 package ilsrep.poll.client;
 
-import ilsrep.poll.common.Item;
-import ilsrep.poll.common.Pollpacket;
-import ilsrep.poll.common.Pollsession;
-import ilsrep.poll.common.Pollsessionlist;
-import ilsrep.poll.common.Request;
+import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Pollpacket;
+import ilsrep.poll.common.protocol.Pollsessionlist;
+import ilsrep.poll.common.protocol.Request;
+import ilsrep.poll.common.protocol.User;
 import ilsrep.poll.server.PollClientHandler;
-import ilsrep.poll.common.Answers;
-import ilsrep.poll.common.User;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -122,7 +122,7 @@ public class TcpCommunicator {
      * @see TcpCommunicator
      * 
      */
-    protected void finalize() {
+    public void finalize() {
         try {
             clientSocket.close();
         }

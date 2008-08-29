@@ -1,9 +1,12 @@
-package ilsrep.poll.common;
+package ilsrep.poll.common.protocol;
 
-import ilsrep.poll.common.Answers;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import ilsrep.poll.common.User;
+
+import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.User;
 /**
  * The "pollpacket" element.
  * 
