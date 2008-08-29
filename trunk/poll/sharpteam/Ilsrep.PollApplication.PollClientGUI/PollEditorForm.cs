@@ -12,18 +12,31 @@ using Ilsrep.PollApplication.Helpers;
 
 namespace Ilsrep.PollApplication.PollClientGUI
 {
+    /// <summary>
+    /// PollEditor Form
+    /// </summary>
     public partial class PollEditorForm : Form
     {
+        /// <summary>
+        /// PollSession name, selected in pollSessionsListBox
+        /// </summary>
         public static Item selectedPollSession = new Item();
+        /// <summary>
+        /// PollSession that will be filled
+        /// </summary>
         public static PollSession pollSession = new PollSession();
+        /// <summary>
+        /// List of PollSessions names
+        /// </summary>
         public static List<Item> pollSessions = new List<Item>();
 
+        /// <summary>
+        /// Initialize form
+        /// </summary>
         public PollEditorForm()
         {
             InitializeComponent();
             RefreshPollSessionsList();
-            selectedPollSession = null;
-            pollSession = null;
         }
 
         /// <summary>
@@ -40,7 +53,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             catch (Exception exception)
             {
-                MessageBox.Show("Error: " + exception.Message);
+                MessageBox.Show(exception.Message, "Error");
             }
 
             string receivedString = PollClientGUI.client.Receive();
@@ -50,16 +63,17 @@ namespace Ilsrep.PollApplication.PollClientGUI
             // Check if received data is correct
             if (receivedPacket == null)
             {
-                MessageBox.Show("Error: Wrong data received");
+                MessageBox.Show("Wrong data received", "Error");
             }
             return receivedPacket;
         }
 
+        /// <summary>
+        /// Get PollSessionsList from server and show them in pollSessionsListBox
+        /// </summary>
         private void RefreshPollSessionsList()
         {
-            selectedPollSession = null;
-
-            // Get list of pollsessions from server and write they in console
+            // Get list of pollsessions
             PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.GET_LIST;
@@ -68,6 +82,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             receivedPacket = ReceivePollPacket(sendPacket);
             pollSessions = receivedPacket.pollSessionList.items;
 
+            // Add PollSessions from list to pollSessionsListBox
             pollSessionsListBox.Items.Clear();
             int index = 0;
             foreach (Item item in pollSessions)
@@ -81,8 +96,15 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 MessageBox.Show("No pollsessions in DB...", "Info");
                 createButton_Click(null, EventArgs.Empty);
             }
+
+            selectedPollSession = null;
         }
 
+        /// <summary>
+        /// Change selectedPollSession if SelectedIndexChanged
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void pollSessionsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -95,8 +117,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
         }
 
+        /// <summary>
+        /// Function opens PollSessionForm and then send new PollSession to server
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void createButton_Click(object sender, EventArgs e)
         {
+            // Open PollSessionForm to fill new PollSession
             pollSession = null;
             PollSessionForm pollSessionForm = new PollSessionForm();
             pollSessionForm.ShowDialog();
@@ -112,10 +140,17 @@ namespace Ilsrep.PollApplication.PollClientGUI
             RefreshPollSessionsList();
         }
 
+        /// <summary>
+        /// Function opens PollSessionForm and then send changed PollSession to server
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void editButton_Click(object sender, EventArgs e)
         {
+            // Check if any PollSession selected
             if (selectedPollSession != null)
             {
+                // Get PollSession and open PollSessionForm to edit it
                 PollPacket sendPacket = new PollPacket();
                 sendPacket.request = new Request();
                 sendPacket.request.type = Request.GET_POLLSESSION;
@@ -140,21 +175,28 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
         }
 
+        /// <summary>
+        /// Function send request to server to remove selected PollSession
+        /// </summary>
+        /// <param name="sender">object sender</param>
+        /// <param name="e">EventArgs e</param>
         private void removeButton_Click(object sender, EventArgs e)
         {
+            // Check if any PollSession selected
             if (selectedPollSession != null)
             {
+                // Ask user confirmation
                 DialogResult userChoice = new DialogResult();
                 userChoice = MessageBox.Show(null, "Do you really want to remove pollsession \"" + selectedPollSession.name + "\"?", "Remove PollSession?", MessageBoxButtons.YesNo);
                 if (userChoice == DialogResult.Yes)
                 {
                     PollPacket sendPacket = new PollPacket();
+                    PollPacket receivedPacket = new PollPacket();
                     sendPacket.request = new Request();
                     sendPacket.request.type = Request.REMOVE_POLLSESSION;
                     sendPacket.request.id = selectedPollSession.id;
-
-                    PollPacket receivedPacket = new PollPacket();
                     receivedPacket = ReceivePollPacket(sendPacket);
+
                     RefreshPollSessionsList();
                 }
             }
