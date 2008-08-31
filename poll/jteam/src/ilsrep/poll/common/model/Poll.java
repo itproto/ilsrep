@@ -1,7 +1,7 @@
 package ilsrep.poll.common.model;
 
 import ilsrep.poll.client.PollClient;
-import ilsrep.poll.client.gui.MainWindow;
+import ilsrep.poll.client.gui.GUIUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -180,7 +180,7 @@ public class Poll {
         return selection;
     }
 
-    public String queryUserGUI(MainWindow win) throws IOException {
+    public String queryUserGUI(GUIUtil win) throws IOException {
         PollClient.consoleClearScreen();
         String query = "<html>Name: " + this.getName() + "<br>Desription: "
                 + this.getDescription().getValue() + "<html>";

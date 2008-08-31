@@ -26,7 +26,7 @@ import javax.swing.JRadioButton;
  */
 public class PollEditorGUI {
 
-    public static MainWindow win = new MainWindow();
+    public static GUIUtil win = new GUIUtil();
 
     public static final String YES = "y";
 
