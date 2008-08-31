@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-public class MainWindow extends JFrame implements ActionListener {
+public class GUIUtil extends JFrame implements ActionListener {
 
     /**
      * Serial version UID.
@@ -33,7 +33,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
     private JButton bb1 = new JButton("Ok");
 
-    public MainWindow() {
+    public GUIUtil() {
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // this.setVisible(true);

@@ -47,7 +47,7 @@ public class PollClientGUI {
     public static void main(String[] args) throws JAXBException, IOException {
         List<AnswerItem> answers = new ArrayList<AnswerItem>();
         String serverPortString = null;
-        MainWindow win = new MainWindow();
+        GUIUtil win = new GUIUtil();
         Pollsession polls = null;
         String name = win.askUser("Enter Name");
         Object[] options = { "Use Server", "Use local file" };
