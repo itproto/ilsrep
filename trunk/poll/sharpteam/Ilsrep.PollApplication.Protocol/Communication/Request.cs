@@ -37,6 +37,10 @@ namespace Ilsrep.PollApplication.Communication
         /// </summary>
         [XmlIgnore] public const string SAVE_RESULT = "saveResult";
         /// <summary>
+        /// Request type that is used to save result
+        /// </summary>
+        [XmlIgnore] public const string GET_RESULTS = "getResults";
+        /// <summary>
         /// string that specifies, which type of request it is
         /// </summary>
         [XmlAttribute("type")] public string type;
