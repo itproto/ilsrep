@@ -376,6 +376,41 @@ namespace Ilsrep.PollApplication.DAL
         }
 
         /// <summary>
+        /// Select from DB all results of needed PollSession
+        /// </summary>
+        /// <param name="pollSessionId">Id of PollSession which results we need</param>
+        /// <returns>List of results of needed PollSession</returns>
+        static public ResultsList GetPollSessionResults(int pollSessionId)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            ResultsList resultsList = new ResultsList();
+            resultsList.pollsessionId = pollSessionId;
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":pollsession_id", pollSessionId));
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE pollsession_id=:pollsession_id";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+
+            // Save each result to resultsList
+            while (sqliteReader.Read())
+            {
+                PollResult curResult = new PollResult();
+                curResult.answerId = Convert.ToInt32(sqliteReader["answer_id"].ToString());
+                curResult.customChoice = sqliteReader["custom_choice"].ToString();
+                // What's wrong? Why "Wrong DateTime" Exception?
+                //curResult.date = sqliteReader["date"].ToString();
+                curResult.questionId = Convert.ToInt32(sqliteReader["question_id"].ToString());
+                curResult.userName = sqliteReader["user_name"].ToString();
+                resultsList.results.Add(curResult);
+            }
+
+            return resultsList;
+        }
+
+        /// <summary>
         /// Removes PollSession from database
         /// </summary>
         /// <param name="pollSessionID">PollSession ID that is to be removed</param>

@@ -24,5 +24,13 @@ namespace Ilsrep.PollApplication.Model
         /// If user answered using custom choice then this is used instead of answerId
         /// </summary>
         [XmlAttribute("customchoice")] public string customChoice;
+        /// <summary>
+        /// Date when result has been saved
+        /// </summary>
+        [XmlAttribute("date")] public string date;
+        /// <summary>
+        /// Date when result has been saved
+        /// </summary>
+        [XmlAttribute("username")] public string userName;
     }
 }

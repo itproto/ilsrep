@@ -15,12 +15,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
     /// <summary>
     /// Statistic Form
     /// </summary>
-    public partial class StatisticForm : Form
+    public partial class StatisticsForm : Form
     {
         /// <summary>
         /// Initialize Form
         /// </summary>
-        public StatisticForm()
+        public StatisticsForm()
         {
             InitializeComponent();
         }
@@ -66,9 +66,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.request = new Request();
 
             sendPacket.request.type = Request.GET_RESULTS;
-            sendPacket.request.id = PollStatisticsForm.selectedPollSession.id.ToString();
+            sendPacket.request.id = StatisticsForm_PollSessions.selectedPollSession.id.ToString();
             receivedPacket = ReceivePollPacket(sendPacket);
-            //...
+
+            foreach (PollResult curResult in receivedPacket.resultsList.results)
+            {
+                resultsListBox.Items.Add(String.Format("name:{0} poll:{1} choice:{2} date:{3} custom:{4}", curResult.userName, curResult.questionId, curResult.answerId, curResult.date, curResult.customChoice));
+            }
         }
 
         /// <summary>
