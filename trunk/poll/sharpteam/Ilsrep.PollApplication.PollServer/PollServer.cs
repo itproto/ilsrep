@@ -326,6 +326,10 @@ namespace Ilsrep.PollApplication.PollServer
                         PollDAL.SavePollSessionResult( receivedPacket.resultsList );
                         EventLog.WriteEntry( String.Format( "Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress ), EventLogEntryType.Information );
                         break;
+                    case Request.GET_RESULTS:
+                        sendPacket.resultsList = PollDAL.GetPollSessionResults(Convert.ToInt32(receivedPacket.request.id));
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} results sent to {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
+                        break;
                     default:
                         EventLog.WriteEntry( String.Format( "Invalid option sent by {0}", client.ipAddress ), EventLogEntryType.Error );
                         break;

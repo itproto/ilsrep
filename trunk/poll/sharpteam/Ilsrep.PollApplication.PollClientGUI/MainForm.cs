@@ -35,7 +35,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void pollStatisticsButton_Click(object sender, EventArgs e)
         {
-            PollStatisticsForm pollStatisticsForm = new PollStatisticsForm();
+            StatisticsForm_PollSessions pollStatisticsForm = new StatisticsForm_PollSessions();
             pollStatisticsForm.ShowDialog();
         }
     }

@@ -90,11 +90,11 @@
     <Compile Include="PollSessionForm.Designer.cs">
       <DependentUpon>PollSessionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PollStatisticsForm.cs">
+    <Compile Include="StatisticsForm_PollSessions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PollStatisticsForm.Designer.cs">
-      <DependentUpon>PollStatisticsForm.cs</DependentUpon>
+    <Compile Include="StatisticsForm_PollSessions.Designer.cs">
+      <DependentUpon>StatisticsForm_PollSessions.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,8 +126,8 @@
       <DependentUpon>PollSessionForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PollStatisticsForm.resx">
-      <DependentUpon>PollStatisticsForm.cs</DependentUpon>
+    <EmbeddedResource Include="StatisticsForm_PollSessions.resx">
+      <DependentUpon>StatisticsForm_PollSessions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -135,8 +135,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="StatisticForm.resx">
-      <DependentUpon>StatisticForm.cs</DependentUpon>
+    <EmbeddedResource Include="StatisticsForm.resx">
+      <DependentUpon>StatisticsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -152,11 +152,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="StatisticForm.cs">
+    <Compile Include="StatisticsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="StatisticForm.Designer.cs">
-      <DependentUpon>StatisticForm.cs</DependentUpon>
+    <Compile Include="StatisticsForm.Designer.cs">
+      <DependentUpon>StatisticsForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
     /// <summary>
     /// PollStatistics Form
     /// </summary>
-    public partial class PollStatisticsForm : Form
+    public partial class StatisticsForm_PollSessions : Form
     {
         /// <summary>
         /// PollSession name, selected in pollSessionsListBox
@@ -30,7 +30,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// Initialize form
         /// </summary>
-        public PollStatisticsForm()
+        public StatisticsForm_PollSessions()
         {
             InitializeComponent();
         }
@@ -109,7 +109,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                StatisticForm statisticForm = new StatisticForm();
+                StatisticsForm statisticForm = new StatisticsForm();
                 statisticForm.ShowDialog();
             }
         }

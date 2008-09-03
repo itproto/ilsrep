@@ -1,6 +1,6 @@
 ﻿namespace Ilsrep.PollApplication.PollClientGUI
 {
-    partial class PollStatisticsForm
+    partial class StatisticsForm_PollSessions
     {
         /// <summary>
         /// Required designer variable.
