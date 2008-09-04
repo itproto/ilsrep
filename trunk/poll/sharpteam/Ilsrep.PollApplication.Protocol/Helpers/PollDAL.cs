@@ -186,7 +186,8 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.Parameters.Add(new SQLiteParameter(":name", newPollSession.name));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", newPollSession.testMode));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", newPollSession.minScore));
-            sqliteCommand.CommandText = "INSERT INTO " + POLLSESSIONS_TABLE + "(name, testmode, minscore) VALUES(:name, :testmode, :minscore)";
+            sqliteCommand.Parameters.Add( new SQLiteParameter( ":date", DateTime.Now.ToString() ) );
+            sqliteCommand.CommandText = "INSERT INTO " + POLLSESSIONS_TABLE + "(name, testmode, minscore, date_created) VALUES(:name, :testmode, :minscore, :date)";
             sqliteCommand.ExecuteNonQuery();
 
             sqliteCommand.CommandText = "SELECT last_insert_rowid()";
