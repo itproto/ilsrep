@@ -45,9 +45,9 @@ public class MainGUI extends JFrame {
     protected int port = -1;
 
     /**
-     * Indicates if connect to local server with default port.
+     * @see GUIUtil
      */
-    protected boolean conectLocal = false;
+    protected GUIUtil guiUtil = null;
 
     /**
      * Creates main window.
@@ -55,8 +55,10 @@ public class MainGUI extends JFrame {
     public MainGUI() {
         super("Poll Application");
 
+        guiUtil = new GUIUtil();
+
         setJMenuBar(createMenu());
-        setSize(256, 128);
+        setSize(800, 600);
     }
 
     /**
@@ -107,7 +109,56 @@ public class MainGUI extends JFrame {
      */
     private void exitProgram() {
         dispose();
-        System.exit(0);
+        // System.exit(0);
+    }
+
+    /**
+     * Set server to operate in current session.
+     * 
+     * @param server
+     *            Server IP(host).
+     * @param port
+     *            Server port.
+     */
+    public void selectServer(String server, String port) {
+        try {
+            this.port = Integer.parseInt(port);
+        }
+        catch (NumberFormatException e) {
+            selectNothingAndAlert("Server port entered not integer!");
+            return;
+        }
+
+        if (this.port <= 0) {
+            selectNothingAndAlert("Port must be larger then 0!");
+            return;
+        }
+
+        this.server = server;
+
+        updateList();
+    }
+
+    /**
+     * Selects no server and show alert.
+     * 
+     * @param alertion
+     *            Alert to show.
+     */
+    private void selectNothingAndAlert(String alertion) {
+        server = null;
+        port = -1;
+
+        if (alertion != null)
+            guiUtil.alert(alertion);
+    }
+
+    /**
+     * Updates pollsession list from server.
+     */
+    private void updateList() {
+        if (server == null || port <= 0)
+            return;
     }
 
     /**
@@ -133,6 +184,12 @@ public class MainGUI extends JFrame {
         SwingUtilities.invokeLater(guiStartThread);
     }
 
+    /**
+     * Dialog for server selection.
+     * 
+     * @author Taras Kostiak
+     * 
+     */
     private class ServerSelectDialog extends JDialog {
 
         /**
@@ -140,10 +197,19 @@ public class MainGUI extends JFrame {
          */
         private static final long serialVersionUID = -5461631921011218819L;
 
+        /**
+         * Text field to read server from.
+         */
         protected JTextField serverField = null;
 
+        /**
+         * Text field to read port from.
+         */
         protected JTextField portField = null;
 
+        /**
+         * Check box to read if use local server with default port.
+         */
         protected JCheckBox localCheckBox = null;
 
         /**
@@ -183,6 +249,14 @@ public class MainGUI extends JFrame {
             });
 
             JButton button = new JButton("Select");
+            button.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectServer(serverField.getText(), portField.getText());
+                    ServerSelectDialog.this.dispose();
+                }
+            });
 
             add(serverLabel);
             add(serverField);
