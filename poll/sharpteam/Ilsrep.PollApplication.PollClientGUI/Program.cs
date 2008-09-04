@@ -54,6 +54,35 @@ namespace Ilsrep.PollApplication.PollClientGUI
         public static bool isAuthorized = false;
 
         /// <summary>
+        /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+        /// </summary>
+        /// <param name="sendPacket">PollPacket with request to send</param>
+        /// <returns>PollPacket receivedPacket</returns>
+        public static PollPacket ReceivePollPacket( PollPacket sendPacket )
+        {
+            try
+            {
+                string sendString = PollSerializator.SerializePacket( sendPacket );
+                PollClientGUI.client.Send( sendString );
+            }
+            catch ( Exception )
+            {
+                return null;
+            }
+
+            string receivedString = PollClientGUI.client.Receive();
+            PollPacket receivedPacket = new PollPacket();
+            receivedPacket = PollSerializator.DeserializePacket( receivedString );
+
+            // Check if received data is correct
+            if ( receivedPacket == null )
+            {
+                return null;
+            }
+            return receivedPacket;
+        }
+
+        /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
