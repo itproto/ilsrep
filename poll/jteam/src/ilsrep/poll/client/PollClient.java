@@ -1,10 +1,10 @@
 package ilsrep.poll.client;
 
-import ilsrep.poll.common.model.Item;
 import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.AnswerItem;
 import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.common.protocol.User;
 
@@ -129,6 +129,7 @@ public class PollClient {
             }
 
             // communicator.listXml();
+            System.out.println("\nGetting list of pollsessions. Please wait.");
             Pollsessionlist lst = communicator.listXml();
             if (lst != null && lst.getItems() != null) {
                 System.out.println("\nList of pollsessions stored on server:");

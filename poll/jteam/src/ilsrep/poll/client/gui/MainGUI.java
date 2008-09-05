@@ -1,8 +1,15 @@
 package ilsrep.poll.client.gui;
 
+import ilsrep.poll.client.TcpCommunicator;
+import ilsrep.poll.common.protocol.Item;
+import ilsrep.poll.common.protocol.Pollsessionlist;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -12,8 +19,16 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  * Main GUI for Poll program(combines client, editor and any other possible Poll
@@ -48,6 +63,22 @@ public class MainGUI extends JFrame {
      * @see GUIUtil
      */
     protected GUIUtil guiUtil = null;
+
+    /**
+     * Indicates if server is valid(after was connected to it once).
+     */
+    protected boolean serverOk = false;
+
+    /**
+     * <code>TcpCommunicator</code> - connection routine manager for current
+     * server.
+     */
+    protected TcpCommunicator serverCommunicator = null;
+
+    /**
+     * Shows what pollsession from table is currently selected by user.
+     */
+    protected int selectedPollsession = -1;
 
     /**
      * Creates main window.
@@ -136,7 +167,15 @@ public class MainGUI extends JFrame {
 
         this.server = server;
 
-        updateList();
+        boolean updateResult = updateList();
+
+        if (!updateResult) {
+            selectNothingAndAlert("Can't connect to " + server + "/" + port
+                    + "!");
+            return;
+        }
+        else
+            serverOk = true;
     }
 
     /**
@@ -148,6 +187,7 @@ public class MainGUI extends JFrame {
     private void selectNothingAndAlert(String alertion) {
         server = null;
         port = -1;
+        serverOk = false;
 
         if (alertion != null)
             guiUtil.alert(alertion);
@@ -155,10 +195,123 @@ public class MainGUI extends JFrame {
 
     /**
      * Updates pollsession list from server.
+     * 
+     * @return True, if list was updated.
      */
-    private void updateList() {
+    private boolean updateList() {
         if (server == null || port <= 0)
-            return;
+            return false;
+
+        if (connect()) {
+            Pollsessionlist sessionList = serverCommunicator.listXml();
+            disconnect();
+
+            if (sessionList != null && sessionList.getItems() != null) {
+                if (sessionList.getItems().size() == 0) {
+                    JPanel contentPanel = new JPanel();
+
+                    JLabel listIsEmptyLabel = new JLabel(
+                            "Server pollsession list is empty!");
+
+                    contentPanel.add(listIsEmptyLabel);
+
+                    setContentPane(contentPanel);
+                }
+                else {
+                    Vector<Vector<String>> pollsessionTableData = new Vector<Vector<String>>();
+
+                    for (Item pollsessionIdName : sessionList.getItems()) {
+                        Vector<String> sessionRow = new Vector<String>();
+                        sessionRow.add(pollsessionIdName.getId());
+                        sessionRow.add(pollsessionIdName.getName());
+
+                        pollsessionTableData.add(sessionRow);
+                    }
+
+                    JTable pollsessionTable = new JTable(
+                            new NonEditableTableModel());
+
+                    pollsessionTable
+                            .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                    pollsessionTable.getSelectionModel()
+                            .addListSelectionListener(
+                                    new ListSelectionListener() {
+
+                                        public void valueChanged(
+                                                ListSelectionEvent e) {
+                                            if (e.getValueIsAdjusting())
+                                                return;
+
+                                            ListSelectionModel lsm = (ListSelectionModel) e
+                                                    .getSource();
+                                            if (lsm.isSelectionEmpty()) {
+                                                selectedPollsession = -1;
+                                            }
+                                            else {
+                                                selectedPollsession = lsm
+                                                        .getMinSelectionIndex();
+                                            }
+                                        }
+                                    });
+
+                    final Vector<String> collumnNames = new Vector<String>();
+                    if (collumnNames.size() == 0) {
+                        collumnNames.add("Id");
+                        collumnNames.add("Name");
+                    }
+
+                    NonEditableTableModel pollsessionTableModel = (NonEditableTableModel) pollsessionTable
+                            .getModel();
+                    pollsessionTableModel.setDataVector(pollsessionTableData,
+                            collumnNames);
+
+                    JPanel contentPanel = new JPanel();
+
+                    JScrollPane tableScroll = new JScrollPane();
+                    tableScroll.add(pollsessionTable);
+
+                    contentPanel.add(tableScroll);
+                    // contentPanel.add(new JLabel("TEST"));
+
+                    setContentPane(contentPanel);
+
+//                    pack();
+                }
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
+    /**
+     * Establishes connection to server and stores in
+     * {@link MainGUI#serverCommunicator}.
+     * 
+     * @return True, if connection was successful.
+     */
+    private boolean connect() {
+        try {
+            serverCommunicator = new TcpCommunicator(server, port);
+            return true;
+        }
+        catch (UnknownHostException e) {
+            return false;
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Disconnects from server, if connected.
+     */
+    private void disconnect() {
+        if (serverCommunicator != null)
+            serverCommunicator.finalize();
+        serverCommunicator = null;
     }
 
     /**
@@ -236,7 +389,7 @@ public class MainGUI extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     if (localCheckBox.isSelected()) {
                         serverField.setText("127.0.0.1");
-                        portField.setText("3310");
+                        portField.setText("3320");
 
                         serverField.setEnabled(false);
                         portField.setEnabled(false);
@@ -276,6 +429,30 @@ public class MainGUI extends JFrame {
             localCheckBox.getActionListeners()[0].actionPerformed(null);
         }
 
+    }
+
+    /**
+     * Represents non-editable(by user) table model.
+     * 
+     * @author TKOST
+     * 
+     * @see TableModel
+     */
+    private class NonEditableTableModel extends DefaultTableModel {
+
+        /**
+         * Serial version UID.
+         */
+        private static final long serialVersionUID = 8014961739308652081L;
+
+        /**
+         * Return false(i.e. non editable) for any element.
+         * 
+         * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+         */
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
     }
 
 }

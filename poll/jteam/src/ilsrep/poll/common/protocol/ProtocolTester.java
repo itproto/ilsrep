@@ -1,6 +1,5 @@
 package ilsrep.poll.common.protocol;
 
-import ilsrep.poll.common.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
-import ilsrep.poll.common.model.Item;
 import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.AnswerItem;
 import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.common.protocol.User;
 
