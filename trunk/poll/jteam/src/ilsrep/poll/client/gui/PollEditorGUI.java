@@ -3,9 +3,9 @@ package ilsrep.poll.client.gui;
 import ilsrep.poll.client.TcpCommunicator;
 import ilsrep.poll.common.model.Choice;
 import ilsrep.poll.common.model.Description;
-import ilsrep.poll.common.model.Item;
 import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
 import java.io.IOException;

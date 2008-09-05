@@ -14,10 +14,10 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import ilsrep.poll.common.model.Choice;
 import ilsrep.poll.common.model.Description;
-import ilsrep.poll.common.model.Item;
 import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.server.PollServer;
 import org.apache.log4j.Logger;
