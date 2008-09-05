@@ -24,6 +24,16 @@
             If user answered using custom choice then this is used instead of answerId
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollResult.date">
+            <summary>
+            Date when result has been saved
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollResult.userName">
+            <summary>
+            Date when result has been saved
+            </summary>
+        </member>
         <member name="T:Ilsrep.PollApplication.Model.User">
             <summary>
             Object that holds user information
@@ -80,6 +90,11 @@
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.Communication.Request.SAVE_RESULT">
+            <summary>
+            Request type that is used to save result
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_RESULTS">
             <summary>
             Request type that is used to save result
             </summary>
@@ -347,6 +362,13 @@
             Receive from Client pollsession result and save it in database
             </summary>
             <param name="resultsList">list of results</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.DAL.PollDAL.GetPollSessionResults(System.Int32)">
+            <summary>
+            Select from DB all results of needed PollSession
+            </summary>
+            <param name="pollSessionId">Id of PollSession which results we need</param>
+            <returns>List of results of needed PollSession</returns>
         </member>
         <member name="M:Ilsrep.PollApplication.DAL.PollDAL.RemovePollSession(System.Int32)">
             <summary>
