@@ -28,34 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lblQuestion = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // lblQuestion
-            // 
-            this.lblQuestion.AutoSize = true;
-            this.lblQuestion.Location = new System.Drawing.Point( 10, 10 );
-            this.lblQuestion.Name = "lblQuestion";
-            this.lblQuestion.Size = new System.Drawing.Size( 47, 13 );
-            this.lblQuestion.TabIndex = 0;
-            this.lblQuestion.Text = "question";
             // 
             // PollClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size( 662, 595 );
-            this.Controls.Add( this.lblQuestion );
             this.Name = "PollClientForm";
             this.Text = "PollClientGUI.PollClient";
             this.Load += new System.EventHandler( this.PollClientForm_Load );
             this.ResumeLayout( false );
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label lblQuestion;
     }
 }

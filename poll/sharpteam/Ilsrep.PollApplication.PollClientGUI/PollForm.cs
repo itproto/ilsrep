@@ -225,7 +225,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 choice = choices[choicesListBox.SelectedIndex];
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 choice = null;
             }

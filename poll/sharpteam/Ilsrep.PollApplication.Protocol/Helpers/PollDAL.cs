@@ -354,14 +354,14 @@ namespace Ilsrep.PollApplication.DAL
             }
             
             // Get current date
-            string currentDate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
+            //string currentDate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
 
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             
             sqliteCommand.CommandText = "INSERT INTO " + RESULTS_TABLE + "(user_name, pollsession_id, question_id, answer_id, custom_choice, date) VALUES(:username, :pollsession, :question, :answer, :custom, :date)";
             sqliteCommand.Parameters.Add(new SQLiteParameter(":username", resultsList.userName));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":pollsession", resultsList.pollsessionId.ToString()));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":date", currentDate));
+            sqliteCommand.Parameters.Add(new SQLiteParameter( ":date", DateTime.Now.ToString() ));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":question"));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":answer"));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":custom"));

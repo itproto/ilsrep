@@ -99,7 +99,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 poll = polls[pollsListBox.SelectedIndex];
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 poll = null;
             }

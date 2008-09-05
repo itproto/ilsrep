@@ -24,7 +24,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void pollClientButton_Click(object sender, EventArgs e)
         {
             PollClientForm pollClientForm = new PollClientForm();
-            pollClientForm.ShowDialog();
+            pollClientForm.ShowDialog( this );
         }
 
         private void pollEditorButton_Click(object sender, EventArgs e)

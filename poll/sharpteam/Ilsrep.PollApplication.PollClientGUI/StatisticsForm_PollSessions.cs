@@ -135,7 +135,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 selectedPollSession = pollSessions[pollSessionsListBox.SelectedIndex];
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 selectedPollSession = null;
             }
