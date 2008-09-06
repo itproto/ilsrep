@@ -304,6 +304,9 @@ public class PollClient {
                 communicator = null;
             }
 
+        if (communicator != null)
+            System.out.println("Connected!");
+
         return communicator;
     }
 

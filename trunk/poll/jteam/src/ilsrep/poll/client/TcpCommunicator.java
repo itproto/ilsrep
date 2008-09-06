@@ -120,7 +120,6 @@ public class TcpCommunicator {
         this.port = port;
 
         clientSocket = new Socket(serverIp, port);
-        System.out.println("Connected!");
     }
 
     /**
