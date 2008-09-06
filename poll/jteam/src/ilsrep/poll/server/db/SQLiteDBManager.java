@@ -30,15 +30,14 @@ public class SQLiteDBManager extends DBManager {
      * @throws ClassNotFoundException
      *             If DB driver not found.
      */
-    public SQLiteDBManager(PollServer srvInstance, String dataFile)
-            throws ClassNotFoundException {
-        super(srvInstance);
+    public SQLiteDBManager(String dataFile)             {try {
+        //super(srvInstance);
 
         this.dataFile = dataFile;
 
         Class.forName(SQLite_DRIVER_CLASS_NAME);
         driverClassName = SQLite_DRIVER_CLASS_NAME;
-        dbURL = "jdbc:sqlite:" + dataFile;
+        dbURL = "jdbc:sqlite:" + dataFile;} catch(Exception e){System.out.println(e.getMessage());}
     }
 
 }
