@@ -20,7 +20,8 @@ import ilsrep.poll.common.protocol.Answers;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.server.PollServer;
-//import org.apache.log4j.Logger;
+
+// import org.apache.log4j.Logger;
 
 /**
  * This abstract class is utility for working with any DB.<br>
@@ -36,8 +37,7 @@ public abstract class DBManager {
     /**
      * Log4j Logger for this class.
      */
- //   private static Logger logger = Logger.getLogger(DBManager.class);
-
+    // private static Logger logger = Logger.getLogger(DBManager.class);
     /**
      * Default minimal number of idle connections in pool.
      */
@@ -85,9 +85,9 @@ public abstract class DBManager {
      * @param srvInstance
      *            Server instance.
      */
-//    public DBManager(PollServer srvInstance) {
-  //      this.srvInstance = srvInstance;
-    //}
+    public DBManager(PollServer srvInstance) {
+        this.srvInstance = srvInstance;
+    }
 
     // private static Logger logger = Logger.getLogger(DBWorker.class);
 
@@ -194,8 +194,8 @@ public abstract class DBManager {
                 stat.close();
             }
             catch (Exception e) {
-               // logger.info("Exception occured while fetching pollsession: "
-                  //      + e.getMessage());
+                // logger.info("Exception occured while fetching pollsession: "
+                // + e.getMessage());
             }
         }
         else {
@@ -225,7 +225,7 @@ public abstract class DBManager {
 
         }
         catch (Exception e) {
-         //   logger.warn(e.getMessage());
+            // logger.warn(e.getMessage());
         }
 
     }
@@ -251,7 +251,7 @@ public abstract class DBManager {
             }
         }
         catch (Exception e) {
-          //  logger.info(e.getMessage());
+            // logger.info(e.getMessage());
             return "false";
         }
 
@@ -277,7 +277,7 @@ public abstract class DBManager {
             }
         }
         catch (Exception e) {
-           // logger.warn(e.getMessage());
+            // logger.warn(e.getMessage());
             return "false";
         }
 
@@ -556,7 +556,7 @@ public abstract class DBManager {
                 conn.commit(); // Commiting if all proceed correctly.
         }
         catch (SQLException e) {
-          //  logger.info(e.getMessage());
+            // logger.info(e.getMessage());
             i = -1;
         }
         finally {
