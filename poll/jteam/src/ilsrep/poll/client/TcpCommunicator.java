@@ -28,6 +28,16 @@ import javax.xml.bind.Unmarshaller;
 public class TcpCommunicator {
 
     /**
+     * Default server name to connect to.
+     */
+    public static final String DEFAULT_SERVER = "127.0.0.1";
+
+    /**
+     * Default port to connect to.
+     */
+    public static final int DEFAULT_PORT = 3320;
+
+    /**
      * Stores received XML data
      * 
      * @see TcpCommunicator
@@ -88,7 +98,7 @@ public class TcpCommunicator {
      * 
      */
     public TcpCommunicator() throws UnknownHostException, IOException {
-        this("127.0.0.1", 3320);
+        this(DEFAULT_SERVER, DEFAULT_PORT);
     }
 
     /**
@@ -109,8 +119,6 @@ public class TcpCommunicator {
         this.serverIp = serverIP;
         this.port = port;
 
-        System.out.println("\nConnecting to " + serverIp + " on "
-                + Integer.toString(port));
         clientSocket = new Socket(serverIp, port);
         System.out.println("Connected!");
     }
@@ -260,7 +268,7 @@ public class TcpCommunicator {
                     .getInputStream());
 
             // Processing.
-           return response.getPollsessionList();
+            return response.getPollsessionList();
         }
         catch (JAXBException e) {
             System.out.println(e.getMessage());

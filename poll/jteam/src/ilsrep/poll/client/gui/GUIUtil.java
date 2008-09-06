@@ -64,10 +64,26 @@ public class GUIUtil extends JFrame implements ActionListener {
         return s;
     }
 
+    /**
+     * Shows warning dialog with given alertion.
+     * 
+     * @param alertion
+     *            Alrertion, to show.
+     */
     public void alert(String alertion) {
         JOptionPane.showMessageDialog(null, alertion, alertion,
                 JOptionPane.ERROR_MESSAGE);
+    }
 
+    /**
+     * Shows info dialog with given alertion.
+     * 
+     * @param alertion
+     *            Alrertion, to show.
+     */
+    public void infoWindow(String alertion) {
+        JOptionPane.showMessageDialog(null, alertion, alertion,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public Boolean askYesNo(String query) {

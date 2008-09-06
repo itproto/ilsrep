@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -20,7 +21,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -79,6 +79,11 @@ public class MainGUI extends JFrame {
      * Shows what pollsession from table is currently selected by user.
      */
     protected int selectedPollsession = -1;
+
+    /**
+     * Pollsession list from last update.
+     */
+    protected Pollsessionlist currentSessionList = null;
 
     /**
      * Creates main window.
@@ -156,7 +161,7 @@ public class MainGUI extends JFrame {
             this.port = Integer.parseInt(port);
         }
         catch (NumberFormatException e) {
-            selectNothingAndAlert("Server port entered not integer!");
+            selectNothingAndAlert("Server port must be integer!");
             return;
         }
 
@@ -167,10 +172,8 @@ public class MainGUI extends JFrame {
 
         this.server = server;
 
-        boolean updateResult = updateList();
-
-        if (!updateResult) {
-            selectNothingAndAlert("Can't connect to " + server + "/" + port
+        if (!updateList()) {
+            selectNothingAndAlert("Can't connect to " + server + ":" + port
                     + "!");
             return;
         }
@@ -203,15 +206,20 @@ public class MainGUI extends JFrame {
             return false;
 
         if (connect()) {
+            guiUtil.infoWindow("Click \"Ok\" to start update from " + server
+                    + ":" + port + " and wait.");
+
             Pollsessionlist sessionList = serverCommunicator.listXml();
             disconnect();
 
             if (sessionList != null && sessionList.getItems() != null) {
+                currentSessionList = sessionList;
+
                 if (sessionList.getItems().size() == 0) {
                     JPanel contentPanel = new JPanel();
 
-                    JLabel listIsEmptyLabel = new JLabel(
-                            "Server pollsession list is empty!");
+                    JLabel listIsEmptyLabel = new JLabel("Server(" + server
+                            + ":" + port + ") pollsession list is empty!");
 
                     contentPanel.add(listIsEmptyLabel);
 
@@ -266,16 +274,14 @@ public class MainGUI extends JFrame {
                             collumnNames);
 
                     JPanel contentPanel = new JPanel();
+                    contentPanel.setLayout(new BoxLayout(contentPanel,
+                            BoxLayout.Y_AXIS));
 
-                    JScrollPane tableScroll = new JScrollPane();
-                    tableScroll.add(pollsessionTable);
-
-                    contentPanel.add(tableScroll);
-                    // contentPanel.add(new JLabel("TEST"));
+                    contentPanel.add(new JLabel("Pollsession list on " + server
+                            + ":" + port));
+                    contentPanel.add(pollsessionTable);
 
                     setContentPane(contentPanel);
-
-//                    pack();
                 }
                 return true;
             }
@@ -388,8 +394,8 @@ public class MainGUI extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (localCheckBox.isSelected()) {
-                        serverField.setText("127.0.0.1");
-                        portField.setText("3320");
+                        serverField.setText(TcpCommunicator.DEFAULT_SERVER);
+                        portField.setText("" + TcpCommunicator.DEFAULT_PORT);
 
                         serverField.setEnabled(false);
                         portField.setEnabled(false);
@@ -406,8 +412,8 @@ public class MainGUI extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    selectServer(serverField.getText(), portField.getText());
                     ServerSelectDialog.this.dispose();
+                    selectServer(serverField.getText(), portField.getText());
                 }
             });
 

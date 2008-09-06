@@ -272,6 +272,9 @@ public class PollClient {
                     int port = Integer.parseInt(serverPortString
                             .substring(separatorIndex + 1));
 
+                    System.out.println("\nConnecting to " + serverName + " on "
+                            + Integer.toString(port));
+
                     communicator = new TcpCommunicator(serverName, port);
                 }
                 catch (NumberFormatException e) {
@@ -289,6 +292,10 @@ public class PollClient {
         if (communicator == null)
             try {
                 communicator = new TcpCommunicator();
+
+                System.out.println("\nConnecting to "
+                        + TcpCommunicator.DEFAULT_SERVER + " on "
+                        + Integer.toString(TcpCommunicator.DEFAULT_PORT));
             }
             catch (UnknownHostException e) {
                 communicator = null;

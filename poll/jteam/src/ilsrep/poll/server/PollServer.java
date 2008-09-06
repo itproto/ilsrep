@@ -251,7 +251,7 @@ public class PollServer {
         // DB initialisation(should be moved somewhere if DB can be other that
         // SQLite).
         try {
-            db = new SQLiteDBManager(configuration.get("dbFile"));
+            db = new SQLiteDBManager(this, configuration.get("dbFile"));
             db.connect();
         }
         catch (ClassNotFoundException e) {
