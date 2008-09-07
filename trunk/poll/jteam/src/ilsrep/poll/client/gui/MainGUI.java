@@ -1,6 +1,7 @@
 package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
+import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
@@ -29,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.xml.bind.JAXBException;
 
 /**
  * Main GUI for Poll program(combines client, editor and any other possible Poll
@@ -134,7 +136,35 @@ public class MainGUI extends JFrame {
                 fileMenu.add(exitItem);
             }
 
+            JMenu clientActions = new JMenu();
+            clientActions.setText("Client actions");
+            {
+                JMenuItem updateItem = new JMenuItem();
+                updateItem.setText("Update list");
+                updateItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateList();
+                    }
+                });
+
+                JMenuItem startSession = new JMenuItem();
+                startSession.setText("Start pollsession");
+                startSession.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        startPollsession();
+                    }
+                });
+
+                clientActions.add(updateItem);
+                clientActions.add(startSession);
+            }
+
             menu.add(fileMenu);
+            menu.add(clientActions);
         }
 
         return menu;
@@ -202,8 +232,10 @@ public class MainGUI extends JFrame {
      * @return True, if list was updated.
      */
     private boolean updateList() {
-        if (server == null || port <= 0)
+        if (server == null || port <= 0) {
+            guiUtil.alert("Server not selected!");
             return false;
+        }
 
         if (connect()) {
             guiUtil.infoWindow("Click \"Ok\" to start update from " + server
@@ -273,6 +305,11 @@ public class MainGUI extends JFrame {
                     pollsessionTableModel.setDataVector(pollsessionTableData,
                             collumnNames);
 
+                    pollsessionTable.getColumnModel().getColumn(0)
+                            .setPreferredWidth(
+                                    (int) (0.25 * pollsessionTable.getSize()
+                                            .getWidth()));
+
                     JPanel contentPanel = new JPanel();
                     contentPanel.setLayout(new BoxLayout(contentPanel,
                             BoxLayout.Y_AXIS));
@@ -290,6 +327,50 @@ public class MainGUI extends JFrame {
         }
         else
             return false;
+    }
+
+    private void startPollsession() {
+        Thread startPollsessionThread = new Thread() {
+
+            @Override
+            public void run() {
+                if (selectedPollsession >= 0)
+                    if (connect()) {
+                        String name = PollClientGUI.login(serverCommunicator,
+                                guiUtil);
+
+                        try {
+                            Pollsession sessionToStart = serverCommunicator
+                                    .getPollsession(currentSessionList
+                                            .getItems().get(0).getId());
+
+                            disconnect();
+
+                            PollClientGUI.processPollsession(sessionToStart,
+                                    guiUtil, name, true, "" + server + ":"
+                                            + port);
+                        }
+                        catch (IOException e) {
+                            guiUtil
+                                    .alert(("Exception while processing pollsession: " + e
+                                            .getMessage()));
+                        }
+                        catch (JAXBException e) {
+                            guiUtil
+                                    .alert(("Exception while processing pollsession: " + e
+                                            .getMessage()));
+                        }
+                    }
+                    else
+                        guiUtil.alert("Can't connect to " + server + ":" + port
+                                + "!");
+                else
+                    guiUtil.alert("Pollsession not selected!");
+            }
+
+        };
+
+        startPollsessionThread.start();
     }
 
     /**

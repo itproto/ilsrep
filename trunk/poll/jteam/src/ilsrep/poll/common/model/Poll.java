@@ -181,7 +181,6 @@ public class Poll {
     }
 
     public String queryUserGUI(GUIUtil win) throws IOException {
-        PollClient.consoleClearScreen();
         String query = "<html>Name: " + this.getName() + "<br>Desription: "
                 + this.getDescription().getValue() + "<html>";
 
@@ -189,7 +188,7 @@ public class Poll {
         ButtonGroup group = new ButtonGroup();
         for (Choice cur : this.getChoices()) {
             JRadioButton jrb = new JRadioButton(cur.getName());
-            System.out.println(cur.getName() + "\n");
+            // System.out.println(cur.getName() + "\n");
             jrb.setActionCommand(Integer.toString(pollNumber));
             group.add(jrb);
             pollNumber++;
