@@ -28,16 +28,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             try
             {
-                infoBox.Items.Add("Please wait, connecting to server...");
                 PollClientGUI.client.Connect(PollClientGUI.HOST, PollClientGUI.PORT);
-                if (PollClientGUI.client.isConnected)
-                {
-                    infoBox.Items.Add("Connection established");
-                }
             }
             catch (Exception exception)
             {
-                infoBox.Items.Add("Error: " + exception.Message);
+                MessageBox.Show(exception.Message, "Error");
             }
         }
 
@@ -47,7 +42,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void DisconnectFromServer()
         {
             PollClientGUI.client.Disconnect();
-            infoBox.Items.Add("Disconnected from server");
         }
 
         /// <summary>
@@ -64,7 +58,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             catch (Exception exception)
             {
-                infoBox.Items.Add("Error: " + exception.Message);
+                MessageBox.Show(exception.Message, "Error");
             }
 
             string receivedString = PollClientGUI.client.Receive();
@@ -74,7 +68,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             // Check if received data is correct
             if (receivedPacket == null)
             {
-                infoBox.Items.Add("Error: Wrong data received");
+                MessageBox.Show("Wrong data received", "Error");
             }
             return receivedPacket;
         }
@@ -86,17 +80,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
             pollPacket.user.username = nameField.Text;
             pollPacket.user.password = passwordField.Text;
 
-            if (confirmField.Enabled)
+            if (confirmField.Visible)
             {
                 if (passwordField.Text == confirmField.Text)
                 {
                     pollPacket.user.password = passwordField.Text;
                     pollPacket.user.isNew = true;
-                    confirmField.Enabled = false;
                 }
                 else
                 {
-                    infoBox.Items.Add("Error: \"password\" and \"confirm password\" fields aren't identicals");
+                    MessageBox.Show("\"password\" and \"confirm password\" fields aren't identicals", "Error");
                     return;
                 }
             }
@@ -114,13 +107,15 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else if (!pollPacket.user.isNew)
             {
-                infoBox.Items.Add("Error: Wrong password");
+                MessageBox.Show("Wrong password", "Error");
             }
             else
             {
-                infoBox.Items.Add("User not found in DB, program will create a new user");
-                infoBox.Items.Add("Please, set your password");
-                confirmField.Enabled = true;
+                MessageBox.Show("User not found in DB, program will create a new user", "Info");
+                confirmField.Visible = true;
+                confirmLabel.Visible = true;
+                //submitButton.Location.Y += 30;
+                //Size.Height += 30;
             }
         }
 
@@ -136,7 +131,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                infoBox.Items.Add("Error: name field is empty");
+                MessageBox.Show("Name field is empty", "Error");
             }
         }
     }
