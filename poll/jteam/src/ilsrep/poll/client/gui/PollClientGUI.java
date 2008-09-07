@@ -9,10 +9,8 @@ import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.common.protocol.User;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +43,10 @@ public class PollClientGUI {
      */
 
     public static void main(String[] args) throws JAXBException, IOException {
-        List<AnswerItem> answers = new ArrayList<AnswerItem>();
         String serverPortString = null;
         GUIUtil win = new GUIUtil();
         Pollsession polls = null;
-        String name = win.askUser("Enter Name");
+        String name = null;
         Object[] options = { "Use Server", "Use local file" };
         int reply = win.askUserChoice("Please choose poll source", options);
 
@@ -77,43 +74,15 @@ public class PollClientGUI {
 
             communicator = initTcpCommunicator(serverPortString);
 
-            User user = new User();
-            user.setUserName(name);
+            name = login(communicator, win);
 
-            user = communicator.sendUser(user);
-
-            // comm2.finalize();
-            if (user.getExist().equals("true")) {
-                boolean notLogged = true;
-                while (notLogged) {
-                    String password = win.askUser("Enter password");
-                    user.setPass(password);
-                    user = communicator.sendUser(user);
-                    if (user.getAuth().equals("true")) {
-                        win.alert("\nLogged in. Welcome!");
-                        notLogged = false;
-                    }
-                    else
-                        win.askUser("\nWrong password. Try again.");
-                }
-            }
-            else {
-                String password = "";
-                // boolean notSame = true;
-                win.alert("\nUser doesn't exist. Creating user.");
-                password = win.createPass();
-                user.setPass(password);
-                user.setNew("true");
-                user = communicator.sendUser(user);
-                win.alert("\nUser created. Welcome!");
-            }
             Pollsessionlist lst = communicator.listXml();
             ButtonGroup group = new ButtonGroup();
             if (lst != null && lst.getItems() != null) {
 
                 for (Item i : lst.getItems()) {
                     JRadioButton jrb = new JRadioButton(i.getName());
-                    System.out.println(i.getName() + "\n");
+                    // System.out.println(i.getName() + "\n");
                     jrb.setActionCommand(i.getId());
                     group.add(jrb);
                 }
@@ -125,8 +94,33 @@ public class PollClientGUI {
             polls = communicator.getPollsession(win.getChoice(group,
                     "Choose pollsession"));
         }
+
+        processPollsession(polls, win, name, (reply == 0), serverPortString);
+    }
+
+    /**
+     * Processes pollsession with continual GUI dialogs.
+     * 
+     * @param polls
+     *            Pollsession to process.
+     * @param win
+     *            The <code>GUIUtil</code> to use.
+     * @param name
+     *            User name
+     * @param sendResults
+     *            True, if send results to server.
+     * @param serverPortString
+     *            Server and port to send results to in format <code>server"port</code>.
+     * @throws IOException
+     *             On I/O error.
+     */
+    public static void processPollsession(Pollsession polls, GUIUtil win,
+            String name, boolean sendResults, String serverPortString)
+            throws IOException {
+        List<AnswerItem> answers = new ArrayList<AnswerItem>();
+
         if (polls != null)
-            win.alert("Pollsession aquired");
+            win.infoWindow("Pollsession retrieved");
         String testMode = "false";
         if (polls.getTestMode() != null)
             testMode = polls.getTestMode();
@@ -187,7 +181,7 @@ public class PollClientGUI {
 
         win.setVisible(false);
         win.alert(resultingOutput);
-        if (reply == 0) {
+        if (sendResults) {
 
             TcpCommunicator communicator = initTcpCommunicator(serverPortString);
 
@@ -201,8 +195,53 @@ public class PollClientGUI {
 
             win.alert("\nResults sent");
         }
-        return;
+    }
 
+    /**
+     * Logins to server(promts for user name, creates new user on server if it
+     * doesn't exist).
+     * 
+     * @param communicator
+     *            Connected <code>TcpCommunicator</code>.
+     * @param win
+     *            The <code>GUIUtil</code> to use.
+     * @return User name entered by user.
+     */
+    public static String login(TcpCommunicator communicator, GUIUtil win) {
+        String name = win.askUser("Enter Name");
+
+        User user = new User();
+        user.setUserName(name);
+
+        user = communicator.sendUser(user);
+
+        // comm2.finalize();
+        if (user.getExist().equals("true")) {
+            boolean notLogged = true;
+            while (notLogged) {
+                String password = win.askUser("Enter password");
+                user.setPass(password);
+                user = communicator.sendUser(user);
+                if (user.getAuth().equals("true")) {
+                    win.alert("\nLogged in. Welcome!");
+                    notLogged = false;
+                }
+                else
+                    win.askUser("\nWrong password. Try again.");
+            }
+        }
+        else {
+            String password = "";
+            // boolean notSame = true;
+            win.alert("\nUser doesn't exist. Creating user.");
+            password = win.createPass();
+            user.setPass(password);
+            user.setNew("true");
+            user = communicator.sendUser(user);
+            win.alert("\nUser created. Welcome!");
+        }
+
+        return name;
     }
 
     private static TcpCommunicator initTcpCommunicator(String serverPortString) {
@@ -242,154 +281,6 @@ public class PollClientGUI {
             }
 
         return communicator;
-    }
-
-    /**
-     * Clears console(prints 40 blank lines).
-     */
-    public static void consoleClearScreen() {
-        for (int i = 0; i < 40; i++)
-            System.out.println();
-    }
-
-    /**
-     * Indicates that just text should be read from System.in.
-     */
-    public static final int ANSWER_TYPE_TEXT = 1;
-
-    /**
-     * Indicates that integer as string should be read from System.in.
-     */
-    public static final int ANSWER_TYPE_INTEGER = 2;
-
-    /**
-     * Indicates that double as string should be read from System.in.
-     */
-    public static final int ANSWER_TYPE_DOUBLE = 3;
-
-    /**
-     * "Y" and "n" answer set.
-     */
-    public static final String[] Y_N_ANSWER_SET = { "y", "n" };
-
-    /**
-     * Reads answer from console, using specified question and if present list
-     * of correct answers or type.
-     * 
-     * @param question
-     *            Question to promt user.
-     * @param correctAnswers
-     *            List if correct answers.
-     * @param type
-     *            Type of answer(integer, double etc).
-     * @return "Polished" answer.
-     * 
-     * @see #ANSWER_TYPE_TEXT
-     * @see #ANSWER_TYPE_INTEGER
-     * @see #ANSWER_TYPE_DOUBLE
-     * @see #Y_N_ANSWER_SET
-     */
-    public static String readFromConsole(String question,
-            String[] correctAnswers, int type) {
-        // Asking question on console.
-        if (correctAnswers == null)
-            System.out.print(question + ": ");
-        else {
-            System.out.print(question + " [");
-            for (int i = 0; i < correctAnswers.length; i++) {
-                if (i != (correctAnswers.length - 1))
-                    System.out.print(correctAnswers[i] + ",");
-                else
-                    System.out.print(correctAnswers[i]);
-            }
-            System.out.print("]: ");
-        }
-
-        BufferedReader consoleReader = new BufferedReader(
-                new InputStreamReader(System.in));
-        String answer = null;
-        try {
-            answer = consoleReader.readLine();
-        }
-        catch (IOException e) {
-            // Shouldn't be for console program. Using console utilities for
-            // daemon?
-            return null;
-        }
-
-        if (correctAnswers != null) {
-            while (true) {
-                for (String cur : correctAnswers) {
-                    if (answer.compareTo(cur) == 0)
-                        return answer;
-                }
-                System.out
-                        .print("Wrong answer. Please select answer from list again: ");
-                try {
-                    answer = consoleReader.readLine();
-                }
-                catch (IOException e) {
-                    // Read comment for this before.
-                    return null;
-                }
-            }
-        }
-
-        if ((type == 2) || (type == 3)) {
-            while (true) {
-                try {
-                    if (type == 2)
-                        Integer.parseInt(answer);
-                    else
-                        if (type == 3)
-                            Double.parseDouble(answer);
-                    return answer;
-                }
-                catch (NumberFormatException e) {
-                    try {
-                        String numberName = "";
-                        if (type == 2)
-                            numberName = "integer";
-                        else
-                            if (type == 3)
-                                numberName = "double";
-
-                        System.out.print("Wrong answer. Please write "
-                                + numberName + ": ");
-                        answer = consoleReader.readLine();
-                    }
-                    catch (IOException e1) {
-                        // Read comment for this before.
-                        return null;
-                    }
-                    continue;
-                }
-            }
-        }
-
-        return answer;
-    }
-
-    /**
-     * @see #readFromConsole(String, String[], int)
-     */
-    public static String readFromConsole(String question,
-            String[] correctAnswers) {
-        return readFromConsole(question, correctAnswers, ANSWER_TYPE_TEXT);
-    }
-
-    /**
-     * @see #readFromConsole(String, String[], int)
-     */
-    public static String readFromConsole(String question) {
-        return readFromConsole(question, null, ANSWER_TYPE_TEXT);
-    }
-
-    /**
-     * @see #readFromConsole(String, String[], int)
-     */
-    public static String readFromConsole(String question, int type) {
-        return readFromConsole(question, null, type);
     }
 
 }
