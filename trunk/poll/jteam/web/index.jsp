@@ -1,26 +1,31 @@
+<%@ include file="./links.jsp" %>
+<%@ include file="./poll.jsp" %>
+<%@ include file="./submit.jsp" %>
+<%@page import="javax.servlet.ServletRequest"%>
 <html>
-<head> <title>JSP JAVA</title></head>
+<head>
+<link rel="stylesheet" type="text/css" href="class.css" />
+</head>
 <body>
-<form name="pollsessions" action="poll.jsp" method="get">
-<h1>Choose pollsession</h1>
-<%@page import="ilsrep.poll.common.model.Poll"%>
-<%@page import="ilsrep.poll.common.model.Choice"%>
-<%@page import="ilsrep.poll.common.model.Pollsession"%>
-<%@page import="ilsrep.poll.server.db.SQLiteDBManager"%>
-<%@page import="ilsrep.poll.server.db.DBManager"%>
-<%@page import="ilsrep.poll.common.protocol.Pollsessionlist"%>
-<%@page import="ilsrep.poll.common.protocol.Item"%>
+<div id="main">
+<div id="head">POLL<img src="./logo.png">CLIENT
+</div>
+<div id="sidebar">
+<%
+out.println(links());
+ %>
+</div>
+<div id="point">
+<%
+if(request.getParameter("sub")!=null){
+out.println(getRes(request));} else if(request.getParameter("session")!=null) {
+out.println(getPoll(request.getParameter("session")));
+} else {
 
-<% 
-Pollsessionlist sessions;
-DBManager db;
-db = new SQLiteDBManager("/pollserver.db");
-sessions=db.getPollsessionlist();
- for ( Item sess : sessions.getItems()) {
-out.println("<input type='radio' name='session' value='"+sess.getId()+"'>"+sess.getName()+"<br>");
+out.println(PLEASE_ENTER_POLL);
 }
-%>
-</br><input type="submit" value="GO">
-</form>
+ %>
+</div>
+</div>
 </body>
 <html>
