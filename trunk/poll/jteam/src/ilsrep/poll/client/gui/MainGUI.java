@@ -32,6 +32,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 /**
  * Main GUI for Poll program(combines client, editor and any other possible Poll
  * client programs).
@@ -40,6 +43,16 @@ import javax.xml.bind.JAXBException;
  * 
  */
 public class MainGUI extends JFrame {
+
+    /**
+     * Namespace path to log4j configuration for client.
+     */
+    public static String CLIENT_LOGGER_CONFIGURATION_FILE = "data/log4j-conf-client-gui.properties";
+
+    /**
+     * Log4j Logger for this class.
+     */
+    private static Logger logger = Logger.getLogger(MainGUI.class);
 
     /**
      * Serial version UID.
@@ -96,7 +109,10 @@ public class MainGUI extends JFrame {
         guiUtil = new GUIUtil();
 
         setJMenuBar(createMenu());
+        logger.debug("Created and set menu.");
         setSize(800, 600);
+        logger.debug("Set size to main window: " + getSize().getWidth() + "x"
+                + getSize().getHeight());
     }
 
     /**
@@ -187,24 +203,36 @@ public class MainGUI extends JFrame {
      *            Server port.
      */
     public void selectServer(String server, String port) {
+        logger.debug("User selected server " + server + ":" + port);
         try {
             this.port = Integer.parseInt(port);
         }
         catch (NumberFormatException e) {
-            selectNothingAndAlert("Server port must be integer!");
+            final String portMustBeIntegerWarning = "Server port must be integer!";
+            selectNothingAndAlert(portMustBeIntegerWarning);
+            logger.warn(portMustBeIntegerWarning + " (user entered" + port
+                    + ")");
             return;
         }
 
         if (this.port <= 0) {
-            selectNothingAndAlert("Port must be larger then 0!");
+            final String portMustBeLargerThenZeroWarning = "Port must be larger then 0!";
+            selectNothingAndAlert(portMustBeLargerThenZeroWarning);
+            logger.warn(portMustBeLargerThenZeroWarning + " (user entered"
+                    + port + ")");
             return;
         }
 
         this.server = server;
 
+        logger.info("Server(" + this.server + ":" + this.port
+                + ") selected by user is valid. Using it for work.");
+
         if (!updateList()) {
-            selectNothingAndAlert("Can't connect to " + server + ":" + port
-                    + "!");
+            String cannotConnectToServerString = "Can't connect to " + server
+                    + ":" + port + "!";
+            selectNothingAndAlert(cannotConnectToServerString);
+            logger.warn(cannotConnectToServerString);
             return;
         }
         else
@@ -227,13 +255,23 @@ public class MainGUI extends JFrame {
     }
 
     /**
+     * Shows if server was selected by user.
+     * 
+     * @return True, if yes.
+     */
+    private boolean serverSelected() {
+        return server != null && port > 0;
+    }
+
+    /**
      * Updates pollsession list from server.
      * 
      * @return True, if list was updated.
      */
     private boolean updateList() {
-        if (server == null || port <= 0) {
+        if (!serverSelected()) {
             guiUtil.alert("Server not selected!");
+            logger.warn("Server not selected, can't update.");
             return false;
         }
 
@@ -250,14 +288,19 @@ public class MainGUI extends JFrame {
                 if (sessionList.getItems().size() == 0) {
                     JPanel contentPanel = new JPanel();
 
-                    JLabel listIsEmptyLabel = new JLabel("Server(" + server
-                            + ":" + port + ") pollsession list is empty!");
+                    String emptyList = "Server(" + server + ":" + port
+                            + ") pollsession list is empty!";
+                    JLabel listIsEmptyLabel = new JLabel(emptyList);
+                    logger.warn(emptyList);
 
                     contentPanel.add(listIsEmptyLabel);
 
                     setContentPane(contentPanel);
                 }
                 else {
+                    logger.info("Received " + sessionList.getItems().size()
+                            + " elements list from server.");
+
                     Vector<Vector<String>> pollsessionTableData = new Vector<Vector<String>>();
 
                     for (Item pollsessionIdName : sessionList.getItems()) {
@@ -322,8 +365,18 @@ public class MainGUI extends JFrame {
                 }
                 return true;
             }
-            else
+            else {
+                if (sessionList == null)
+                    logger
+                            .warn("Pollsessionlist is null. Corrupted packet from server or response packet wasn't received at all.");
+                else
+                    if (sessionList.getItems() == null) {
+                        logger
+                                .warn("Items array of Pollsessionlist is null. Corrupted packet from server.");
+                    }
+
                 return false;
+            }
         }
         else
             return false;
@@ -380,16 +433,29 @@ public class MainGUI extends JFrame {
      * @return True, if connection was successful.
      */
     private boolean connect() {
+        boolean connected = false;
+        String exceptionMessage = null;
+
         try {
             serverCommunicator = new TcpCommunicator(server, port);
-            return true;
+            connected = true;
         }
         catch (UnknownHostException e) {
-            return false;
+            connected = false;
+            exceptionMessage = e.getMessage();
         }
         catch (IOException e) {
-            return false;
+            connected = false;
+            exceptionMessage = e.getMessage();
         }
+
+        if (!connected)
+            logger.warn("Couldn't connect to " + server + ":" + port
+                    + "! (exception message: " + exceptionMessage + ")");
+        else
+            logger.info("Connected to " + server + ":" + port + ".");
+
+        return connected;
     }
 
     /**
@@ -398,7 +464,11 @@ public class MainGUI extends JFrame {
     private void disconnect() {
         if (serverCommunicator != null)
             serverCommunicator.finalize();
+
         serverCommunicator = null;
+
+        if (!serverSelected())
+            logger.info("Disconnected from " + server + ":" + port + ".");
     }
 
     /**
@@ -420,6 +490,9 @@ public class MainGUI extends JFrame {
                 gui.setVisible(true);
             }
         };
+
+        PropertyConfigurator.configure(MainGUI.class.getClassLoader()
+                .getResource(CLIENT_LOGGER_CONFIGURATION_FILE));
 
         SwingUtilities.invokeLater(guiStartThread);
     }

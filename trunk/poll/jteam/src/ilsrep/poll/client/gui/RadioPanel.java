@@ -52,8 +52,7 @@ public class RadioPanel extends JPanel implements ActionListener {
                 JRadioButton jrb = (JRadioButton) e.nextElement();
                 if (jrb.isSelected()) {
                     reply = jrb.getActionCommand();
-                    System.out.println(jrb.getActionCommand());
-
+                    // System.out.println(jrb.getActionCommand());
                 }
             }
 
