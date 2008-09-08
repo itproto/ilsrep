@@ -44,9 +44,9 @@ public class PollServer {
     private static Logger logger = Logger.getLogger(PollServer.class);
 
     /**
-     * Namespace path to log4j configuration.
+     * Namespace path to log4j configuration for server.
      */
-    public static String LOGGER_CONFIGURATION_FILE = "data/log4j-conf.properties";
+    public static String LOGGER_CONFIGURATION_FILE = "data/log4j-conf-server.properties";
 
     /**
      * Main method for poll server. <br>
