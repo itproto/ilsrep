@@ -5,13 +5,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.Poll
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollEditor", "Ilsrep.PollApplication.PollEditor\Ilsrep.PollApplication.PollEditor.csproj", "{33A77EBA-C5FF-44CD-A8C4-EA3082C1A5C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollServer", "Ilsrep.PollApplication.PollServer\Ilsrep.PollApplication.PollServer.csproj", "{66FA0406-4697-46B8-AA2E-F01802AC510C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollServerWinService", "Ilsrep.PollApplication.PollServer\Ilsrep.PollApplication.PollServerWinService.csproj", "{66FA0406-4697-46B8-AA2E-F01802AC510C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollProtocol", "Ilsrep.PollApplication.Protocol\Ilsrep.PollApplication.PollProtocol.csproj", "{97BFC9FF-DB20-4465-8FF0-6FB8CD4B0080}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Common", "Ilsrep.Common\Ilsrep.Common.csproj", "{B00F7C13-0DE1-48F4-BC78-F9FB6F367980}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollClientGUI", "Ilsrep.PollApplication.PollClientGUI\Ilsrep.PollApplication.PollClientGUI.csproj", "{FCD098CA-ADD1-4CBA-8320-C3D764831A6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.PollApplication.PollServerConsole", "Ilsrep.PollApplication.PollServerConsole\Ilsrep.PollApplication.PollServerConsole.csproj", "{2DF1BE7A-3C46-4E0E-AD26-DAA0D7781A01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{FCD098CA-ADD1-4CBA-8320-C3D764831A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCD098CA-ADD1-4CBA-8320-C3D764831A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCD098CA-ADD1-4CBA-8320-C3D764831A6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DF1BE7A-3C46-4E0E-AD26-DAA0D7781A01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DF1BE7A-3C46-4E0E-AD26-DAA0D7781A01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DF1BE7A-3C46-4E0E-AD26-DAA0D7781A01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DF1BE7A-3C46-4E0E-AD26-DAA0D7781A01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
