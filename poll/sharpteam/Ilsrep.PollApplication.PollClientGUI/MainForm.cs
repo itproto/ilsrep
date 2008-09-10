@@ -147,6 +147,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 sendPacket.request.id = selectedPollSession.id;
                 PollPacket receivedPacket = new PollPacket();
                 receivedPacket = ReceivePollPacket(sendPacket);
+                if (receivedPacket == null)
+                    return;
+
                 pollSession = receivedPacket.pollSession;
 
                 PollSessionForm pollSessionForm = new PollSessionForm();
