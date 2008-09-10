@@ -1,46 +1,17 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Ilsrep.PollApplication.PollServer</name>
+        <name>Ilsrep.PollApplication.PollServerConsole</name>
     </assembly>
     <members>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServerInstaller.components">
+        <member name="T:Ilsrep.PollApplication.PollServer.PollServer">
             <summary>
-            Required designer variable.
+            PollServer handles connections and creates new threads to work with them.
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServerInstaller.Dispose(System.Boolean)">
-            <summary> 
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServerInstaller.InitializeComponent">
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.PATH_TO_LOG_CONFIG">
             <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
-            <summary>
-            Event Log
+            path to Logger configuration file
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.host">
@@ -51,6 +22,11 @@
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.port">
             <summary>
             Port to which bind the server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
+            <summary>
+            Logger
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.server">
@@ -68,36 +44,20 @@
             Thread signal
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.serverThread">
-            <summary>
-            Main thread that server will run on
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.serviceRunning">
-            <summary>
-            Flag to see if service is still running
-            </summary>
-        </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Main(System.String[])">
             <summary>
             Main function
             </summary>
             <param name="args">arguments</param>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStart(System.String[])">
-            <summary>
-            Start server
-            </summary>
-            <param name="args">passed arguments</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStop">
-            <summary>
-            Stop server.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Run">
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Start">
             <summary>
             Start Server. Inits socket and starts listening. Sets async accept callback.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Stop">
+            <summary>
+            Stop server. Close main listening socket and all the clients' sockets.
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnClientConnect(System.IAsyncResult)">

@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ilsrep.PollApplication.PollServerWinService</name>
+    </assembly>
+    <members>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServerInstaller.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServerInstaller.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServerInstaller.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
+            <summary>
+            Event Log
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.host">
+            <summary>
+            IP Address to which bind the server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.port">
+            <summary>
+            Port to which bind the server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.server">
+            <summary>
+            Main socket that will accept connections
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.workers">
+            <summary>
+            Worker sockets that will handle clients individually
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.allDone">
+            <summary>
+            Thread signal
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.serverThread">
+            <summary>
+            Main thread that server will run on
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.serviceRunning">
+            <summary>
+            Flag to see if service is still running
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Main(System.String[])">
+            <summary>
+            Main function
+            </summary>
+            <param name="args">arguments</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStart(System.String[])">
+            <summary>
+            Start server
+            </summary>
+            <param name="args">passed arguments</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnStop">
+            <summary>
+            Stop server.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Run">
+            <summary>
+            Start Server. Inits socket and starts listening. Sets async accept callback.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.OnClientConnect(System.IAsyncResult)">
+            <summary>
+            Method is exetuted when new client connects
+            </summary>
+            <param name="iAsyncResult"></param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.ProcessClient(System.IAsyncResult)">
+            <summary>
+            Method is executed when data is received
+            </summary>
+            <param name="iAsyncResult"></param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.SendCallback(System.IAsyncResult)">
+            <summary>
+            Method is executed when data has been sent
+            </summary>
+            <param name="iAsyncResult"></param>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.BUFFERSIZE">
+            <summary>
+            Size of receive buffer
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.workSocket">
+            <summary>
+            Client  socket
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.buffer">
+            <summary>
+            Receive buffer
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.sb">
+            <summary>
+            Received data string
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.isAuthorized">
+            <summary>
+            Shows is user authorized or not
+            </summary>
+        </member>
+        <member name="P:Ilsrep.PollApplication.PollServer.PollServer.StateObject.ipAddress">
+            <summary>
+            get ip address
+            </summary>
+        </member>
+    </members>
+</doc>

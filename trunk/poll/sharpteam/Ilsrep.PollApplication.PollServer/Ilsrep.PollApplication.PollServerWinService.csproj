@@ -7,8 +7,8 @@
     <ProjectGuid>{66FA0406-4697-46B8-AA2E-F01802AC510C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ilsrep.PollApplication.PollServer</RootNamespace>
-    <AssemblyName>Ilsrep.PollApplication.PollServer</AssemblyName>
+    <RootNamespace>Ilsrep.PollApplication.PollServerWinService</RootNamespace>
+    <AssemblyName>Ilsrep.PollApplication.PollServerWinService</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -51,7 +51,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\Doc\Ilsrep.PollApplication.PollServer.xml</DocumentationFile>
+    <DocumentationFile>..\Doc\Ilsrep.PollApplication.PollServerWinService.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
