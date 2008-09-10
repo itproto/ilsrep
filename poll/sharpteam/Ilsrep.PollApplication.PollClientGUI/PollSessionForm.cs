@@ -36,18 +36,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
             InitializeComponent();
 
             // Fill fields
-            if (PollEditorForm.pollSession != null)
+            if (MainForm.pollSession != null)
             {
                 // Copy polls list
-                foreach (Poll curPoll in PollEditorForm.pollSession.polls)
+                foreach (Poll curPoll in MainForm.pollSession.polls)
                 {
                     polls.Add(curPoll);
                 }
 
-                nameField.Text = PollEditorForm.pollSession.name;
-                isTestMode.Checked = PollEditorForm.pollSession.testMode;
+                nameField.Text = MainForm.pollSession.name;
+                isTestMode.Checked = MainForm.pollSession.testMode;
                 if (isTestMode.Checked)
-                    minScoreField.Text = PollEditorForm.pollSession.minScore.ToString();
+                    minScoreField.Text = MainForm.pollSession.minScore.ToString();
             }
 
             RefreshPollsList();
@@ -196,12 +196,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                if (PollEditorForm.pollSession == null)
-                    PollEditorForm.pollSession = new PollSession();
+                if (MainForm.pollSession == null)
+                    MainForm.pollSession = new PollSession();
 
                 // Fill name and testMode fields
-                PollEditorForm.pollSession.name = nameField.Text;
-                PollEditorForm.pollSession.testMode = isTestMode.Checked;
+                MainForm.pollSession.name = nameField.Text;
+                MainForm.pollSession.testMode = isTestMode.Checked;
 
                 // Fill minScore field
                 if (isTestMode.Checked)
@@ -211,7 +211,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                         Double minScore = Convert.ToDouble(minScoreField.Text);
                         if (minScore < 0 || minScore > 1)
                             throw new Exception("minScore must be in interval [0,1]");
-                        PollEditorForm.pollSession.minScore = minScore;
+                        MainForm.pollSession.minScore = minScore;
                     }
                     catch (Exception exception)
                     {
@@ -221,10 +221,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
 
                 // Fill polls list
-                PollEditorForm.pollSession.polls.Clear();
+                MainForm.pollSession.polls.Clear();
                 foreach (Poll curPoll in polls)
                 {
-                    PollEditorForm.pollSession.polls.Add(curPoll);
+                    MainForm.pollSession.polls.Add(curPoll);
                 }
                 polls.Clear();
                 Close();
