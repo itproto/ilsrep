@@ -14,7 +14,7 @@ res+="<form name=\"polls\" id=\"polls\" action=\"index.jsp\" method=\"get\">\n"+
 Pollsession sess;
 DBManager db;
 int num=0;
-db = new SQLiteDBManager("/pollserver.db");
+db = new SQLiteDBManager(getServletContext().getRealPath("/")+"/pollserver.db");
 sess=db.getPollsessionById(sessi);
 
 res+="<h1>"+sess.getName()+"</h1>";
