@@ -117,6 +117,7 @@
             this.MinimumSize = new System.Drawing.Size(275, 150);
             this.Name = "LoginForm";
             this.Text = "PollClientGUI";
+            this.Load += new System.EventHandler(this.LoginForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

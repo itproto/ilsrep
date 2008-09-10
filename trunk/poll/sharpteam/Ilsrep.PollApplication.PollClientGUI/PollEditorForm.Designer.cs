@@ -88,6 +88,7 @@
             this.MinimumSize = new System.Drawing.Size(239, 267);
             this.Name = "PollEditorForm";
             this.Text = "PollClientGUI.PollEditor";
+            this.Load += new System.EventHandler(this.PollEditorForm_Load);
             this.ResumeLayout(false);
 
         }

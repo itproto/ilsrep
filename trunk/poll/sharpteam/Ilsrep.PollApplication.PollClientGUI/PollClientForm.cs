@@ -28,6 +28,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void PollClientForm_Load( object sender, EventArgs e )
         {
+            int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
+            int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
+            this.Location = new Point(width, height);
             if ( !PollClientGUI.client.isConnected )
             {
                 //PollClientGUI.client.Connect( PollClientGUI.HOST, PollClientGUI.PORT );

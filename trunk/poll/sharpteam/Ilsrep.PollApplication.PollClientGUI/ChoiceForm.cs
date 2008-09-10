@@ -52,5 +52,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 Close();
             }
         }
+
+        private void ChoiceForm_Load(object sender, EventArgs e)
+        {
+            int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
+            int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
+            this.Location = new Point(width, height);
+        }
     }
 }
