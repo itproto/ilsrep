@@ -50,7 +50,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 // Select correct choice in choicesListBox
                 if (PollSessionForm.poll != null)
-                    if (PollEditorForm.pollSession == null)
+                    if (MainForm.pollSession == null)
                     {
                         choicesListBox.SelectedIndex = PollSessionForm.poll.correctChoiceID - 1;
                     }
