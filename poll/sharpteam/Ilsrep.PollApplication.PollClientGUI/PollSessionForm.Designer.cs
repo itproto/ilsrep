@@ -154,6 +154,7 @@
             this.MinimumSize = new System.Drawing.Size(280, 365);
             this.Name = "PollSessionForm";
             this.Text = "PollSession";
+            this.Load += new System.EventHandler(this.PollSessionForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

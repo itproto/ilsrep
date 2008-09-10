@@ -61,6 +61,7 @@
             this.MinimumSize = new System.Drawing.Size(191, 107);
             this.Name = "ChoiceForm";
             this.Text = "ChoiceForm";
+            this.Load += new System.EventHandler(this.ChoiceForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

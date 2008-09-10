@@ -121,6 +121,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <param name="e">EventArgs e</param>
         private void PollStatisticsForm_Load(object sender, EventArgs e)
         {
+            int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
+            int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
+            this.Location = new Point(width, height);
             RefreshPollSessionsList();
         }
 

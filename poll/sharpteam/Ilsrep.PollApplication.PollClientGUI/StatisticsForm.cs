@@ -61,6 +61,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <param name="e">EventArgs e</param>
         private void StatisticForm_Load(object sender, EventArgs e)
         {
+            int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
+            int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
+            this.Location = new Point(width, height);
+
             PollPacket sendPacket = new PollPacket();
             PollPacket receivedPacket = new PollPacket();
             sendPacket.request = new Request();
