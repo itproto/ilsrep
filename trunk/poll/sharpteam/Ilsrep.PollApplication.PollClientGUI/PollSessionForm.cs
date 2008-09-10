@@ -18,11 +18,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// Poll, selected in pollsListBox
         /// </summary>
-        public static Poll poll = new Poll();
+        public static Poll activePoll = new Poll();
         /// <summary>
         /// List of Polls that will be filled
         /// </summary>
-        public static List<Poll> polls = new List<Poll>();
+        public static List<Poll> pollsList = new List<Poll>();
         /// <summary>
         /// Shows enabled status of TestMode
         /// </summary>
@@ -41,7 +41,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 // Copy polls list
                 foreach (Poll curPoll in MainForm.pollSession.polls)
                 {
-                    polls.Add(curPoll);
+                    pollsList.Add(curPoll);
                 }
 
                 nameField.Text = MainForm.pollSession.name;
@@ -60,13 +60,21 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             pollsListBox.Items.Clear();
             int index = 0;
-            foreach (Poll curPoll in polls)
+            foreach (Poll curPoll in pollsList)
             {
                 index++;
                 pollsListBox.Items.Add(index + ". " + curPoll.name);
             }
 
-            poll = null;
+            if (pollsList.Count == 0)
+            {
+                MessageBox.Show("No polls in pollsession...", "Info");
+                activePoll = null;
+                return;
+            }
+
+            pollsListBox.SelectedIndex = 0;
+            activePoll = pollsList[0];
         }
 
         /// <summary>
@@ -97,14 +105,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             try
             {
-                poll = polls[pollsListBox.SelectedIndex];
+                activePoll = pollsList[pollsListBox.SelectedIndex];
             }
             catch (Exception)
             {
-                poll = null;
+                activePoll = null;
             }
         }
-
+        
         /// <summary>
         /// Function opens PollForm and then add new poll to polls list
         /// </summary>
@@ -113,13 +121,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void addButton_Click(object sender, EventArgs e)
         {
             // Open PollForm to fill new poll
-            poll = null;
+            activePoll = null;
             PollForm pollForm = new PollForm();
             pollForm.ShowDialog();
 
             // Save changes
-            if (poll != null)
-                polls.Add(poll);
+            if (activePoll != null)
+                pollsList.Add(activePoll);
 
             RefreshPollsList();
         }
@@ -132,7 +140,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void editButton_Click(object sender, EventArgs e)
         {
             // Check if any poll selected
-            if (poll == null)
+            if (activePoll == null)
             {
                 MessageBox.Show("Please, choose poll to edit");
             }
@@ -143,12 +151,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollForm.ShowDialog();
 
                 // Save changes
-                polls[pollsListBox.SelectedIndex] = poll;
+                pollsList[pollsListBox.SelectedIndex] = activePoll;
 
                 RefreshPollsList();
             }
         }
-
+        
         /// <summary>
         /// Function remove selected poll from polls list
         /// </summary>
@@ -157,7 +165,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void removeButton_Click(object sender, EventArgs e)
         {
             // Check if any poll selected
-            if (poll == null)
+            if (activePoll == null)
             {
                 MessageBox.Show("Please, choose poll to remove");
             }
@@ -165,10 +173,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 // Ask user confirmation
                 DialogResult userChoice = new DialogResult();
-                userChoice = MessageBox.Show(null, "Do you really want to remove poll \"" + poll.name + "\"?", "Remove Poll?", MessageBoxButtons.YesNo);
+                userChoice = MessageBox.Show(null, "Do you really want to remove poll \"" + activePoll.name + "\"?", "Remove Poll?", MessageBoxButtons.YesNo);
                 if (userChoice == DialogResult.Yes)
                 {
-                    polls.RemoveAt(pollsListBox.SelectedIndex);
+                    pollsList.RemoveAt(pollsListBox.SelectedIndex);
                     RefreshPollsList();
                 }
             }
@@ -182,10 +190,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void submitButton_Click(object sender, EventArgs e)
         {
             // Force poll adding if polls list is empty
-            if (polls.Count == 0)
+            if (pollsList.Count == 0)
             {
                 MessageBox.Show("No polls in PollSession...", "Info");
-                addButton_Click(null, EventArgs.Empty);
                 return;
             }
 
@@ -222,11 +229,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                 // Fill polls list
                 MainForm.pollSession.polls.Clear();
-                foreach (Poll curPoll in polls)
+                foreach (Poll curPoll in pollsList)
                 {
                     MainForm.pollSession.polls.Add(curPoll);
                 }
-                polls.Clear();
+                pollsList.Clear();
                 Close();
             }
         }

@@ -32,16 +32,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
             InitializeComponent();
 
             // Fill fields
-            if (PollSessionForm.poll != null)
+            if (PollSessionForm.activePoll != null)
             {
-                foreach (Choice curChoice in PollSessionForm.poll.choices)
+                foreach (Choice curChoice in PollSessionForm.activePoll.choices)
                 {
                     choices.Add(curChoice);
                 }
 
-                nameField.Text = PollSessionForm.poll.name;
-                descriptionField.Text = PollSessionForm.poll.description;
-                isCustomChoiceEnabled.Checked = PollSessionForm.poll.customChoiceEnabled;
+                nameField.Text = PollSessionForm.activePoll.name;
+                descriptionField.Text = PollSessionForm.activePoll.description;
+                isCustomChoiceEnabled.Checked = PollSessionForm.activePoll.customChoiceEnabled;
 
                 RefreshChoicesList();
             }
@@ -49,17 +49,17 @@ namespace Ilsrep.PollApplication.PollClientGUI
             if (PollSessionForm.isTestModeEnabled)
             {
                 // Select correct choice in choicesListBox
-                if (PollSessionForm.poll != null)
+                if (PollSessionForm.activePoll != null)
                     if (MainForm.pollSession == null)
                     {
-                        choicesListBox.SelectedIndex = PollSessionForm.poll.correctChoiceID - 1;
+                        choicesListBox.SelectedIndex = PollSessionForm.activePoll.correctChoiceID - 1;
                     }
                     else
                     {
                         int selectedIndex = 0;
                         foreach (Choice curChoice in choices)
                         {
-                            if (curChoice.id == PollSessionForm.poll.correctChoiceID)
+                            if (curChoice.id == PollSessionForm.activePoll.correctChoiceID)
                             {
                                 choicesListBox.SelectedIndex = selectedIndex;
                                 break;
@@ -181,8 +181,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                if (PollSessionForm.poll == null)
-                    PollSessionForm.poll = new Poll();
+                if (PollSessionForm.activePoll == null)
+                    PollSessionForm.activePoll = new Poll();
 
                 // Save selected choice to correctChoiceId
                 if (PollSessionForm.isTestModeEnabled)
@@ -194,20 +194,20 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     }
                     else
                     {
-                        PollSessionForm.poll.correctChoiceID = choicesListBox.SelectedIndex + 1;
+                        PollSessionForm.activePoll.correctChoiceID = choicesListBox.SelectedIndex + 1;
                     }
                 }
 
                 // Fill name, description, customChoiceEnabled fields
-                PollSessionForm.poll.name = nameField.Text;
-                PollSessionForm.poll.description = descriptionField.Text;
-                PollSessionForm.poll.customChoiceEnabled = isCustomChoiceEnabled.Checked;
+                PollSessionForm.activePoll.name = nameField.Text;
+                PollSessionForm.activePoll.description = descriptionField.Text;
+                PollSessionForm.activePoll.customChoiceEnabled = isCustomChoiceEnabled.Checked;
 
                 // Fill choices list
-                PollSessionForm.poll.choices.Clear();
+                PollSessionForm.activePoll.choices.Clear();
                 foreach (Choice curChoice in choices)
                 {
-                    PollSessionForm.poll.choices.Add(curChoice);
+                    PollSessionForm.activePoll.choices.Add(curChoice);
                 }
                 choices.Clear();
                 Close();
