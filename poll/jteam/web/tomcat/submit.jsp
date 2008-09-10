@@ -16,7 +16,7 @@ String res="<table border=\"1\">";
  List<AnswerItem> answers = new ArrayList<AnswerItem>();
 Pollsession sess;
 DBManager db;
-db = new SQLiteDBManager("/pollserver.db");
+db = new SQLiteDBManager(getServletContext().getRealPath("/")+"/pollserver.db");
 sess=db.getPollsessionById(request.getParameter("session"));
 if(sess.getTestMode().equals("true")){ res+="<tr><td colspan=2>Your selection</td><td>Result</td></tr>\n";
 } else {

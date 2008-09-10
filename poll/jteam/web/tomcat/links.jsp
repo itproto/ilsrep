@@ -11,7 +11,7 @@ String res="";
 res="<ul>";
 Pollsessionlist sessions;
 DBManager db;
-db = new SQLiteDBManager("/pollserver.db");
+db = new SQLiteDBManager(c);
 sessions=db.getPollsessionlist();
  for ( Item sess : sessions.getItems()) {
 res+="<li><a href=\"./index.jsp?session="+sess.getId()+"\">"+sess.getName()+"</a></li>\n";
