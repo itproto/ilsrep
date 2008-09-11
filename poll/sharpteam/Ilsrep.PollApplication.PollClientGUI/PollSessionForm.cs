@@ -34,23 +34,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         public PollSessionForm()
         {
             InitializeComponent();
-
-            // Fill fields
-            if (MainForm.pollSession != null)
-            {
-                // Copy polls list
-                foreach (Poll curPoll in MainForm.pollSession.polls)
-                {
-                    pollsList.Add(curPoll);
-                }
-
-                nameField.Text = MainForm.pollSession.name;
-                isTestMode.Checked = MainForm.pollSession.testMode;
-                if (isTestMode.Checked)
-                    minScoreField.Text = MainForm.pollSession.minScore.ToString();
-            }
-
-            RefreshPollsList();
         }
 
         /// <summary>
@@ -68,7 +51,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
             if (pollsList.Count == 0)
             {
-                MessageBox.Show("No polls in pollsession...", "Info");
                 activePoll = null;
                 return;
             }
@@ -222,7 +204,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     }
                     catch (Exception exception)
                     {
-                        MessageBox.Show(exception.Message, "Error");
+                        MessageBox.Show(exception.Message, "Error[MinScore field]");
                         return;
                     }
                 }
@@ -233,7 +215,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 {
                     MainForm.pollSession.polls.Add(curPoll);
                 }
-                pollsList.Clear();
                 Close();
             }
         }
@@ -243,6 +224,52 @@ namespace Ilsrep.PollApplication.PollClientGUI
             int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
             int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
             this.Location = new Point(width, height);
+
+            isTestModeEnabled = false;
+
+            // Fill fields
+            if (MainForm.pollSession != null)
+            {
+                // Copy polls list
+                foreach (Poll curPoll in MainForm.pollSession.polls)
+                {
+                    pollsList.Add(curPoll);
+                }
+
+                nameField.Text = MainForm.pollSession.name;
+                isTestMode.Checked = MainForm.pollSession.testMode;
+                if (isTestMode.Checked)
+                    minScoreField.Text = MainForm.pollSession.minScore.ToString();
+
+                int pollIndex = 0;
+                foreach (Poll curPoll in MainForm.pollSession.polls)
+                {
+                    // Save correct choice order number in correctChoiceId
+                    int choiceIndex = 1;
+                    foreach (Choice curChoice in curPoll.choices)
+                    {
+                        if (curChoice.id == curPoll.correctChoiceID)
+                        {
+                            MainForm.pollSession.polls[pollIndex].correctChoiceID = choiceIndex;
+                            break;
+                        }
+                        choiceIndex++;
+                    }
+                    pollIndex++;
+                }
+            }
+
+            RefreshPollsList();
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void PollSessionForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            pollsList.Clear();
         }
     }
 }
