@@ -217,7 +217,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     {
                         choicesListBox.SelectedIndex = PollSessionForm.activePoll.correctChoiceID - 1;
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
                     }
                 }
