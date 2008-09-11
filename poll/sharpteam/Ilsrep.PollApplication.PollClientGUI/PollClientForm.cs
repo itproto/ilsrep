@@ -15,7 +15,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 {
     public partial class PollClientForm : Form
     {
-        private int selectedPollSession = -1;
+        private int selectPollSession = -1;
         private int currentPoll = 0;
         private Choice selectedChoice;
         private PollSession pollSession;
@@ -65,7 +65,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 radioButton.AutoSize = true;
                 radioButton.CheckedChanged += delegate( Object sender2, EventArgs e2 )
                 {
-                    selectedPollSession = Convert.ToInt32(((RadioButton)sender2).Name);
+                    selectPollSession = Convert.ToInt32(((RadioButton)sender2).Name);
                 };
 
                 this.Controls.Add( radioButton );
@@ -90,17 +90,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             PollPacket pollPacket = new PollPacket();
             pollPacket.request = new Request();
             pollPacket.request.type = Request.GET_POLLSESSION;
-            pollPacket.request.id = selectedPollSession.ToString();
+            pollPacket.request.id = selectPollSession.ToString();
             pollPacket = PollClientGUI.ReceivePollPacket( pollPacket );
             pollSession = pollPacket.pollSession;
 
             AskQuestion();
-
-/*            foreach ( Poll poll in pollPacket.pollSession.polls )
-            {
-                resultsList.results.Add( AskQuestion(poll, pollPacket.pollSession) );
-            }*/
-
         }
 
         private void AskQuestion()
