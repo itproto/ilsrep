@@ -142,6 +142,61 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.selectedPollSession">
+            <summary>
+            PollSession name, selected in pollSessionsListBox
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.pollSession">
+            <summary>
+            PollSession that will be filled
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.pollSessionsList">
+            <summary>
+            List of PollSessions names
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
+            <summary>
+            Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+            </summary>
+            <param name="sendPacket">PollPacket with request to send</param>
+            <returns>PollPacket receivedPacket</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.RefreshPollSessionsList">
+            <summary>
+            Get PollSessionsList from server and show them in pollSessionsListBox
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.createButton_Click(System.Object,System.EventArgs)">
+            <summary>
+            Function opens PollSessionForm and then send new PollSession to server
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.editButton_Click(System.Object,System.EventArgs)">
+            <summary>
+            Function opens PollSessionForm and then send changed PollSession to server
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.removeButton_Click(System.Object,System.EventArgs)">
+            <summary>
+            Function send request to server to remove selected PollSession
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.pollSessionsListBox_SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            Change selectedPollSession if SelectedIndexChanged
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.ChoiceForm">
             <summary>
             Choice Form
@@ -214,12 +269,12 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.poll">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.activePoll">
             <summary>
             Poll, selected in pollsListBox
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.polls">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.pollsList">
             <summary>
             List of Polls that will be filled
             </summary>
@@ -286,12 +341,12 @@
             Poll Form
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.choice">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.activeChoice">
             <summary>
             choice, selected in choicesListBox
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.choices">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.choicesList">
             <summary>
             list of choices, that will be filled
             </summary>
@@ -462,88 +517,6 @@
             <summary>
             The main entry point for the application.
             </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.PollClientGUI.PollEditorForm">
-            <summary>
-            PollEditor Form
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.selectedPollSession">
-            <summary>
-            PollSession name, selected in pollSessionsListBox
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.pollSession">
-            <summary>
-            PollSession that will be filled
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.pollSessions">
-            <summary>
-            List of PollSessions names
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.#ctor">
-            <summary>
-            Initialize form
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
-            <summary>
-            Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
-            </summary>
-            <param name="sendPacket">PollPacket with request to send</param>
-            <returns>PollPacket receivedPacket</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.RefreshPollSessionsList">
-            <summary>
-            Get PollSessionsList from server and show them in pollSessionsListBox
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.pollSessionsListBox_SelectedIndexChanged(System.Object,System.EventArgs)">
-            <summary>
-            Change selectedPollSession if SelectedIndexChanged
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.createButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens PollSessionForm and then send new PollSession to server
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.editButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens PollSessionForm and then send changed PollSession to server
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollEditorForm.removeButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function send request to server to remove selected PollSession
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
         </member>
     </members>
 </doc>

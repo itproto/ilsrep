@@ -23,8 +23,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
             InitializeComponent();
 
             // Fill choiceField
-            if (PollForm.choice != null)
-                choiceField.Text = PollForm.choice.choice;
+            if (PollForm.activeChoice != null)
+                choiceField.Text = PollForm.activeChoice.choice;
         }
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                if (PollForm.choice == null)
+                if (PollForm.activeChoice == null)
                 {
-                    PollForm.choice = new Choice();
-                    PollForm.choice.id = 0;
+                    PollForm.activeChoice = new Choice();
+                    PollForm.activeChoice.id = 0;
                 }
 
                 // Fill choiceField
-                PollForm.choice.choice = choiceField.Text;
+                PollForm.activeChoice.choice = choiceField.Text;
                 Close();
             }
         }
@@ -58,6 +58,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
             int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
             this.Location = new Point(width, height);
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

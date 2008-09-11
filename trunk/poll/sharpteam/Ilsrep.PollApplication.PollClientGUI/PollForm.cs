@@ -18,11 +18,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// choice, selected in choicesListBox
         /// </summary>
-        public static Choice choice = new Choice();
+        public static Choice activeChoice = new Choice();
         /// <summary>
         /// list of choices, that will be filled
         /// </summary>
-        public static List<Choice> choices = new List<Choice>();
+        public static List<Choice> choicesList = new List<Choice>();
 
         /// <summary>
         /// Initialize Form
@@ -30,48 +30,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         public PollForm()
         {
             InitializeComponent();
-
-            // Fill fields
-            if (PollSessionForm.activePoll != null)
-            {
-                foreach (Choice curChoice in PollSessionForm.activePoll.choices)
-                {
-                    choices.Add(curChoice);
-                }
-
-                nameField.Text = PollSessionForm.activePoll.name;
-                descriptionField.Text = PollSessionForm.activePoll.description;
-                isCustomChoiceEnabled.Checked = PollSessionForm.activePoll.customChoiceEnabled;
-
-                RefreshChoicesList();
-            }
-
-            if (PollSessionForm.isTestModeEnabled)
-            {
-                // Select correct choice in choicesListBox
-                if (PollSessionForm.activePoll != null)
-                    if (MainForm.pollSession == null)
-                    {
-                        choicesListBox.SelectedIndex = PollSessionForm.activePoll.correctChoiceID - 1;
-                    }
-                    else
-                    {
-                        int selectedIndex = 0;
-                        foreach (Choice curChoice in choices)
-                        {
-                            if (curChoice.id == PollSessionForm.activePoll.correctChoiceID)
-                            {
-                                choicesListBox.SelectedIndex = selectedIndex;
-                                break;
-                            }
-                            selectedIndex++;
-                        }
-                    }
-            }
-            else
-            {
-                isCustomChoiceEnabled.Enabled = true;
-            }
         }
 
         /// <summary>
@@ -81,13 +39,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             choicesListBox.Items.Clear();
             int index = 0;
-            foreach (Choice curChoice in choices)
+            foreach (Choice curChoice in choicesList)
             {
                 index++;
                 choicesListBox.Items.Add(index + ". " + curChoice.choice);
             }
 
-            choice = null;
+            activeChoice = null;
         }
 
         /// <summary>
@@ -98,13 +56,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void addButton_Click(object sender, EventArgs e)
         {
             // Open ChoiceForm to fill new choice
-            choice = null;
+            activeChoice = null;
             ChoiceForm choiceForm = new ChoiceForm();
             choiceForm.ShowDialog();
 
             // Save changes
-            if (choice != null)
-                choices.Add(choice);
+            if (activeChoice != null)
+                choicesList.Add(activeChoice);
 
             RefreshChoicesList();
         }
@@ -117,7 +75,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void editButton_Click(object sender, EventArgs e)
         {
             // Check if any choice selected
-            if (choice == null)
+            if (activeChoice == null)
             {
                 MessageBox.Show("Please, choose choice to edit", "Error");
             }
@@ -128,7 +86,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 choiceForm.ShowDialog();
 
                 // Save changes
-                choices[choicesListBox.SelectedIndex] = choice;
+                choicesList[choicesListBox.SelectedIndex] = activeChoice;
 
                 RefreshChoicesList();
             }
@@ -142,7 +100,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void removeButton_Click(object sender, EventArgs e)
         {
             // Check if any choice selected
-            if (choice == null)
+            if (activeChoice == null)
             {
                 MessageBox.Show("Please, choose choice to remove", "Error");
             }
@@ -150,10 +108,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 // Ask user confirmation
                 DialogResult userChoice = new DialogResult();
-                userChoice = MessageBox.Show(null, "Do you really want to remove choice \"" + choice.choice + "\"?", "Remove choice?", MessageBoxButtons.YesNo);
+                userChoice = MessageBox.Show(null, "Do you really want to remove choice \"" + activeChoice.choice + "\"?", "Remove choice?", MessageBoxButtons.YesNo);
                 if (userChoice == DialogResult.Yes)
                 {
-                    choices.RemoveAt(choicesListBox.SelectedIndex);
+                    choicesList.RemoveAt(choicesListBox.SelectedIndex);
                     RefreshChoicesList();
                 }
             }
@@ -167,10 +125,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void submitButton_Click(object sender, EventArgs e)
         {
             // Force choice adding if choices list is empty
-            if (choices.Count == 0)
+            if (choicesList.Count == 0)
             {
                 MessageBox.Show("No choices in Poll...", "Info");
-                addButton_Click(null, EventArgs.Empty);
                 return;
             }
 
@@ -187,7 +144,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 // Save selected choice to correctChoiceId
                 if (PollSessionForm.isTestModeEnabled)
                 {
-                    if (choice == null)
+                    if (activeChoice == null)
                     {
                         MessageBox.Show("Please, select correct choice", "Error");
                         return;
@@ -205,11 +162,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                 // Fill choices list
                 PollSessionForm.activePoll.choices.Clear();
-                foreach (Choice curChoice in choices)
+                foreach (Choice curChoice in choicesList)
                 {
                     PollSessionForm.activePoll.choices.Add(curChoice);
                 }
-                choices.Clear();
                 Close();
             }
         }
@@ -223,11 +179,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             try
             {
-                choice = choices[choicesListBox.SelectedIndex];
+                activeChoice = choicesList[choicesListBox.SelectedIndex];
             }
             catch (Exception)
             {
-                choice = null;
+                activeChoice = null;
             }
         }
 
@@ -236,6 +192,50 @@ namespace Ilsrep.PollApplication.PollClientGUI
             int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
             int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
             this.Location = new Point(width, height);
+
+            // Fill fields
+            if (PollSessionForm.activePoll != null)
+            {
+                foreach (Choice curChoice in PollSessionForm.activePoll.choices)
+                {
+                    choicesList.Add(curChoice);
+                }
+
+                nameField.Text = PollSessionForm.activePoll.name;
+                descriptionField.Text = PollSessionForm.activePoll.description;
+                isCustomChoiceEnabled.Checked = PollSessionForm.activePoll.customChoiceEnabled;
+
+                RefreshChoicesList();
+            }
+
+            if (PollSessionForm.isTestModeEnabled)
+            {
+                // Select correct choice in choicesListBox
+                if (PollSessionForm.activePoll != null)
+                {
+                    try
+                    {
+                        choicesListBox.SelectedIndex = PollSessionForm.activePoll.correctChoiceID - 1;
+                    }
+                    catch (Exception exception)
+                    {
+                    }
+                }
+            }
+            else
+            {
+                isCustomChoiceEnabled.Enabled = true;
+            }
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void PollForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            choicesList.Clear();
         }
     }
 }

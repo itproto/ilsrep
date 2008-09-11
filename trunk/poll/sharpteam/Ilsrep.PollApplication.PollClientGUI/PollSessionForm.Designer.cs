@@ -38,6 +38,7 @@
             this.editButton = new System.Windows.Forms.Button();
             this.removeButton = new System.Windows.Forms.Button();
             this.submitButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // nameField
@@ -118,7 +119,7 @@
             // 
             this.removeButton.Location = new System.Drawing.Point(12, 300);
             this.removeButton.Name = "removeButton";
-            this.removeButton.Size = new System.Drawing.Size(166, 23);
+            this.removeButton.Size = new System.Drawing.Size(247, 23);
             this.removeButton.TabIndex = 10;
             this.removeButton.Text = "Remove poll";
             this.removeButton.UseVisualStyleBackColor = true;
@@ -126,7 +127,7 @@
             // 
             // submitButton
             // 
-            this.submitButton.Location = new System.Drawing.Point(184, 300);
+            this.submitButton.Location = new System.Drawing.Point(184, 329);
             this.submitButton.Name = "submitButton";
             this.submitButton.Size = new System.Drawing.Size(75, 23);
             this.submitButton.TabIndex = 11;
@@ -134,11 +135,22 @@
             this.submitButton.UseVisualStyleBackColor = true;
             this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
             // 
+            // cancelButton
+            // 
+            this.cancelButton.Location = new System.Drawing.Point(103, 329);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 12;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
             // PollSessionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(272, 331);
+            this.ClientSize = new System.Drawing.Size(272, 360);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.submitButton);
             this.Controls.Add(this.removeButton);
             this.Controls.Add(this.editButton);
@@ -150,11 +162,12 @@
             this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.nameField);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(280, 365);
-            this.MinimumSize = new System.Drawing.Size(280, 365);
+            this.MaximumSize = new System.Drawing.Size(280, 394);
+            this.MinimumSize = new System.Drawing.Size(280, 394);
             this.Name = "PollSessionForm";
             this.Text = "PollSession";
             this.Load += new System.EventHandler(this.PollSessionForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PollSessionForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,5 +185,6 @@
         private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Button submitButton;
+        private System.Windows.Forms.Button cancelButton;
     }
 }
