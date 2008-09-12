@@ -1,4 +1,4 @@
-package ilsrep.poll.client.gui;
+package ilsrep.poll.client.gui.old;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;

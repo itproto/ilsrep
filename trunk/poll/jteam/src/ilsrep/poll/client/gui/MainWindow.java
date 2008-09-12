@@ -1,6 +1,8 @@
 package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
+import ilsrep.poll.client.gui.old.GUIUtil;
+import ilsrep.poll.client.gui.old.PollClientGUI;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
@@ -42,7 +44,7 @@ import org.apache.log4j.PropertyConfigurator;
  * @author TKOST
  * 
  */
-public class MainGUI extends JFrame {
+public class MainWindow extends JFrame {
 
     /**
      * Namespace path to log4j configuration for client.
@@ -52,7 +54,7 @@ public class MainGUI extends JFrame {
     /**
      * Log4j Logger for this class.
      */
-    private static Logger logger = Logger.getLogger(MainGUI.class);
+    private static Logger logger = Logger.getLogger(MainWindow.class);
 
     /**
      * Serial version UID.
@@ -103,7 +105,7 @@ public class MainGUI extends JFrame {
     /**
      * Creates main window.
      */
-    public MainGUI() {
+    public MainWindow() {
         super("Poll Application");
 
         guiUtil = new GUIUtil();
@@ -428,7 +430,7 @@ public class MainGUI extends JFrame {
 
     /**
      * Establishes connection to server and stores in
-     * {@link MainGUI#serverCommunicator}.
+     * {@link MainWindow#serverCommunicator}.
      * 
      * @return True, if connection was successful.
      */
@@ -486,12 +488,12 @@ public class MainGUI extends JFrame {
              */
             @Override
             public void run() {
-                MainGUI gui = new MainGUI();
+                MainWindow gui = new MainWindow();
                 gui.setVisible(true);
             }
         };
 
-        PropertyConfigurator.configure(MainGUI.class.getClassLoader()
+        PropertyConfigurator.configure(MainWindow.class.getClassLoader()
                 .getResource(CLIENT_LOGGER_CONFIGURATION_FILE));
 
         SwingUtilities.invokeLater(guiStartThread);
@@ -529,7 +531,7 @@ public class MainGUI extends JFrame {
          * Creates current dialog.
          */
         public ServerSelectDialog() {
-            super(MainGUI.this, "Select server", true);
+            super(MainWindow.this, "Select server", true);
 
             GridLayout layout = new GridLayout(3, 2, 6, 6);
 
