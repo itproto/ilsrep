@@ -26,18 +26,17 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// List of PollSessions names
         /// </summary>
         public static List<Item> pollSessionsList = new List<Item>();
-
-        private int selectPollSession = -1;
         private int currentPoll = 0;
-        private Choice selectedChoice;
-        //private PollSession pollSession;
+        private int clientIndexSelected = 0;
         private ResultsList resultsList = new ResultsList();
-
+        private const string POLLSESSION = "PollSession";
+        private const string POLL = "Poll";
+        private const string RESULTS = "Results";
+        private string process = POLLSESSION;
 
         public MainForm()
         {
             InitializeComponent();
-            RefreshPollSessionsList();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -46,36 +45,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
             this.Location = new Point(width, height);
             this.Text += " [" + PollClientGUI.userName + "]";
-        }
-
-        /// <summary>
-        /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
-        /// </summary>
-        /// <param name="sendPacket">PollPacket with request to send</param>
-        /// <returns>PollPacket receivedPacket</returns>
-        private PollPacket ReceivePollPacket(PollPacket sendPacket)
-        {
-            try
-            {
-                string sendString = PollSerializator.SerializePacket(sendPacket);
-                PollClientGUI.client.Send(sendString);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message, "Error");
-                return null;
-            }
-
-            string receivedString = PollClientGUI.client.Receive();
-            PollPacket receivedPacket = new PollPacket();
-            receivedPacket = PollSerializator.DeserializePacket(receivedString);
-
-            // Check if received data is correct
-            if (receivedPacket == null)
-            {
-                MessageBox.Show("Wrong data received", "Error");
-            }
-            return receivedPacket;
+            RefreshPollSessionsList();
         }
 
         /// <summary>
@@ -89,18 +59,20 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.request.type = Request.GET_LIST;
 
             PollPacket receivedPacket = new PollPacket();
-            receivedPacket = ReceivePollPacket(sendPacket);
+            receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
             if (receivedPacket == null)
                 return;
             pollSessionsList = receivedPacket.pollSessionList.items;
 
-            // Add PollSessions from list to pollSessionsListBox
+            // Add PollSessions from list to pollSessionsListBox in Editor and in Client
             pollSessionsListBox.Items.Clear();
+            clientListBox.Items.Clear();
             int index = 0;
             foreach (Item item in pollSessionsList)
             {
                 index++;
                 pollSessionsListBox.Items.Add(index + ". " + item.name);
+                clientListBox.Items.Add(index + ". " + item.name);
             }
 
             if (pollSessionsList.Count() == 0)
@@ -111,6 +83,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
 
             pollSessionsListBox.SelectedIndex = 0;
+            clientListBox.SelectedIndex = 0;
+            clientInfoBox.Text = "Please, select PollSession to pass test:";
             selectedPollSession = pollSessionsList[0];
         }
         
@@ -126,13 +100,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
             PollSessionForm pollSessionForm = new PollSessionForm();
             pollSessionForm.ShowDialog();
 
+            if (pollSession == null)
+                return;
+
             // Save changes
             PollPacket sendPacket = new PollPacket();
             PollPacket receivedPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.CREATE_POLLSESSION;
             sendPacket.pollSession = pollSession;
-            receivedPacket = ReceivePollPacket(sendPacket);
+            receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
 
             RefreshPollSessionsList();
         }        
@@ -153,7 +130,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 sendPacket.request.type = Request.GET_POLLSESSION;
                 sendPacket.request.id = selectedPollSession.id;
                 PollPacket receivedPacket = new PollPacket();
-                receivedPacket = ReceivePollPacket(sendPacket);
+                receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
                 if (receivedPacket == null)
                     return;
 
@@ -165,7 +142,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 // Save changes
                 sendPacket.request.type = Request.EDIT_POLLSESSION;
                 sendPacket.pollSession = pollSession;
-                receivedPacket = ReceivePollPacket(sendPacket);
+                receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
 
                 RefreshPollSessionsList();
             }
@@ -195,7 +172,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     sendPacket.request = new Request();
                     sendPacket.request.type = Request.REMOVE_POLLSESSION;
                     sendPacket.request.id = selectedPollSession.id;
-                    receivedPacket = ReceivePollPacket(sendPacket);
+                    receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
 
                     RefreshPollSessionsList();
                 }
@@ -223,139 +200,104 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
         }
 
-        private void editorPage_Enter(object sender, EventArgs e)
-        {
-            RefreshPollSessionsList();
-        }
-
-        private void clientPage_Enter( object sender, EventArgs e )
-        {
-            SelectPollSession();
-        }
-
-        private void SelectPollSession()
-        {
-            PollPacket pollPacket = new PollPacket();
-            pollPacket.request = new Request();
-            pollPacket.request.type = Request.GET_LIST;
-            pollPacket = PollClientGUI.ReceivePollPacket( pollPacket );
-
-            Label lblQuestion = new Label();
-            lblQuestion.AutoSize = true;
-            lblQuestion.Location = new System.Drawing.Point( 10, 10 );
-            lblQuestion.Text = "Please choose poll session:";
-            this.Controls.Add( lblQuestion );
-
-            int index = 0;
-            foreach ( Item item in pollPacket.pollSessionList.items )
-            {
-                RadioButton radioButton = new RadioButton();
-                radioButton.Name = item.id;
-                radioButton.Text = item.name;
-                radioButton.Location = new System.Drawing.Point( 15, 30+10*index );
-                radioButton.AutoSize = true;
-                radioButton.CheckedChanged += delegate( Object sender2, EventArgs e2 )
-                {
-                    selectPollSession = Convert.ToInt32( ((RadioButton)sender2).Name );
-                };
-
-                this.clientPage.Controls.Add( radioButton );
-                ++index;
-            }
-
-            Button button = new Button();
-            button.Name = "submit";
-            button.Text = "Select";
-            button.Location = new System.Drawing.Point( 10, 50+10*pollPacket.pollSessionList.items.Count );
-            button.AutoSize = true;
-            button.Click += delegate
-            {
-                ((Button)button).Enabled = false;
-                ProcessPollSession();
-            };
-            this.clientPage.Controls.Add( button );
-        }
-
         private void ProcessPollSession()
         {
-            PollPacket pollPacket = new PollPacket();
-            pollPacket.request = new Request();
-            pollPacket.request.type = Request.GET_POLLSESSION;
-            pollPacket.request.id = selectPollSession.ToString();
-            pollPacket = PollClientGUI.ReceivePollPacket( pollPacket );
-            pollSession = pollPacket.pollSession;
+            if (clientIndexSelected != -1)
+            {
+                PollPacket pollPacket = new PollPacket();
+                pollPacket.request = new Request();
+                pollPacket.request.type = Request.GET_POLLSESSION;
+                pollPacket.request.id = pollSessionsList[clientIndexSelected].id.ToString();
+                pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
+                pollSession = pollPacket.pollSession;
 
-            AskQuestion();
+                this.Text += " - " + pollSession.name;
+                process = POLL;
+            }
+            else
+            {
+                MessageBox.Show("Please, select PollSession", "Error");
+            }
         }
 
-        private void AskQuestion()
+        private void ProcessPoll()
         {
-            this.clientPage.Controls.Clear();
+            clientInfoBox.Clear();
+            clientListBox.Items.Clear();
 
-            Label lblQuestion = new Label();
-            lblQuestion.AutoSize = true;
-            lblQuestion.Location = new System.Drawing.Point( 10, 10 );
-            lblQuestion.Text = pollSession.polls[currentPoll].description;
-            this.clientPage.Controls.Add( lblQuestion );
-
-            int index = 0;
-            foreach ( Choice curChoice in pollSession.polls[currentPoll].choices )
+            if (currentPoll < pollSession.polls.Count)
             {
-                RadioButton radioButton = new RadioButton();
-                radioButton.Name = index.ToString();
-                radioButton.Text = curChoice.choice;
-                radioButton.Location = new System.Drawing.Point( 15, 30+20*index );
-                radioButton.AutoSize = true;
-                radioButton.CheckedChanged += delegate( Object sender2, EventArgs e2 )
-                {
-                    selectedChoice = pollSession.polls[currentPoll].choices[Convert.ToInt32( ((RadioButton)sender2).Name )];
-                };
+                clientInfoBox.Text = "Poll #" + (currentPoll + 1);
+                clientInfoBox.AppendText(Environment.NewLine);
+                clientInfoBox.AppendText("Name: " + pollSession.polls[currentPoll].name);
+                clientInfoBox.AppendText(Environment.NewLine);
+                clientInfoBox.AppendText("Description: " + pollSession.polls[currentPoll].description);
 
-                this.clientPage.Controls.Add( radioButton );
-                ++index;
+                int choiceIndex = 0;
+                foreach (Choice curChoice in pollSession.polls[currentPoll].choices)
+                {
+                    choiceIndex++;
+                    clientListBox.Items.Add(choiceIndex + ". " + curChoice.choice);
+                }
+
+                currentPoll++;
             }
-
-            Button button = new Button();
-            button.Name = "submit";
-            button.Text = "Select";
-            button.Location = new System.Drawing.Point( 10, 50+20*pollSession.polls[currentPoll].choices.Count );
-            button.AutoSize = true;
-            button.Click += delegate
+            else
             {
-                ((Button)button).Enabled = false;
-
-                PollResult pollResult = new PollResult();
-                pollResult.userName = PollClientGUI.userName;
-                pollResult.answerId = selectedChoice.parent.id;
-                pollResult.questionId = selectedChoice.id;
-                resultsList.results.Add( pollResult );
-
-                if ( currentPoll < pollSession.polls.Count - 1 )
-                {
-                    ++currentPoll;
-                    AskQuestion();
-                }
-                else
-                {
-                    ProcessResults();
-                }
-            };
-            this.clientPage.Controls.Add( button );
+                ProcessResults();
+                clientSubmitButton.Text = "OK";
+            }
         }
 
         private void ProcessResults()
         {
-            PollPacket pollPacket = new PollPacket();
+            /*PollPacket pollPacket = new PollPacket();
             pollPacket.request = new Request();
             pollPacket.request.type = Request.SAVE_RESULT;
             pollPacket.resultsList = resultsList;
             pollPacket.resultsList.userName = PollClientGUI.userName;
             pollPacket.resultsList.pollsessionId = pollSession.id;
-
+         
             PollClientGUI.client.Send( PollSerializator.SerializePacket( pollPacket ) );
 
-            this.clientPage.Controls.Clear();
-            SelectPollSession();
+            this.clientPage.Controls.Clear();*/
+
+            MessageBox.Show("Results!");
+
+            currentPoll = 0;
+            process = RESULTS;
+        }
+
+        private void clientSubmitButton_Click(object sender, EventArgs e)
+        {
+            switch (process)
+            {
+                case POLLSESSION:
+                    ProcessPollSession();
+                    ProcessPoll();
+                    clientSubmitButton.Text = "Next>";
+                    break;
+                case POLL:
+                    ProcessPoll();
+                    break;
+                case RESULTS:
+                    RefreshPollSessionsList();
+                    process = POLLSESSION;
+                    clientSubmitButton.Text = "Submit";
+                    break;
+            }
+        }
+
+        private void clientListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                clientIndexSelected = clientListBox.SelectedIndex;
+            }
+            catch (Exception)
+            {
+                clientIndexSelected = -1;
+            }
         }
     }
 }
