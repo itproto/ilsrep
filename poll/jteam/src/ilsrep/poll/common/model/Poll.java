@@ -1,7 +1,7 @@
 package ilsrep.poll.common.model;
 
 import ilsrep.poll.client.PollClient;
-import ilsrep.poll.client.gui.GUIUtil;
+import ilsrep.poll.client.gui.old.GUIUtil;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ilsrep.poll.client.gui;
+package ilsrep.poll.client.gui.old;
 
 import ilsrep.poll.client.TcpCommunicator;
 import ilsrep.poll.common.model.Poll;
