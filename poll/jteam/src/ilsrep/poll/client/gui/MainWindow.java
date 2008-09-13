@@ -77,6 +77,8 @@ public class MainWindow extends JFrame {
     protected int port = -1;
 
     /**
+     * This is class have bugs, should be replaced with new {@link GUIUtilities}
+     * 
      * @see GUIUtil
      */
     protected GUIUtil guiUtil = null;
@@ -253,7 +255,7 @@ public class MainWindow extends JFrame {
         serverOk = false;
 
         if (alertion != null)
-            guiUtil.alert(alertion);
+            GUIUtilities.showWarningDialog(alertion);
     }
 
     /**
@@ -272,7 +274,7 @@ public class MainWindow extends JFrame {
      */
     private boolean updateList() {
         if (!serverSelected()) {
-            guiUtil.alert("Server not selected!");
+            GUIUtilities.showWarningDialog("Server not selected!");
             logger.warn("Server not selected, can't update.");
             return false;
         }
@@ -406,21 +408,21 @@ public class MainWindow extends JFrame {
                                             + port);
                         }
                         catch (IOException e) {
-                            guiUtil
-                                    .alert(("Exception while processing pollsession: " + e
-                                            .getMessage()));
+                            GUIUtilities
+                                    .showWarningDialog("Exception while processing pollsession: "
+                                            + e.getMessage());
                         }
                         catch (JAXBException e) {
-                            guiUtil
-                                    .alert(("Exception while processing pollsession: " + e
-                                            .getMessage()));
+                            GUIUtilities
+                                    .showWarningDialog("Exception while processing pollsession: "
+                                            + e.getMessage());
                         }
                     }
                     else
-                        guiUtil.alert("Can't connect to " + server + ":" + port
-                                + "!");
+                        GUIUtilities.showWarningDialog("Can't connect to "
+                                + server + ":" + port + "!");
                 else
-                    guiUtil.alert("Pollsession not selected!");
+                    GUIUtilities.showWarningDialog("Pollsession not selected!");
             }
 
         };
