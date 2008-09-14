@@ -253,18 +253,17 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void ProcessResults()
         {
-            PollPacket pollPacket = new PollPacket();
-            pollPacket.request = new Request();
-            pollPacket.request.type = Request.SAVE_RESULT;
-            pollPacket.resultsList = resultsList;
-            pollPacket.resultsList.userName = PollClientGUI.userName;
-            pollPacket.resultsList.pollsessionId = pollSession.id;
-         
-            PollClientGUI.client.Send( PollSerializator.SerializePacket( pollPacket ) );
+            PollPacket sendPacket = new PollPacket();
+            sendPacket.request = new Request();
+            sendPacket.request.type = Request.SAVE_RESULT;
+            sendPacket.resultsList = resultsList;
+            sendPacket.resultsList.userName = PollClientGUI.userName;
+            sendPacket.resultsList.pollsessionId = pollSession.id;
+
+            PollPacket receivedPacket = new PollPacket();
+            receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
 
             clientInfoBox.Text = results;
-
-            //MessageBox.Show("Results!");
 
             currentPoll = 0;
             process = RESULTS;
