@@ -33,6 +33,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private const string POLL = "Poll";
         private const string RESULTS = "Results";
         private string process = POLLSESSION;
+        private string results = String.Empty;
 
         public MainForm()
         {
@@ -212,6 +213,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollSession = pollPacket.pollSession;
 
                 this.Text += " - " + pollSession.name;
+                results = "Results:" + Environment.NewLine;
                 process = POLL;
             }
             else
@@ -251,7 +253,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void ProcessResults()
         {
-            /*PollPacket pollPacket = new PollPacket();
+            PollPacket pollPacket = new PollPacket();
             pollPacket.request = new Request();
             pollPacket.request.type = Request.SAVE_RESULT;
             pollPacket.resultsList = resultsList;
@@ -260,9 +262,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
          
             PollClientGUI.client.Send( PollSerializator.SerializePacket( pollPacket ) );
 
-            this.clientPage.Controls.Clear();*/
+            clientInfoBox.Text = results;
 
-            MessageBox.Show("Results!");
+            //MessageBox.Show("Results!");
 
             currentPoll = 0;
             process = RESULTS;
@@ -278,6 +280,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     clientSubmitButton.Text = "Next>";
                     break;
                 case POLL:
+                    PollResult result = new PollResult();
+                    result.questionId = pollSession.polls[currentPoll-1].id;
+                    result.answerId = pollSession.polls[currentPoll-1].choices[clientIndexSelected].id;
+                    result.userName = PollClientGUI.userName;
+                    resultsList.results.Add( result );
+                    results += currentPoll + ". " + pollSession.polls[currentPoll-1].name + ": " + pollSession.polls[currentPoll-1].choices[clientIndexSelected].choice + Environment.NewLine;
                     ProcessPoll();
                     break;
                 case RESULTS:
