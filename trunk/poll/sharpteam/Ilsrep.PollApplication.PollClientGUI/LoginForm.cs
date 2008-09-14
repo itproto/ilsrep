@@ -44,35 +44,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             PollClientGUI.client.Disconnect();
         }
 
-        /// <summary>
-        /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
-        /// </summary>
-        /// <param name="sendPacket">PollPacket with request to send</param>
-        /// <returns>PollPacket receivedPacket</returns>
-        private PollPacket ReceivePollPacket(PollPacket sendPacket)
-        {
-            try
-            {
-                string sendString = PollSerializator.SerializePacket(sendPacket);
-                PollClientGUI.client.Send(sendString);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message, "Error");
-            }
-
-            string receivedString = PollClientGUI.client.Receive();
-            PollPacket receivedPacket = new PollPacket();
-            receivedPacket = PollSerializator.DeserializePacket(receivedString);
-
-            // Check if received data is correct
-            if (receivedPacket == null)
-            {
-                MessageBox.Show("Wrong data received", "Error");
-            }
-            return receivedPacket;
-        }
-
         private void AuthorizeUser()
         {
             PollPacket pollPacket = new PollPacket();
@@ -94,7 +65,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
             }
 
-            pollPacket = ReceivePollPacket(pollPacket);
+            pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
 
             if (pollPacket == null)
                 return;
