@@ -33,7 +33,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private const string POLL = "Poll";
         private const string RESULTS = "Results";
         private string process = POLLSESSION;
-        private string results = String.Empty;
 
         public MainForm()
         {
@@ -212,9 +211,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
                 pollSession = pollPacket.pollSession;
 
-                this.Text += " - " + pollSession.name;
-                results = "Results:" + Environment.NewLine;
-                process = POLL;
+                this.Text = "PollClientGUI [" + PollClientGUI.userName + "] - " + pollSession.name;
             }
             else
             {
@@ -224,30 +221,47 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void ProcessPoll()
         {
-            clientInfoBox.Clear();
-            clientListBox.Items.Clear();
-
-            if (currentPoll < pollSession.polls.Count)
+            if (clientIndexSelected != -1)
             {
-                clientInfoBox.Text = "Poll #" + (currentPoll + 1);
-                clientInfoBox.AppendText(Environment.NewLine);
-                clientInfoBox.AppendText("Name: " + pollSession.polls[currentPoll].name);
-                clientInfoBox.AppendText(Environment.NewLine);
-                clientInfoBox.AppendText("Description: " + pollSession.polls[currentPoll].description);
-
-                int choiceIndex = 0;
-                foreach (Choice curChoice in pollSession.polls[currentPoll].choices)
+                if (process == POLL)
                 {
-                    choiceIndex++;
-                    clientListBox.Items.Add(choiceIndex + ". " + curChoice.choice);
+                    PollResult result = new PollResult();
+                    result.questionId = pollSession.polls[currentPoll - 1].id;
+                    result.answerId = pollSession.polls[currentPoll - 1].choices[clientIndexSelected].id;
+                    result.userName = PollClientGUI.userName;
+                    resultsList.results.Add(result);
                 }
 
-                currentPoll++;
+                clientInfoBox.Clear();
+                clientListBox.Items.Clear();
+
+                if (currentPoll < pollSession.polls.Count)
+                {
+                    clientInfoBox.Text = "Poll #" + (currentPoll + 1);
+                    clientInfoBox.AppendText(Environment.NewLine);
+                    clientInfoBox.AppendText("Name: " + pollSession.polls[currentPoll].name);
+                    clientInfoBox.AppendText(Environment.NewLine);
+                    clientInfoBox.AppendText("Description: " + pollSession.polls[currentPoll].description);
+
+                    int choiceIndex = 0;
+                    foreach (Choice curChoice in pollSession.polls[currentPoll].choices)
+                    {
+                        choiceIndex++;
+                        clientListBox.Items.Add(choiceIndex + ". " + curChoice.choice);
+                    }
+
+                    currentPoll++;
+                    clientIndexSelected = -1;
+                }
+                else
+                {
+                    ProcessResults();
+                    clientSubmitButton.Text = "OK";
+                }
             }
             else
             {
-                ProcessResults();
-                clientSubmitButton.Text = "OK";
+                MessageBox.Show("Please, select your answer", "Error");
             }
         }
 
@@ -263,8 +277,54 @@ namespace Ilsrep.PollApplication.PollClientGUI
             PollPacket receivedPacket = new PollPacket();
             receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
 
-            clientInfoBox.Text = results;
+            clientInfoBox.Text = "PollSession: " + pollSession.name + Environment.NewLine + "Here is your results:" + Environment.NewLine;
+            float correctAnswers = 0;
+            int index = 0;
+            foreach (PollResult curResult in resultsList.results)
+            {
+                index++;
 
+                int pollIndex = 0;
+                foreach (Poll curPoll in pollSession.polls)
+                {
+                    if (curPoll.id == curResult.questionId)
+                        break;
+                    pollIndex++;
+                }
+
+                int choiceIndex = 0;
+                foreach (Choice curChoice in pollSession.polls[pollIndex].choices)
+                {
+                    if (curChoice.id == curResult.answerId)
+                        break;
+                    choiceIndex++;
+                }
+                
+                clientInfoBox.AppendText(index + ". " + pollSession.polls[pollIndex].name + ": " + pollSession.polls[pollIndex].choices[choiceIndex].choice + Environment.NewLine);
+                
+                if (pollSession.testMode)
+                {
+                    if (pollSession.polls[pollIndex].choices[choiceIndex].id == pollSession.polls[pollIndex].correctChoiceID)
+                        correctAnswers++;
+                }
+            }
+
+            if (pollSession.testMode)
+            {
+                double userScore = correctAnswers / pollSession.polls.Count;
+                clientInfoBox.AppendText(Environment.NewLine + "Your scores: " + userScore);
+
+                if (userScore >= pollSession.minScore)
+                {
+                    clientInfoBox.AppendText(Environment.NewLine + "Congratulations!!! You PASSED the test");
+                }
+                else
+                {
+                    clientInfoBox.AppendText(Environment.NewLine + "Sorry, try again... you FAILED");
+                }
+            }
+
+            resultsList.results.Clear();
             currentPoll = 0;
             process = RESULTS;
         }
@@ -276,19 +336,15 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 case POLLSESSION:
                     ProcessPollSession();
                     ProcessPoll();
+                    process = POLL;
                     clientSubmitButton.Text = "Next>";
                     break;
                 case POLL:
-                    PollResult result = new PollResult();
-                    result.questionId = pollSession.polls[currentPoll-1].id;
-                    result.answerId = pollSession.polls[currentPoll-1].choices[clientIndexSelected].id;
-                    result.userName = PollClientGUI.userName;
-                    resultsList.results.Add( result );
-                    results += currentPoll + ". " + pollSession.polls[currentPoll-1].name + ": " + pollSession.polls[currentPoll-1].choices[clientIndexSelected].choice + Environment.NewLine;
                     ProcessPoll();
                     break;
                 case RESULTS:
                     RefreshPollSessionsList();
+                    this.Text = "PollClientGUI [" + PollClientGUI.userName + "]";
                     process = POLLSESSION;
                     clientSubmitButton.Text = "Submit";
                     break;
