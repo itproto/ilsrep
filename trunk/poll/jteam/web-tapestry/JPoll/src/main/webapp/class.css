@@ -1,0 +1,42 @@
+#main{
+width: 750px;
+   margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+
+
+}
+#head {
+background: #3780da;
+width: 750px;
+   margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+font-size: 2.5em;
+text-align: center;
+letter-spacing: 0.3ex;
+word-spacing: 0.5ex;
+font-family:Brushstroke, fantasy;
+}
+#logo{
+    text-align:center;
+    margin-top:0px;
+    margin-bottom:0px;
+    padding:0px;
+}
+#sidebar{
+float:left;
+width:30%;
+background: #3783fa;
+height:100%;
+}
+#point{
+float:left;
+padding:30;
+
+}
+#inner_poll{
+float:center;
+}

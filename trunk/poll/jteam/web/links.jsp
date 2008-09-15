@@ -7,16 +7,16 @@
 <%@page import="ilsrep.poll.common.protocol.Item"%>
 <%! 
 public String links() throws Exception{
-String res="";
-res="<ul>";
+String links="";
+links="<ul>";
 Pollsessionlist sessions;
-DBManager db;
-db = new SQLiteDBManager(c);
+DBManager db;try {
+db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
 sessions=db.getPollsessionlist();
  for ( Item sess : sessions.getItems()) {
-res+="<li><a href=\"./index.jsp?session="+sess.getId()+"\">"+sess.getName()+"</a></li>\n";
+links+="<li><a href=\"./index.jsp?session="+sess.getId()+"\">"+sess.getName()+"</a></li>\n";
 }
-res+="<ul>";
-return res;
+links+="<ul>";} catch (Exception e){links=e.getMessage();}
+return links;
 }
 %>

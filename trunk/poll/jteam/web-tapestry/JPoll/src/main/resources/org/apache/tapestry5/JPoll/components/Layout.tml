@@ -1,0 +1,23 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+ <head>
+<link rel="stylesheet" type="text/css" href="class.css" />
+</head>
+<body>
+<div id="main">
+<div id="head">POLL<img src="./logo.png"></img>CLIENT
+</div>
+<div id="sidebar">
+<ul>
+<t:loop source="polsessions" value="session" xml:space="preserve">
+<li><t:actionlink t:id="poll" context="session">${session}</t:actionlink></li>
+</t:loop>
+</ul>
+</div>
+<div id="point">
+<t:body>
+Please Choose Poll
+</t:body>
+</div>
+</div>
+</body>
+</html>
