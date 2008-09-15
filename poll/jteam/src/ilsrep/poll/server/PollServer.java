@@ -1,5 +1,6 @@
 package ilsrep.poll.server;
 
+import ilsrep.poll.common.Versioning;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.server.db.DBManager;
 import ilsrep.poll.server.db.SQLiteDBManager;
@@ -26,9 +27,6 @@ import net.sf.xpilotpanel.preferences.model.PreferenceSelector;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import java.util.jar.Manifest;
-import java.util.jar.JarFile;
-import java.util.jar.Attributes;
 
 /**
  * Main class for poll server.
@@ -77,12 +75,8 @@ public class PollServer {
             System.exit(1);
         }
         try {
-            JarFile jar = new JarFile("./poll.jar");
-            Manifest manifest = jar.getManifest();
-            Attributes attribs = manifest
-                    .getAttributes("ilsrep/poll/server/PollServer.class");
             logger.info("Poll Server - version: "
-                    + attribs.getValue("Specification-Version"));
+                    + Versioning.getVersion(Versioning.COMPONENT_SERVER));
         }
         catch (Exception e) {
             logger.warn("Failed to read manifest");

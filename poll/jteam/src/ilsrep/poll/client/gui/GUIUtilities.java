@@ -28,6 +28,11 @@ public class GUIUtilities {
     public static final String ERROR_ICON = "error.png";
 
     /**
+     * Filename of <code>information.png</code>.
+     */
+    public static final String INFORMATION_ICON = "information.png";
+
+    /**
      * Contains <code>Poll Application</code>, for window titles.
      */
     public static final String DIALOG_TITLE_BASE = "Poll Application";
@@ -48,6 +53,24 @@ public class GUIUtilities {
         warningDialog.setIconImage(loadIcon(ERROR_ICON).getImage());
 
         warningDialog.setVisible(true);
+    }
+
+    /**
+     * Shows info dialog.
+     * 
+     * @param message
+     *            Message to show.
+     */
+    public static void showInfoDialog(String message) {
+        JOptionPane infoPane = new JOptionPane(message,
+                JOptionPane.INFORMATION_MESSAGE);
+
+        JDialog infoDialog = infoPane.createDialog("Information - "
+                + DIALOG_TITLE_BASE);
+
+        infoDialog.setIconImage(loadIcon(INFORMATION_ICON).getImage());
+
+        infoDialog.setVisible(true);
     }
 
     /**

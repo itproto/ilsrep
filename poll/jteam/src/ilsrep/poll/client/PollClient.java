@@ -1,5 +1,6 @@
 package ilsrep.poll.client;
 
+import ilsrep.poll.common.Versioning;
 import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.AnswerItem;
@@ -13,15 +14,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.util.jar.Manifest;
-import java.util.jar.JarFile;
-import java.util.jar.Attributes;
 
 /**
  * Main class for task 7 - Poll.
@@ -47,12 +46,8 @@ public class PollClient {
 
         String serverPortString = null;
 
-        JarFile jar = new JarFile("./poll.jar");
-        Manifest manifest = jar.getManifest();
-        Attributes attribs = manifest
-                .getAttributes("ilsrep/poll/client/PollClient.class");
         System.out.println("Poll Client\nVersion: "
-                + attribs.getValue("Specification-Version") + '\n');
+                + Versioning.getVersion(Versioning.COMPONENT_CLIENT_CONSOLE) + '\n');
 
         // Greeting user and asking his name and filename of poll xml file.
         System.out.println("Welcome to polls client program!\n");

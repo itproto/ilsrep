@@ -1,6 +1,7 @@
 package ilsrep.poll.client.gui.old;
 
 import ilsrep.poll.client.TcpCommunicator;
+import ilsrep.poll.common.Versioning;
 import ilsrep.poll.common.model.Choice;
 import ilsrep.poll.common.model.Description;
 import ilsrep.poll.common.model.Poll;
@@ -11,9 +12,6 @@ import ilsrep.poll.common.protocol.Pollsessionlist;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
@@ -88,12 +86,9 @@ public class PollEditorGUI {
 
     public static void main(String[] args) throws IOException {
         try {
-            JarFile jar = new JarFile("./poll.jar");
-            Manifest manifest = jar.getManifest();
-            Attributes attribs = manifest
-                    .getAttributes("ilsrep/poll/client/PollEditor.class");
             win.alert("Poll Editor\nVersion: "
-                    + attribs.getValue("Specification-Version"));
+                    + Versioning
+                            .getVersion(Versioning.COMPONENT_EDITOR_CONSOLE));
             Object[] a = { "Create new poll session",
                     "Edit existing oll session at server",
                     "Delete existing poll session from server" };

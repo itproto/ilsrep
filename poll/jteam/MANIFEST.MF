@@ -1,18 +1,14 @@
 Manifest-Version: 1.0
-Main-Class: "ilsrep.poll.client.PollClient"
-Specification-Title: "ilsprep.poll" 
-Specification-Version: "0.0.1"
-Specification-Vendor: "JTeaM"
+Main-Class: ilsrep.poll.client.PollClient
+
+Name: ilsrep/poll/client/PollEditor.class
+Specification-Version: 0.0.1
 
 Name: ilsrep/poll/client/PollClient.class
-Specification-Title: ilsrep.poll.client
 Specification-Version: 0.0.1
-Specification-Vendor: JTeaM
+
 Name: ilsrep/poll/server/PollServer.class
-Specification-Title: ilsrep.poll.server
 Specification-Version: 0.0.1
-Specification-Vendor: JTeaM
-Name: ilsrep/poll/client/PollEditor.class
-Specification-Title: ilsrep.poll.common
+
+Name: ilsrep/poll/client/gui/MainWindow.class
 Specification-Version: 0.0.1
-Specification-Vendor: JTeaM
