@@ -1,0 +1,4 @@
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<h2>${Session_name}</h2>
+<t:actionlink t:id="start" context="Session_id"><img src="start.png"></img></t:actionlink>
+</html>

@@ -1,0 +1,20 @@
+To run this you will need:
+a) Maven
+b) Jetty (it gets installed by maven)
+
+first you will need to setup the Maven environment.
+To do this using your favurite Maven utility add all libraries used by the project (from the projects lib directory) and the pol.jar itslef to maven repository
+under following groups, names (excerpt from config)
+mvn install:install-file -Dfile=$JTEAM_DIRECTORY_ON_YOUR_PC/lib/commons-pool-1.4.jar  -DartifactId=cp -Dversion=0.1 -Dpackaging=jar -DgeneratePom=true -DgroupId=ilsrep
+mvn install:install-file -Dfile=$JTEAM_DIRECTORY_ON_YOUR_PC/lib/commons-dbcp-1.2.2.jar  -DartifactId=cd -Dversion=0.1 -Dpackaging=jar -DgeneratePom=true -DgroupId=ilsrep
+mvn install:install-file -Dfile=$JTEAM_DIRECTORY_ON_YOUR_PC/lib/sqlitejdbc-v052-pure.jar  -DartifactId=sqlitejdbc -Dversion=0.1 -Dpackaging=jar -DgeneratePom=true -DgroupId=ilsrep
+mvn install:install-file -Dfile=$JTEAM_DIRECTORY_ON_YOUR_PC/lib/xpilotpanel-lib.jar  -DartifactId=xp -Dversion=0.1 -Dpackaging=jar -DgeneratePom=true -DgroupId=ilsrep
+mvn install:install-file -Dfile=$JTEAM_DIRECTORY_ON_YOUR_PC/poll.jar  -DartifactId=ilsrep -Dversion=0.1 -Dpackaging=jar -DgeneratePom=true -DgroupId=ilsrep
+
+then enter web-tapestry/JPoll directory and run
+maven jetty:run
+
+If maven fails to find and install jetty you will have to download and install it manually.
+
+
+

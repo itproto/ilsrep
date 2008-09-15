@@ -1,0 +1,19 @@
+<html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<h2>${SessionName}</h2>
+<h3>${PollName}</h3>
+<h4>${PollDesc}</h4>
+<t:form t:id="PollForm">
+<t:radiogroup t:id="choicesList">
+<t:loop source="choices" value="choice">
+<t:radio t:id="choice" />${choice}<br />
+</t:loop>
+<t:if test="custom">
+<input type="radio" name="choicesList" value="Custom" />
+Custom Choice 
+<t:textfield t:id="customChoice" size="20"/>
+<br/>
+</t:if>
+</t:radiogroup>
+<t:submit t:id="GO" value="GO"/>
+ </t:form>
+</html>

@@ -1,0 +1,1 @@
+To run, just copy the files over to the tomcat directory ($CATALINA_HOME), and point browser to http://localhost:8080/index.jsp

@@ -118,10 +118,10 @@ public abstract class DBManager {
                         "poolMaxActive"));
             }
             else {
-                dbPool.setMinIdle(DEFAULT_MIN_IDLE);
-                dbPool.setInitialSize(DEFAULT_INITIAL_SIZE);
-                dbPool.setMaxIdle(DEFAULT_MAX_IDLE);
-                dbPool.setMaxActive(DEFAULT_MAX_ACTIVE);
+               // dbPool.setMinIdle(DEFAULT_MIN_IDLE);
+                //dbPool.setInitialSize(1);
+                //dbPool.setMaxIdle(DEFAULT_MAX_IDLE);
+                //dbPool.setMaxActive(DEFAULT_MAX_ACTIVE);
             }
         }
     }
