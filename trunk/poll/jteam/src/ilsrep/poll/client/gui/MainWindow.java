@@ -1,9 +1,7 @@
 package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
-import ilsrep.poll.client.gui.old.GUIUtil;
-import ilsrep.poll.client.gui.old.PollClientGUI;
-import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.Versioning;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
@@ -25,6 +23,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -32,7 +31,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -77,13 +75,6 @@ public class MainWindow extends JFrame {
     protected int port = -1;
 
     /**
-     * This is class have bugs, should be replaced with new {@link GUIUtilities}
-     * 
-     * @see GUIUtil
-     */
-    protected GUIUtil guiUtil = null;
-
-    /**
      * Indicates if server is valid(after was connected to it once).
      */
     protected boolean serverOk = false;
@@ -105,18 +96,38 @@ public class MainWindow extends JFrame {
     protected Pollsessionlist currentSessionList = null;
 
     /**
+     * Tabbed pane of this window.
+     */
+    protected CloseableTabbedPane tabbedPane = null;
+
+    /**
+     * Panel that contains pollsession list.
+     */
+    protected JPanel listPanel = null;
+
+    /**
+     * Content of "About" tab.
+     */
+    protected JPanel aboutTabPanel = null;
+
+    /**
      * Creates main window.
      */
     public MainWindow() {
         super("Poll Application");
-
-        guiUtil = new GUIUtil();
 
         setJMenuBar(createMenu());
         logger.debug("Created and set menu.");
         setSize(800, 600);
         logger.debug("Set size to main window: " + getSize().getWidth() + "x"
                 + getSize().getHeight());
+
+        listPanel = new JPanel();
+
+        tabbedPane = new CloseableTabbedPane();
+        getContentPane().add(tabbedPane);
+
+        initAboutTab();
     }
 
     /**
@@ -183,8 +194,25 @@ public class MainWindow extends JFrame {
                 clientActions.add(startSession);
             }
 
+            JMenu helpMenu = new JMenu();
+            helpMenu.setText("Help");
+            {
+                JMenuItem aboutItem = new JMenuItem();
+                aboutItem.setText("About");
+                aboutItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        initAboutTab();
+                    }
+                });
+
+                helpMenu.add(aboutItem);
+            }
+
             menu.add(fileMenu);
             menu.add(clientActions);
+            menu.add(helpMenu);
         }
 
         return menu;
@@ -195,7 +223,7 @@ public class MainWindow extends JFrame {
      */
     private void exitProgram() {
         dispose();
-        // System.exit(0);
+        System.exit(0);
     }
 
     /**
@@ -280,8 +308,8 @@ public class MainWindow extends JFrame {
         }
 
         if (connect()) {
-            guiUtil.infoWindow("Click \"Ok\" to start update from " + server
-                    + ":" + port + " and wait.");
+            GUIUtilities.showInfoDialog("Click \"Ok\" to start update from "
+                    + server + ":" + port + " and wait.");
 
             Pollsessionlist sessionList = serverCommunicator.listXml();
             disconnect();
@@ -290,16 +318,14 @@ public class MainWindow extends JFrame {
                 currentSessionList = sessionList;
 
                 if (sessionList.getItems().size() == 0) {
-                    JPanel contentPanel = new JPanel();
+                    listPanel.removeAll();
 
                     String emptyList = "Server(" + server + ":" + port
                             + ") pollsession list is empty!";
                     JLabel listIsEmptyLabel = new JLabel(emptyList);
                     logger.warn(emptyList);
 
-                    contentPanel.add(listIsEmptyLabel);
-
-                    setContentPane(contentPanel);
+                    listPanel.add(listIsEmptyLabel);
                 }
                 else {
                     logger.info("Received " + sessionList.getItems().size()
@@ -357,16 +383,17 @@ public class MainWindow extends JFrame {
                                     (int) (0.25 * pollsessionTable.getSize()
                                             .getWidth()));
 
-                    JPanel contentPanel = new JPanel();
-                    contentPanel.setLayout(new BoxLayout(contentPanel,
+                    listPanel.removeAll();
+                    listPanel.setLayout(new BoxLayout(listPanel,
                             BoxLayout.Y_AXIS));
 
-                    contentPanel.add(new JLabel("Pollsession list on " + server
+                    listPanel.add(new JLabel("Pollsession list on " + server
                             + ":" + port));
-                    contentPanel.add(pollsessionTable);
-
-                    setContentPane(contentPanel);
+                    listPanel.add(pollsessionTable);
                 }
+
+                updateListTab();
+
                 return true;
             }
             else {
@@ -386,48 +413,63 @@ public class MainWindow extends JFrame {
             return false;
     }
 
+    /**
+     * If tab with pollsession list isn't created - creates it and focuses on
+     * this tab.
+     */
+    private void updateListTab() {
+        final String listTabName = "Pollsession list";
+
+        activateTab(listTabName, listPanel);
+    }
+
+    /**
+     * Processes pollsession in new tab.
+     */
     private void startPollsession() {
-        Thread startPollsessionThread = new Thread() {
+        // TODO: Fix this method.
 
-            @Override
-            public void run() {
-                if (selectedPollsession >= 0)
-                    if (connect()) {
-                        String name = PollClientGUI.login(serverCommunicator,
-                                guiUtil);
-
-                        try {
-                            Pollsession sessionToStart = serverCommunicator
-                                    .getPollsession(currentSessionList
-                                            .getItems().get(0).getId());
-
-                            disconnect();
-
-                            PollClientGUI.processPollsession(sessionToStart,
-                                    guiUtil, name, true, "" + server + ":"
-                                            + port);
-                        }
-                        catch (IOException e) {
-                            GUIUtilities
-                                    .showWarningDialog("Exception while processing pollsession: "
-                                            + e.getMessage());
-                        }
-                        catch (JAXBException e) {
-                            GUIUtilities
-                                    .showWarningDialog("Exception while processing pollsession: "
-                                            + e.getMessage());
-                        }
-                    }
-                    else
-                        GUIUtilities.showWarningDialog("Can't connect to "
-                                + server + ":" + port + "!");
-                else
-                    GUIUtilities.showWarningDialog("Pollsession not selected!");
-            }
-
-        };
-
-        startPollsessionThread.start();
+        // Thread startPollsessionThread = new Thread() {
+        //
+        // @Override
+        // public void run() {
+        // if (selectedPollsession >= 0)
+        // if (connect()) {
+        // String name = PollClientGUI.login(serverCommunicator,
+        // guiUtil);
+        //
+        // try {
+        // Pollsession sessionToStart = serverCommunicator
+        // .getPollsession(currentSessionList
+        // .getItems().get(0).getId());
+        //
+        // disconnect();
+        //
+        // PollClientGUI.processPollsession(sessionToStart,
+        // guiUtil, name, true, "" + server + ":"
+        // + port);
+        // }
+        // catch (IOException e) {
+        // GUIUtilities
+        // .showWarningDialog("Exception while processing pollsession: "
+        // + e.getMessage());
+        // }
+        // catch (JAXBException e) {
+        // GUIUtilities
+        // .showWarningDialog("Exception while processing pollsession: "
+        // + e.getMessage());
+        // }
+        // }
+        // else
+        // GUIUtilities.showWarningDialog("Can't connect to "
+        // + server + ":" + port + "!");
+        // else
+        // GUIUtilities.showWarningDialog("Pollsession not selected!");
+        // }
+        //
+        // };
+        //
+        // startPollsessionThread.start();
     }
 
     /**
@@ -473,6 +515,52 @@ public class MainWindow extends JFrame {
 
         if (!serverSelected())
             logger.info("Disconnected from " + server + ":" + port + ".");
+    }
+
+    /**
+     * Builds "About" tab and/or(if it was already built) activates it.
+     */
+    private void initAboutTab() {
+        final String aboutTabName = "About";
+
+        if (aboutTabPanel == null) {
+            aboutTabPanel = new JPanel();
+
+            JTextArea infoTextArea = new JTextArea();
+
+            final char endl = '\n';
+            infoTextArea.setText("Poll Application" + endl + "GUI client"
+                    + endl + endl + "Version:"
+                    + Versioning.getVersion(Versioning.COMPONENT_CLIENT_GUI));
+            infoTextArea.setEditable(false);
+
+            aboutTabPanel.add(infoTextArea);
+        }
+
+        activateTab(aboutTabName, aboutTabPanel);
+    }
+
+    /**
+     * Activates tab:
+     * <ul>
+     * <li>if it was not added yet - adds it</li>
+     * <li>if it was added already - make focus on it</li>
+     * </ul>
+     * 
+     * @param name
+     *            Tab name.
+     * @param content
+     *            Reference to tab content.
+     */
+    private void activateTab(String name, JPanel content) {
+        int tabIndex = tabbedPane.indexOfTab(name);
+
+        if (tabIndex == -1) {
+            tabbedPane.addCloseableTab(name, content);
+            tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+        }
+        else
+            tabbedPane.setSelectedIndex(tabIndex);
     }
 
     /**

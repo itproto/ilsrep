@@ -1,5 +1,6 @@
 package ilsrep.poll.client;
 
+import ilsrep.poll.common.Versioning;
 import ilsrep.poll.common.model.Choice;
 import ilsrep.poll.common.model.Description;
 import ilsrep.poll.common.model.Poll;
@@ -10,9 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Manifest;
-import java.util.jar.JarFile;
-import java.util.jar.Attributes;
 
 /**
  * Handles XML creation and uploading to server.
@@ -94,12 +92,9 @@ public class PollEditor {
      */
     public static void main(String[] args) throws IOException {
         try {
-            JarFile jar = new JarFile("./poll.jar");
-            Manifest manifest = jar.getManifest();
-            Attributes attribs = manifest
-                    .getAttributes("ilsrep/poll/client/PollEditor.class");
             System.out.println("Poll Editor\nVersion: "
-                    + attribs.getValue("Specification-Version"));
+                    + Versioning
+                            .getVersion(Versioning.COMPONENT_EDITOR_CONSOLE));
 
             String actionChoice = PollClient.readFromConsole("\nSelect action:"
                     + "\n(1) Create new poll session"
