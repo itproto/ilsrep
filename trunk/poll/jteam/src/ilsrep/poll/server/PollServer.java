@@ -354,6 +354,21 @@ public class PollServer {
         if (!isAlive())
             return;
 
+        try {
+            // This takes time, but after first operation with DB it works
+            // faster for first client connected.
+            // (better do this now, then when first clients connects and
+            // requests list)
+            db.getPollsessionlist();
+
+            logger.info("Database initialised.");
+        }
+        catch (SQLException e1) {
+            logger.fatal("Database initialisation failed. Quitting!");
+            serverShutdown(6);
+            return;
+        }
+
         // Binding server to port.
         ServerSocket serverSock = null;
         try {
@@ -363,6 +378,7 @@ public class PollServer {
                 serverSock = new ServerSocket(port, maxConnections,
                         alternativeIPAddress);
             logger.info("Bound server to port: " + port);
+            logger.info("Server now ready to accept client connections.");
             connections = new Vector<Socket>();
         }
         catch (IOException e) {
