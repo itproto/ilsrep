@@ -1,1 +1,5 @@
 To run, just copy the files over to the tomcat directory ($CATALINA_HOME), and point browser to http://localhost:8080/index.jsp
+1) download tomcat http://apache.infocom.ua/tomcat/tomcat-6/v6.0.18/bin/apache-tomcat-6.0.18.exe
+2)install tomcat
+3)in your installed tomcat directory you wiill find the webapps/ROOT directory, copy the files from this folder there
+4)start tomcat
