@@ -30,9 +30,6 @@
         {
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.clientPage = new System.Windows.Forms.TabPage();
-            this.clientSubmitButton = new System.Windows.Forms.Button();
-            this.clientInfoBox = new System.Windows.Forms.TextBox();
-            this.clientListBox = new System.Windows.Forms.ListBox();
             this.editorPage = new System.Windows.Forms.TabPage();
             this.removeButton = new System.Windows.Forms.Button();
             this.editButton = new System.Windows.Forms.Button();
@@ -40,7 +37,6 @@
             this.pollSessionsListBox = new System.Windows.Forms.ListBox();
             this.statisticsPage = new System.Windows.Forms.TabPage();
             this.mainTabControl.SuspendLayout();
-            this.clientPage.SuspendLayout();
             this.editorPage.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +44,6 @@
             // 
             this.mainTabControl.Controls.Add( this.clientPage );
             this.mainTabControl.Controls.Add( this.editorPage );
-            //this.mainTabControl.Controls.Add( this.statisticsPage );
             this.mainTabControl.Location = new System.Drawing.Point( 12, 12 );
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
@@ -57,9 +52,6 @@
             // 
             // clientPage
             // 
-            this.clientPage.Controls.Add( this.clientSubmitButton );
-            this.clientPage.Controls.Add( this.clientInfoBox );
-            this.clientPage.Controls.Add( this.clientListBox );
             this.clientPage.Location = new System.Drawing.Point( 4, 22 );
             this.clientPage.Name = "clientPage";
             this.clientPage.Padding = new System.Windows.Forms.Padding( 3 );
@@ -67,34 +59,7 @@
             this.clientPage.TabIndex = 0;
             this.clientPage.Text = "PollClient";
             this.clientPage.UseVisualStyleBackColor = true;
-            // 
-            // clientSubmitButton
-            // 
-            this.clientSubmitButton.Location = new System.Drawing.Point( 487, 360 );
-            this.clientSubmitButton.Name = "clientSubmitButton";
-            this.clientSubmitButton.Size = new System.Drawing.Size( 75, 23 );
-            this.clientSubmitButton.TabIndex = 2;
-            this.clientSubmitButton.Text = "Submit";
-            this.clientSubmitButton.UseVisualStyleBackColor = true;
-            this.clientSubmitButton.Click += new System.EventHandler( this.clientSubmitButton_Click );
-            // 
-            // clientInfoBox
-            // 
-            this.clientInfoBox.Location = new System.Drawing.Point( 25, 12 );
-            this.clientInfoBox.Multiline = true;
-            this.clientInfoBox.Name = "clientInfoBox";
-            this.clientInfoBox.ReadOnly = true;
-            this.clientInfoBox.Size = new System.Drawing.Size( 537, 184 );
-            this.clientInfoBox.TabIndex = 1;
-            // 
-            // clientListBox
-            // 
-            this.clientListBox.FormattingEnabled = true;
-            this.clientListBox.Location = new System.Drawing.Point( 25, 204 );
-            this.clientListBox.Name = "clientListBox";
-            this.clientListBox.Size = new System.Drawing.Size( 537, 147 );
-            this.clientListBox.TabIndex = 0;
-            this.clientListBox.SelectedIndexChanged += new System.EventHandler( this.clientListBox_SelectedIndexChanged );
+            this.clientPage.Enter += new System.EventHandler( this.clientPage_Enter );
             // 
             // editorPage
             // 
@@ -148,7 +113,7 @@
             this.pollSessionsListBox.Name = "pollSessionsListBox";
             this.pollSessionsListBox.Size = new System.Drawing.Size( 269, 264 );
             this.pollSessionsListBox.TabIndex = 4;
-            this.pollSessionsListBox.SelectedIndexChanged += new System.EventHandler( this.pollSessionsListBox_SelectedIndexChanged );
+            this.pollSessionsListBox.SelectedIndexChanged += new System.EventHandler( this.SelectedIndexChanged );
             // 
             // statisticsPage
             // 
@@ -172,8 +137,6 @@
             this.Text = "PollClientGUI";
             this.Load += new System.EventHandler( this.MainForm_Load );
             this.mainTabControl.ResumeLayout( false );
-            this.clientPage.ResumeLayout( false );
-            this.clientPage.PerformLayout();
             this.editorPage.ResumeLayout( false );
             this.ResumeLayout( false );
 
@@ -189,9 +152,6 @@
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Button createButton;
-        private System.Windows.Forms.Button clientSubmitButton;
-        private System.Windows.Forms.TextBox clientInfoBox;
-        private System.Windows.Forms.ListBox clientListBox;
     }
 }
 
