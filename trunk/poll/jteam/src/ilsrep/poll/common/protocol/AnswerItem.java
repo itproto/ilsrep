@@ -3,7 +3,6 @@ package ilsrep.poll.common.protocol;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
 
-
 /**
  * Saves answer session
  * 
@@ -12,22 +11,29 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 @XmlRootElement(name = "pollresult")
 public class AnswerItem {
-/**
+
+    /**
      * ID od poll
      */
     protected String poll = null;
-/**ID of entered choice
+
+    /**
+     * ID of entered choice
      */
     protected String choice = "-1";
-/**
+
+    /**
      * custom choice
      */
     protected String customChoice = null;
- /**
+
+    /**
      * Sets poll id and choice id
      * 
-     * @param poll_id Id of poll.
-     * @param choice_id  id of entered choice
+     * @param poll_id
+     *            Id of poll.
+     * @param choice_id
+     *            id of entered choice
      * 
      * 
      * 
@@ -37,11 +43,14 @@ public class AnswerItem {
         choice = Integer.toString(choice_id);
         return this;
     }
- /**
+
+    /**
      * Sets poll id and custom choice
      * 
-     * @param poll_id Id of poll.
-     * @param choice_id  a String of custom choice
+     * @param poll_id
+     *            Id of poll.
+     * @param choice_id
+     *            a String of custom choice
      * 
      * 
      * 
@@ -59,7 +68,8 @@ public class AnswerItem {
     public String getQuestionId() {
         return poll;
     }
-  /**
+
+    /**
      * @see #poll
      */
     public void setQuestionId(String name) {
@@ -73,7 +83,8 @@ public class AnswerItem {
     public String getAnswerId() {
         return choice;
     }
-  /**
+
+    /**
      * @see #choice
      */
     public void setAnswerId(String name) {
@@ -83,16 +94,16 @@ public class AnswerItem {
     /**
      * @see #customChoice
      */
-      @XmlAttribute(name = "customchoice")
+    @XmlAttribute(name = "customchoice")
     public String getCustomChoice() {
         return customChoice;
     }
-/**
+
+    /**
      * @see #customChoice
      */
     public void setCustomChoice(String name) {
         this.customChoice = name;
     }
-    
 
 }

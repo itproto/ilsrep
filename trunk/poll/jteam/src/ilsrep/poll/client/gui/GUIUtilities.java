@@ -38,6 +38,11 @@ public class GUIUtilities {
     public static final String DIALOG_TITLE_BASE = "Poll Application";
 
     /**
+     * Poll Application logo.
+     */
+    public static final String POLL_APPLICATION_LOGO_ICON = "logo.png";
+
+    /**
      * Shows warning dialog.
      * 
      * @param message
