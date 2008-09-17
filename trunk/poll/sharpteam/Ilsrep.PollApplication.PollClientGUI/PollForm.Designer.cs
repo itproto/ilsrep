@@ -129,7 +129,7 @@
             this.submitButton.Name = "submitButton";
             this.submitButton.Size = new System.Drawing.Size(75, 23);
             this.submitButton.TabIndex = 9;
-            this.submitButton.Text = "Submit";
+            this.submitButton.Text = "OK";
             this.submitButton.UseVisualStyleBackColor = true;
             this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
             // 
