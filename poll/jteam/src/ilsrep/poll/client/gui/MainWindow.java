@@ -2,6 +2,7 @@ package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
 import ilsrep.poll.common.Versioning;
+import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
@@ -31,6 +32,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -126,6 +128,9 @@ public class MainWindow extends JFrame {
 
         tabbedPane = new CloseableTabbedPane();
         getContentPane().add(tabbedPane);
+
+        setIconImage(GUIUtilities.loadIcon(
+                GUIUtilities.POLL_APPLICATION_LOGO_ICON).getImage());
 
         initAboutTab();
     }
@@ -367,8 +372,9 @@ public class MainWindow extends JFrame {
                                         }
                                     });
 
-                    final Vector<String> collumnNames = new Vector<String>();
-                    if (collumnNames.size() == 0) {
+                    Vector<String> collumnNames = null;
+                    if (collumnNames == null) {
+                        collumnNames = new Vector<String>();
                         collumnNames.add("Id");
                         collumnNames.add("Name");
                     }
@@ -429,47 +435,52 @@ public class MainWindow extends JFrame {
     private void startPollsession() {
         // TODO: Fix this method.
 
-        // Thread startPollsessionThread = new Thread() {
-        //
-        // @Override
-        // public void run() {
-        // if (selectedPollsession >= 0)
-        // if (connect()) {
-        // String name = PollClientGUI.login(serverCommunicator,
-        // guiUtil);
-        //
-        // try {
-        // Pollsession sessionToStart = serverCommunicator
-        // .getPollsession(currentSessionList
-        // .getItems().get(0).getId());
-        //
-        // disconnect();
-        //
-        // PollClientGUI.processPollsession(sessionToStart,
-        // guiUtil, name, true, "" + server + ":"
-        // + port);
-        // }
-        // catch (IOException e) {
-        // GUIUtilities
-        // .showWarningDialog("Exception while processing pollsession: "
-        // + e.getMessage());
-        // }
-        // catch (JAXBException e) {
-        // GUIUtilities
-        // .showWarningDialog("Exception while processing pollsession: "
-        // + e.getMessage());
-        // }
-        // }
-        // else
-        // GUIUtilities.showWarningDialog("Can't connect to "
-        // + server + ":" + port + "!");
-        // else
-        // GUIUtilities.showWarningDialog("Pollsession not selected!");
-        // }
-        //
-        // };
-        //
-        // startPollsessionThread.start();
+        Thread startPollsessionThread = new Thread() {
+
+            @Override
+            public void run() {
+                if (selectedPollsession >= 0)
+                    if (connect()) {
+                        try {
+                            Pollsession sessionToStart = serverCommunicator
+                                    .getPollsession(currentSessionList
+                                            .getItems().get(0).getId());
+
+                            disconnect();
+
+                            PollsessionTab pollsessionTab = new PollsessionTab(
+                                    sessionToStart);
+
+                            activateTab("Pollsession: "
+                                    + sessionToStart.getName(), pollsessionTab);
+
+                            pollsessionTab.start();
+
+                            // PollClientGUI.processPollsession(sessionToStart,
+                            // guiUtil, name, true, "" + server + ":"
+                            // + port);
+                        }
+                        catch (IOException e) {
+                            GUIUtilities
+                                    .showWarningDialog("Exception while processing pollsession: "
+                                            + e.getMessage());
+                        }
+                        catch (JAXBException e) {
+                            GUIUtilities
+                                    .showWarningDialog("Exception while processing pollsession: "
+                                            + e.getMessage());
+                        }
+                    }
+                    else
+                        GUIUtilities.showWarningDialog("Can't connect to "
+                                + server + ":" + port + "!");
+                else
+                    GUIUtilities.showWarningDialog("Pollsession not selected!");
+            }
+
+        };
+
+        startPollsessionThread.start();
     }
 
     /**
@@ -513,7 +524,7 @@ public class MainWindow extends JFrame {
 
         serverCommunicator = null;
 
-        if (!serverSelected())
+        if (serverSelected())
             logger.info("Disconnected from " + server + ":" + port + ".");
     }
 
