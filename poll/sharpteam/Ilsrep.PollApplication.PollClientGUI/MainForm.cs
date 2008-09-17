@@ -118,8 +118,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.request = new Request();
             sendPacket.request.type = Request.CREATE_POLLSESSION;
             sendPacket.pollSession = pollSession;
-            PollClientGUI.client.Send( PollSerializator.SerializePacket( sendPacket ) );
-            //receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
+            PollClientGUI.ReceivePollPacket( sendPacket );
 
             RefreshPollSessionsList();
         }
@@ -153,7 +152,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 // Save changes
                 sendPacket.request.type = Request.EDIT_POLLSESSION;
                 sendPacket.pollSession = pollSession;
-                PollClientGUI.client.Send( PollSerializator.SerializePacket( sendPacket ) );
+                PollClientGUI.ReceivePollPacket( sendPacket );
 
                 RefreshPollSessionsList();
             }
@@ -183,8 +182,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     sendPacket.request = new Request();
                     sendPacket.request.type = Request.REMOVE_POLLSESSION;
                     sendPacket.request.id = pollSessionsList[selectedPollSession].id;
-                    PollClientGUI.client.Send( PollSerializator.SerializePacket( sendPacket ) );
-                    //receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
+                    PollClientGUI.ReceivePollPacket(sendPacket);
 
                     RefreshPollSessionsList();
                 }
@@ -220,9 +218,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void clientPage_Enter( object sender, EventArgs e )
         {
             clientPage.Controls.Clear();
-            selectedChoice = 0;
+            selectedChoice = -1;
             currentPoll = 0;
-            selectedPollSession = 0;
+            selectedPollSession = -1;
 
             Label lblTopText = new Label();
             lblTopText.AutoSize = true;
@@ -245,7 +243,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     selectedPollSession = Convert.ToInt32( ((RadioButton)sender2).Name ) - 1;
                 };
                 clientPage.Controls.Add( radioButton );
-                //clientListBox.Items.Add(index + ". " + item.name);
             }
 
             Button btnSubmit = new Button();
@@ -254,8 +251,15 @@ namespace Ilsrep.PollApplication.PollClientGUI
             btnSubmit.Location = new System.Drawing.Point( 5, 5 + lblTopText.Height + 20*index + 10 );
             btnSubmit.Click += delegate
             {
-                GetPollSession();
-                GetPoll();
+                try
+                {
+                    GetPollSession();
+                    GetPoll();
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(exception.Message, "Error");
+                }
             };
             clientPage.Controls.Add( btnSubmit );
         }
@@ -278,7 +282,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                MessageBox.Show("Please, select PollSession", "Error");
+                throw new Exception("Please, select PollSession");
             }
         }
 
@@ -290,13 +294,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
             Label lblTopText = new Label();
             lblTopText.AutoSize = true;
             lblTopText.Name = "lblTopText";
-            lblTopText.Location = new System.Drawing.Point( 5, 5 );
+            lblTopText.Location = new System.Drawing.Point(5, 5);
             lblTopText.Text = "Poll #" + (currentPoll + 1)
                          + Environment.NewLine
                          + "Name: " + pollSession.polls[currentPoll].name
                          + Environment.NewLine
                          + "Description: " + pollSession.polls[currentPoll].description;
-            clientPage.Controls.Add( lblTopText );
+            clientPage.Controls.Add(lblTopText);
 
             int index = 0;
             foreach (Choice curChoice in pollSession.polls[currentPoll].choices)
@@ -324,7 +328,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 if ( selectedChoice == -1 )
                 {
-                    MessageBox.Show( "Select a choice" );
+                    MessageBox.Show("Select a choice", "Error");
                     return;
                 }
 
@@ -361,7 +365,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.resultsList.userName = PollClientGUI.userName;
             sendPacket.resultsList.pollsessionId = pollSession.id;
 
-            PollClientGUI.client.Send( PollSerializator.SerializePacket( sendPacket ) );
+            PollClientGUI.ReceivePollPacket(sendPacket);
 
             clientPage.Controls.Clear();
             Label lblTopText = new Label();

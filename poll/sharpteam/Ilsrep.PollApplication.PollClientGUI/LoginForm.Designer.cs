@@ -39,14 +39,14 @@
             // 
             // nameField
             // 
-            this.nameField.Location = new System.Drawing.Point(117, 7);
+            this.nameField.Location = new System.Drawing.Point(79, 7);
             this.nameField.Name = "nameField";
             this.nameField.Size = new System.Drawing.Size(138, 20);
             this.nameField.TabIndex = 0;
             // 
             // passwordField
             // 
-            this.passwordField.Location = new System.Drawing.Point(117, 33);
+            this.passwordField.Location = new System.Drawing.Point(79, 33);
             this.passwordField.Name = "passwordField";
             this.passwordField.PasswordChar = '*';
             this.passwordField.Size = new System.Drawing.Size(138, 20);
@@ -54,7 +54,7 @@
             // 
             // confirmField
             // 
-            this.confirmField.Location = new System.Drawing.Point(117, 59);
+            this.confirmField.Location = new System.Drawing.Point(79, 59);
             this.confirmField.Name = "confirmField";
             this.confirmField.PasswordChar = '*';
             this.confirmField.Size = new System.Drawing.Size(138, 20);
@@ -63,18 +63,18 @@
             // 
             // submitButton
             // 
-            this.submitButton.Location = new System.Drawing.Point(180, 85);
+            this.submitButton.Location = new System.Drawing.Point(142, 85);
             this.submitButton.Name = "submitButton";
             this.submitButton.Size = new System.Drawing.Size(75, 23);
             this.submitButton.TabIndex = 3;
-            this.submitButton.Text = "Submit";
+            this.submitButton.Text = "Login";
             this.submitButton.UseVisualStyleBackColor = true;
             this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
             // 
             // nameLabel
             // 
             this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(63, 10);
+            this.nameLabel.Location = new System.Drawing.Point(25, 10);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(38, 13);
             this.nameLabel.TabIndex = 4;
@@ -83,7 +83,7 @@
             // passwordLabel
             // 
             this.passwordLabel.AutoSize = true;
-            this.passwordLabel.Location = new System.Drawing.Point(45, 36);
+            this.passwordLabel.Location = new System.Drawing.Point(7, 36);
             this.passwordLabel.Name = "passwordLabel";
             this.passwordLabel.Size = new System.Drawing.Size(56, 13);
             this.passwordLabel.TabIndex = 5;
@@ -92,11 +92,11 @@
             // confirmLabel
             // 
             this.confirmLabel.AutoSize = true;
-            this.confirmLabel.Location = new System.Drawing.Point(8, 62);
+            this.confirmLabel.Location = new System.Drawing.Point(18, 62);
             this.confirmLabel.Name = "confirmLabel";
-            this.confirmLabel.Size = new System.Drawing.Size(93, 13);
+            this.confirmLabel.Size = new System.Drawing.Size(45, 13);
             this.confirmLabel.TabIndex = 6;
-            this.confirmLabel.Text = "Confirm password:";
+            this.confirmLabel.Text = "Confirm:";
             this.confirmLabel.Visible = false;
             // 
             // LoginForm
@@ -104,7 +104,7 @@
             this.AcceptButton = this.submitButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(267, 116);
+            this.ClientSize = new System.Drawing.Size(226, 116);
             this.Controls.Add(this.confirmLabel);
             this.Controls.Add(this.passwordLabel);
             this.Controls.Add(this.nameLabel);
@@ -113,8 +113,6 @@
             this.Controls.Add(this.passwordField);
             this.Controls.Add(this.nameField);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(275, 150);
-            this.MinimumSize = new System.Drawing.Size(275, 150);
             this.Name = "LoginForm";
             this.Text = "PollClientGUI";
             this.Load += new System.EventHandler(this.LoginForm_Load);

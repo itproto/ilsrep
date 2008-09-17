@@ -85,8 +85,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 MessageBox.Show("User not found in DB, program will create a new user", "Info");
                 confirmField.Visible = true;
                 confirmLabel.Visible = true;
-                //submitButton.Location.Y += 30;
-                //Size.Height += 30;
+                this.Size = new Size(234, 150);
+                this.MinimumSize = new Size(234, 150);
+                this.MaximumSize = new Size(234, 150);
+                submitButton.Top = 85;
             }
         }
 
@@ -111,6 +113,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             int width = Screen.PrimaryScreen.WorkingArea.Width/2 - this.Width/2;
             int height = Screen.PrimaryScreen.WorkingArea.Height/2 - this.Height/2;
             this.Location = new Point(width, height);
+
+            this.Size = new Size(234, 122);
+            this.MinimumSize = new Size(234, 122);
+            this.MaximumSize = new Size(234, 122);
+            submitButton.Top = 59;
         }
     }
 }
