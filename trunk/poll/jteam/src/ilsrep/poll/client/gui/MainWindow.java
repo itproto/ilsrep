@@ -9,10 +9,13 @@ import ilsrep.poll.common.protocol.Pollsessionlist;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -23,6 +26,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -77,6 +81,16 @@ public class MainWindow extends JFrame {
     protected int port = -1;
 
     /**
+     * User name to login on server.
+     */
+    protected String user = null;
+
+    /**
+     * Password to login on server.
+     */
+    protected String password = null;
+
+    /**
      * Indicates if server is valid(after was connected to it once).
      */
     protected boolean serverOk = false;
@@ -111,6 +125,11 @@ public class MainWindow extends JFrame {
      * Content of "About" tab.
      */
     protected JPanel aboutTabPanel = null;
+
+    /**
+     * Dialog for server/port and user/password selection.
+     */
+    protected ServerSelectDialog serverAndUserSelectDialog = null;
 
     /**
      * Creates main window.
@@ -149,17 +168,20 @@ public class MainWindow extends JFrame {
             {
                 JMenuItem selectServerItem = new JMenuItem();
                 selectServerItem.setText("Select server");
+                selectServerItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.SERVER_KEY_ICON));
                 selectServerItem.addActionListener(new ActionListener() {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ServerSelectDialog selectDialog = new ServerSelectDialog();
-                        selectDialog.setVisible(true);
+                        showSelectServerAndUserDialog();
                     }
                 });
 
                 JMenuItem exitItem = new JMenuItem();
                 exitItem.setText("Exit");
+                exitItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.DOOR_OUT_ICON));
                 exitItem.addActionListener(new ActionListener() {
 
                     @Override
@@ -177,6 +199,8 @@ public class MainWindow extends JFrame {
             {
                 JMenuItem updateItem = new JMenuItem();
                 updateItem.setText("Update list");
+                updateItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.ARROW_ROTATE_CLOCKWISE_ICON));
                 updateItem.addActionListener(new ActionListener() {
 
                     @Override
@@ -186,7 +210,9 @@ public class MainWindow extends JFrame {
                 });
 
                 JMenuItem startSession = new JMenuItem();
-                startSession.setText("Start pollsession");
+                startSession.setText("Start poll session");
+                startSession.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.PAGE_WHITE_GO_ICON));
                 startSession.addActionListener(new ActionListener() {
 
                     @Override
@@ -204,6 +230,8 @@ public class MainWindow extends JFrame {
             {
                 JMenuItem aboutItem = new JMenuItem();
                 aboutItem.setText("About");
+                aboutItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.INFORMATION_ICON));
                 aboutItem.addActionListener(new ActionListener() {
 
                     @Override
@@ -232,6 +260,17 @@ public class MainWindow extends JFrame {
     }
 
     /**
+     * Creates new dialog for server/port and user/password pairs selection or
+     * activates one if it was already created(with old values).
+     */
+    private void showSelectServerAndUserDialog() {
+        if (serverAndUserSelectDialog == null)
+            serverAndUserSelectDialog = new ServerSelectDialog();
+
+        serverAndUserSelectDialog.setVisible(true);
+    }
+
+    /**
      * Set server to operate in current session.
      * 
      * @param server
@@ -239,7 +278,17 @@ public class MainWindow extends JFrame {
      * @param port
      *            Server port.
      */
-    public void selectServer(String server, String port) {
+    public void selectServerAndUser(String server, String port, String user,
+            String password) {
+        if (server == null || server.isEmpty() || port == null
+                || port.isEmpty() || user == null || user.isEmpty()
+                || password == null || password.isEmpty()) {
+            String warnMessage = "One of server, port, user or port is empty - selected no server!";
+            logger.warn(warnMessage);
+            GUIUtilities.showWarningDialog(warnMessage);
+            return;
+        }
+
         logger.debug("User selected server " + server + ":" + port);
         try {
             this.port = Integer.parseInt(port);
@@ -249,6 +298,7 @@ public class MainWindow extends JFrame {
             selectNothingAndAlert(portMustBeIntegerWarning);
             logger.warn(portMustBeIntegerWarning + " (user entered" + port
                     + ")");
+            serverOk = false;
             return;
         }
 
@@ -257,19 +307,24 @@ public class MainWindow extends JFrame {
             selectNothingAndAlert(portMustBeLargerThenZeroWarning);
             logger.warn(portMustBeLargerThenZeroWarning + " (user entered"
                     + port + ")");
+            serverOk = false;
             return;
         }
 
         this.server = server;
+        this.user = user;
+        this.password = password;
 
         logger.info("Server(" + this.server + ":" + this.port
-                + ") selected by user is valid. Using it for work.");
+                + ") selected by user(" + user
+                + ") is valid. Using it for work.");
 
         if (!updateList()) {
             String cannotConnectToServerString = "Can't connect to " + server
                     + ":" + port + "!";
             selectNothingAndAlert(cannotConnectToServerString);
             logger.warn(cannotConnectToServerString);
+            serverOk = false;
             return;
         }
         else
@@ -317,6 +372,10 @@ public class MainWindow extends JFrame {
                     + server + ":" + port + " and wait.");
 
             Pollsessionlist sessionList = serverCommunicator.listXml();
+
+            logger.info("Received " + sessionList.getItems().size()
+                    + " elements list from server.");
+
             disconnect();
 
             if (sessionList != null && sessionList.getItems() != null) {
@@ -333,8 +392,6 @@ public class MainWindow extends JFrame {
                     listPanel.add(listIsEmptyLabel);
                 }
                 else {
-                    logger.info("Received " + sessionList.getItems().size()
-                            + " elements list from server.");
 
                     Vector<Vector<String>> pollsessionTableData = new Vector<Vector<String>>();
 
@@ -433,54 +490,43 @@ public class MainWindow extends JFrame {
      * Processes pollsession in new tab.
      */
     private void startPollsession() {
-        // TODO: Fix this method.
+        if (selectedPollsession >= 0)
+            if (connect()) {
+                try {
+                    Pollsession sessionToStart = serverCommunicator
+                            .getPollsession(currentSessionList.getItems()
+                                    .get(0).getId());
 
-        Thread startPollsessionThread = new Thread() {
+                    disconnect();
 
-            @Override
-            public void run() {
-                if (selectedPollsession >= 0)
-                    if (connect()) {
-                        try {
-                            Pollsession sessionToStart = serverCommunicator
-                                    .getPollsession(currentSessionList
-                                            .getItems().get(0).getId());
+                    logger.info("Retrieved pollsession from server(id: "
+                            + sessionToStart.getId() + ", name: "
+                            + sessionToStart.getName() + ")");
 
-                            disconnect();
+                    PollsessionTab pollsessionTab = new PollsessionTab(
+                            sessionToStart);
 
-                            PollsessionTab pollsessionTab = new PollsessionTab(
-                                    sessionToStart);
+                    activateTab("Pollsession: " + sessionToStart.getName(),
+                            pollsessionTab);
 
-                            activateTab("Pollsession: "
-                                    + sessionToStart.getName(), pollsessionTab);
-
-                            pollsessionTab.start();
-
-                            // PollClientGUI.processPollsession(sessionToStart,
-                            // guiUtil, name, true, "" + server + ":"
-                            // + port);
-                        }
-                        catch (IOException e) {
-                            GUIUtilities
-                                    .showWarningDialog("Exception while processing pollsession: "
-                                            + e.getMessage());
-                        }
-                        catch (JAXBException e) {
-                            GUIUtilities
-                                    .showWarningDialog("Exception while processing pollsession: "
-                                            + e.getMessage());
-                        }
-                    }
-                    else
-                        GUIUtilities.showWarningDialog("Can't connect to "
-                                + server + ":" + port + "!");
-                else
-                    GUIUtilities.showWarningDialog("Pollsession not selected!");
+                    pollsessionTab.start();
+                }
+                catch (IOException e) {
+                    GUIUtilities
+                            .showWarningDialog("Exception while processing pollsession: "
+                                    + e.getMessage());
+                }
+                catch (JAXBException e) {
+                    GUIUtilities
+                            .showWarningDialog("Exception while processing pollsession: "
+                                    + e.getMessage());
+                }
             }
-
-        };
-
-        startPollsessionThread.start();
+            else
+                GUIUtilities.showWarningDialog("Can't connect to " + server
+                        + ":" + port + "!");
+        else
+            GUIUtilities.showWarningDialog("Pollsession not selected!");
     }
 
     /**
@@ -567,11 +613,14 @@ public class MainWindow extends JFrame {
         int tabIndex = tabbedPane.indexOfTab(name);
 
         if (tabIndex == -1) {
+            logger.info("Added new tab: " + name);
             tabbedPane.addCloseableTab(name, content);
             tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
         }
-        else
+        else {
+            logger.info("Activated tab: " + name);
             tabbedPane.setSelectedIndex(tabIndex);
+        }
     }
 
     /**
@@ -591,6 +640,7 @@ public class MainWindow extends JFrame {
             public void run() {
                 MainWindow gui = new MainWindow();
                 gui.setVisible(true);
+                gui.showSelectServerAndUserDialog();
             }
         };
 
@@ -614,14 +664,24 @@ public class MainWindow extends JFrame {
         private static final long serialVersionUID = -5461631921011218819L;
 
         /**
-         * Text field to read server from.
+         * Text field to enter server.
          */
         protected JTextField serverField = null;
 
         /**
-         * Text field to read port from.
+         * Text field to enter port.
          */
         protected JTextField portField = null;
+
+        /**
+         * Text field to enter user.
+         */
+        protected JTextField userField = null;
+
+        /**
+         * <code>JPasswordField</code> field to enter password.
+         */
+        protected JPasswordField passwordField = null;
 
         /**
          * Check box to read if use local server with default port.
@@ -632,9 +692,17 @@ public class MainWindow extends JFrame {
          * Creates current dialog.
          */
         public ServerSelectDialog() {
-            super(MainWindow.this, "Select server", true);
+            super(MainWindow.this, "Select server and login", true);
 
-            GridLayout layout = new GridLayout(3, 2, 6, 6);
+            setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+
+                public void windowClosing(WindowEvent e) {
+                    closeSelectDialog();
+                }
+            });
+
+            GridLayout layout = new GridLayout(0, 2, 6, 6);
 
             setLayout(layout);
 
@@ -669,10 +737,15 @@ public class MainWindow extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ServerSelectDialog.this.dispose();
-                    selectServer(serverField.getText(), portField.getText());
+                    closeSelectDialog();
                 }
             });
+
+            JLabel userLabel = new JLabel("User");
+            userField = new JTextField();
+
+            JLabel passwordLabel = new JLabel("Password");
+            passwordField = new JPasswordField();
 
             add(serverLabel);
             add(serverField);
@@ -681,6 +754,15 @@ public class MainWindow extends JFrame {
             add(portField);
 
             add(localCheckBox);
+            add(Box.createGlue());
+
+            add(userLabel);
+            add(userField);
+
+            add(passwordLabel);
+            add(passwordField);
+
+            add(Box.createGlue());
             add(button);
 
             pack();
@@ -690,6 +772,13 @@ public class MainWindow extends JFrame {
             // and launching its ActionListener.
             localCheckBox.setSelected(true);
             localCheckBox.getActionListeners()[0].actionPerformed(null);
+        }
+
+        private void closeSelectDialog() {
+            ServerSelectDialog.this.setVisible(false);
+            selectServerAndUser(serverField.getText(), portField.getText(),
+                    userField.getText(),
+                    new String(passwordField.getPassword()));
         }
 
     }
