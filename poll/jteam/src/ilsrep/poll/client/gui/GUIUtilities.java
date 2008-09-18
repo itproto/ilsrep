@@ -33,6 +33,26 @@ public class GUIUtilities {
     public static final String INFORMATION_ICON = "information.png";
 
     /**
+     * Filename of <code>server_key.png</code>.
+     */
+    public static final String SERVER_KEY_ICON = "server_key.png";
+
+    /**
+     * Filename of <code>arrow_rotate_clockwise.png</code>.
+     */
+    public static final String ARROW_ROTATE_CLOCKWISE_ICON = "arrow_rotate_clockwise.png";
+
+    /**
+     * Filename of <code>door_out.png</code>.
+     */
+    public static final String DOOR_OUT_ICON = "door_out.png";
+
+    /**
+     * Filename of <code>page_white_go.png</code>.
+     */
+    public static final String PAGE_WHITE_GO_ICON = "page_white_go.png";
+
+    /**
      * Contains <code>Poll Application</code>, for window titles.
      */
     public static final String DIALOG_TITLE_BASE = "Poll Application";
