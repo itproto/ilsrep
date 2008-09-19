@@ -31,6 +31,8 @@
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.clientPage = new System.Windows.Forms.TabPage();
             this.editorPage = new System.Windows.Forms.TabPage();
+            this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.pollSessionsListLabel = new System.Windows.Forms.Label();
             this.removeButton = new System.Windows.Forms.Button();
             this.editButton = new System.Windows.Forms.Button();
             this.createButton = new System.Windows.Forms.Button();
@@ -67,6 +69,8 @@
             // 
             // editorPage
             // 
+            this.editorPage.Controls.Add(this.propertyGrid);
+            this.editorPage.Controls.Add(this.pollSessionsListLabel);
             this.editorPage.Controls.Add(this.removeButton);
             this.editorPage.Controls.Add(this.editButton);
             this.editorPage.Controls.Add(this.createButton);
@@ -79,33 +83,50 @@
             this.editorPage.Text = "Poll Editor";
             this.editorPage.UseVisualStyleBackColor = true;
             // 
+            // propertyGrid
+            // 
+            this.propertyGrid.Location = new System.Drawing.Point(281, 27);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(305, 316);
+            this.propertyGrid.TabIndex = 9;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            // 
+            // pollSessionsListLabel
+            // 
+            this.pollSessionsListLabel.AutoSize = true;
+            this.pollSessionsListLabel.Location = new System.Drawing.Point(88, 11);
+            this.pollSessionsListLabel.Name = "pollSessionsListLabel";
+            this.pollSessionsListLabel.Size = new System.Drawing.Size(84, 13);
+            this.pollSessionsListLabel.TabIndex = 8;
+            this.pollSessionsListLabel.Text = "PollSessions list:";
+            // 
             // removeButton
             // 
-            this.removeButton.Location = new System.Drawing.Point(166, 356);
+            this.removeButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.cross;
+            this.removeButton.Location = new System.Drawing.Point(250, 349);
             this.removeButton.Name = "removeButton";
-            this.removeButton.Size = new System.Drawing.Size(269, 23);
+            this.removeButton.Size = new System.Drawing.Size(25, 23);
             this.removeButton.TabIndex = 7;
-            this.removeButton.Text = "Remove pollsession";
             this.removeButton.UseVisualStyleBackColor = true;
             this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
             // 
             // editButton
             // 
-            this.editButton.Location = new System.Drawing.Point(166, 327);
+            this.editButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.pencil;
+            this.editButton.Location = new System.Drawing.Point(219, 349);
             this.editButton.Name = "editButton";
-            this.editButton.Size = new System.Drawing.Size(269, 23);
+            this.editButton.Size = new System.Drawing.Size(25, 23);
             this.editButton.TabIndex = 6;
-            this.editButton.Text = "Edit pollsession";
             this.editButton.UseVisualStyleBackColor = true;
             this.editButton.Click += new System.EventHandler(this.editButton_Click);
             // 
             // createButton
             // 
-            this.createButton.Location = new System.Drawing.Point(166, 298);
+            this.createButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.add;
+            this.createButton.Location = new System.Drawing.Point(188, 349);
             this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(269, 23);
+            this.createButton.Size = new System.Drawing.Size(25, 23);
             this.createButton.TabIndex = 5;
-            this.createButton.Text = "Create new pollsession";
             this.createButton.UseVisualStyleBackColor = true;
             this.createButton.Click += new System.EventHandler(this.createButton_Click);
             // 
@@ -113,9 +134,9 @@
             // 
             this.pollSessionsListBox.FormattingEnabled = true;
             this.pollSessionsListBox.HorizontalScrollbar = true;
-            this.pollSessionsListBox.Location = new System.Drawing.Point(166, 18);
+            this.pollSessionsListBox.Location = new System.Drawing.Point(6, 27);
             this.pollSessionsListBox.Name = "pollSessionsListBox";
-            this.pollSessionsListBox.Size = new System.Drawing.Size(269, 264);
+            this.pollSessionsListBox.Size = new System.Drawing.Size(269, 316);
             this.pollSessionsListBox.TabIndex = 4;
             this.pollSessionsListBox.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
@@ -172,6 +193,7 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.mainTabControl.ResumeLayout(false);
             this.editorPage.ResumeLayout(false);
+            this.editorPage.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -192,6 +214,8 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
+        private System.Windows.Forms.Label pollSessionsListLabel;
+        private System.Windows.Forms.PropertyGrid propertyGrid;
     }
 }
 
