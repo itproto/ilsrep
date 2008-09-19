@@ -6,6 +6,7 @@ import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -139,7 +140,7 @@ public class MainWindow extends JFrame {
 
         setJMenuBar(createMenu());
         logger.debug("Created and set menu.");
-        setSize(800, 600);
+        setSize(640, 480);
         logger.debug("Set size to main window: " + getSize().getWidth() + "x"
                 + getSize().getHeight());
 
@@ -494,8 +495,8 @@ public class MainWindow extends JFrame {
             if (connect()) {
                 try {
                     Pollsession sessionToStart = serverCommunicator
-                            .getPollsession(currentSessionList.getItems()
-                                    .get(0).getId());
+                            .getPollsession(currentSessionList.getItems().get(
+                                    selectedPollsession).getId());
 
                     disconnect();
 
@@ -504,7 +505,7 @@ public class MainWindow extends JFrame {
                             + sessionToStart.getName() + ")");
 
                     PollsessionTab pollsessionTab = new PollsessionTab(
-                            sessionToStart);
+                            sessionToStart, this);
 
                     activateTab("Pollsession: " + sessionToStart.getName(),
                             pollsessionTab);
@@ -621,6 +622,19 @@ public class MainWindow extends JFrame {
             logger.info("Activated tab: " + name);
             tabbedPane.setSelectedIndex(tabIndex);
         }
+    }
+
+    /**
+     * Removes tab by given reference to tab content.
+     * 
+     * @param tabToRemove
+     *            Reference to tab content.
+     */
+    public void removeTabByInstance(Component tabToRemove) {
+        int tabIndexToRemove = tabbedPane.indexOfComponent(tabToRemove);
+
+        if (tabIndexToRemove != -1)
+            tabbedPane.remove(tabIndexToRemove);
     }
 
     /**
