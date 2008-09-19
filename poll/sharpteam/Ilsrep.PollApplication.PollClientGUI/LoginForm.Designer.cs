@@ -63,11 +63,15 @@
             // 
             // submitButton
             // 
+            this.submitButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.door_in;
+            this.submitButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.submitButton.Location = new System.Drawing.Point(142, 85);
             this.submitButton.Name = "submitButton";
-            this.submitButton.Size = new System.Drawing.Size(75, 23);
+            this.submitButton.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
+            this.submitButton.Size = new System.Drawing.Size(75, 24);
             this.submitButton.TabIndex = 3;
             this.submitButton.Text = "Login";
+            this.submitButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.submitButton.UseVisualStyleBackColor = true;
             this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
             // 
@@ -112,8 +116,11 @@
             this.Controls.Add(this.confirmField);
             this.Controls.Add(this.passwordField);
             this.Controls.Add(this.nameField);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "LoginForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PollClientGUI";
             this.Load += new System.EventHandler(this.LoginForm_Load);
             this.ResumeLayout(false);

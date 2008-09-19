@@ -86,8 +86,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 confirmField.Visible = true;
                 confirmLabel.Visible = true;
                 this.Size = new Size(234, 150);
-                this.MinimumSize = new Size(234, 150);
-                this.MaximumSize = new Size(234, 150);
                 submitButton.Top = 85;
             }
         }
@@ -110,13 +108,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-            int width = Screen.PrimaryScreen.WorkingArea.Width/2 - this.Width/2;
-            int height = Screen.PrimaryScreen.WorkingArea.Height/2 - this.Height/2;
-            this.Location = new Point(width, height);
-
             this.Size = new Size(234, 122);
-            this.MinimumSize = new Size(234, 122);
-            this.MaximumSize = new Size(234, 122);
             submitButton.Top = 59;
         }
     }

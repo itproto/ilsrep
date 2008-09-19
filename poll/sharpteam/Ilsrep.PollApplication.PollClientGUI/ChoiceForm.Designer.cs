@@ -72,8 +72,8 @@
             this.MaximumSize = new System.Drawing.Size(191, 107);
             this.MinimumSize = new System.Drawing.Size(191, 107);
             this.Name = "ChoiceForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ChoiceForm";
-            this.Load += new System.EventHandler(this.ChoiceForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
