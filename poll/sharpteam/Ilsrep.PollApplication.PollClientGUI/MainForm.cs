@@ -101,22 +101,25 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void createButton_Click( object sender, EventArgs e )
         {
             // Open PollSessionForm to fill new PollSession
-            pollSession = null;
-            PollSessionForm pollSessionForm = new PollSessionForm();
-            pollSessionForm.ShowDialog();
+            //pollSession = null;
+            //PollSessionForm pollSessionForm = new PollSessionForm();
+            //pollSessionForm.ShowDialog();
 
-            if ( pollSession == null )
-                return;
+            //if ( pollSession == null )
+            //    return;
 
+            pollSession = new PollSession();
+            propertyGrid.SelectedObject = pollSession;
+            /*
             // Save changes
             PollPacket sendPacket = new PollPacket();
-            //PollPacket receivedPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.CREATE_POLLSESSION;
             sendPacket.pollSession = pollSession;
             PollClientGUI.ReceivePollPacket( sendPacket );
 
             RefreshPollSessionsList();
+            */
         }
                 
         /// <summary>
@@ -142,15 +145,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                 pollSession = receivedPacket.pollSession;
 
-                PollSessionForm pollSessionForm = new PollSessionForm();
-                pollSessionForm.ShowDialog();
+                propertyGrid.SelectedObject = pollSession;
+                //PollSessionForm pollSessionForm = new PollSessionForm();
+                //pollSessionForm.ShowDialog();
 
                 // Save changes
-                sendPacket.request.type = Request.EDIT_POLLSESSION;
-                sendPacket.pollSession = pollSession;
-                PollClientGUI.ReceivePollPacket( sendPacket );
+                //sendPacket.request.type = Request.EDIT_POLLSESSION;
+                //sendPacket.pollSession = pollSession;
+                //PollClientGUI.ReceivePollPacket( sendPacket );
 
-                RefreshPollSessionsList();
+                //RefreshPollSessionsList();
             }
             else
             {
@@ -426,6 +430,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             resultsList.results.Clear();
             currentPoll = -1;
             selectedPollSession = -1;
+        }
+
+        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            propertyGrid.Refresh();
         }
     }
 }
