@@ -165,6 +165,7 @@
             this.MaximumSize = new System.Drawing.Size(280, 394);
             this.MinimumSize = new System.Drawing.Size(280, 394);
             this.Name = "PollSessionForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PollSession";
             this.Load += new System.EventHandler(this.PollSessionForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PollSessionForm_FormClosing);

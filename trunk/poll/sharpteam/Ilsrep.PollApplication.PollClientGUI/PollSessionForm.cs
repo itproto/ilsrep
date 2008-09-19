@@ -221,10 +221,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void PollSessionForm_Load(object sender, EventArgs e)
         {
-            int width = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width / 2;
-            int height = Screen.PrimaryScreen.WorkingArea.Height / 2 - this.Height / 2;
-            this.Location = new Point(width, height);
-
             isTestModeEnabled = false;
 
             // Fill fields
