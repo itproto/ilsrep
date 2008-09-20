@@ -313,22 +313,18 @@ namespace Ilsrep.PollApplication.PollServer
 					case Request.EDIT_POLLSESSION:
 						PollDAL.EditPollSession(receivedPacket.pollSession);
                         EventLog.WriteEntry( String.Format( "Pollsession {0} changed by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
-                        sendPacket = null;
 						break;
                     case Request.CREATE_POLLSESSION:
                         receivedPacket.pollSession.id = PollDAL.CreatePollSession( receivedPacket.pollSession );
                         EventLog.WriteEntry( String.Format( "Pollsession {0} created by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
-                        sendPacket = null;
                         break;
                     case Request.REMOVE_POLLSESSION:
                         PollDAL.RemovePollSession( Convert.ToInt32( receivedPacket.request.id ) );
                         EventLog.WriteEntry( String.Format( "Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
-                        sendPacket = null;
                         break;
                     case Request.SAVE_RESULT:
                         PollDAL.SavePollSessionResult( receivedPacket.resultsList );
                         EventLog.WriteEntry( String.Format( "Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress ), EventLogEntryType.Information );
-                        sendPacket = null;
                         break;
                     case Request.GET_RESULTS:
                         sendPacket.resultsList = PollDAL.GetPollSessionResults(Convert.ToInt32(receivedPacket.request.id));
@@ -336,37 +332,29 @@ namespace Ilsrep.PollApplication.PollServer
                         break;
                     default:
                         EventLog.WriteEntry( String.Format( "Invalid option sent by {0}", client.ipAddress ), EventLogEntryType.Error );
-                        sendPacket = null;
                         break;
                 }
             }
 
-            if ( sendPacket != null )
+            string sendString = PollSerializator.SerializePacket( sendPacket );
+            byte[] sendData = Encoding.ASCII.GetBytes( sendString );
+            try
             {
-                string sendString = PollSerializator.SerializePacket( sendPacket );
-                byte[] sendData = Encoding.ASCII.GetBytes( sendString );
-                try
-                {
-                    client.workSocket.BeginSend( sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback( SendCallback ), clientID );
-                }
-                catch ( SocketException e )
-                {
-                    if ( e.ErrorCode == 10054 )
-                    {
-                        EventLog.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
-                        workers.RemoveAt( clientID );
-                    }
-                    else
-                    {
-                        EventLog.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
-                    }
-
-                    return;
-                }
+                client.workSocket.BeginSend( sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback( SendCallback ), clientID );
             }
-            else
+            catch ( SocketException e )
             {
-                client.workSocket.BeginReceive( client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback( ProcessClient ), clientID );
+                if ( e.ErrorCode == 10054 )
+                {
+                    EventLog.WriteEntry( String.Format( "Client {0} disconnected", client.ipAddress ), EventLogEntryType.Information );
+                    workers.RemoveAt( clientID );
+                }
+                else
+                {
+                    EventLog.WriteEntry( String.Format( "Socket Exception on client {0}: {1}", client.ipAddress, e.Message ), EventLogEntryType.Error );
+                }
+
+                return;
             }
         }
 

@@ -36,6 +36,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Web\", "{EEA2CCE5-E4
 		VWDPort = "2042"
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PollServerServiceSetup", "PollServerServiceSetup\PollServerServiceSetup.vdproj", "{EC82C57F-AB89-425C-AF26-1C970D970DF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -126,6 +128,12 @@ Global
 		{EEA2CCE5-E402-4C0C-8CCA-83C610317343}.Release|Any CPU.ActiveCfg = Debug|.NET
 		{EEA2CCE5-E402-4C0C-8CCA-83C610317343}.Release|Mixed Platforms.ActiveCfg = Debug|.NET
 		{EEA2CCE5-E402-4C0C-8CCA-83C610317343}.Release|Mixed Platforms.Build.0 = Debug|.NET
+		{EC82C57F-AB89-425C-AF26-1C970D970DF9}.Debug|.NET.ActiveCfg = Debug
+		{EC82C57F-AB89-425C-AF26-1C970D970DF9}.Debug|Any CPU.ActiveCfg = Debug
+		{EC82C57F-AB89-425C-AF26-1C970D970DF9}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{EC82C57F-AB89-425C-AF26-1C970D970DF9}.Release|.NET.ActiveCfg = Release
+		{EC82C57F-AB89-425C-AF26-1C970D970DF9}.Release|Any CPU.ActiveCfg = Release
+		{EC82C57F-AB89-425C-AF26-1C970D970DF9}.Release|Mixed Platforms.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
