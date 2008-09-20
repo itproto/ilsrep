@@ -17,9 +17,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// Selected pollsession
         /// </summary>
-        /// public static Item selectedPollSession = new Item();
         private int selectedPollSession = -1;
-
+        /// <summary>
+        /// Selected choice
+        /// </summary>
         private int selectedChoice = -1;
         /// <summary>
         /// Currently poll that is being processed
@@ -37,7 +38,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// Where results are stored
         /// </summary>
         private ResultsList resultsList = new ResultsList();
-        //private int clientIndexSelected = -1;
+        /// <summary>
+        /// Action that user do at the moment
+        /// </summary>
+        private String currentAction = null;
 
         public MainForm()
         {
@@ -100,26 +104,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <param name="e">EventArgs e</param>
         private void createButton_Click( object sender, EventArgs e )
         {
-            // Open PollSessionForm to fill new PollSession
-            //pollSession = null;
-            //PollSessionForm pollSessionForm = new PollSessionForm();
-            //pollSessionForm.ShowDialog();
-
-            //if ( pollSession == null )
-            //    return;
-
             pollSession = new PollSession();
+            currentAction = Request.CREATE_POLLSESSION;
             propertyGrid.SelectedObject = pollSession;
-            /*
-            // Save changes
-            PollPacket sendPacket = new PollPacket();
-            sendPacket.request = new Request();
-            sendPacket.request.type = Request.CREATE_POLLSESSION;
-            sendPacket.pollSession = pollSession;
-            PollClientGUI.ReceivePollPacket( sendPacket );
-
-            RefreshPollSessionsList();
-            */
+            saveButton.Enabled = true;
+            cancelButton.Enabled = true;
         }
                 
         /// <summary>
@@ -133,28 +122,21 @@ namespace Ilsrep.PollApplication.PollClientGUI
             if (selectedPollSession != -1)
             {
                 // Get PollSession and open PollSessionForm to edit it
-                PollPacket sendPacket = new PollPacket();
-                sendPacket.request = new Request();
-                sendPacket.request.type = Request.GET_POLLSESSION;
-                sendPacket.request.id = pollSessionsList[selectedPollSession].id;
-                
-                PollPacket receivedPacket = new PollPacket();
-                receivedPacket = PollClientGUI.ReceivePollPacket(sendPacket);
-                if (receivedPacket == null)
+                PollPacket pollPacket = new PollPacket();
+                pollPacket.request = new Request();
+                pollPacket.request.type = Request.GET_POLLSESSION;
+                pollPacket.request.id = pollSessionsList[selectedPollSession].id;
+
+                pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
+                if (pollPacket == null)
                     return;
 
-                pollSession = receivedPacket.pollSession;
+                pollSession = pollPacket.pollSession;
 
+                currentAction = Request.EDIT_POLLSESSION;
                 propertyGrid.SelectedObject = pollSession;
-                //PollSessionForm pollSessionForm = new PollSessionForm();
-                //pollSessionForm.ShowDialog();
-
-                // Save changes
-                //sendPacket.request.type = Request.EDIT_POLLSESSION;
-                //sendPacket.pollSession = pollSession;
-                //PollClientGUI.ReceivePollPacket( sendPacket );
-
-                //RefreshPollSessionsList();
+                saveButton.Enabled = true;
+                cancelButton.Enabled = true;
             }
             else
             {
@@ -277,7 +259,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollPacket.request.id = pollSessionsList[selectedPollSession].id.ToString();
                 pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
                 pollSession = pollPacket.pollSession;
-
                 //this.Text = "PollClientGUI [" + PollClientGUI.userName + "] - " + pollSession.name;
             }
             else
@@ -432,9 +413,38 @@ namespace Ilsrep.PollApplication.PollClientGUI
             selectedPollSession = -1;
         }
 
-        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void saveButton_Click(object sender, EventArgs e)
         {
-            propertyGrid.Refresh();
+            PollPacket pollPacket = new PollPacket();
+            pollPacket.request = new Request();
+            switch (currentAction)
+            {
+                case Request.CREATE_POLLSESSION:
+                    pollPacket.request.type = Request.CREATE_POLLSESSION;
+                    pollPacket.pollSession = pollSession;
+                    PollClientGUI.ReceivePollPacket(pollPacket);
+                    RefreshPollSessionsList();
+                    break;
+                case Request.EDIT_POLLSESSION:
+                    pollPacket.request.type = Request.EDIT_POLLSESSION;
+                    pollPacket.pollSession = pollSession;
+                    PollClientGUI.ReceivePollPacket(pollPacket);
+                    RefreshPollSessionsList();
+                    break;
+            }
+
+            currentAction = null;
+            propertyGrid.SelectedObject = null;
+            saveButton.Enabled = false;
+            cancelButton.Enabled = false;
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            currentAction = null;
+            propertyGrid.SelectedObject = null;
+            saveButton.Enabled = false;
+            cancelButton.Enabled = false;
         }
     }
 }

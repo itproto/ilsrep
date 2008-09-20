@@ -16,17 +16,19 @@ namespace Ilsrep.PollApplication.Model
         /// <summary>
         /// Choice id
         /// </summary>
-        [XmlAttribute("id")] public int _id;
+        public int _id;
         /// <summary>
         /// Choice
         /// </summary>
-        [XmlAttribute("name")] public string _choice;
+        public string _choice;
         /// <summary>
         /// Poll that choice belongs to
         /// </summary>
-        [XmlIgnore] public Poll parent;
+        [XmlIgnore]
+        public Poll parent;
 
         [ReadOnly(true)]
+        [XmlAttribute("id")]
         public int id
         {
             get
@@ -39,6 +41,7 @@ namespace Ilsrep.PollApplication.Model
             }
         }
 
+        [XmlAttribute("name")]
         public string choice
         {
             get

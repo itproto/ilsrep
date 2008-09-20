@@ -17,31 +17,30 @@ namespace Ilsrep.PollApplication.Model
         /// <summary>
         /// poll id
         /// </summary>
-        [XmlAttribute("id")] public int _id;
+        public int _id;
         /// <summary>
         /// poll name
         /// </summary>
-        [XmlAttribute("name")] public string _name;
+        public string _name;
         /// <summary>
         /// poll description
         /// </summary>
-        [XmlAttribute("description")] public string _description;
+        public string _description;
         /// <summary>
         /// if poll session in test mode, id of the correct choice
         /// </summary>
-        [XmlAttribute("correctChoiceID")] public int _correctChoiceID;
+        public int _correctChoiceID;
         /// <summary>
         /// if custom choice is enabled for this poll
         /// </summary>
-        [XmlAttribute("customChoiceEnabled")] public bool _customChoiceEnabled;
+        public bool _customChoiceEnabled;
         /// <summary>
         /// list of choices for this poll
         /// </summary>
-        [XmlElement("choice", typeof(Choice))]
-        //[XmlArray("choices")] [XmlArrayItem("choice")] 
         public List<Choice> _choices = new List<Choice>();
 
         [ReadOnly(true)]
+        [XmlAttribute("id")]
         public int id
         {
             get
@@ -53,7 +52,8 @@ namespace Ilsrep.PollApplication.Model
                 _id = value;
             }
         }
-        
+
+        [XmlAttribute("name")]
         public string name
         {
             get
@@ -66,6 +66,7 @@ namespace Ilsrep.PollApplication.Model
             }
         }
 
+        [XmlElement("description")]
         public string description
         {
             get
@@ -77,7 +78,8 @@ namespace Ilsrep.PollApplication.Model
                 _description = value;
             }
         }
-        
+
+        [XmlAttribute("correctChoiceID")]
         public int correctChoiceID
         {
             get
@@ -91,6 +93,7 @@ namespace Ilsrep.PollApplication.Model
         }
         
         [TypeConverter(typeof(bool))]
+        [XmlAttribute("customChoiceEnabled")]
         public bool customChoiceEnabled
         {
             get
@@ -102,7 +105,9 @@ namespace Ilsrep.PollApplication.Model
                 _customChoiceEnabled = value;
             }
         }
-        
+
+        //[XmlElement("choice", typeof(Choice))]
+        [XmlArray("choices"), XmlArrayItem("choice")]
         public List<Choice> choices
         {
             get
