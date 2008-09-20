@@ -21,29 +21,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             InitializeComponent();
         }
 
-        /// <summary>
-        /// Connect to server
-        /// </summary>
-        private void ConnectToServer()
-        {
-            try
-            {
-                PollClientGUI.client.Connect(PollClientGUI.HOST, PollClientGUI.PORT);
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.Message, "Error");
-            }
-        }
-
-        /// <summary>
-        /// Disconnect from server
-        /// </summary>
-        private void DisconnectFromServer()
-        {
-            PollClientGUI.client.Disconnect();
-        }
-
         private void AuthorizeUser()
         {
             PollPacket pollPacket = new PollPacket();
@@ -96,7 +73,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 if (!PollClientGUI.client.isConnected)
                 {
-                    ConnectToServer();
+                    PollClientGUI.ConnectToServer();
                 }
                 AuthorizeUser();
             }

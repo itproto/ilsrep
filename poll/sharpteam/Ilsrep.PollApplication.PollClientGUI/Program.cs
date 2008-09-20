@@ -52,6 +52,34 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// Show is user authorized
         /// </summary>
         public static bool isAuthorized = false;
+        /// <summary>
+        /// Show is user logged out
+        /// </summary>
+        public static bool isLogOut = false;
+
+        /// <summary>
+        /// Connect to server
+        /// </summary>
+        public static void ConnectToServer()
+        {
+            client = new TcpClient();
+            try
+            {
+                client.Connect(HOST, PORT);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error");
+            }
+        }
+
+        /// <summary>
+        /// Disconnect from server
+        /// </summary>
+        public static void DisconnectFromServer()
+        {
+            client.Disconnect();
+        }
 
         /// <summary>
         /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
@@ -90,10 +118,26 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginForm());
-            if (isAuthorized)
+            while (true)
             {
-                Application.Run(new MainForm());
+                Application.Run(new LoginForm());
+                if (isAuthorized)
+                {
+                    Application.Run(new MainForm());
+                    if (isLogOut)
+                    {
+                        DisconnectFromServer();
+                        isLogOut = false;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
         }
     }

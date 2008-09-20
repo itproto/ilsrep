@@ -59,7 +59,7 @@ namespace Ilsrep.Common
         /// </summary>
         public void Disconnect()
         {
-            m_client.Disconnect(false);
+            m_client.Disconnect(true);
         }
 
         /// <summary>

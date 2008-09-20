@@ -11,20 +11,22 @@ namespace Ilsrep.PollApplication.Model
     /// Object that holds choice
     /// </summary>
     [XmlRoot("choice"), Serializable]
+    [DisplayName("Choice")]
     public class Choice
     {
         /// <summary>
         /// Choice id
         /// </summary>
-        public int _id;
+        private int _id;
         /// <summary>
         /// Choice
         /// </summary>
-        public string _choice;
+        private string _choice;
         /// <summary>
         /// Poll that choice belongs to
         /// </summary>
         [XmlIgnore]
+        [Browsable(false)]
         public Poll parent;
 
         [ReadOnly(true)]

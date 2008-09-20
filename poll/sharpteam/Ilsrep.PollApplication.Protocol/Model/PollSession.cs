@@ -11,29 +11,29 @@ namespace Ilsrep.PollApplication.Model
     /// Object that holds poll session
     /// </summary>
     [XmlRoot("pollsession"), Serializable]
+    [DisplayName("PollSession")]
     public class PollSession
     {
         /// <summary>
         /// poll session id
         /// </summary>
-        public int _id;
+        private int _id;
         /// <summary>
         /// poll session name
         /// </summary>
-        public string _name;
+        private string _name;
         /// <summary>
         /// if this poll session is a test
         /// </summary>
-        public bool _testMode;
+        private bool _testMode;
         /// <summary>
         /// if in test mode how much is needed to pass the test
         /// </summary>
-        public double _minScore;
-
+        private double _minScore;
         /// <summary>
         /// list of polls that this poll session holds
         /// </summary>
-        public List<Poll> _polls = new List<Poll>();
+        private List<Poll> _polls = new List<Poll>();
 
         [ReadOnly(true)]
         [XmlAttribute("id")]
@@ -86,7 +86,14 @@ namespace Ilsrep.PollApplication.Model
             }
             set
             {
-                _minScore = value;
+                if (value >= 0 && value <= 1)
+                {
+                    _minScore = value;
+                }
+                else
+                {
+                    throw new Exception("minScore must be in interval [0;1]");
+                }
             }
         }
 

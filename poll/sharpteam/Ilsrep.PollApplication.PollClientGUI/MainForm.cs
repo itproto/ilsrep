@@ -70,10 +70,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
             
             pollSessionsList = pollPacket.pollSessionList.items;
 
-            // Add PollSessions from list to pollSessionsListBox in Editor and in Client
+            // Add PollSessions from list to pollSessionsListBox in Editor
             pollSessionsListBox.Items.Clear();
-            //clientListBox.Items.Clear();
-            //clientPage.Controls.Clear();
 
             if ( pollSessionsList.Count() == 0 )
             {
@@ -87,7 +85,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 index++;
                 pollSessionsListBox.Items.Add(index + ". " + item.name);
-                //clientListBox.Items.Add(index + ". " + item.name);
             }
 
             //pollSessionsListBox.SelectedIndex = 0;
@@ -445,6 +442,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
             propertyGrid.SelectedObject = null;
             saveButton.Enabled = false;
             cancelButton.Enabled = false;
+        }
+
+        private void logoutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PollClientGUI.isAuthorized = false;
+            PollClientGUI.isLogOut = true;
+            Close();
         }
     }
 }
