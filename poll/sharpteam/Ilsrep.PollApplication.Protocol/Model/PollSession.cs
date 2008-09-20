@@ -16,26 +16,27 @@ namespace Ilsrep.PollApplication.Model
         /// <summary>
         /// poll session id
         /// </summary>
-        [XmlAttribute("id")] public int _id;
+        public int _id;
         /// <summary>
         /// poll session name
         /// </summary>
-        [XmlAttribute("name")] public string _name;
+        public string _name;
         /// <summary>
         /// if this poll session is a test
         /// </summary>
-        [XmlAttribute("testMode")] public bool _testMode;
+        public bool _testMode;
         /// <summary>
         /// if in test mode how much is needed to pass the test
         /// </summary>
-        [XmlAttribute("minScore")] public double _minScore;
+        public double _minScore;
 
         /// <summary>
         /// list of polls that this poll session holds
         /// </summary>
-        [XmlElement("poll", typeof(Poll))] public List<Poll> _polls = new List<Poll>();
+        public List<Poll> _polls = new List<Poll>();
 
         [ReadOnly(true)]
+        [XmlAttribute("id")]
         public int id
         {
             get
@@ -48,6 +49,7 @@ namespace Ilsrep.PollApplication.Model
             }
         }
 
+        [XmlAttribute("name")]
         public string name
         {
             get
@@ -61,6 +63,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [TypeConverter(typeof(bool))]
+        [XmlAttribute("testMode")]
         public bool testMode
         {
             get
@@ -74,6 +77,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [TypeConverter(typeof(double))]
+        [XmlAttribute("minScore")]
         public double minScore
         {
             get
@@ -86,6 +90,7 @@ namespace Ilsrep.PollApplication.Model
             }
         }
 
+        [XmlElement("poll", typeof(Poll))]
         public List<Poll> polls
         {
             get
