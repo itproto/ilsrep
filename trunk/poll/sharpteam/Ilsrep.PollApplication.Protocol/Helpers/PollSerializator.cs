@@ -123,7 +123,7 @@ namespace Ilsrep.PollApplication.Helpers
                 memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
                 XmlizedString = Encoding.ASCII.GetString(memoryStream.ToArray());   
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
