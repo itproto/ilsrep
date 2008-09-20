@@ -12,32 +12,33 @@ namespace Ilsrep.PollApplication.Model
     /// Object that holds poll
     /// </summary>
     [XmlRoot("poll"), Serializable]
+    [DisplayName("Poll")]
     public class Poll
     {
         /// <summary>
         /// poll id
         /// </summary>
-        public int _id;
+        private int _id;
         /// <summary>
         /// poll name
         /// </summary>
-        public string _name;
+        private string _name;
         /// <summary>
         /// poll description
         /// </summary>
-        public string _description;
+        private string _description;
         /// <summary>
         /// if poll session in test mode, id of the correct choice
         /// </summary>
-        public int _correctChoiceID;
+        private int _correctChoiceID;
         /// <summary>
         /// if custom choice is enabled for this poll
         /// </summary>
-        public bool _customChoiceEnabled;
+        private bool _customChoiceEnabled;
         /// <summary>
         /// list of choices for this poll
         /// </summary>
-        public List<Choice> _choices = new List<Choice>();
+        private List<Choice> _choices = new List<Choice>();
 
         [ReadOnly(true)]
         [XmlAttribute("id")]
@@ -80,6 +81,8 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlAttribute("correctChoiceID")]
+        [DisplayName("correctChoiceIndex")]
+        [Description("Sequence number of correct choice. Choices indexing begins from 0-index")]
         public int correctChoiceID
         {
             get
@@ -106,7 +109,6 @@ namespace Ilsrep.PollApplication.Model
             }
         }
 
-        //[XmlElement("choice", typeof(Choice))]
         [XmlArray("choices"), XmlArrayItem("choice")]
         public List<Choice> choices
         {

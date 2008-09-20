@@ -31,6 +31,7 @@
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.clientPage = new System.Windows.Forms.TabPage();
             this.editorPage = new System.Windows.Forms.TabPage();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.pollSessionsListLabel = new System.Windows.Forms.Label();
@@ -42,7 +43,6 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.mainTabControl.SuspendLayout();
             this.editorPage.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -86,6 +86,21 @@
             this.editorPage.TabIndex = 1;
             this.editorPage.Text = "Poll Editor";
             this.editorPage.UseVisualStyleBackColor = true;
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Enabled = false;
+            this.cancelButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.cross;
+            this.cancelButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.cancelButton.Location = new System.Drawing.Point(511, 349);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Padding = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 11;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // saveButton
             // 
@@ -194,21 +209,7 @@
             this.logoutToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
             this.logoutToolStripMenuItem.Text = "&Logout";
             this.logoutToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Enabled = false;
-            this.cancelButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.cross;
-            this.cancelButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.cancelButton.Location = new System.Drawing.Point(511, 349);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Padding = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 11;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.logoutToolStripMenuItem.Click += new System.EventHandler(this.logoutToolStripMenuItem_Click);
             // 
             // MainForm
             // 
