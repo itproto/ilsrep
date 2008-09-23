@@ -13,96 +13,18 @@ using System.Xml.Linq;
 using Ilsrep.PollApplication.Communication;
 using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Helpers;
+using Ilsrep.PollApplication.DAL;
 using Ilsrep.Common;
+using System.Data.SQLite;
 
 public partial class _Default : System.Web.UI.Page
 {
-    /// <summary>
-    /// host to which connect
-    /// </summary>
-    public const string HOST = "localhost";
-    /// <summary>
-    /// port to which connect
-    /// </summary>
-    public const int PORT = 3320;
-    /// <summary>
-    /// handles connection to server
-    /// </summary>
-    private TcpClient client = new TcpClient();
-    public static List<Item> pollSessionsList = new List<Item>();
+    public List<Item> pollSessionsList = new List<Item>();
+    public SQLiteConnection sqliteConnection = new SQLiteConnection();
 
-    protected void Page_Load(object sender, EventArgs e)
+    protected void Page_Load( object sender, EventArgs e )
     {
-        try
-        {
-            client.Connect(HOST, PORT);
-        }
-        catch (Exception exception)
-        {
-
-        }
-
-        if (client.isConnected)
-        {
-            pollSessionsList = GetPollSessionsList();
-            client.Disconnect();
-        }
-        else
-        {
-            pollSessionsList = null;
-        }       
-    }
-
-    /// <summary>
-    /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
-    /// </summary>
-    /// <param name="sendPacket">PollPacket with request to send</param>
-    /// <returns>PollPacket receivedPacket</returns>
-    private PollPacket ReceivePollPacket(PollPacket sendPacket)
-    {
-        try
-        {
-            string sendString = PollSerializator.SerializePacket(sendPacket);
-            client.Send(sendString);
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-
-        string receivedString = client.Receive();
-        PollPacket receivedPacket = new PollPacket();
-        receivedPacket = PollSerializator.DeserializePacket(receivedString);
-
-        // Check if received data is correct
-        if (receivedPacket == null)
-        {
-            return null;
-        }
-        return receivedPacket;
-    }
-
-    private List<Item> GetPollSessionsList()
-    {
-        // Get list of pollsessions
-        PollPacket pollPacket = new PollPacket();
-        pollPacket.user = new User();
-        pollPacket.user.username = "test";
-        pollPacket.user.password = "123456";
-        pollPacket = ReceivePollPacket(pollPacket);
-
-        if (pollPacket.user.auth)
-        {
-            pollPacket.request = new Request();
-            pollPacket.request.type = Ilsrep.PollApplication.Communication.Request.GET_LIST;
-            pollPacket = ReceivePollPacket(pollPacket);
-
-            if (pollPacket != null)
-            {
-                return pollPacket.pollSessionList.items;
-            }
-        }
-
-        return null;
+        PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
+        pollSessionsList = PollDAL.GetPollSessions();
     }
 }
