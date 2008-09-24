@@ -63,7 +63,14 @@ namespace Ilsrep.PollApplication.Model
             }
             set
             {
-                _name = value;
+                if (value == String.Empty)
+                {
+                    throw new Exception("Poll name can't be empty");
+                }
+                else
+                {
+                    _name = value;
+                }
             }
         }
 
@@ -76,7 +83,14 @@ namespace Ilsrep.PollApplication.Model
             }
             set
             {
-                _description = value;
+                if (value == String.Empty)
+                {
+                    throw new Exception("Poll description can't be empty");
+                }
+                else
+                {
+                    _description = value;
+                }
             }
         }
 
