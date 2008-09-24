@@ -21,23 +21,6 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.components">
-            <summary> 
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.InitializeComponent">
-            <summary> 
-            Required method for Designer support - do not modify 
-            the contents of this method with the code editor.
-            </summary>
-        </member>
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.log">
             <summary>
             Event Log
@@ -117,6 +100,23 @@
             Method is executed when data has been sent
             </summary>
             <param name="iAsyncResult"></param>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollServer.PollServer.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollServer.PollServer.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollServer.PollServer.StateObject.BUFFERSIZE">
             <summary>

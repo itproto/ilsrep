@@ -21,16 +21,6 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.ConnectToServer">
-            <summary>
-            Connect to server
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.DisconnectFromServer">
-            <summary>
-            Disconnect from server
-            </summary>
-        </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.StatisticsForm_PollSessions">
             <summary>
             PollStatistics Form
@@ -122,7 +112,11 @@
             <summary>
             Selected pollsession
             </summary>
-            public static Item selectedPollSession = new Item();
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.selectedChoice">
+            <summary>
+            Selected choice
+            </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.currentPoll">
             <summary>
@@ -142,6 +136,11 @@
         <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.resultsList">
             <summary>
             Where results are stored
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.currentAction">
+            <summary>
+            Action that user do at the moment
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.RefreshPollSessionsList">
@@ -189,40 +188,6 @@
             Get PollSession by the selected poll session index
             </summary>
         </member>
-        <member name="T:Ilsrep.PollApplication.PollClientGUI.ChoiceForm">
-            <summary>
-            Choice Form
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.ChoiceForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.ChoiceForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.ChoiceForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.ChoiceForm.#ctor">
-            <summary>
-            Initialize Form
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.ChoiceForm.submitButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -237,172 +202,6 @@
             <summary>
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.PollClientGUI.PollSessionForm">
-            <summary>
-            PollSession Form
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.activePoll">
-            <summary>
-            Poll, selected in pollsListBox
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.pollsList">
-            <summary>
-            List of Polls that will be filled
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.isTestModeEnabled">
-            <summary>
-            Shows enabled status of TestMode
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.#ctor">
-            <summary>
-            Initialize form
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.RefreshPollsList">
-            <summary>
-            Refresh list of Polls in pollsListBox
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.isTestMode_CheckedChanged(System.Object,System.EventArgs)">
-            <summary>
-            Function enables or disables minScoreField and sets isTestModeEnabled value according to isTestMode CheckBox
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.pollsListBox_SelectedIndexChanged(System.Object,System.EventArgs)">
-            <summary>
-            Change poll if SelectedIndexChanged
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.addButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens PollForm and then add new poll to polls list
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.editButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens PollForm and then save changed poll to polls list
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.removeButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function remove selected poll from polls list
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollSessionForm.submitButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Save all changes in PollEditorForm.pollSession
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="T:Ilsrep.PollApplication.PollClientGUI.PollForm">
-            <summary>
-            Poll Form
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.activeChoice">
-            <summary>
-            choice, selected in choicesListBox
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.choicesList">
-            <summary>
-            list of choices, that will be filled
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.#ctor">
-            <summary>
-            Initialize Form
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.RefreshChoicesList">
-            <summary>
-            Refresh list of choices in choicesListBox
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.addButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens ChoiceForm and then add new choice to choices list
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.editButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens ChoiceForm and then save changed choice to choices list
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.removeButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function remove selected choice from choices list
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.submitButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Save all changes in PollSessionForm.poll
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.choicesListBox_SelectedIndexChanged(System.Object,System.EventArgs)">
-            <summary>
-            Change choice if SelectedIndexChanged
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
             </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.StatisticsForm">
@@ -496,6 +295,21 @@
         <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isAuthorized">
             <summary>
             Show is user authorized
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isLogOut">
+            <summary>
+            Show is user logged out
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.ConnectToServer">
+            <summary>
+            Connect to server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.DisconnectFromServer">
+            <summary>
+            Disconnect from server
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
