@@ -131,6 +131,20 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollSession = pollPacket.pollSession;
 
                 currentAction = Request.EDIT_POLLSESSION;
+
+                // Modify correctChoices
+                foreach (Poll curPoll in pollSession.polls)
+                {
+                    int choiceIndex = 0;
+                    foreach (Choice curChoice in curPoll.choices)
+                    {
+                        if (curChoice.id == curPoll.correctChoiceID)
+                            break;
+                        choiceIndex++;
+                    }
+                    curPoll.correctChoiceID = choiceIndex;
+                }
+
                 propertyGrid.SelectedObject = pollSession;
                 saveButton.Enabled = true;
                 cancelButton.Enabled = true;
