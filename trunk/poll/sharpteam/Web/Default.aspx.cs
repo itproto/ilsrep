@@ -19,12 +19,32 @@ using System.Data.SQLite;
 
 public partial class _Default : System.Web.UI.Page
 {
-    public List<Item> pollSessionsList = new List<Item>();
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
+    public string errorMessage = String.Empty;
+
+    const string ERROR_AUTH = "Wrong username or password!";
 
     protected void Page_Load( object sender, EventArgs e )
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
-        pollSessionsList = PollDAL.GetPollSessions();
+
+        if ( Request["do"] == "login" )
+        {
+            User user = new User();
+            user.username = Request["username"];
+            user.password = Request["password"];
+            PollDAL.AuthorizeUser( user );
+
+            if ( !user.auth )
+            {
+                errorMessage = ERROR_AUTH;
+                return;
+            }
+            else
+            {
+                Session["loggedin"] = user.auth;
+                Response.Redirect( "Main.aspx" );
+            }
+        }
     }
 }
