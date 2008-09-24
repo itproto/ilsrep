@@ -119,7 +119,6 @@ namespace Ilsrep.PollApplication.Model
                     if (curPoll.choices.Count == 0)
                     {
                         throw new Exception("Poll #" + index + " contains 0 choices");
-                        return;
                     }
                     index++;
                 }

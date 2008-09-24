@@ -431,6 +431,31 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.ExecuteNonQuery();
         }
 
+        static public bool RegisterUser(User user)
+        {
+            if ( !isConnected )
+            {
+                Init();
+            }
+
+            try
+            {
+                SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+                sqliteCommand.Parameters.Add( new SQLiteParameter( ":userName", user.username ) );
+                sqliteCommand.Parameters.Add( new SQLiteParameter( ":password", user.password ) );
+                sqliteCommand.CommandText = "INSERT INTO " + USERS_TABLE + "(userName, password) VALUES (:userName, :password)";
+                SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+                user.auth = true;
+            }
+            catch ( Exception )
+            {
+                user.auth = false;
+                return false;
+            }
+
+            return true;
+        }
+
         static public User AuthorizeUser(User user)
         {
             if (!isConnected)
@@ -438,37 +463,27 @@ namespace Ilsrep.PollApplication.DAL
                 Init();
             }
 
-            if (!user.isNew)
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add( new SQLiteParameter( ":userName", user.username ) );
+            sqliteCommand.CommandText = "SELECT * FROM " + USERS_TABLE + " WHERE userName=:userName";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            if ( sqliteReader.HasRows )
             {
-                SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", user.username));
-                sqliteCommand.CommandText = "SELECT * FROM " + USERS_TABLE + " WHERE userName=:userName";
-                SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
-                if (sqliteReader.HasRows)
+                if ( sqliteReader["password"].ToString() == user.password )
                 {
-                    if (sqliteReader["password"].ToString() == user.password)
-                    {
-                        user.auth = true;
-                    }
-                    else
-                    {
-                        user.auth = false;
-                    }
+                    user.auth = true;
                 }
                 else
                 {
-                    user.isNew = true;
+                    user.auth = false;
                 }
             }
             else
             {
-                SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", user.username));
-                sqliteCommand.Parameters.Add(new SQLiteParameter(":password", user.password));
-                sqliteCommand.CommandText = "INSERT INTO " + USERS_TABLE + "(userName, password) VALUES (:userName, :password)";
-                SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
-                user.auth = true;
+                //user.isNew = true;
+                user.auth = false;
             }
+
 
             return user;
         }

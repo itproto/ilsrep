@@ -53,18 +53,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 PollClientGUI.userName = nameField.Text;
                 Close();
             }
-            else if (!pollPacket.user.isNew)
+            else /*if (!pollPacket.user.isNew)*/
             {
                 MessageBox.Show("Wrong password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else
+            /*else
             {
                 MessageBox.Show("User not found in DB, program will create a new user", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 confirmField.Visible = true;
                 confirmLabel.Visible = true;
                 this.Size = new Size(234, 150);
                 submitButton.Top = 85;
-            }
+            }*/
         }
 
         private void submitButton_Click(object sender, EventArgs e)
