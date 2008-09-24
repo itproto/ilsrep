@@ -75,7 +75,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
             if ( pollSessionsList.Count() == 0 )
             {
-                MessageBox.Show( "No pollsessions in DB...", "Info" );
+                MessageBox.Show("No pollsessions in DB...", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 selectedPollSession = -1;
                 return;
             }
@@ -137,7 +137,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                MessageBox.Show("Please, select PollSession to edit", "Error");
+                MessageBox.Show("Please, select PollSession to edit", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -153,7 +153,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 // Ask user confirmation
                 DialogResult userChoice = new DialogResult();
-                userChoice = MessageBox.Show(null, "Do you really want to remove pollsession \"" + pollSessionsList[selectedPollSession].name + "\"?", "Remove PollSession?", MessageBoxButtons.YesNo);
+                userChoice = MessageBox.Show("Do you really want to remove pollsession \"" + pollSessionsList[selectedPollSession].name + "\"?", "Remove PollSession?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                 if (userChoice == DialogResult.Yes)
                 {
                     PollPacket sendPacket = new PollPacket();
@@ -168,7 +168,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                MessageBox.Show("Please, select PollSession to remove", "Error");
+                MessageBox.Show("Please, select PollSession to remove", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -241,7 +241,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
                 catch (Exception exception)
                 {
-                    MessageBox.Show(exception.Message, "Error");
+                    MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
             clientPage.Controls.Add( btnSubmit );
@@ -328,7 +328,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 if ( selectedChoice == -1 )
                 {
-                    MessageBox.Show("Select a choice", "Error");
+                    MessageBox.Show("Select a choice", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -468,7 +468,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message, "Error");
+                MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

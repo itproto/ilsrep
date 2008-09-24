@@ -37,7 +37,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
                 else
                 {
-                    MessageBox.Show("\"password\" and \"confirm password\" fields aren't identicals", "Error");
+                    MessageBox.Show("\"password\" and \"confirm password\" fields aren't identicals", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -55,11 +55,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else if (!pollPacket.user.isNew)
             {
-                MessageBox.Show("Wrong password", "Error");
+                MessageBox.Show("Wrong password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                MessageBox.Show("User not found in DB, program will create a new user", "Info");
+                MessageBox.Show("User not found in DB, program will create a new user", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 confirmField.Visible = true;
                 confirmLabel.Visible = true;
                 this.Size = new Size(234, 150);
@@ -79,7 +79,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                MessageBox.Show("Name field is empty", "Error");
+                MessageBox.Show("Name field is empty", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
