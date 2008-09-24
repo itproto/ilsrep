@@ -19,15 +19,21 @@ sess=db.getPollsessionById(sessi);
 
 resultingOutput+="<h1>"+sess.getName()+"</h1>";
  for (Poll currentPoll : sess.getPolls()) {
-resultingOutput+="<div id="+Integer.toString(numberOfPolls)+" style=\"inner_poll\">";
+resultingOutput+="<div id="+Integer.toString(numberOfPolls)+">";
 resultingOutput+="<h2>"+currentPoll.getName()+"</h2>";
 resultingOutput+="<h3>"+currentPoll.getDescription().getValue()+"</h3>";
+resultingOutput+="\n <table>";
+boolean rowtype=true;
 for( Choice currentChoice : currentPoll.getChoices()){
-resultingOutput+="<input type='radio' name='"+currentPoll.getName()+"' value='"+currentChoice.getName()+"'>"+currentChoice.getName()+"<br>";
+resultingOutput+="<tr ";
+
+resultingOutput+="><td><input type='radio' name='"+currentPoll.getName()+"' value='"+currentChoice.getName()+"'>"+currentChoice.getName()+"</td></tr>";
+rowtype=rowtype ? false :true;
 }
 if(currentPoll.getCustomEnabled().equals("true")){
-resultingOutput+="<input type='radio' name='"+currentPoll.getName()+"' value='custom_choice'>Custom<input type='textarea' name='custom"+currentPoll.getName()+"'>";
+resultingOutput+="<tr><td><input type='radio' name='"+currentPoll.getName()+"' value='custom_choice'>Custom<input type='textarea' name='custom"+currentPoll.getName()+"'></tr></td>";
 }
+resultingOutput+="</table>";
 resultingOutput+="</div>";
 numberOfPolls++;
 }
