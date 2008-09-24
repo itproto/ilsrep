@@ -58,7 +58,14 @@ namespace Ilsrep.PollApplication.Model
             }
             set
             {
-                _name = value;
+                if (value == String.Empty)
+                {
+                    throw new Exception("PollSession name can't be empty");
+                }
+                else
+                {
+                    _name = value;
+                }
             }
         }
 
@@ -106,6 +113,17 @@ namespace Ilsrep.PollApplication.Model
             }
             set
             {
+                int index = 0;
+                foreach (Poll curPoll in value)
+                {
+                    if (curPoll.choices.Count == 0)
+                    {
+                        throw new Exception("Poll #" + index + " contains 0 choices");
+                        return;
+                    }
+                    index++;
+                }
+
                 _polls = value;
             }
         }

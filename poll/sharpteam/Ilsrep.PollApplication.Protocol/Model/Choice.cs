@@ -52,7 +52,14 @@ namespace Ilsrep.PollApplication.Model
             }
             set
             {
-                _choice = value;
+                if (value == String.Empty)
+                {
+                    throw new Exception("Choice can't be empty");
+                }
+                else
+                {
+                    _choice = value;
+                }
             }
         }
     }

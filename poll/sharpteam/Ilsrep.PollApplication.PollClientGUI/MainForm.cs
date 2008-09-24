@@ -437,8 +437,50 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void saveButton_Click(object sender, EventArgs e)
         {
+            // Verification of filling of pollsession's fields
+            try
+            {
+                if (pollSession.name == null)
+                    throw new Exception("PollSession name can't be empty");
+                if (pollSession.polls.Count == 0)
+                    throw new Exception("PollSession must have polls");
+                
+                int pollIndex = 0;
+                foreach (Poll curPoll in pollSession.polls)
+                {
+                    if (curPoll.name == null)
+                        throw new Exception("Poll#" + pollIndex + " name can't be empty");
+                    if (curPoll.description == null)
+                        throw new Exception("Poll#" + pollIndex + " description can't be empty");
+                    if (curPoll.choices.Count == 0)
+                        throw new Exception("Poll#" + pollIndex + " must have choices");
+
+                    int choiceIndex = 0;
+                    foreach (Choice curChoice in curPoll.choices)
+                    {
+                        if (curChoice.choice == null)
+                            throw new Exception("Choice#" + choiceIndex + " of Poll#" + pollIndex + " can't be empty");
+                        choiceIndex++;
+                    }
+
+                    pollIndex++;
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error");
+                return;
+            }
+
             PollPacket pollPacket = new PollPacket();
             pollPacket.request = new Request();
+
+            // ----- for synchronize with server(will fixed on future) -----
+            foreach (Poll curPoll in pollSession.polls)
+            {
+                curPoll.correctChoiceID += 1;
+            }
+
             switch (currentAction)
             {
                 case Request.CREATE_POLLSESSION:
