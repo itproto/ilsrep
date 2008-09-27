@@ -284,7 +284,7 @@ public class MainWindow extends JFrame {
         if (server == null || server.isEmpty() || port == null
                 || port.isEmpty() || user == null || user.isEmpty()
                 || password == null || password.isEmpty()) {
-            String warnMessage = "One of server, port, user or port is empty - selected no server!";
+            String warnMessage = "One of server, port, user or password is empty - selected no server!";
             logger.warn(warnMessage);
             GUIUtilities.showWarningDialog(warnMessage);
             return;
