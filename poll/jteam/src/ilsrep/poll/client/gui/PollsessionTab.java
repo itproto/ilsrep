@@ -1,7 +1,10 @@
 package ilsrep.poll.client.gui;
 
+import ilsrep.poll.common.model.Choice;
 import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.AnswerItem;
+import ilsrep.poll.common.protocol.Answers;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,6 +12,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.AbstractButton;
@@ -18,6 +22,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 /**
@@ -42,6 +47,26 @@ public class PollsessionTab extends JPanel implements ActionListener {
      * Stands for "finish" action(close tab).
      */
     public static final String FINISH_ACTION = "finish";
+
+    /**
+     * Name of custom choice radio button.
+     */
+    public static final String CUSTOM_CHOICE_RADIO_BUTTON_NAME = "custom";
+
+    /**
+     * Text of custom choice radio button.
+     */
+    public static final String CUSTOM_CHOICE_RADIO_BUTTON_TEXT = "custom choice";
+
+    /**
+     * Text of custom choice radio button.
+     */
+    public static final String CUSTOM_CHOICE_RADIO_BUTTON_ACTION = "customSelected";
+
+    /**
+     * Text of custom choice radio button.
+     */
+    public static final String ANOTHER_RADIO_BUTTON_ACTION = "custom choice";
 
     /**
      * Pollsession that is proceed by this tab.
@@ -79,15 +104,25 @@ public class PollsessionTab extends JPanel implements ActionListener {
      */
     private JButton nextButton = null;
 
-    // /**
-    // * Results of pollsession.
-    // */
-    // private Answers pollResultList = null;
+    /**
+     * Results of pollsession.
+     */
+    private Answers pollResultList = null;
 
     /**
      * Choices of each poll.
      */
     private ButtonGroup choices = null;
+
+    /**
+     * Radio button to select custom choice.
+     */
+    private JRadioButton customChoiceRadioButton = null;
+
+    /**
+     * Field to enter custom choice.
+     */
+    private JTextField customChoiceField = null;
 
     /**
      * Creates new <code>PollsessionTab</code>, for passing given pollsession.
@@ -98,6 +133,10 @@ public class PollsessionTab extends JPanel implements ActionListener {
     public PollsessionTab(Pollsession session, MainWindow owningWindow) {
         this.session = session;
         this.owningWindow = owningWindow;
+
+        pollResultList = new Answers();
+        pollResultList.setAnswers(new ArrayList<AnswerItem>());
+        pollResultList.setPollSesionId(session.getId());
     }
 
     /**
@@ -216,8 +255,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
             }
             else
                 if (currentFrame >= 0
-                        && currentFrame < session.getPolls().size()) {
-                    String choice = null;
+                        && currentFrame <= session.getPolls().size()) {
+                    String radioBoxChoice = null;
 
                     if (choices != null) {
                         Enumeration<AbstractButton> radioBoxes = choices
@@ -228,90 +267,28 @@ public class PollsessionTab extends JPanel implements ActionListener {
                                     .nextElement();
 
                             if (currentBox.isSelected()) {
-                                choice = currentBox.getName();
+                                radioBoxChoice = currentBox.getName();
                                 break;
                             }
                         }
 
-                        if (choice == null) {
+                        if (radioBoxChoice == null) {
                             GUIUtilities
                                     .showWarningDialog("You didn't select your choice!");
                             return;
                         }
                         else {
-                            // TODO: Store result.
+                            Poll poll = session.getPolls()
+                                    .get(currentFrame - 1);
+
+                            AnswerItem answerItem = new AnswerItem();
+                            answerItem.setQuestionId(poll.getId());
+                            answerItem.setAnswerId(radioBoxChoice);
+
+                            pollResultList.getAnswers().add(answerItem);
                         }
                     }
 
-                    Poll poll = session.getPolls().get(currentFrame);
-
-                    JLabel pollIdLabel = new JLabel("Id");
-                    JTextField pollIdField = new JTextField(collumsCount);
-                    pollIdField.setText(poll.getId());
-                    pollIdField.setEditable(false);
-
-                    JLabel pollNameLabel = new JLabel("Name");
-                    JTextField pollNameField = new JTextField(collumsCount);
-                    pollNameField.setText(poll.getName());
-                    pollNameField.setEditable(false);
-
-                    JLabel pollDescriptionLabel = new JLabel("Description");
-                    JTextField pollDescriptionField = new JTextField(
-                            collumsCount);
-                    pollDescriptionField.setText(poll.getDescription()
-                            .getValue());
-                    pollDescriptionField.setEditable(false);
-
-                    GridBagLayout layout = new GridBagLayout();
-                    framePanel.setLayout(layout);
-
-                    GridBagConstraints c = new GridBagConstraints();
-
-                    JLabel pollLabel = new JLabel("Poll");
-                    JLabel infoLabel = new JLabel("information");
-
-                    c.anchor = GridBagConstraints.LAST_LINE_END;
-                    c.gridx = 0;
-                    c.gridy = 0;
-                    c.insets.bottom = componentSpace;
-                    framePanel.add(pollLabel, c);
-
-                    c.anchor = GridBagConstraints.LAST_LINE_START;
-                    c.gridx = 1;
-                    c.gridy = 0;
-                    c.insets.left = componentSpace;
-                    framePanel.add(infoLabel, c);
-
-                    c.gridx = 0;
-                    c.gridy = 1;
-                    c.insets.left = 0;
-                    c.insets.right = componentSpace;
-                    c.anchor = GridBagConstraints.FIRST_LINE_START;
-                    framePanel.add(pollIdLabel, c);
-
-                    c.gridx = 1;
-                    c.gridy = 1;
-                    framePanel.add(pollIdField, c);
-
-                    c.gridx = 0;
-                    c.gridy = 2;
-                    framePanel.add(pollNameLabel, c);
-
-                    c.gridx = 1;
-                    c.gridy = 2;
-                    framePanel.add(pollNameField, c);
-
-                    c.gridx = 0;
-                    c.gridy = 3;
-                    framePanel.add(pollDescriptionLabel, c);
-
-                    c.gridx = 1;
-                    c.gridy = 3;
-                    framePanel.add(pollDescriptionField, c);
-
-                    // choices = new ButtonGroup();
-                }
-                else
                     if (currentFrame == session.getPolls().size()) {
                         // Show results and "Click "Next" to send results".
 
@@ -325,40 +302,161 @@ public class PollsessionTab extends JPanel implements ActionListener {
                                 "Click \"Next\" to send results"));
                     }
                     else {
-                        nextButton.setText("Finish");
-                        nextButton.setActionCommand(FINISH_ACTION);
+                        Poll poll = session.getPolls().get(currentFrame);
 
-                        BoxLayout pageLayout = new BoxLayout(framePanel,
-                                BoxLayout.PAGE_AXIS);
+                        JLabel pollIdLabel = new JLabel("Id");
+                        JTextField pollIdField = new JTextField(collumsCount);
+                        pollIdField.setText(poll.getId());
+                        pollIdField.setEditable(false);
 
-                        framePanel.setLayout(pageLayout);
+                        JLabel pollNameLabel = new JLabel("Name");
+                        JTextField pollNameField = new JTextField(collumsCount);
+                        pollNameField.setText(poll.getName());
+                        pollNameField.setEditable(false);
 
-                        framePanel.add(new JLabel(
-                                "Results (should be :)) sent!"));
-                        framePanel.add(new JLabel(
-                                "Click \"Finish\" to close tab."));
+                        JLabel pollDescriptionLabel = new JLabel("Description");
+                        JTextField pollDescriptionField = new JTextField(
+                                collumsCount);
+                        pollDescriptionField.setText(poll.getDescription()
+                                .getValue());
+                        pollDescriptionField.setEditable(false);
+
+                        GridBagLayout layout = new GridBagLayout();
+                        framePanel.setLayout(layout);
+
+                        GridBagConstraints c = new GridBagConstraints();
+
+                        JLabel pollLabel = new JLabel("Poll");
+                        JLabel infoLabel = new JLabel("information");
+
+                        c.anchor = GridBagConstraints.LAST_LINE_END;
+                        c.gridx = 0;
+                        c.gridy = 0;
+                        c.insets.bottom = componentSpace;
+                        framePanel.add(pollLabel, c);
+
+                        c.anchor = GridBagConstraints.LAST_LINE_START;
+                        c.gridx = 1;
+                        c.gridy = 0;
+                        c.insets.left = componentSpace;
+                        framePanel.add(infoLabel, c);
+
+                        c.gridx = 0;
+                        c.gridy = 1;
+                        c.insets.left = 0;
+                        c.insets.right = componentSpace;
+                        c.anchor = GridBagConstraints.FIRST_LINE_START;
+                        framePanel.add(pollIdLabel, c);
+
+                        c.gridx = 1;
+                        c.gridy = 1;
+                        framePanel.add(pollIdField, c);
+
+                        c.gridx = 0;
+                        c.gridy = 2;
+                        framePanel.add(pollNameLabel, c);
+
+                        c.gridx = 1;
+                        c.gridy = 2;
+                        framePanel.add(pollNameField, c);
+
+                        c.gridx = 0;
+                        c.gridy = 3;
+                        framePanel.add(pollDescriptionLabel, c);
+
+                        c.gridx = 1;
+                        c.gridy = 3;
+                        framePanel.add(pollDescriptionField, c);
+
+                        // Creating and adding choices.
+                        choices = new ButtonGroup();
+
+                        int lastYGridPosition = 3;
+
+                        c.gridx = 0;
+
+                        for (Choice choice : poll.getChoices()) {
+                            JRadioButton choiceRadioButton = new JRadioButton();
+                            choiceRadioButton.setName(choice.getId());
+                            choiceRadioButton.setText(choice.getName());
+                            choiceRadioButton.addActionListener(this);
+                            choiceRadioButton
+                                    .setActionCommand(ANOTHER_RADIO_BUTTON_ACTION);
+
+                            choices.add(choiceRadioButton);
+
+                            c.gridy = ++lastYGridPosition;
+                            framePanel.add(choiceRadioButton, c);
+                        }
+
+                        if (poll.checkCustomEnabled()) {
+                            customChoiceRadioButton = new JRadioButton();
+                            customChoiceRadioButton
+                                    .setName(CUSTOM_CHOICE_RADIO_BUTTON_NAME);
+                            customChoiceRadioButton
+                                    .setText(CUSTOM_CHOICE_RADIO_BUTTON_TEXT);
+                            customChoiceRadioButton.addActionListener(this);
+                            customChoiceRadioButton
+                                    .setActionCommand(CUSTOM_CHOICE_RADIO_BUTTON_ACTION);
+                            choices.add(customChoiceRadioButton);
+
+                            customChoiceField = new JTextField(collumsCount);
+                            customChoiceField.setEnabled(false);
+
+                            c.gridy = ++lastYGridPosition;
+                            framePanel.add(customChoiceRadioButton, c);
+
+                            c.gridx = 1;
+                            framePanel.add(customChoiceField, c);
+                        }
                     }
+                }
+                else {
+                    nextButton.setText("Finish");
+                    nextButton.setActionCommand(FINISH_ACTION);
+
+                    BoxLayout pageLayout = new BoxLayout(framePanel,
+                            BoxLayout.PAGE_AXIS);
+
+                    framePanel.setLayout(pageLayout);
+
+                    framePanel.add(new JLabel("Results (should be :)) sent!"));
+                    framePanel
+                            .add(new JLabel("Click \"Finish\" to close tab."));
+                }
+
+            currentFrame++;
+
+            BoxLayout pollsessionTabLayout = new BoxLayout(this,
+                    BoxLayout.PAGE_AXIS);
+
+            setLayout(pollsessionTabLayout);
+
+            removeAll();
+
+            add(header);
+            add(Box.createVerticalGlue());
+            add(framePanel);
+            add(Box.createVerticalGlue());
+            add(footer);
         }
         else
             if (e.getActionCommand().equals(FINISH_ACTION)) {
                 owningWindow.removeTabByInstance(this);
-                return;
             }
+            else
+                if (e.getActionCommand().equals(
+                        CUSTOM_CHOICE_RADIO_BUTTON_ACTION)) {
+                    if (customChoiceField != null)
+                        customChoiceField.setEnabled(true);
+                }
+                else
+                    if (e.getActionCommand()
+                            .equals(ANOTHER_RADIO_BUTTON_ACTION)) {
+                        if (customChoiceField != null)
+                            customChoiceField.setEnabled(false);
+                    }
 
-        currentFrame++;
-
-        BoxLayout pollsessionTabLayout = new BoxLayout(this,
-                BoxLayout.PAGE_AXIS);
-
-        setLayout(pollsessionTabLayout);
-
-        removeAll();
-
-        add(header);
-        add(Box.createVerticalGlue());
-        add(framePanel);
-        add(Box.createVerticalGlue());
-        add(footer);
     }
 
     /**
