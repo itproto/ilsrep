@@ -11,4 +11,4 @@ Name: ilsrep/poll/server/PollServer.class
 Specification-Version: 0.0.1
 
 Name: ilsrep/poll/client/gui/MainWindow.class
-Specification-Version: 0.0.1
+Specification-Version: 0.0.2
