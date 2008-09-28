@@ -431,9 +431,9 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.ExecuteNonQuery();
         }
 
-        static public bool RegisterUser(User user)
+        static public User RegisterUser(User user)
         {
-            if ( !isConnected )
+            if (!isConnected)
             {
                 Init();
             }
@@ -445,15 +445,14 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.Add( new SQLiteParameter( ":password", user.password ) );
                 sqliteCommand.CommandText = "INSERT INTO " + USERS_TABLE + "(userName, password) VALUES (:userName, :password)";
                 SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
-                user.auth = true;
+                user.action = User.ACCEPTED;
             }
-            catch ( Exception )
+            catch (Exception)
             {
-                user.auth = false;
-                return false;
+                user.action = User.DENIED;
             }
 
-            return true;
+            return user;
         }
 
         static public User AuthorizeUser(User user)
@@ -467,24 +466,23 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.Parameters.Add( new SQLiteParameter( ":userName", user.username ) );
             sqliteCommand.CommandText = "SELECT * FROM " + USERS_TABLE + " WHERE userName=:userName";
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+
+            // if user already exist
             if ( sqliteReader.HasRows )
             {
                 if ( sqliteReader["password"].ToString() == user.password )
                 {
-                    user.auth = true;
+                    user.action = User.ACCEPTED;
                 }
                 else
                 {
-                    user.auth = false;
+                    user.action = User.DENIED;
                 }
             }
             else
             {
-                //user.isNew = true;
-                user.auth = false;
+                user.action = User.NEW_USER;
             }
-
-
             return user;
         }
     }

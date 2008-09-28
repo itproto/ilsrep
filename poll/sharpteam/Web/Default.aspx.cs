@@ -21,29 +21,27 @@ public partial class _Default : System.Web.UI.Page
 {
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
     public string errorMessage = String.Empty;
-
     const string ERROR_AUTH = "Wrong username or password!";
 
     protected void Page_Load( object sender, EventArgs e )
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
 
-        if ( Request["do"] == "login" )
+        if (Request["action"] == "login")
         {
             User user = new User();
             user.username = Request["username"];
             user.password = Request["password"];
-            PollDAL.AuthorizeUser( user );
+            user = PollDAL.AuthorizeUser(user);
 
-            if ( !user.auth )
+            if (user.action == Ilsrep.PollApplication.Model.User.ACCEPTED)
             {
-                errorMessage = ERROR_AUTH;
-                return;
+                Session["logged"] = true;
+                //Response.Redirect("Main.aspx");
             }
             else
             {
-                Session["loggedin"] = user.auth;
-                Response.Redirect( "Main.aspx" );
+                errorMessage = ERROR_AUTH;
             }
         }
     }

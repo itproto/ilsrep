@@ -277,23 +277,28 @@ namespace Ilsrep.PollApplication.PollServer
                 return;
             }
 
-            // packet to be sent back
+            // Packet to be sent back
             PollPacket sendPacket = new PollPacket();
 
-            if ( !client.isAuthorized )
+            if (!client.isAuthorized)
             {
-                sendPacket.user = PollDAL.AuthorizeUser( receivedPacket.user );
-                if ( sendPacket.user.auth == true )
+                switch (receivedPacket.user.action)
                 {
-                    client.isAuthorized = true;
-                    if ( sendPacket.user.isNew )
-                    {
-                        EventLog.WriteEntry( "New user created: " + sendPacket.user.username, EventLogEntryType.Information );
-                    }
-                    else
-                    {
-                        EventLog.WriteEntry( "User accepted: " + sendPacket.user.username, EventLogEntryType.Information );
-                    }
+                    case User.LOGIN:
+                        sendPacket.user = PollDAL.AuthorizeUser(receivedPacket.user);
+                        if (sendPacket.user.action == User.ACCEPTED)
+                        {
+                            client.isAuthorized = true;
+                            EventLog.WriteEntry("User accepted: " + sendPacket.user.username, EventLogEntryType.Information);
+                        }
+                        break;
+                    case User.NEW_USER:
+                        sendPacket.user = PollDAL.RegisterUser(receivedPacket.user);
+                        if (sendPacket.user.action == User.ACCEPTED)
+                        {
+                            EventLog.WriteEntry("New user created: " + sendPacket.user.username, EventLogEntryType.Information);
+                        }
+                        break;
                 }
             }
             else

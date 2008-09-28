@@ -8,12 +8,27 @@
     <link href="StyleSheet.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div class="error"><%= errorMessage %></div>
-    <form action="?do=login" method="post">
+    <div class="error"><%=errorMessage%></div>
+    <form action="?action=login" method="post">
     <table align="center">
-    <tr><td>Username:</td><td><input type="text" name="username" /></td></tr>
-    <tr><td>Password:</td><td><input type="password" name="password" /></td></tr>
-    <tr><td colspan="2" align="center"><input type="submit" value="Login" /> <input type="button" value="Register" onclick="document.location='Register.aspx'" /></td></tr>
+        <tr>
+            <td>Username:</td>
+            <td>
+                <input type="text" name="username" />
+            </td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td>
+                <input type="password" name="password" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" value="Login" />
+                <input type="button" value="Register" onclick="document.location='Defuult.aspx'" />
+            </td>
+        </tr>
     </table>
     </form>
 </body>

@@ -176,22 +176,17 @@
         </member>
         <member name="F:Ilsrep.PollApplication.Model.User.username">
             <summary>
-            user name
+            User name
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.Model.User.password">
             <summary>
-            password
+            Password
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Model.User.auth">
+        <member name="F:Ilsrep.PollApplication.Model.User.action">
             <summary>
-            Is allowed access
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.User.isNew">
-            <summary>
-            If true - server creates new user
+            Action(used in user authorisation)
             </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper">
