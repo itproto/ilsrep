@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -307,7 +308,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                         framePanel.setLayout(pageLayout);
 
-                        framePanel.add(new JLabel("Results should go here!"));
+                        framePanel.add(new JTextArea(generateResults(
+                                pollResultList, session)));
                         framePanel.add(new JLabel(
                                 "Click \"Next\" to send results"));
                     }
@@ -468,6 +470,58 @@ public class PollsessionTab extends JPanel implements ActionListener {
                         if (customChoiceField != null)
                             customChoiceField.setEnabled(false);
                     }
+    }
+
+    /**
+     * Generates results output as string.
+     * 
+     * @param results
+     *            Source of pollsession resuls.
+     * @param session
+     *            Pollsession matching current results.
+     * @return Generated string.
+     */
+    public static String generateResults(Answers results, Pollsession session) {
+        String resultingOutput = "";
+        int i = 0;
+        int n = 0;
+
+        for (Poll cur : session.getPolls()) {
+            String answeredChoice = results.getAnswerItemByPollId(cur.getId())
+                    .getAnswerId();
+            String choiceText = (!answeredChoice.equals("-1")) ? cur
+                    .getChoiceById(answeredChoice).getName() : results
+                    .getAnswerItemByPollId(cur.getId()).getCustomChoice();
+
+            if (session.getTestMode().compareTo("true") == 0) {
+                n++;
+                boolean answeredCorrect = !answeredChoice.equals("-1")
+                        && answeredChoice.equals(cur.getCorrectChoice());
+
+                if (answeredCorrect)
+                    i++;
+
+                resultingOutput += cur.getName() + " => " + choiceText + " ("
+                        + (answeredCorrect ? "PASS" : "FAIL") + ")" + "\n";
+            }
+            else {
+                resultingOutput += cur.getName() + " => " + choiceText + "\n";
+            }
+        }
+        if (session.getTestMode().compareTo("true") == 0) {
+            // BUG: May happen too long number after comma.
+            resultingOutput += "\nYour score " + Float.toString((float) i / n)
+                    + "\n";
+
+            if (((float) i / n) >= Float.parseFloat(session.getMinScore())) {
+                resultingOutput += "You pass!";
+            }
+            else {
+                resultingOutput += "You fail.";
+            }
+        }
+
+        return resultingOutput;
     }
 
     /**

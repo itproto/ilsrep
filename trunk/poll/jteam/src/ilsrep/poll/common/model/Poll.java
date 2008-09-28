@@ -273,4 +273,21 @@ public class Poll {
         this.correctChoice = correctChoice;
     }
 
+    /**
+     * Returns choice by id.
+     * 
+     * @param pollId
+     *            Id of choice.
+     * @return Choice matching given id or <code>null</code>, if such one not
+     *         present.
+     */
+    public Choice getChoiceById(String choiceId) {
+        for (Choice choice : choices) {
+            if (choice.getId().equals(choiceId))
+                return choice;
+        }
+
+        return null;
+    }
+
 }
