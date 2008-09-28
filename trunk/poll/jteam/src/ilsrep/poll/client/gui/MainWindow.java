@@ -3,6 +3,7 @@ package ilsrep.poll.client.gui;
 import ilsrep.poll.client.TcpCommunicator;
 import ilsrep.poll.common.Versioning;
 import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Answers;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
@@ -13,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -206,7 +206,10 @@ public class MainWindow extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        updateList();
+                        if (connect())
+                            updateList();
+
+                        disconnect();
                     }
                 });
 
@@ -284,7 +287,7 @@ public class MainWindow extends JFrame {
         if (server == null || server.isEmpty() || port == null
                 || port.isEmpty() || user == null || user.isEmpty()
                 || password == null || password.isEmpty()) {
-            String warnMessage = "One of server, port, user or password is empty - selected no server!";
+            String warnMessage = "One of user, password, server or port is empty - selected no server!";
             logger.warn(warnMessage);
             GUIUtilities.showWarningDialog(warnMessage);
             return;
@@ -320,7 +323,7 @@ public class MainWindow extends JFrame {
                 + ") selected by user(" + user
                 + ") is valid. Using it for work.");
 
-        if (!updateList()) {
+        if (!connect()) {
             String cannotConnectToServerString = "Can't connect to " + server
                     + ":" + port + "!";
             selectNothingAndAlert(cannotConnectToServerString);
@@ -328,8 +331,27 @@ public class MainWindow extends JFrame {
             serverOk = false;
             return;
         }
+
+        if (!login()) {
+            String cannotConnectToServerString = "Login failed!";
+            selectNothingAndAlert(cannotConnectToServerString);
+            logger.warn(cannotConnectToServerString);
+            serverOk = false;
+            return;
+        }
+
+        if (!updateList()) {
+            String cannotConnectToServerString = "Update list failed from "
+                    + server + ":" + port + "!";
+            selectNothingAndAlert(cannotConnectToServerString);
+            logger.warn(cannotConnectToServerString);
+            serverOk = false;
+            return;
+        }
         else
             serverOk = true;
+
+        disconnect();
     }
 
     /**
@@ -357,124 +379,112 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * Updates pollsession list from server.
+     * Updates pollsession list from server.<br>
+     * You must be connected.
      * 
      * @return True, if list was updated.
      */
     private boolean updateList() {
-        if (!serverSelected()) {
-            GUIUtilities.showWarningDialog("Server not selected!");
-            logger.warn("Server not selected, can't update.");
-            return false;
-        }
+        GUIUtilities.showInfoDialog("Click \"Ok\" to start update from "
+                + server + ":" + port + " and wait.");
 
-        if (connect()) {
-            GUIUtilities.showInfoDialog("Click \"Ok\" to start update from "
-                    + server + ":" + port + " and wait.");
+        Pollsessionlist sessionList = serverCommunicator.listXml();
 
-            Pollsessionlist sessionList = serverCommunicator.listXml();
+        logger.info("Received " + sessionList.getItems().size()
+                + " elements list from server.");
 
-            logger.info("Received " + sessionList.getItems().size()
-                    + " elements list from server.");
+        disconnect();
 
-            disconnect();
+        if (sessionList != null && sessionList.getItems() != null) {
+            currentSessionList = sessionList;
 
-            if (sessionList != null && sessionList.getItems() != null) {
-                currentSessionList = sessionList;
+            if (sessionList.getItems().size() == 0) {
+                listPanel.removeAll();
 
-                if (sessionList.getItems().size() == 0) {
-                    listPanel.removeAll();
+                String emptyList = "Server(" + server + ":" + port
+                        + ") pollsession list is empty!";
+                JLabel listIsEmptyLabel = new JLabel(emptyList);
+                logger.warn(emptyList);
 
-                    String emptyList = "Server(" + server + ":" + port
-                            + ") pollsession list is empty!";
-                    JLabel listIsEmptyLabel = new JLabel(emptyList);
-                    logger.warn(emptyList);
-
-                    listPanel.add(listIsEmptyLabel);
-                }
-                else {
-
-                    Vector<Vector<String>> pollsessionTableData = new Vector<Vector<String>>();
-
-                    for (Item pollsessionIdName : sessionList.getItems()) {
-                        Vector<String> sessionRow = new Vector<String>();
-                        sessionRow.add(pollsessionIdName.getId());
-                        sessionRow.add(pollsessionIdName.getName());
-
-                        pollsessionTableData.add(sessionRow);
-                    }
-
-                    JTable pollsessionTable = new JTable(
-                            new NonEditableTableModel());
-
-                    pollsessionTable
-                            .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                    pollsessionTable.getSelectionModel()
-                            .addListSelectionListener(
-                                    new ListSelectionListener() {
-
-                                        public void valueChanged(
-                                                ListSelectionEvent e) {
-                                            if (e.getValueIsAdjusting())
-                                                return;
-
-                                            ListSelectionModel lsm = (ListSelectionModel) e
-                                                    .getSource();
-                                            if (lsm.isSelectionEmpty()) {
-                                                selectedPollsession = -1;
-                                            }
-                                            else {
-                                                selectedPollsession = lsm
-                                                        .getMinSelectionIndex();
-                                            }
-                                        }
-                                    });
-
-                    Vector<String> collumnNames = null;
-                    if (collumnNames == null) {
-                        collumnNames = new Vector<String>();
-                        collumnNames.add("Id");
-                        collumnNames.add("Name");
-                    }
-
-                    NonEditableTableModel pollsessionTableModel = (NonEditableTableModel) pollsessionTable
-                            .getModel();
-                    pollsessionTableModel.setDataVector(pollsessionTableData,
-                            collumnNames);
-
-                    pollsessionTable.getColumnModel().getColumn(0)
-                            .setPreferredWidth(
-                                    (int) (0.25 * pollsessionTable.getSize()
-                                            .getWidth()));
-
-                    listPanel.removeAll();
-                    listPanel.setLayout(new BoxLayout(listPanel,
-                            BoxLayout.Y_AXIS));
-
-                    listPanel.add(new JLabel("Pollsession list on " + server
-                            + ":" + port));
-                    listPanel.add(pollsessionTable);
-                }
-
-                updateListTab();
-
-                return true;
+                listPanel.add(listIsEmptyLabel);
             }
             else {
-                if (sessionList == null)
-                    logger
-                            .warn("Pollsessionlist is null. Corrupted packet from server or response packet wasn't received at all.");
-                else
-                    if (sessionList.getItems() == null) {
-                        logger
-                                .warn("Items array of Pollsessionlist is null. Corrupted packet from server.");
-                    }
 
-                return false;
+                Vector<Vector<String>> pollsessionTableData = new Vector<Vector<String>>();
+
+                for (Item pollsessionIdName : sessionList.getItems()) {
+                    Vector<String> sessionRow = new Vector<String>();
+                    sessionRow.add(pollsessionIdName.getId());
+                    sessionRow.add(pollsessionIdName.getName());
+
+                    pollsessionTableData.add(sessionRow);
+                }
+
+                JTable pollsessionTable = new JTable(
+                        new NonEditableTableModel());
+
+                pollsessionTable
+                        .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                pollsessionTable.getSelectionModel().addListSelectionListener(
+                        new ListSelectionListener() {
+
+                            public void valueChanged(ListSelectionEvent e) {
+                                if (e.getValueIsAdjusting())
+                                    return;
+
+                                ListSelectionModel lsm = (ListSelectionModel) e
+                                        .getSource();
+                                if (lsm.isSelectionEmpty()) {
+                                    selectedPollsession = -1;
+                                }
+                                else {
+                                    selectedPollsession = lsm
+                                            .getMinSelectionIndex();
+                                }
+                            }
+                        });
+
+                Vector<String> collumnNames = null;
+                if (collumnNames == null) {
+                    collumnNames = new Vector<String>();
+                    collumnNames.add("Id");
+                    collumnNames.add("Name");
+                }
+
+                NonEditableTableModel pollsessionTableModel = (NonEditableTableModel) pollsessionTable
+                        .getModel();
+                pollsessionTableModel.setDataVector(pollsessionTableData,
+                        collumnNames);
+
+                pollsessionTable.getColumnModel().getColumn(0)
+                        .setPreferredWidth(
+                                (int) (0.25 * pollsessionTable.getSize()
+                                        .getWidth()));
+
+                listPanel.removeAll();
+                listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+
+                listPanel.add(new JLabel("Pollsession list on " + server + ":"
+                        + port));
+                listPanel.add(pollsessionTable);
             }
+
+            updateListTab();
+
+            return true;
         }
-        else
+        else {
+            if (sessionList == null)
+                logger
+                        .warn("Pollsessionlist is null. Corrupted packet from server or response packet wasn't received at all.");
+            else
+                if (sessionList.getItems() == null) {
+                    logger
+                            .warn("Items array of Pollsessionlist is null. Corrupted packet from server.");
+                }
+
             return false;
+        }
     }
 
     /**
@@ -491,6 +501,13 @@ public class MainWindow extends JFrame {
      * Processes pollsession in new tab.
      */
     private void startPollsession() {
+        // When login was not validated before.
+        if (!serverOk) {
+            GUIUtilities.showWarningDialog("Server not selected!");
+            logger.warn("Server not selected, can't start pollsession.");
+            return;
+        }
+
         if (selectedPollsession >= 0)
             if (connect()) {
                 try {
@@ -537,6 +554,12 @@ public class MainWindow extends JFrame {
      * @return True, if connection was successful.
      */
     private boolean connect() {
+        if (!serverSelected()) {
+            GUIUtilities.showWarningDialog("Server not selected!");
+            logger.warn("Server not selected, can't update.");
+            return false;
+        }
+
         boolean connected = false;
         String exceptionMessage = null;
 
@@ -544,11 +567,7 @@ public class MainWindow extends JFrame {
             serverCommunicator = new TcpCommunicator(server, port);
             connected = true;
         }
-        catch (UnknownHostException e) {
-            connected = false;
-            exceptionMessage = e.getMessage();
-        }
-        catch (IOException e) {
+        catch (Exception e) {
             connected = false;
             exceptionMessage = e.getMessage();
         }
@@ -662,6 +681,32 @@ public class MainWindow extends JFrame {
                 .getResource(CLIENT_LOGGER_CONFIGURATION_FILE));
 
         SwingUtilities.invokeLater(guiStartThread);
+    }
+
+    /**
+     * Logins to server.<br>
+     * You must be connected with {@link #connect()}.
+     * 
+     * @return If login was successful.
+     */
+    private boolean login() {
+        return serverCommunicator.login(user, password);
+    }
+
+    /**
+     * Sends results of pollsession to server.
+     * 
+     * @param results
+     *            Results to send.
+     */
+    public void sendResults(Answers results) {
+        connect();
+
+        results.setUsername(user);
+
+        serverCommunicator.sendResult(results);
+
+        disconnect();
     }
 
     /**

@@ -366,4 +366,41 @@ public class TcpCommunicator {
         }
     }
 
+    /**
+     * Logins to server with given user and password or if user doesn't exist
+     * creates it.
+     * 
+     * @param username
+     *            Username to login.
+     * @param password
+     *            Password to login.
+     * @return True, if login was successful(or user was created).
+     */
+    public boolean login(String username, String password) {
+        // Creating request if user exists on server.
+        User user = new User();
+        user.setUserName(username);
+        user = sendUser(user);
+
+        if (user.getExist().equals("true")) {
+            // Login to server.
+            user.setPass(password);
+            user = sendUser(user);
+
+            // Checking if username and password is ok.
+            if (user.getAuth().equals("true"))
+                return true;
+            else
+                return false;
+        }
+        else {
+            // Creating new user.
+            user.setPass(password);
+            user.setNew("true");
+            user = sendUser(user);
+
+            return true;
+        }
+    }
+
 }

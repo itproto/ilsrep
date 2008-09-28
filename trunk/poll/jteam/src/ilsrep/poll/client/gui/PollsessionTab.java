@@ -61,12 +61,12 @@ public class PollsessionTab extends JPanel implements ActionListener {
     /**
      * Text of custom choice radio button.
      */
-    public static final String CUSTOM_CHOICE_RADIO_BUTTON_ACTION = "customSelected";
+    public static final String CUSTOM_CHOICE_RADIO_BUTTON_ACTION = "customRadioButtonSelected";
 
     /**
      * Text of custom choice radio button.
      */
-    public static final String ANOTHER_RADIO_BUTTON_ACTION = "custom choice";
+    public static final String ANOTHER_RADIO_BUTTON_ACTION = "anotherRadioButtonSelected";
 
     /**
      * Pollsession that is proceed by this tab.
@@ -272,7 +272,11 @@ public class PollsessionTab extends JPanel implements ActionListener {
                             }
                         }
 
-                        if (radioBoxChoice == null) {
+                        if (radioBoxChoice == null
+                                || (radioBoxChoice
+                                        .equals(CUSTOM_CHOICE_RADIO_BUTTON_NAME)
+                                        && customChoiceField != null && customChoiceField
+                                        .getText().isEmpty())) {
                             GUIUtilities
                                     .showWarningDialog("You didn't select your choice!");
                             return;
@@ -283,7 +287,13 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                             AnswerItem answerItem = new AnswerItem();
                             answerItem.setQuestionId(poll.getId());
-                            answerItem.setAnswerId(radioBoxChoice);
+                            if (radioBoxChoice
+                                    .equals(CUSTOM_CHOICE_RADIO_BUTTON_NAME)) {
+                                answerItem.setCustomChoice(customChoiceField
+                                        .getText());
+                            }
+                            else
+                                answerItem.setAnswerId(radioBoxChoice);
 
                             pollResultList.getAnswers().add(answerItem);
                         }
@@ -420,9 +430,11 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                     framePanel.setLayout(pageLayout);
 
-                    framePanel.add(new JLabel("Results (should be :)) sent!"));
+                    framePanel.add(new JLabel("Results sent!"));
                     framePanel
                             .add(new JLabel("Click \"Finish\" to close tab."));
+
+                    owningWindow.sendResults(pollResultList);
                 }
 
             currentFrame++;
@@ -456,7 +468,6 @@ public class PollsessionTab extends JPanel implements ActionListener {
                         if (customChoiceField != null)
                             customChoiceField.setEnabled(false);
                     }
-
     }
 
     /**
