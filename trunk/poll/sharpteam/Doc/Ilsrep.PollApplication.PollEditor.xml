@@ -42,11 +42,6 @@
             Disconnect from server
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.AuthorizeUser">
-            <summary>
-            Authorize user
-            </summary>
-        </member>
         <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
             <summary>
             Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket

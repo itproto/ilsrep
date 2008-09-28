@@ -13,21 +13,20 @@ namespace Ilsrep.PollApplication.Model
     public class User
     {
         /// <summary>
-        /// user name
+        /// User name
         /// </summary>
         [XmlAttribute("username")] public string username;
         /// <summary>
-        /// password
+        /// Password
         /// </summary>
         [XmlAttribute("password")] public string password = String.Empty;
         /// <summary>
-        /// Is allowed access
+        /// Action(used in user authorisation)
         /// </summary>
-        [XmlAttribute("auth")] public bool auth = false;
-        [XmlAttribute("exist")] public bool exist = false; //temporary
-        /// <summary>
-        /// If true - server creates new user
-        /// </summary>
-        [XmlAttribute("new")] public bool isNew = false;
+        [XmlAttribute("action")] public string action;
+        [XmlIgnore] public const string LOGIN = "login";
+        [XmlIgnore] public const string ACCEPTED = "accepted";
+        [XmlIgnore] public const string DENIED = "denied";
+        [XmlIgnore] public const string NEW_USER = "newUser";
     }
 }

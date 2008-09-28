@@ -362,49 +362,52 @@ namespace Ilsrep.PollApplication.PollEditor
             client.Disconnect();
         }
 
-        /// <summary>
-        /// Authorize user
-        /// </summary>
         public static void AuthorizeUser()
         {
-            // Read user name
             Console.WriteLine("Welcome to polls editor program.");
             while (true)
             {
-                Console.Write("Please enter your name:");
-                userName = Console.ReadLine();
-                if (userName != String.Empty)
+                // Read user name
+                while (true)
                 {
-                    break;
+                    Console.Write("Please enter your name:");
+                    userName = Console.ReadLine();
+                    if (userName != String.Empty)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        //Console.Clear();
+                        Console.WriteLine("! You didn't enter your name.");
+                    }
                 }
-                else
-                {
-                    //Console.Clear();
-                    Console.WriteLine("! You didn't enter your name.");
-                }
-            }
 
-            PollPacket pollPacket = new PollPacket();
-            pollPacket.user = new User();
-            pollPacket.user.username = userName;
-            while (true)
-            {
+                PollPacket pollPacket = new PollPacket();
+                pollPacket.user = new User();
+                pollPacket.user.username = userName;
+                pollPacket.user.action = User.LOGIN;
                 pollPacket = ReceivePollPacket(pollPacket);
-                if (pollPacket.user.auth)
-                    break;
-                if (pollPacket.user.exist)
-                {
-                    Console.WriteLine("{0}, please, enter your password:", userName);
-                    userPassword = Console.ReadLine();
-                    pollPacket.user.password = userPassword;
-                }
-                else
+
+                if (pollPacket.user.action == User.NEW_USER)
                 {
                     Console.WriteLine("{0}, please, set your password:", userName);
                     userPassword = Console.ReadLine();
                     pollPacket.user.password = userPassword;
-                    pollPacket.user.isNew = true;
                 }
+                else
+                {
+                    Console.WriteLine("{0}, please, enter your password:", userName);
+                    userPassword = Console.ReadLine();
+                    pollPacket.user.password = userPassword;
+                    pollPacket.user.action = User.LOGIN;
+                }
+
+                pollPacket = ReceivePollPacket(pollPacket);
+                if (pollPacket.user.action == User.ACCEPTED)
+                    break;
+                if (pollPacket.user.action == User.DENIED)
+                    Console.WriteLine("Invalid password!");
             }
         }
 
@@ -483,8 +486,13 @@ namespace Ilsrep.PollApplication.PollEditor
                 pollPacket.user = new User();
                 pollPacket.user.username = userName;
                 pollPacket.user.password = userPassword;
-                pollPacket.user.auth = true;
+                pollPacket.user.action = User.LOGIN;
                 pollPacket = ReceivePollPacket(pollPacket);
+                if (pollPacket.user.action == User.DENIED)
+                {
+                    Console.WriteLine("Sorry, access denied");
+                    break;
+                }
             }
 
             Console.WriteLine("Press any key to exit...");

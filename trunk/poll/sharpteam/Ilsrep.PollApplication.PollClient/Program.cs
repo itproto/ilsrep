@@ -412,42 +412,49 @@ namespace Ilsrep.PollApplication.PollClient
 
         public static void AuthorizeUser()
         {
-            // Read user name
+           
             Console.WriteLine("Welcome to polls client program.");
             while (true)
             {
-                Console.Write("Please enter your name:");
-                userName = Console.ReadLine();
-                if (userName != String.Empty)
+                // Read user name
+                while (true)
                 {
-                    break;
+                    Console.Write("Please enter your name:");
+                    userName = Console.ReadLine();
+                    if (userName != String.Empty)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        //Console.Clear();
+                        Console.WriteLine("! You didn't enter your name.");
+                    }
                 }
-                else
-                {
-                    //Console.Clear();
-                    Console.WriteLine("! You didn't enter your name.");
-                }
-            }
 
-            PollPacket pollPacket = new PollPacket();
-            pollPacket.user = new User();
-            pollPacket.user.username = userName;
-            while (true)
-            {
+                PollPacket pollPacket = new PollPacket();
+                pollPacket.user = new User();
+                pollPacket.user.username = userName;
+                pollPacket.user.action = User.LOGIN;
                 pollPacket = ReceivePollPacket(pollPacket);
-                if (pollPacket.user.auth)
-                    break;
-                if (pollPacket.user.exist)
-                {
-                    Console.WriteLine("{0}, please, enter your password:", userName);
-                    pollPacket.user.password = Console.ReadLine();
-                }
-                else
+
+                if (pollPacket.user.action == User.NEW_USER)
                 {
                     Console.WriteLine("{0}, please, set your password:", userName);
                     pollPacket.user.password = Console.ReadLine();
-                    pollPacket.user.isNew = true;
                 }
+                else
+                {
+                    Console.WriteLine("{0}, please, enter your password:", userName);
+                    pollPacket.user.password = Console.ReadLine();
+                    pollPacket.user.action = User.LOGIN;
+                }
+
+                pollPacket = ReceivePollPacket(pollPacket);
+                if (pollPacket.user.action == User.ACCEPTED)
+                    break;
+                if (pollPacket.user.action == User.DENIED)
+                    Console.WriteLine("Invalid password!");
             }
 
             Console.Clear();
