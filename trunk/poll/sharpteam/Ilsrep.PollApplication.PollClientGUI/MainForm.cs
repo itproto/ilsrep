@@ -531,5 +531,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             PollClientGUI.isLogOut = true;
             Close();
         }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.ShowDialog();
+        }
     }
 }
