@@ -67,6 +67,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     nameField.Enabled = false;
                     this.Size = new Size(234, 150);
                     submitButton.Top = 85;
+                    settingsButton.Top = 85;
                     break;
             }    
         }
@@ -91,6 +92,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             this.Size = new Size(234, 122);
             submitButton.Top = 59;
+            settingsButton.Top = 59;
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.ShowDialog();
         }
     }
 }

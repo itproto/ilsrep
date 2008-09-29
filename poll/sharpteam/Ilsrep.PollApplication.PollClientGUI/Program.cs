@@ -27,11 +27,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// host to which connect
         /// </summary>
-        public const string HOST = "localhost";
+        public static string host = "localhost";
         /// <summary>
         /// port to which connect
         /// </summary>
-        public const int PORT = 3320;
+        public static int port = 3320;
         /// <summary>
         /// holds current user's username
         /// </summary>
@@ -65,11 +65,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             client = new TcpClient();
             try
             {
-                client.Connect(HOST, PORT);
+                client.Connect(host, port);
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message, "Error");
+                MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

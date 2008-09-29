@@ -50,7 +50,7 @@ namespace Ilsrep.Common
             }
             catch (SocketException)
             {
-                throw new Exception("Error: Couldn't connect to " + address + ":" + port);
+                throw new Exception("Couldn't connect to " + address + ":" + port);
             }
         }
 

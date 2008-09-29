@@ -35,6 +35,7 @@
             this.nameLabel = new System.Windows.Forms.Label();
             this.passwordLabel = new System.Windows.Forms.Label();
             this.confirmLabel = new System.Windows.Forms.Label();
+            this.settingsButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // nameField
@@ -68,7 +69,7 @@
             this.submitButton.Location = new System.Drawing.Point(142, 85);
             this.submitButton.Name = "submitButton";
             this.submitButton.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
-            this.submitButton.Size = new System.Drawing.Size(75, 24);
+            this.submitButton.Size = new System.Drawing.Size(75, 25);
             this.submitButton.TabIndex = 3;
             this.submitButton.Text = "Login";
             this.submitButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -103,12 +104,24 @@
             this.confirmLabel.Text = "Confirm:";
             this.confirmLabel.Visible = false;
             // 
+            // settingsButton
+            // 
+            this.settingsButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.wrench;
+            this.settingsButton.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.settingsButton.Location = new System.Drawing.Point(110, 85);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(26, 25);
+            this.settingsButton.TabIndex = 7;
+            this.settingsButton.UseVisualStyleBackColor = true;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            // 
             // LoginForm
             // 
             this.AcceptButton = this.submitButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(226, 116);
+            this.ClientSize = new System.Drawing.Size(226, 115);
+            this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.confirmLabel);
             this.Controls.Add(this.passwordLabel);
             this.Controls.Add(this.nameLabel);
@@ -137,5 +150,6 @@
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Label passwordLabel;
         private System.Windows.Forms.Label confirmLabel;
+        private System.Windows.Forms.Button settingsButton;
     }
 }
