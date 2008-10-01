@@ -26,8 +26,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            hostTextBox.Text = PollClientGUI.host;
-            portTextBox.Text = PollClientGUI.port.ToString();
+            hostTextBox.Text = PollClientGUI.settings.host;
+            portTextBox.Text = PollClientGUI.settings.port.ToString();
         }
 
         private void applyButton_Click(object sender, EventArgs e)
@@ -48,8 +48,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 return;
             }
 
-            PollClientGUI.host = host;
-            PollClientGUI.port = port;
+            // Save settings
+            PollClientGUI.settings.host = host;
+            PollClientGUI.settings.port = port;
+            PollClientGUI.settings.SaveSettings(PollClientGUI.PATH_TO_CONFIG_FILE);
 
             if (PollClientGUI.isAuthorized)
             {

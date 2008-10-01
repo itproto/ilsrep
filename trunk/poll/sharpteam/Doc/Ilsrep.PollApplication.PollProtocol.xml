@@ -474,5 +474,32 @@
             User information is sent in the beginning of session to identify user
             </summary>
         </member>
+        <member name="T:Ilsrep.PollApplication.Helpers.SettingsHelper">
+            <summary>
+            Help to work with settings
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.host">
+            <summary>
+            Host
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.port">
+            <summary>
+            Port
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.LoadSettings(System.String)">
+            <summary>
+            Load settings from xml file
+            </summary>
+            <param name="pathToConfigFile">Path to xml file</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.SaveSettings(System.String)">
+            <summary>
+            Save settings to xml file
+            </summary>
+            <param name="pathToConfigFile">Path to xml file</param>
+        </member>
     </members>
 </doc>

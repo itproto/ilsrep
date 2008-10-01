@@ -25,14 +25,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// </summary>
         public const string CONSOLE_NO = "n";
         /// <summary>
-        /// host to which connect
-        /// </summary>
-        public static string host = "localhost";
-        /// <summary>
-        /// port to which connect
-        /// </summary>
-        public static int port = 3320;
-        /// <summary>
         /// holds current user's username
         /// </summary>
         public static string userName = "";
@@ -56,6 +48,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// Show is user logged out
         /// </summary>
         public static bool isLogOut = false;
+        /// <summary>
+        /// Settings
+        /// </summary>
+        public static SettingsHelper settings = new SettingsHelper();
+        public const string PATH_TO_CONFIG_FILE = "AppConfig.xml";
 
         /// <summary>
         /// Connect to server
@@ -65,7 +62,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             client = new TcpClient();
             try
             {
-                client.Connect(host, port);
+                client.Connect(settings.host, settings.port);
             }
             catch (Exception exception)
             {
@@ -116,6 +113,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
         [STAThread]
         static void Main()
         {
+            // Load settings
+            try
+            {
+                settings.LoadSettings(PATH_TO_CONFIG_FILE);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             while (true)
