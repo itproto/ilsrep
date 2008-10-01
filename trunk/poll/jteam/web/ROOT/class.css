@@ -1,11 +1,4 @@
-/*
 
-	bookish1.0 by nodethirtythree design
-	http://www.nodethirtythree.com
-	hope you enjoy it :)
-
-*/
-*
 {
 margin: 0px;
 padding: 0px;
@@ -13,7 +6,7 @@ padding: 0px;
 
 body
 {
-background: #fff url('images/bg.gif');
+//background: #fff url('images/bg.gif');
 font-size: 11px;
 font-family: "trebuchet ms", helvetica, sans-serif;
 color: #857D74;
@@ -123,8 +116,8 @@ background: #FFFAF4 url('images/trbg2.gif') repeat-x;
 {
 width: 698px;
 background: #fff url('images/mainbg.gif');
-margin: 20px auto 0px auto;
-padding: 10px 13px 0px 13px;
+margin: 0px auto 0px auto;
+padding: 0px 13px 0px 13px;
 }
 
 #outer2
@@ -227,6 +220,7 @@ z-index: 1;
 {
 position: relative;
 width: 500px;
+height: 400px;
 margin: 3px -500px 0px 0px;
 float: left;
 }
@@ -336,6 +330,8 @@ position: relative;
 float: right;
 width: 194px;
 margin: 3px 0px 0px 3px;
+height: 400px;
+background-image: url('images/il.gif');
 }
 
 #side h3
