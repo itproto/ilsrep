@@ -69,6 +69,9 @@
     <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Helpers\PollDAL.cs" />
     <Compile Include="Helpers\PollSerializator.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Model\Choice.cs" />
     <Compile Include="Model\Poll.cs" />
     <Compile Include="Model\PollResult.cs" />
