@@ -31,16 +31,15 @@
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.clientPage = new System.Windows.Forms.TabPage();
             this.editorPage = new System.Windows.Forms.TabPage();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.pollSessionsListLabel = new System.Windows.Forms.Label();
+            this.removeButton = new System.Windows.Forms.Button();
+            this.createButton = new System.Windows.Forms.Button();
             this.pollSessionsListBox = new System.Windows.Forms.ListBox();
             this.statisticsPage = new System.Windows.Forms.TabPage();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.removeButton = new System.Windows.Forms.Button();
-            this.editButton = new System.Windows.Forms.Button();
-            this.createButton = new System.Windows.Forms.Button();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainTabControl.SuspendLayout();
@@ -76,7 +75,6 @@
             this.editorPage.Controls.Add(this.propertyGrid);
             this.editorPage.Controls.Add(this.pollSessionsListLabel);
             this.editorPage.Controls.Add(this.removeButton);
-            this.editorPage.Controls.Add(this.editButton);
             this.editorPage.Controls.Add(this.createButton);
             this.editorPage.Controls.Add(this.pollSessionsListBox);
             this.editorPage.Location = new System.Drawing.Point(4, 22);
@@ -86,12 +84,41 @@
             this.editorPage.TabIndex = 1;
             this.editorPage.Text = "Poll Editor";
             this.editorPage.UseVisualStyleBackColor = true;
+            this.editorPage.Enter += new System.EventHandler(this.editorPage_Enter);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.cross;
+            this.cancelButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.cancelButton.Location = new System.Drawing.Point(87, 349);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Padding = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 11;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // saveButton
+            // 
+            this.saveButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.tick;
+            this.saveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.saveButton.Location = new System.Drawing.Point(6, 349);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 10;
+            this.saveButton.Text = "Save";
+            this.saveButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
             // propertyGrid
             // 
             this.propertyGrid.Location = new System.Drawing.Point(281, 27);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(305, 316);
+            this.propertyGrid.Size = new System.Drawing.Size(305, 345);
             this.propertyGrid.TabIndex = 9;
             // 
             // pollSessionsListLabel
@@ -102,6 +129,26 @@
             this.pollSessionsListLabel.Size = new System.Drawing.Size(84, 13);
             this.pollSessionsListLabel.TabIndex = 8;
             this.pollSessionsListLabel.Text = "PollSessions list:";
+            // 
+            // removeButton
+            // 
+            this.removeButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.delete;
+            this.removeButton.Location = new System.Drawing.Point(250, 349);
+            this.removeButton.Name = "removeButton";
+            this.removeButton.Size = new System.Drawing.Size(25, 23);
+            this.removeButton.TabIndex = 7;
+            this.removeButton.UseVisualStyleBackColor = true;
+            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
+            // 
+            // createButton
+            // 
+            this.createButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.add;
+            this.createButton.Location = new System.Drawing.Point(219, 349);
+            this.createButton.Name = "createButton";
+            this.createButton.Size = new System.Drawing.Size(25, 23);
+            this.createButton.TabIndex = 5;
+            this.createButton.UseVisualStyleBackColor = true;
+            this.createButton.Click += new System.EventHandler(this.createButton_Click);
             // 
             // pollSessionsListBox
             // 
@@ -133,66 +180,6 @@
             this.menuStrip.Size = new System.Drawing.Size(618, 24);
             this.menuStrip.TabIndex = 5;
             this.menuStrip.Text = "menuStrip";
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.Enabled = false;
-            this.cancelButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.cross;
-            this.cancelButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.cancelButton.Location = new System.Drawing.Point(511, 349);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Padding = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 11;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-            // 
-            // saveButton
-            // 
-            this.saveButton.Enabled = false;
-            this.saveButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.tick;
-            this.saveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.saveButton.Location = new System.Drawing.Point(430, 349);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
-            this.saveButton.Size = new System.Drawing.Size(75, 23);
-            this.saveButton.TabIndex = 10;
-            this.saveButton.Text = "Save";
-            this.saveButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
-            // 
-            // removeButton
-            // 
-            this.removeButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.cross;
-            this.removeButton.Location = new System.Drawing.Point(250, 349);
-            this.removeButton.Name = "removeButton";
-            this.removeButton.Size = new System.Drawing.Size(25, 23);
-            this.removeButton.TabIndex = 7;
-            this.removeButton.UseVisualStyleBackColor = true;
-            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
-            // 
-            // editButton
-            // 
-            this.editButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.pencil;
-            this.editButton.Location = new System.Drawing.Point(219, 349);
-            this.editButton.Name = "editButton";
-            this.editButton.Size = new System.Drawing.Size(25, 23);
-            this.editButton.TabIndex = 6;
-            this.editButton.UseVisualStyleBackColor = true;
-            this.editButton.Click += new System.EventHandler(this.editButton_Click);
-            // 
-            // createButton
-            // 
-            this.createButton.Image = global::Ilsrep.PollApplication.PollClientGUI.Properties.Resources.add;
-            this.createButton.Location = new System.Drawing.Point(188, 349);
-            this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(25, 23);
-            this.createButton.TabIndex = 5;
-            this.createButton.UseVisualStyleBackColor = true;
-            this.createButton.Click += new System.EventHandler(this.createButton_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -244,7 +231,6 @@
         private System.Windows.Forms.TabPage statisticsPage;
         private System.Windows.Forms.ListBox pollSessionsListBox;
         private System.Windows.Forms.Button removeButton;
-        private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Button createButton;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;

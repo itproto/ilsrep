@@ -74,6 +74,13 @@ namespace Ilsrep.PollApplication.PollClientGUI.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap delete {
+            get {
+                object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap door_in {
             get {
                 object obj = ResourceManager.GetObject("door_in", resourceCulture);

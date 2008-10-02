@@ -134,7 +134,8 @@
     <None Include="Resources\tick.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AppConfig.xml">
+    <None Include="Resources\delete.png" />
+    <Content Include="Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
