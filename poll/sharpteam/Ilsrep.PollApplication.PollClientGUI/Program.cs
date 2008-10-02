@@ -52,7 +52,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// Settings
         /// </summary>
         public static SettingsHelper settings = new SettingsHelper();
-        public const string PATH_TO_CONFIG_FILE = "AppConfig.xml";
+        public const string PATH_TO_CONFIG_FILE = "Settings.xml";
 
         /// <summary>
         /// Connect to server
