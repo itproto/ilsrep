@@ -11,6 +11,9 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -385,8 +388,8 @@ public class MainWindow extends JFrame {
      * @return True, if list was updated.
      */
     private boolean updateList() {
-        GUIUtilities.showInfoDialog("Click \"Ok\" to start update from "
-                + server + ":" + port + " and wait.");
+        // GUIUtilities.showInfoDialog("Click \"Ok\" to start update from "
+        // + server + ":" + port + " and wait.");
 
         Pollsessionlist sessionList = serverCommunicator.listXml();
 
@@ -748,6 +751,21 @@ public class MainWindow extends JFrame {
         protected JCheckBox localCheckBox = null;
 
         /**
+         * KeyListener to add to all components.
+         */
+        protected KeyListener closeDialogKeyListener = new KeyAdapter() {
+
+            /**
+             * @see java.awt.event.KeyAdapter#keyReleased(java.awt.event.KeyEvent)
+             */
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                    closeSelectDialog();
+            }
+        };
+
+        /**
          * Creates current dialog.
          */
         public ServerSelectDialog() {
@@ -831,8 +849,19 @@ public class MainWindow extends JFrame {
             // and launching its ActionListener.
             localCheckBox.setSelected(true);
             localCheckBox.getActionListeners()[0].actionPerformed(null);
+
+            addKeyListener(closeDialogKeyListener);
+
+            for (Component componentToSetKeyListener : getContentPane()
+                    .getComponents())
+                componentToSetKeyListener
+                        .addKeyListener(closeDialogKeyListener);
         }
 
+        /**
+         * Closes this dialog and selects server, port, user and password
+         * entered by user into main window.
+         */
         private void closeSelectDialog() {
             ServerSelectDialog.this.setVisible(false);
             selectServerAndUser(serverField.getText(), portField.getText(),

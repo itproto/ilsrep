@@ -8,6 +8,7 @@ import ilsrep.poll.common.protocol.Answers;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -126,6 +127,11 @@ public class PollsessionTab extends JPanel implements ActionListener {
     private JTextField customChoiceField = null;
 
     /**
+     * Font for "big" labels(labels with big font size).
+     */
+    private Font bigLabelsFont = null;
+
+    /**
      * Creates new <code>PollsessionTab</code>, for passing given pollsession.
      * 
      * @param session
@@ -138,6 +144,10 @@ public class PollsessionTab extends JPanel implements ActionListener {
         pollResultList = new Answers();
         pollResultList.setAnswers(new ArrayList<AnswerItem>());
         pollResultList.setPollSesionId(session.getId());
+
+        // Label for getting default font name for label.
+        JLabel testLabel = new JLabel();
+        bigLabelsFont = new Font(testLabel.getFont().getName(), Font.BOLD, 16);
     }
 
     /**
@@ -152,8 +162,10 @@ public class PollsessionTab extends JPanel implements ActionListener {
         // Creating frame header.
         header = new JPanel();
 
-        header.add(new JLabel(session.getName() + " (ID: " + session.getId()
-                + ")"));
+        header.add(new JLabel(session.getName()/*
+                                                * + " (ID: " + session.getId() +
+                                                * ")"
+                                                */));
 
         // Creating frame footer.
         footer = new JPanel();
@@ -306,12 +318,20 @@ public class PollsessionTab extends JPanel implements ActionListener {
                         BoxLayout pageLayout = new BoxLayout(framePanel,
                                 BoxLayout.PAGE_AXIS);
 
+                        JTextArea resultsArea = new JTextArea(generateResults(
+                                pollResultList, session));
+                        resultsArea.setFont(new Font(resultsArea.getFont()
+                                .getName(), Font.PLAIN, 14));
+
+                        JLabel clickNextLabel = new JLabel(
+                                "Click \"Next\" to send results");
+                        clickNextLabel.setFont(bigLabelsFont);
+
                         framePanel.setLayout(pageLayout);
 
-                        framePanel.add(new JTextArea(generateResults(
-                                pollResultList, session)));
-                        framePanel.add(new JLabel(
-                                "Click \"Next\" to send results"));
+                        framePanel.add(resultsArea);
+
+                        framePanel.add(clickNextLabel);
                     }
                     else {
                         Poll poll = session.getPolls().get(currentFrame);
@@ -432,9 +452,16 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                     framePanel.setLayout(pageLayout);
 
-                    framePanel.add(new JLabel("Results sent!"));
-                    framePanel
-                            .add(new JLabel("Click \"Finish\" to close tab."));
+                    JLabel resultsSentLabel = new JLabel("Results sent!");
+                    JLabel clickFinishLabel = new JLabel(
+                            "Click \"Finish\" to close tab.");
+
+                    resultsSentLabel.setFont(bigLabelsFont);
+                    clickFinishLabel.setFont(bigLabelsFont);
+
+                    framePanel.add(resultsSentLabel);
+                    framePanel.add(Box.createRigidArea(new Dimension(0, 16)));
+                    framePanel.add(clickFinishLabel);
 
                     owningWindow.sendResults(pollResultList);
                 }
