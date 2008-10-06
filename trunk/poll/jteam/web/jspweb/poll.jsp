@@ -27,7 +27,7 @@ boolean rowtype=true;
 for( Choice currentChoice : currentPoll.getChoices()){
 resultingOutput+="<tr ";
 
-resultingOutput+="><td><input type='radio' name='"+currentPoll.getName()+"' value='"+currentChoice.getName()+"'>"+currentChoice.getName()+"</td></tr>";
+resultingOutput+="><td><input type='radio'  name='"+currentPoll.getName()+"' value='"+currentChoice.getName()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
 rowtype=rowtype ? false :true;
 }
 if(currentPoll.getCustomEnabled().equals("true")){
@@ -38,7 +38,7 @@ resultingOutput+="</div>";
 numberOfPolls++;
 }
 
-resultingOutput+="</br><input type=\"button\" id=\"but\" value=\"GO\" onClick=\"l=next(l);\">\n"+
+resultingOutput+="</br><img src=\"./images/button.gif\" id=\"but\" onClick=\"l=next(l);\">\n"+
 "<input type='hidden' name='sub' value='true'>\n"+
 "</form>\n"+
 "<script lang=\"javascript\">"+
