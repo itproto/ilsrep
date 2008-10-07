@@ -20,14 +20,14 @@ using System.Data.SQLite;
 public partial class _Default : System.Web.UI.Page
 {
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
-    public string errorMessage = String.Empty;
-    const string ERROR_AUTH = "Wrong username or password!";
+    //public string errorMessage = String.Empty;
+    //const string ERROR_AUTH = "Wrong username or password!";
 
     protected void Page_Load( object sender, EventArgs e )
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
 
-        if (Request["action"] == "login")
+        /*if (Request["action"] == "login")
         {
             User user = new User();
             user.username = Request["username"];
@@ -43,6 +43,6 @@ public partial class _Default : System.Web.UI.Page
             {
                 errorMessage = ERROR_AUTH;
             }
-        }
+        }*/
     }
 }

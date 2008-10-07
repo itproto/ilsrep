@@ -1,35 +1,29 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"  CodeFile="Default.aspx.cs" Inherits="_Default" %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head runat="server">
     <title>PollClientASP</title>
-    <link href="StyleSheet.css" rel="stylesheet" type="text/css" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <link href="css/style.css" type="text/css" rel="stylesheet" />
+    <!--script src="js/scripts.js" type="text/javascript" /-->
 </head>
-<body>
-    <div class="error"><%=errorMessage%></div>
-    <form action="?action=login" method="post">
-    <table align="center">
-        <tr>
-            <td>Username:</td>
-            <td>
-                <input type="text" name="username" />
-            </td>
-        </tr>
-        <tr>
-            <td>Password:</td>
-            <td>
-                <input type="password" name="password" />
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center">
-                <input type="submit" value="Login" />
-                <input type="button" value="Register" onclick="document.location='Defuult.aspx'" />
-            </td>
-        </tr>
-    </table>
-    </form>
+<body class="home">
+    <div class="main">
+        <div class="header">
+            <div class="mainMenu">
+                <ul>
+                    <li>
+                        <a href="#">Start poll |</a>
+                    </li>
+                    <li>
+                        <a href="#">Poll editor</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="leftMenu">leftMenu</div>
+        <div class="content">content</div>
+        <div class="footer">footer</div>
+    </div>
 </body>
 </html>
