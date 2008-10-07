@@ -10,20 +10,23 @@
 <body class="home">
     <div class="main">
         <div class="header">
+            <div class="logo"></div>
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="#">Start poll |</a>
+                        <a href="#" onfocus="this.blur()">Start poll |</a>
                     </li>
                     <li>
-                        <a href="#">Poll editor</a>
+                        <a href="#" onfocus="this.blur()">Poll editor</a>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="leftMenu">leftMenu</div>
-        <div class="content">content</div>
-        <div class="footer">footer</div>
+        <div class="centralBlock">
+            <div class="leftMenu">leftMenu</div>
+            <div class="content">content</div>
+        </div>
+        <div class="footer">Copyright &copy; Sharpteam 2008</div>
     </div>
 </body>
 </html>
