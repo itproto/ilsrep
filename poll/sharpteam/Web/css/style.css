@@ -1,6 +1,8 @@
 .home
 {
 	background-color: #FFFFFF;
+	font-family: Verdana;
+	font-size: 11px;
 	color: #000000;
 }
 
@@ -8,18 +10,29 @@
 {	
 	padding: 0px;
 	margin: 10px;
+	border: solid 1px #808080;
+}
+
+.logo
+{
+	width: 150px;
+	height: 80px;
+	border: solid 1px green;
+	float: left;
+	margin: 10px;
 }
 
 .header
 {	
 	width: 100%;
 	height: 100px;
-	border: solid 1px red;
+	float: left;
 	background-color: #a30313;
 }
 
 .mainMenu
 {
+	padding: 80px 0px 0px 250px;
 }
 
 .mainMenu ul
@@ -27,6 +40,7 @@
 	list-style: none;	
 	margin: 0px;
 	padding: 0px;
+	vertical-align: bottom;	
 }
 
 .mainMenu li
@@ -48,24 +62,30 @@
 	padding: 0px;
 }
 
+.centralBlock
+{
+	clear: both;	
+}
+
 .leftMenu
 {	
+	width: 250px;
 	height: 100%;
-	width: 300px;
+	min-height: 500px;
 	float: left;
-	border: solid 1px blue;
 	background-color: #d4d0b6;
 }
 
 .content
 {	
 	height: 100%;
-	border: solid 1px blue;
+	min-height: 500px;
 }
 
 .footer
 {	
 	width: 100%;
-	height: 20px;
-	border: solid 1px red;
+	height: 15px;
+	text-align: center;
+	border-top: solid 1px #808080;
 }
