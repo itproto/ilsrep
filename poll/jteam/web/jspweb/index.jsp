@@ -36,9 +36,8 @@
 				<!-- Main start -->
 	
 				<%
-if(request.getParameter("sub")!=null){
-out.println(getRes(request));} else if(request.getParameter("session")!=null) {
-out.println(getPoll(request.getParameter("session")));
+if((request.getParameter("session")!=null) && (request.getParameter("poll")!=null )) {
+out.println(getPoll(request.getParameter("session"),request.getParameter("poll"),  session, request.getParameter("choice"),request.getParameter("custom")));
 } else {
 
 out.println(PLEASE_ENTER_POLL);

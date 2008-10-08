@@ -14,7 +14,7 @@ DBManager db;try {
 db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
 sessions=db.getPollsessionlist();
  for ( Item sess : sessions.getItems()) {
-links+="<li><a href=\"./index.jsp?session="+sess.getId()+"\">"+sess.getName()+"</a></li>\n";
+links+="<li><a href=\"./index.jsp?session="+sess.getId()+"&poll=0 \">"+sess.getName()+"</a></li>\n";
 }
 links+="<ul>";} catch (Exception e){links=e.getMessage();}
 return links;

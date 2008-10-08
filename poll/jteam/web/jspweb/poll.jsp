@@ -3,10 +3,12 @@
 <%@page import="ilsrep.poll.common.model.Pollsession"%>
 <%@page import="ilsrep.poll.server.db.SQLiteDBManager"%>
 <%@page import="ilsrep.poll.server.db.DBManager"%>
+<%@page import="ilsrep.poll.common.protocol.AnswerItem"%>
+<%@page import="ilsrep.poll.common.protocol.Answers"%>
 <% String PLEASE_ENTER_POLL="Please choose poll";
 %>
 <%!
-public String getPoll(String sessi) throws Exception{
+public String getPoll(String sessi, String polli, HttpSession hsession, String choici  , String customi  ) throws Exception{
 
 String resultingOutput="<script type=\"text/javascript\" src=\"next.js\"></script>";
 resultingOutput+="<form name=\"polls\" id=\"polls\" action=\"index.jsp\" method=\"get\">\n"+
@@ -18,7 +20,35 @@ db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.
 sess=db.getPollsessionById(sessi);
 
 resultingOutput+="<h1>"+sess.getName()+"</h1>";
- for (Poll currentPoll : sess.getPolls()) {
+Poll currentPoll= null;
+if (!(Integer.parseInt(polli)==sess.getPolls().size())) currentPoll=sess.getPolls().get(Integer.parseInt(polli));
+Answers ans=null;
+if (Integer.parseInt(polli)==0){
+	ans= new Answers();
+	ans.setPollSesionId(sess.getId());
+	ans.setAnswers(new ArrayList<AnswerItem>());
+	hsession.setAttribute("answers",ans);
+		} else {
+		
+		AnswerItem ansitem=new AnswerItem();
+		if (!(choici.equals("custom_choice"))) {
+			Poll previousPoll=sess.getPolls().get(Integer.parseInt(polli)-1);
+			int selId=0;
+for (Choice currentChoice : previousPoll.getChoices()) {
+                    if (currentChoice.getName().equals(choici)) selId=Integer.parseInt(currentChoice.getId());
+                                  }
+			ansitem.setItem(Integer.parseInt(previousPoll.getId()),selId);
+			
+			} else {
+				Poll previousPoll=sess.getPolls().get(Integer.parseInt(polli)-1);
+				ansitem.setItem(Integer.parseInt(previousPoll.getId()),customi);
+				
+				}
+			Answers answer = (Answers)hsession.getAttribute("answers");
+			answer.getAnswers().add(ansitem);
+			hsession.setAttribute("answers",answer);
+    }
+  if (!(Integer.parseInt(polli)==sess.getPolls().size())) {  
 resultingOutput+="<div id="+Integer.toString(numberOfPolls)+">";
 resultingOutput+="<h2>"+currentPoll.getName()+"</h2>";
 resultingOutput+="<h3>"+currentPoll.getDescription().getValue()+"</h3>";
@@ -27,25 +57,19 @@ boolean rowtype=true;
 for( Choice currentChoice : currentPoll.getChoices()){
 resultingOutput+="<tr ";
 
-resultingOutput+="><td><input type='radio'  name='"+currentPoll.getName()+"' value='"+currentChoice.getName()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
+resultingOutput+="><td><input type='radio'  name='choice' value='"+currentChoice.getName()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
 rowtype=rowtype ? false :true;
 }
 if(currentPoll.getCustomEnabled().equals("true")){
-resultingOutput+="<tr><td><input type='radio' name='"+currentPoll.getName()+"' value='custom_choice'>Custom<input type='textarea' name='custom"+currentPoll.getName()+"'></tr></td>";
+resultingOutput+="<tr><td><input type='radio' name='choice' value='custom_choice'>Custom<input type='textarea' name='custom'></td></tr>";
 }
-resultingOutput+="</table>";
-resultingOutput+="</div>";
-numberOfPolls++;
+if(!(Integer.parseInt(polli)<sess.getPolls().size()-1)) {
+	resultingOutput+="<tr><td><input type='hidden' value='1' name='res' ></td></tr>\n";
+	}
+resultingOutput+="<tr><td><Input type='hidden' name='poll' value='"+Integer.toString(Integer.parseInt(polli)+1)+"'><input type='image' src='./images/button.gif'></td></tr></table>";
+resultingOutput+="</div></form>";
 }
-
-resultingOutput+="</br><img src=\"./images/button.gif\" id=\"but\" onClick=\"l=next(l);\">\n"+
-"<input type='hidden' name='sub' value='true'>\n"+
-"</form>\n"+
-"<script lang=\"javascript\">"+
-"var max="+Integer.toString(numberOfPolls-1)+";";
-for (int n=0;n<numberOfPolls;n++) resultingOutput+="document.getElementById('"+Integer.toString(n)+"').style.display='none';\n";
-resultingOutput+="l=next(l);"+
-"</script>";
+if (Integer.parseInt(polli)==sess.getPolls().size()) resultingOutput=getRes(hsession.getAttribute("answers"));
 return resultingOutput;
 }
 
