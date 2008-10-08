@@ -4,20 +4,25 @@
 	font-family: Verdana;
 	font-size: 11px;
 	color: #000000;
+	margin: 0px;
+	padding: 0px;
 }
 
 .main
 {	
 	padding: 0px;
-	margin: 10px;
+	margin: 0px auto;
 	border: solid 1px #808080;
+	width: 800px;
+	height: 100%;
 }
 
 .logo
 {
 	width: 150px;
 	height: 80px;
-	border: solid 1px green;
+	background: url(../images/logo.jpg) no-repeat top left;
+	border: solid 1px #808080;
 	float: left;
 	margin: 10px;
 }
@@ -67,13 +72,47 @@
 	clear: both;	
 }
 
-.leftMenu
+.leftBlock
 {	
 	width: 250px;
 	height: 100%;
 	min-height: 500px;
 	float: left;
 	background-color: #d4d0b6;
+}
+
+.leftMenu
+{
+	margin: 30px 20px;;
+}
+
+.leftMenu ul
+{
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.leftMenu li
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+.leftMenu a
+{
+	color: #a30313;
+	font-weight: bold;
+	font-size: 10px;
+	font-family: Verdana;
+	text-align: left;
+	text-decoration: none;
+	line-height: 15px;	
+	display: block;
+	margin: 3px 10px;
+	padding: 3px;
+	border: solid 1px #808080;
+	width: 180px;
 }
 
 .content
