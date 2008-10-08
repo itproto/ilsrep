@@ -83,7 +83,7 @@
 
 .leftMenu
 {
-	margin: 30px 20px;;
+	margin: 30px 20px;
 }
 
 .leftMenu ul
@@ -121,10 +121,31 @@
 	min-height: 500px;
 }
 
+.content h3
+{
+	color: #999974;	
+	font-size: 22px;
+	font-weight: lighter;
+	font-family: Times New Roman, Verdana, Tahoma;
+	text-align: center;
+}
+
 .footer
 {	
 	width: 100%;
 	height: 15px;
 	text-align: center;
 	border-top: solid 1px #808080;
+}
+
+.choices
+{
+	margin: 10px 300px;
+	padding: 0px;
+	text-align: left;
+}
+
+.choices input
+{
+	margin: 5px;
 }

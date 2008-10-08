@@ -14,7 +14,7 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="#" onfocus="this.blur()">Start poll |</a>
+                        <a href="?action=start_poll" onfocus="this.blur()">Start poll |</a>
                     </li>
                     <li>
                         <a href="#" onfocus="this.blur()">Poll editor</a>
@@ -26,19 +26,41 @@
             <div class="leftBlock">
                 <div class="leftMenu">
                     <ul>
-                        <li>
-                            <a href="#" onfocus="this.blur()">PollSession#1</a>
-                        </li>
-                        <li>
-                            <a href="#" onfocus="this.blur()">PollSession#2</a>
-                        </li>
-                        <li>
-                            <a href="#" onfocus="this.blur()">PollSession#3</a>
-                        </li>
+                        <%
+                        foreach (Ilsrep.PollApplication.Communication.Item curItem in pollSessionsList)
+                        {
+                        %>
+                            <li>
+                                <a href="?action=start_pollsession&id=<%=curItem.id%>" onfocus="this.blur()"><%=curItem.name%></a>
+                            </li>
+                        <%    
+                        }
+                        %>
                     </ul>
                 </div>
             </div>
-            <div class="content"></div>
+            <div class="content">
+                <%
+                if (pollSession != null)
+                {
+                %>
+                    <h3><%=pollSession.name%></h3>
+                    <h3><%=pollSession.polls[curPollIndex].name%></h3>
+                    <form class="choices" method="post">
+                    <%
+                    foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.polls[curPollIndex].choices)
+                    {
+                    %>
+                        <input onfocus="this.blur();" type="radio" name="choice" value="<%=curChoice.id%>" /><%=curChoice.choice%><br />
+                    <%  
+                    }
+                    %>
+                        <input type="submit" value="Next poll" />
+                    </form>
+                <%
+                }         
+                %>
+            </div>
         </div>
         <div class="footer">Copyright &copy; Sharpteam 2008</div>
     </div>
