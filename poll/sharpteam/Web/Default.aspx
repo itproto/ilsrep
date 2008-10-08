@@ -23,8 +23,22 @@
             </div>
         </div>
         <div class="centralBlock">
-            <div class="leftMenu">leftMenu</div>
-            <div class="content">content</div>
+            <div class="leftBlock">
+                <div class="leftMenu">
+                    <ul>
+                        <li>
+                            <a href="#" onfocus="this.blur()">PollSession#1</a>
+                        </li>
+                        <li>
+                            <a href="#" onfocus="this.blur()">PollSession#2</a>
+                        </li>
+                        <li>
+                            <a href="#" onfocus="this.blur()">PollSession#3</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="content"></div>
         </div>
         <div class="footer">Copyright &copy; Sharpteam 2008</div>
     </div>
