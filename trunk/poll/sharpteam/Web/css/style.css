@@ -109,18 +109,25 @@ h3
 
 .leftMenu a
 {
-	color: #a30313;
-	font-weight: bold;
-	font-size: 10px;
-	font-family: Verdana;
-	text-align: left;
+	color: #FFFFFF;
+	background-color: #a30313;
+	font-size: 19px;
+	text-align: center;
+	font-weight: lighter;
+	font-family: Times New Roman, Verdana, Tahoma;
 	text-decoration: none;
-	line-height: 15px;	
+	line-height: 18px;	
 	display: block;
+	border: solid 1px #808080;	
 	margin: 3px 10px;
 	padding: 3px;
-	border: solid 1px #808080;
-	width: 180px;
+	width: 200px;
+}
+
+.leftMenu a:hover
+{
+	color: #a30313;	
+	background-color: #d4d0b6;
 }
 
 .content
@@ -165,11 +172,7 @@ h3
 	margin-left: 100px;
 }
 
-/*
-.error
+.text
 {
-	color: #ff0000;
-	font-weight: bold;
-	text-align: center;
+	padding: 20px 40px;	
 }
-*/

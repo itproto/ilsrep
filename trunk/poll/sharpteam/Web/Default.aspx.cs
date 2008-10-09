@@ -22,50 +22,50 @@ public partial class _Default : System.Web.UI.Page
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
     public List<Item> pollSessionsList = new List<Item>();
     public PollSession pollSession = null;
+    public ResultsList resultsList = null;
 
     protected void Page_Load( object sender, EventArgs e )
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
         pollSessionsList = PollDAL.GetPollSessions();
-        
-        if (Request["action"] == "showpollsession")
+
+        switch (Request["action"])
         {
-            pollSession = new PollSession();
-            if (Request["do"] == "submitpoll")
-            {
-                pollSession = (PollSession)Session["pollSession"];
+            case "showpollsession":
+                pollSession = new PollSession();
+                resultsList = new ResultsList();
+                if (Request["do"] == "submitpoll")
+                {
+                    pollSession = (PollSession)Session["pollSession"];
+                    resultsList = (ResultsList)Session["resultsList"];
+                    PollResult curResult = new PollResult();
+                    curResult.questionId = Convert.ToInt32(Session["pollIndex"]);
+                    curResult.answerId = Convert.ToInt32(Request["choice"]);
+                    resultsList.results.Add(curResult);
 
-                if (Convert.ToInt32(Session["pollIndex"]) == pollSession.polls.Count - 1)
-                {
-                    Response.Redirect("?action=results");
-                }
-                else
-                {
-                    Session["pollIndex"] = Convert.ToInt32(Session["pollIndex"]) + 1;
-                }
-
-                /*
-                if (Convert.ToInt32(Request["currentPoll"]) != Convert.ToInt32(Session["pollIndex"]))
-                {
-                    // Refreshing
-                    //Response.Write( 123 );
-                    //Response.Redirect( "?" + Request["currentPoll"] + "=" + Session["pollIndex"] );
-                }
-                else
-                {
                     if (Convert.ToInt32(Session["pollIndex"]) == pollSession.polls.Count - 1)
-                        Response.Redirect("?action=results");
+                    {
+                        Response.Redirect("?action=showresults");
+                    }
                     else
+                    {
                         Session["pollIndex"] = Convert.ToInt32(Session["pollIndex"]) + 1;
+                    }
                 }
-                */
-            }
-            else
-            {
-                pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
-                Session["pollSession"] = pollSession;
-                Session["pollIndex"] = 0;
-            }
+                else
+                {
+                    pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
+                    Session["pollSession"] = pollSession;
+                    Session["pollIndex"] = 0;
+                    resultsList.pollsessionId = pollSession.id;
+                    Session["resultsList"] = resultsList;
+                }
+                break;
+            case "showresults":
+                pollSession = (PollSession)Session["pollSession"];
+                resultsList = (ResultsList)Session["resultsList"];
+                // Save results to DB
+                break;
         }
     }
 }

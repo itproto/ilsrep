@@ -61,14 +61,13 @@
                     {
                 %>
                     <form class="choices" method="post" action="Default.aspx?action=showpollsession&do=submitpoll">
-                    <!--input type="hidden" name="currentPoll" value="<%=Session["pollIndex"] %>" /-->
                     <label><h3><%=pollSession.polls[Convert.ToInt32(Session["pollIndex"])].description%></h3></label>
                     <%
                         int index = 0;
                         foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.polls[Convert.ToInt32(Session["pollIndex"])].choices)
                         {
                     %>
-                            <label for="choice_<%=index%>"><input type="radio" onfocus="this.blur();" name="choice" id="choice_<%=index%>" value="<%=curChoice.id%>" /><%=curChoice.choice%></label><br />
+                            <label for="choice_<%=index%>"><input type="radio" onfocus="this.blur();" name="choice" id="choice_<%=index%>" value="<%=index%>" /><%=curChoice.choice%></label><br />
                     <%  
                             index++;
                         }
@@ -77,11 +76,42 @@
                     </form>
                 <%
                     }
-                    else if (Request["action"] == "results")
+                    else if (Request["action"] == "showresults")
                     {
-                %>   
-                    Results Page
-                <%
+                        Response.Write("<div class='text'>");
+                        float correctAnswers = 0;
+                        int index = 0;
+                        Response.Write("<h3>Here is your PollSession results:<br /></h3>");
+                        foreach (Ilsrep.PollApplication.Model.PollResult curResult in resultsList.results)
+                        {
+                            index++;                            
+                            Response.Write(index + ". " + pollSession.polls[curResult.questionId].name + ": " + pollSession.polls[curResult.questionId].choices[curResult.answerId].choice + "<br />");
+                            if (pollSession.testMode)
+                            {
+                                if (pollSession.polls[curResult.questionId].choices[curResult.answerId].id == pollSession.polls[curResult.questionId].correctChoiceID)
+                                    correctAnswers++;
+                            }
+                        }
+
+                        if (pollSession.testMode)
+                        {
+                            double userScore = correctAnswers / pollSession.polls.Count;
+                            Response.Write("<br />Your score: " + Convert.ToInt32(userScore * 100) + "%");
+
+                            if (userScore >= pollSession.minScore)
+                            {
+                                Response.Write("<br />Congratulations!!! You PASSED the test");
+                            }
+                            else
+                            {
+                                Response.Write("<br />Sorry, try again... you FAILED");
+                            }
+                        }
+                        Response.Write("</div>");
+                    }
+                    else if (Request["action"] == "start_poll")
+                    {
+                        Response.Write("<div class='text'><h3>Please, select PollSession</h3></div>");
                     }
                 %>
             </div>
