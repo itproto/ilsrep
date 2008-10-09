@@ -22,17 +22,42 @@ public partial class _Default : System.Web.UI.Page
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
     public List<Item> pollSessionsList = new List<Item>();
     public PollSession pollSession = null;
-    public int curPollIndex;
+    public string errorMessage = String.Empty;
 
     protected void Page_Load( object sender, EventArgs e )
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
         pollSessionsList = PollDAL.GetPollSessions();
-        if (Request["action"] == "start_pollsession")
+        
+        if (Request["action"] == "showpollsession")
         {
             pollSession = new PollSession();
-            pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
-            curPollIndex = 0;
+
+            if ( Request["do"] == "submitpoll" )
+            {
+                pollSession = (PollSession)Session["pollSession"];
+
+                if ( Convert.ToInt32( Request["choice"] ) == 0 )
+                    errorMessage = "Select an option!";
+                else if ( Convert.ToInt32(Request["currentPoll"]) != Convert.ToInt32(Session["pollIndex"]) )
+                {
+                    // Refreshing
+                    //Response.Write( 123 );
+                    //Response.Redirect( "?" + Request["currentPoll"] + "=" + Session["pollIndex"] );
+                }
+                else
+                {
+                    if ( Convert.ToInt32( Session["pollIndex"] ) == pollSession.polls.Count-1 )
+                        Response.Redirect( "?action=results" );
+                    else
+                        Session["pollIndex"] = Convert.ToInt32( Session["pollIndex"] )+1;
+                }
+            }
+            else
+            {
+                Session["pollSession"] = pollSession = PollDAL.GetPollSession( Convert.ToInt32( Request["id"] ) );
+                Session["pollIndex"] = 0;
+            }
         }
     }
 }
