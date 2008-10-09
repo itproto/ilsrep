@@ -17,12 +17,20 @@
 	height: 100%;
 }
 
+h3
+{
+	color: #7f7f64;	
+	font-size: 20px;
+	font-weight: lighter;
+	font-family: Times New Roman, Verdana, Tahoma;
+	text-align: left;
+}
+
 .logo
 {
 	width: 150px;
 	height: 80px;
 	background: url(../images/logo.jpg) no-repeat top left;
-	border: solid 1px #808080;
 	float: left;
 	margin: 10px;
 }
@@ -83,7 +91,7 @@
 
 .leftMenu
 {
-	margin: 10px 5px;
+	margin: 10px;
 }
 
 .leftMenu ul
@@ -117,17 +125,9 @@
 
 .content
 {	
+	margin-left: 250px;
 	height: 100%;
 	min-height: 500px;
-}
-
-.content h3
-{
-	color: #999974;	
-	font-size: 22px;
-	font-weight: lighter;
-	font-family: Times New Roman, Verdana, Tahoma;
-	text-align: center;
 }
 
 .footer
@@ -140,19 +140,36 @@
 
 .choices
 {
-	margin: 10px 300px;
-	padding: 0px;
+	margin: 0px;
+	padding: 20px 40px;
 	text-align: left;
 }
 
 .choices input
 {
-	margin: 5px;
+	height: 13px;
+	margin: 3px;
+	padding: 0px;	
 }
 
+.choices label
+{
+	line-height: 10px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.choices input.submitButton
+{
+	height: auto;
+	margin-left: 100px;
+}
+
+/*
 .error
 {
 	color: #ff0000;
 	font-weight: bold;
 	text-align: center;
 }
+*/

@@ -5,7 +5,7 @@
     <title>PollClientASP</title>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link href="css/style.css" type="text/css" rel="stylesheet" />
-    <!--script src="js/scripts.js" type="text/javascript" /-->
+    <script src="js/scripts.js" type="text/javascript"></script>
 </head>
 <body class="home">
     <div class="main">
@@ -14,7 +14,7 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="?action=start_poll" onfocus="this.blur()">Start poll</a> |
+                        <a href="?action=start_poll" onfocus="this.blur()">Start poll |</a>
                     </li>
                     <li>
                         <a href="#" onfocus="this.blur()">Poll editor</a>
@@ -27,29 +27,29 @@
                 <div class="leftMenu">
                     <ul>
                         <%
-                            if ( Request["action"] == "showpollsession" )
+                            if (Request["action"] == "showpollsession")
                             {
-                                Response.Write("<h2>"+pollSession.name + ":</h2>\n");
+                                Response.Write("<li><h3>" + pollSession.name + ":</h3></li>");
                                 int index = 1;
-                                foreach ( Ilsrep.PollApplication.Model.Poll poll in pollSession.polls )
+                                foreach (Ilsrep.PollApplication.Model.Poll curPoll in pollSession.polls)
                                 {
-                                    if ( Convert.ToInt32(Session["pollIndex"]) == index-1 )
-                                        Response.Write( "<li><b>"+index+". "+poll.name+"</b></li>" );
+                                    if (Convert.ToInt32(Session["pollIndex"]) == index - 1)
+                                        Response.Write("<li><b>" + index + ". " + curPoll.name + "</b></li>");
                                     else
-                                        Response.Write("<li>"+index+". "+poll.name+"</li>");
-                                    ++index;
+                                        Response.Write("<li>" + index + ". " + curPoll.name + "</li>");
+                                    index++;
                                 }
                             }
                             else
                             {
-                                foreach ( Ilsrep.PollApplication.Communication.Item curItem in pollSessionsList )
+                                foreach (Ilsrep.PollApplication.Communication.Item curItem in pollSessionsList)
                                 {
                         %>
                                 <li>
                                     <a href="Default.aspx?action=showpollsession&id=<%=curItem.id%>" onfocus="this.blur()"><%=curItem.name%></a>
                                 </li>
                         <%    
-                                }
+                            }
                             }
                         %>
                     </ul>
@@ -57,32 +57,32 @@
             </div>
             <div class="content">
                 <%
-                if (Request["action"] == "showpollsession")
-                {
-                %>
-                    <h3><%=pollSession.name%></h3>
-                    <h3><%=pollSession.polls[Convert.ToInt32( Session["pollIndex"] )].name%></h3>
-                    <div class="error"><%=errorMessage %></div>
-                    <form class="choices" method="post" action="Default.aspx?action=showpollsession&do=submitpoll">
-                    <input type="hidden" name="currentPoll" value="<%=Session["pollIndex"] %>" />
-                    <%
-                    foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.polls[Convert.ToInt32(Session["pollIndex"])].choices)
+                    if (Request["action"] == "showpollsession")
                     {
+                %>
+                    <form class="choices" method="post" action="Default.aspx?action=showpollsession&do=submitpoll">
+                    <!--input type="hidden" name="currentPoll" value="<%=Session["pollIndex"] %>" /-->
+                    <label><h3><%=pollSession.polls[Convert.ToInt32(Session["pollIndex"])].description%></h3></label>
+                    <%
+                        int index = 0;
+                        foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.polls[Convert.ToInt32(Session["pollIndex"])].choices)
+                        {
                     %>
-                        <label for="choice_<%=curChoice.id %>"><input type="radio" name="choice" id="choice_<%=curChoice.id %>" value="<%=curChoice.id%>" /><%=curChoice.choice%></label><br />
+                            <label for="choice_<%=index%>"><input type="radio" onfocus="this.blur();" name="choice" id="choice_<%=index%>" value="<%=curChoice.id%>" /><%=curChoice.choice%></label><br />
                     <%  
-                    }
+                            index++;
+                        }
                     %>
-                        <input type="submit" value="Continue" />
+                        <input type="Submit" class="submitButton" value="Continue" onfocus="this.blur();" onclick="return CheckIfSelectedChoice();" />
                     </form>
                 <%
-                }
-                else if (Request["action"] == "results")
-                {
+                    }
+                    else if (Request["action"] == "results")
+                    {
                 %>   
-                Results Page
+                    Results Page
                 <%
-                }
+                    }
                 %>
             </div>
         </div>
