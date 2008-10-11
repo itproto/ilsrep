@@ -20,8 +20,8 @@
 		<div id="menu">
 			<ul>
 				<li class="first"><a href="./index.jsp?register=true">Register</a></li>
-				<!-- <li><a href="#">links</a></li>
-				<li><a href="#">here</a></li> -->
+				 <li><a href="./index.jsp?logout=true">Logout</a></li>
+				<!--<li><a href="#">here</a></li> -->
 			</ul>
 		</div>
 	</div>
@@ -36,6 +36,10 @@
 				<!-- Main start -->
 	
 				<%
+				if ((request.getParameter("logout")!=null)) {
+				session.removeAttribute("username");
+				out.println(login(session,request.getParameter("name"),request.getParameter("password")));
+					} else {
 				if(request.getParameter("register")==null){
 if((request.getParameter("session")!=null) && (request.getParameter("poll")!=null ) && (session.getAttribute("username")!=null)) {
 out.println(getPoll(request.getParameter("session"),request.getParameter("poll"),  session, request.getParameter("choice"),request.getParameter("custom")));
@@ -46,7 +50,7 @@ out.println(login(session,request.getParameter("name"),request.getParameter("pas
 } else {
 	out.println(register(request.getParameter("name"),request.getParameter("password"),request.getParameter("password2")));
 	}
-
+}
  %>				
 				
 				<!-- Main End -->
