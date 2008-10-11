@@ -8,15 +8,16 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.servlet.ServletRequest"%>
+<%@ include file="./links.jsp" %>
 <%!
 public String showForm(){
 return("<form action='./index.jsp' method='post'><div class=\"ILbox\">"+
 	"<table>"+
 		"<tr>"+
-			"<td><b><span style=\"FONT-SIZE: 11px\">On-line projektstatus</span></b></td>"+
+			"<td><b><span style=\"FONT-SIZE: 11px\">Please login</span></b></td>"+
 		"</tr>"+
 		"<tr>"+
-			"<td>E-mail:<br>"+
+			"<td>Login:<br>"+
 				"<input name='name' type=\"text\"  class=\"boxinput\" />"+
 			"</td>"+
 		"</tr>"+
@@ -32,11 +33,32 @@ return("<form action='./index.jsp' method='post'><div class=\"ILbox\">"+
 "</div></form>");
 
 }
-public String login(HttpSession hsession, String name, String password){
+public String login(HttpSession hsession, String name, String password) throws Exception{
+	String err = null;
 if (hsession.getAttribute("username")!=null) {
-return("Welcome"+(String)hsession.getAttribute("username"));
-} else {
+return("<h2>Welcome "+(String)hsession.getAttribute("username")+"</h2>"+links());
+} else if (name==null){
 return(showForm());
-}
+} else {
+		DBManager db;
+int numberOfPolls=0;
+db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
+if (db.checkUser(name).equals("false")) {
+	err="<h2>No such user</h2>";
+	return(err+showForm());
+} else {
+	if(db.authUser(name,password).equals("false")) {
+				err="<h2>Wrong password</h2>";
+	    return(err+showForm());
+				} else {
+					hsession.setAttribute("username",name);
+					return("<h2>Logged in</h2>"+links());
+										}
+				
+	
+	}
+	
+	
+	}
 }
 %>

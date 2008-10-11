@@ -396,3 +396,23 @@ color: #7DAFBD;
 background-color: #7DAFBD;
 color: #E8FAFF;
 }
+
+#ILbox 
+{
+	background-color:#e5e1c3;
+	border:1px solid white;
+	padding: 2px;
+}
+
+.box tr td
+{
+	color:Black;
+	line-height:12px;
+	vertical-align:middle;
+	padding: 1px 0px 1px 0px;
+}
+
+.boxinput 
+{
+	width:30%;
+}
