@@ -2,6 +2,8 @@ package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
 import ilsrep.poll.common.Versioning;
+import ilsrep.poll.common.model.Choice;
+import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Answers;
 import ilsrep.poll.common.protocol.Item;
@@ -17,6 +19,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -437,7 +441,7 @@ public class MainWindow extends JFrame {
      * 
      * @return True, if list was updated.
      */
-    private boolean updateList() {
+    public boolean updateList() {
         // GUIUtilities.showInfoDialog("Click \"Ok\" to start update from "
         // + server + ":" + port + " and wait.");
 
@@ -702,7 +706,7 @@ public class MainWindow extends JFrame {
      * 
      * @return True, if connection was successful.
      */
-    private boolean connect() {
+    public boolean connect() {
         if (!serverSelected()) {
             GUIUtilities.showWarningDialog("Server not selected!");
             logger.warn("Server not selected, can't update.");
@@ -733,7 +737,7 @@ public class MainWindow extends JFrame {
     /**
      * Disconnects from server, if connected.
      */
-    private void disconnect() {
+    public void disconnect() {
         if (serverCommunicator != null)
             serverCommunicator.finalize();
 
@@ -856,6 +860,83 @@ public class MainWindow extends JFrame {
         serverCommunicator.sendResult(results);
 
         disconnect();
+    }
+
+    /**
+     * Sends created/edited pollsession to server.
+     * 
+     * @param session
+     * 
+     * @return <code>true</code> if pollsession was ok and sent to server or
+     *         <code>false</code> if pollsession was badly formed or sending
+     *         failed.
+     */
+    public boolean sendPollsession(Pollsession session) {
+        if (session.getName() == null || session.getName().isEmpty())
+            return false;
+
+        if (session.getTestMode() == null
+                || !session.getTestMode().equals("true"))
+            session.setTestMode("false");
+
+        if (session.getTestMode().equals("true"))
+            if (session.getMinScore() == null)
+                return false;
+
+        Collection<Poll> pollsToRemove = new ArrayList<Poll>();
+        for (Poll poll : session.getPolls()) {
+            if (poll.getName() == null || poll.getName().isEmpty()
+                    || poll.getDescription() == null
+                    || poll.getDescription().getValue() == null
+                    || poll.getDescription().getValue().isEmpty()) {
+                pollsToRemove.add(poll);
+                continue;
+            }
+
+            Collection<Choice> choicesToRemove = new ArrayList<Choice>();
+
+            for (Choice choice : poll.getChoices()) {
+                if (choice.getName() == null || choice.getName().isEmpty())
+                    choicesToRemove.add(choice);
+            }
+
+            poll.getChoices().removeAll(choicesToRemove);
+
+            if (poll.getChoices().size() == 0) {
+                pollsToRemove.add(poll);
+                continue;
+            }
+
+            for (int i = 1; i <= poll.getChoices().size(); i++)
+                poll.getChoices().get(i - 1).setId(Integer.toString(i));
+        }
+
+        session.getPolls().removeAll(pollsToRemove);
+
+        for (int i = 1; i <= session.getPolls().size(); i++)
+            session.getPolls().get(i - 1).setId(Integer.toString(i));
+
+        if (session.getPolls().size() == 0)
+            return false;
+
+        if (connect())
+            try {
+                if (session.getId() == null)
+                    serverCommunicator.sendPollsession(session);
+                else
+                    serverCommunicator
+                            .editPollsession(session.getId(), session);
+
+                disconnect();
+            }
+            catch (JAXBException e) {
+                return false;
+            }
+            catch (IOException e) {
+                return false;
+            }
+
+        return true;
     }
 
     /**
