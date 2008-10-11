@@ -1,6 +1,7 @@
 <%@ include file="./links.jsp" %>
 <%@ include file="./poll.jsp" %>
 <%@ include file="./submit.jsp" %>
+<%@ include file="./login.jsp" %>
 <%@page import="javax.servlet.ServletRequest"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -40,7 +41,7 @@ if((request.getParameter("session")!=null) && (request.getParameter("poll")!=nul
 out.println(getPoll(request.getParameter("session"),request.getParameter("poll"),  session, request.getParameter("choice"),request.getParameter("custom")));
 } else {
 
-out.println(PLEASE_ENTER_POLL);
+out.println(login(session,request.getParameter("name"),request.getParameter("password")));
 }
  %>				
 				
