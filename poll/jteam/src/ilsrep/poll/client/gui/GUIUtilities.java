@@ -53,6 +53,21 @@ public class GUIUtilities {
     public static final String PAGE_WHITE_GO_ICON = "page_white_go.png";
 
     /**
+     * Filename of <code>page_white_add.png</code>.
+     */
+    public static final String PAGE_WHITE_ADD_ICON = "page_white_add.png";
+
+    /**
+     * Filename of <code>page_white_delete.png</code>.
+     */
+    public static final String PAGE_WHITE_DELETE_ICON = "page_white_delete.png";
+
+    /**
+     * Filename of <code>page_white_edit.png</code>.
+     */
+    public static final String PAGE_WHITE_EDIT_ICON = "page_white_edit.png";
+
+    /**
      * Contains <code>Poll Application</code>, for window titles.
      */
     public static final String DIALOG_TITLE_BASE = "Poll Application";
@@ -96,6 +111,32 @@ public class GUIUtilities {
         infoDialog.setIconImage(loadIcon(INFORMATION_ICON).getImage());
 
         infoDialog.setVisible(true);
+    }
+
+    /**
+     * Asks "Yes-No" to user with dialog.
+     * 
+     * @param question
+     *            Question to ask.
+     * @return True, if user selected "Yes".
+     */
+    public static boolean askYesNo(String question) {
+        // JOptionPane infoPane = new JOptionPane(question,
+        // JOptionPane.INFORMATION_MESSAGE, JOptionPane.YES_NO_OPTION);
+        //
+        // JDialog infoDialog = infoPane.createDialog(DIALOG_TITLE_BASE
+        // + " - question");
+        //
+        // infoDialog.setIconImage(loadIcon(INFORMATION_ICON).getImage());
+        //
+        // infoDialog.setVisible(true);
+        //
+        // return false;
+        Object[] options = { "Yes", "No" };
+        int selectedValue = JOptionPane.showOptionDialog(null, question,
+                DIALOG_TITLE_BASE, JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        return (selectedValue == 0) ? true : false;
     }
 
     /**

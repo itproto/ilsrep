@@ -108,7 +108,12 @@ public class MainWindow extends JFrame {
     /**
      * Shows what pollsession from table is currently selected by user.
      */
-    protected int selectedPollsession = -1;
+    protected int selectedPollsession = POLLSESSION_NOT_SELECTED;
+
+    /**
+     * Indicates that pollsession wasn't selected in current pollsession list.
+     */
+    protected static int POLLSESSION_NOT_SELECTED = -1;
 
     /**
      * Pollsession list from last update.
@@ -232,6 +237,50 @@ public class MainWindow extends JFrame {
                 clientActions.add(startSession);
             }
 
+            JMenu editorActions = new JMenu();
+            editorActions.setText("Editor actions");
+            {
+                JMenuItem createNewItem = new JMenuItem();
+                createNewItem.setText("Create new poll session");
+                createNewItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.PAGE_WHITE_ADD_ICON));
+                createNewItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        createPollsession();
+                    }
+                });
+
+                JMenuItem editExistingItem = new JMenuItem();
+                editExistingItem.setText("Edit existing poll session");
+                editExistingItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.PAGE_WHITE_EDIT_ICON));
+                editExistingItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        editPollsession();
+                    }
+                });
+
+                JMenuItem deleteItem = new JMenuItem();
+                deleteItem.setText("Delete poll session");
+                deleteItem.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.PAGE_WHITE_DELETE_ICON));
+                deleteItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        deletePollsession();
+                    }
+                });
+
+                editorActions.add(createNewItem);
+                editorActions.add(editExistingItem);
+                editorActions.add(deleteItem);
+            }
+
             JMenu helpMenu = new JMenu();
             helpMenu.setText("Help");
             {
@@ -252,6 +301,7 @@ public class MainWindow extends JFrame {
 
             menu.add(fileMenu);
             menu.add(clientActions);
+            menu.add(editorActions);
             menu.add(helpMenu);
         }
 
@@ -438,7 +488,7 @@ public class MainWindow extends JFrame {
                                 ListSelectionModel lsm = (ListSelectionModel) e
                                         .getSource();
                                 if (lsm.isSelectionEmpty()) {
-                                    selectedPollsession = -1;
+                                    selectedPollsession = POLLSESSION_NOT_SELECTED;
                                 }
                                 else {
                                     selectedPollsession = lsm
@@ -497,7 +547,12 @@ public class MainWindow extends JFrame {
     private void updateListTab() {
         final String listTabName = "Pollsession list";
 
+        if (tabbedPane.indexOfComponent(listPanel) != -1)
+            listPanel.update(listPanel.getGraphics());
+
         activateTab(listTabName, listPanel);
+
+        selectedPollsession = POLLSESSION_NOT_SELECTED;
     }
 
     /**
@@ -505,49 +560,140 @@ public class MainWindow extends JFrame {
      */
     private void startPollsession() {
         // When login was not validated before.
-        if (!serverOk) {
-            GUIUtilities.showWarningDialog("Server not selected!");
-            logger.warn("Server not selected, can't start pollsession.");
+        if (!checkServerSelected())
             return;
-        }
 
-        if (selectedPollsession >= 0)
-            if (connect()) {
-                try {
-                    Pollsession sessionToStart = serverCommunicator
-                            .getPollsession(currentSessionList.getItems().get(
-                                    selectedPollsession).getId());
+        Pollsession sessionToStart = null;
 
-                    disconnect();
+        if (checkPollsessionSeleted())
+            if ((sessionToStart = retrievePollsession()) != null) {
+                PollsessionTab pollsessionTab = new PollsessionTab(
+                        sessionToStart, this);
 
-                    logger.info("Retrieved pollsession from server(id: "
-                            + sessionToStart.getId() + ", name: "
-                            + sessionToStart.getName() + ")");
+                activateTab("Pollsession: " + sessionToStart.getName(),
+                        pollsessionTab);
 
-                    PollsessionTab pollsessionTab = new PollsessionTab(
-                            sessionToStart, this);
-
-                    activateTab("Pollsession: " + sessionToStart.getName(),
-                            pollsessionTab);
-
-                    pollsessionTab.start();
-                }
-                catch (IOException e) {
-                    GUIUtilities
-                            .showWarningDialog("Exception while processing pollsession: "
-                                    + e.getMessage());
-                }
-                catch (JAXBException e) {
-                    GUIUtilities
-                            .showWarningDialog("Exception while processing pollsession: "
-                                    + e.getMessage());
-                }
+                pollsessionTab.start();
             }
             else
                 GUIUtilities.showWarningDialog("Can't connect to " + server
                         + ":" + port + "!");
-        else
+    }
+
+    /**
+     * Retrieves current selected pollsession from server or shows warning on
+     * connection/io problems.
+     * 
+     * @return Current pollsession or <code>null</code> if nothing selected.
+     */
+    private Pollsession retrievePollsession() {
+        Pollsession retrievedPollsession = null;
+
+        if (connect())
+            try {
+                retrievedPollsession = serverCommunicator
+                        .getPollsession(currentSessionList.getItems().get(
+                                selectedPollsession).getId());
+
+                logger.info("Retrieved pollsession from server(id: "
+                        + retrievedPollsession.getId() + ", name: "
+                        + retrievedPollsession.getName() + ")");
+            }
+            catch (IOException e) {
+                GUIUtilities
+                        .showWarningDialog("Exception while processing pollsession: "
+                                + e.getMessage());
+            }
+            catch (JAXBException e) {
+                GUIUtilities
+                        .showWarningDialog("Exception while processing pollsession: "
+                                + e.getMessage());
+            }
+
+        disconnect();
+
+        return retrievedPollsession;
+    }
+
+    /**
+     * Starts editing new pollsession.
+     */
+    private void createPollsession() {
+        if (checkServerSelected()) {
+            EditorTab editorTab = EditorTab.createNewPollsession(this);
+
+            activateTab("Create new poll session", editorTab);
+
+            editorTab.editPollsession();
+        }
+    }
+
+    /**
+     * Starts editing existing pollsession.
+     */
+    private void editPollsession() {
+        if (checkPollsessionSeleted()) {
+            Pollsession sessionToEdit = retrievePollsession();
+
+            if (sessionToEdit != null) {
+                EditorTab editorTab = EditorTab.editPollsession(this,
+                        sessionToEdit);
+                activateTab("Edit poll session: " + sessionToEdit.getName(),
+                        editorTab);
+
+                editorTab.editPollsession();
+            }
+        }
+    }
+
+    /**
+     * Deletes pollsession from server.
+     */
+    private void deletePollsession() {
+        if (checkPollsessionSeleted()) {
+            if (GUIUtilities
+                    .askYesNo("Do you really want to delete poll session: "
+                            + currentSessionList.getItems().get(
+                                    selectedPollsession).getName() + "?")) {
+                if (connect()) {
+                    serverCommunicator.deleteXml(currentSessionList.getItems()
+                            .get(selectedPollsession).getId());
+
+                    updateList();
+                }
+                disconnect();
+            }
+        }
+    }
+
+    /**
+     * Checks if pollsession selected and shows warning if not.
+     * 
+     * @return <code>true</code>, if pollsession selected.
+     */
+    private boolean checkPollsessionSeleted() {
+        if (selectedPollsession >= 0)
+            return true;
+        else {
             GUIUtilities.showWarningDialog("Pollsession not selected!");
+            return false;
+        }
+    }
+
+    /**
+     * Checks if server is selected. If not - shows warning dialog.
+     * 
+     * @return <code>true</code>, if selected.
+     */
+    private boolean checkServerSelected() {
+        if (!serverOk) {
+            GUIUtilities.showWarningDialog("Server not selected!");
+            logger
+                    .warn("Server not selected, can't start pollsession or do other actions.");
+            return false;
+        }
+        else
+            return true;
     }
 
     /**
