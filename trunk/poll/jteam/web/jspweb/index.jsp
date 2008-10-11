@@ -1,7 +1,6 @@
-<%@ include file="./links.jsp" %>
 <%@ include file="./poll.jsp" %>
 <%@ include file="./submit.jsp" %>
-<%@ include file="./login.jsp" %>
+<%@ include file="./register.jsp" %>
 <%@page import="javax.servlet.ServletRequest"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -20,9 +19,9 @@
 		<h1><span>JSP</span><strong>jteam</strong>Poll</h1>
 		<div id="menu">
 			<ul>
-				<li class="first"><a href="#">some</a></li>
-				<li><a href="#">links</a></li>
-				<li><a href="#">here</a></li>
+				<li class="first"><a href="./index.jsp?register=true">Register</a></li>
+				<!-- <li><a href="#">links</a></li>
+				<li><a href="#">here</a></li> -->
 			</ul>
 		</div>
 	</div>
@@ -37,12 +36,17 @@
 				<!-- Main start -->
 	
 				<%
-if((request.getParameter("session")!=null) && (request.getParameter("poll")!=null )) {
+				if(request.getParameter("register")==null){
+if((request.getParameter("session")!=null) && (request.getParameter("poll")!=null ) && (session.getAttribute("username")!=null)) {
 out.println(getPoll(request.getParameter("session"),request.getParameter("poll"),  session, request.getParameter("choice"),request.getParameter("custom")));
 } else {
 
 out.println(login(session,request.getParameter("name"),request.getParameter("password")));
 }
+} else {
+	out.println(register(request.getParameter("name"),request.getParameter("password"),request.getParameter("password2")));
+	}
+
  %>				
 				
 				<!-- Main End -->

@@ -8,6 +8,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.servlet.ServletRequest"%>
+<%@page import="java.text.DecimalFormat"%>
 <%!
 public Poll getPollbyid(Pollsession sess, String id){
 	Poll poll=null;
@@ -80,9 +81,13 @@ rowtype=rowtype ? false :true;
 res+="</table>";
 Float ress=numberPassed/numberTotal;
 if(sess.getTestMode().equals("true")){
-res+="<br/><strong>Your score  "+Float.toString(ress)+"</strong>";  
-res+=((ress)>Float.parseFloat(sess.getMinScore()))?"You Pass</h1>":"<h1>You Fail </h1>\n";
+		
+DecimalFormat df = new DecimalFormat("#.##");
+res+="<br/><strong>Your score  "+df.format(ress)+"</strong>";  
+
+res+=((ress)>Float.parseFloat(sess.getMinScore()))?"<h2>You Pass</h2>":"<h2>You Fail </h2>\n";
 }
+db.saveResults(ans);
 return(res);
 }
 %>

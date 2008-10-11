@@ -27,8 +27,9 @@ if (Integer.parseInt(polli)==0){
 	ans= new Answers();
 	ans.setPollSesionId(sess.getId());
 	ans.setAnswers(new ArrayList<AnswerItem>());
+	ans.setUsername((String)hsession.getAttribute("username"));
 	hsession.setAttribute("answers",ans);
-		} else {
+			} else {
 		
 		AnswerItem ansitem=new AnswerItem();
 		if (!(choici.equals("custom_choice"))) {
@@ -45,7 +46,15 @@ for (Choice currentChoice : previousPoll.getChoices()) {
 				
 				}
 			Answers answer = (Answers)hsession.getAttribute("answers");
+			boolean duplicate=false;
+			for (AnswerItem ansItm: answer.getAnswers()) {
+			if (ansItm.getQuestionId().equals(ansitem.getQuestionId())) {
+				duplicate=true;
+				}
+				}
+			if (!duplicate) {			
 			answer.getAnswers().add(ansitem);
+		}
 			hsession.setAttribute("answers",answer);
     }
   if (!(Integer.parseInt(polli)==sess.getPolls().size())) {  
