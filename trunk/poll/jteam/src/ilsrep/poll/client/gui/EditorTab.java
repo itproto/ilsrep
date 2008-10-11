@@ -54,6 +54,12 @@ public class EditorTab extends JPanel {
     protected Pollsession currentSession = null;
 
     /**
+     * If creating new pollsession then <code>true</code>, if editing existing -
+     * <code>false</code>.
+     */
+    protected boolean creating = true;
+
+    /**
      * Holds references to JTextField's and JComboBox'es where user inputed
      * pollsession data.
      */
@@ -106,6 +112,8 @@ public class EditorTab extends JPanel {
         this.owningWindow = owningWindow;
         currentSession = session;
         userAnswersList = new ArrayList<JComponent>();
+
+        creating = (session == null);
     }
 
     /**
@@ -251,9 +259,45 @@ public class EditorTab extends JPanel {
 
         JButton addPollButton = new JButton();
         addPollButton.setText("Add new poll");
+        addPollButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                savePollsessionRootChanges();
+
+                if (currentSession.getPolls() == null)
+                    currentSession.setPolls(new ArrayList<Poll>());
+
+                currentSession.getPolls().add(new Poll());
+
+                editPollsession();
+            }
+        });
         c.gridx = 0;
         c.gridy++;
         add(addPollButton, c);
+
+        JButton saveButton = new JButton();
+        saveButton.setText(creating ? "Create" : "Save");
+        saveButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!owningWindow.sendPollsession(currentSession))
+                    GUIUtilities
+                            .showWarningDialog("Failed to send poll session!");
+
+                owningWindow.removeTabByInstance(EditorTab.this);
+
+                if (owningWindow.connect()) {
+                    owningWindow.updateList();
+                    owningWindow.disconnect();
+                }
+            }
+        });
+        c.gridx = 3;
+        c.gridy++;
+        add(saveButton, c);
 
         refreshTab();
     }
