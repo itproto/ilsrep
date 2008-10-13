@@ -36,6 +36,7 @@ JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
 	"<tr><td>Poll Name:</td><td><input type=\"text\" name=\"PollName\" id=\"PollName\" disabled></td></tr>"+
 	"<tr><td>Poll Desc:</td><td><input type=\"text\" name=\"PollDesc\" id=\"PollDesc\" disabled></td></tr>"+
 	"<tr><td>Allow custom choice</td><td><INPUT TYPE=\"checkbox\" NAME=\"Custom\" disabled></td></tr>"+
+	"<tr><td>Correct choice</td><td>Choice option</td></tr>"+
 	"</table>"+
 	"<div style=\"text-align: center\">"+
 	"<input type=\"button\" name=\"cmdMoveFirst\" id=\"cmdMoveFirst\" class=\"navigation\" value=\"<<\" title=\"Move First\" disabled onclick=\"navigateUserList(\'first\')\">"+

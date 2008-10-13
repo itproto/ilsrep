@@ -119,7 +119,7 @@ function clearform() {
     document.getElementById("PollName").value = "";
     document.getElementById("PollDesc").value = "";
    docRef.Custom.checked=false;
-var lgh=document.getElementById('polltbl').rows.length-3;
+var lgh=document.getElementById('polltbl').rows.length-4;
  for(i=0;i<lgh;i++){
 	 	 	 RemoveRow();
 	 	 		 	 	
