@@ -16,7 +16,8 @@ sessions=db.getPollsessionlist();
  for ( Item sess : sessions.getItems()) {
 links+="<li><a href=\"./index.jsp?session="+sess.getId()+"&poll=0 \">"+sess.getName()+"</a></li>\n";
 }
-links+="<ul>";} catch (Exception e){links=e.getMessage();}
+links+="<li><a href=\"./index.jsp?session=new\">Create New Session</a></li>";
+links+="</ul>";} catch (Exception e){links=e.getMessage();}
 return links;
 }
 %>

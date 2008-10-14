@@ -1,5 +1,6 @@
 <%@ include file="./poll.jsp" %>
 <%@ include file="./links.jsp" %>
+<%@ include file="./save.jsp" %>
 <%@page import="javax.servlet.ServletRequest"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -18,9 +19,9 @@
 		<h1><span>JSP</span><strong>jteam</strong>Poll</h1>
 		<div id="menu">
 			<ul>
-				<li class="first"><a href="./index.jsp?register=true">Register</a></li>
-				 <li><a href="./index.jsp?logout=true">Logout</a></li>
-				<!--<li><a href="#">here</a></li> -->
+				<li class="first"><a href="./../index.jsp?register=true">Register</a></li>
+				 <li><a href="./../index.jsp?logout=true">Logout</a></li>
+				<li><a href="./../index.jsp">Poll Client</a></li> 
 			</ul>
 		</div>
 	</div>
@@ -34,11 +35,17 @@
 
 				<!-- Main start -->
 <%
+if(request.getParameter("result")==null){
 if(request.getParameter("session")!=null){
-	out.println(editPoll(request.getParameter("session")));
+	out.println(editPoll(request.getParameter("session"),(String)session.getAttribute("username")));
 	} else {
-	out.println(links()); 	
+	out.println(links()); 
+	
 		}
+		} else {
+			out.println(saveToDB(request.getParameter("sessiontype"),request.getParameter("result")));
+			
+			}
 %>			
 
 				<!-- Main End -->
@@ -51,6 +58,7 @@ if(request.getParameter("session")!=null){
 			<!-- Side start -->
 
 <% out.println(links()); 
+
 %>
 				
 			<!-- Side end -->
@@ -67,5 +75,6 @@ if(request.getParameter("session")!=null){
     <script type="text/javascript" src="./xmlw3cdom.js"></script>
     <script type="text/javascript" src="./xmlsax.js"></script>
    <script type="text/javascript" src="./formfunctions.js"></script> 
+   <script type="text/javascript" src="./xmlEscape.js"></script> 
 </body>
 </html>
