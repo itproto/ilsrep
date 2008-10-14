@@ -21,7 +21,7 @@
 			<ul>
 				<li class="first"><a href="./index.jsp?register=true">Register</a></li>
 				 <li><a href="./index.jsp?logout=true">Logout</a></li>
-				<!--<li><a href="#">here</a></li> -->
+				<li><a href="./editor/index.jsp">Poll Editor</a></li>
 			</ul>
 		</div>
 	</div>

@@ -1,0 +1,35 @@
+<%@page import="ilsrep.poll.common.model.Poll"%>
+<%@page import="ilsrep.poll.common.model.Choice"%>
+<%@page import="ilsrep.poll.common.model.Pollsession"%>
+<%@page import="ilsrep.poll.server.db.SQLiteDBManager"%>
+<%@page import="ilsrep.poll.server.db.DBManager"%>
+<%@page import="ilsrep.poll.common.protocol.AnswerItem"%>
+<%@page import="ilsrep.poll.common.protocol.Answers"%>
+<%@page import="javax.xml.bind.JAXBContext"%>
+<%@page import="javax.xml.bind.JAXBContext"%>
+<%@page import="javax.xml.bind.JAXBException"%>
+<%@page import="javax.xml.bind.Unmarshaller"%>
+<%@page import="java.io.StringReader"%>
+<%!
+public String saveToDB(String session, String xml) throws Exception{
+	
+	Pollsession sess;
+DBManager db;
+db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
+JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
+        Unmarshaller mr = pollContext.createUnmarshaller();
+        StringReader reader = new StringReader(xml);
+        sess=(Pollsession)mr.unmarshal(reader);
+        if (session.equals("new")){
+db.storePollsession(sess);
+	        return("<h3>Session Created</h3>");	        
+	        } else {
+        db.updatePollsession(sess.getId(),sess);
+    
+       return("<h2>Session Updated</h2>");
+}   
+	
+	
+	}
+
+%>
