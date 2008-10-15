@@ -42,7 +42,12 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pollSessionsListBox1 = new System.Windows.Forms.ListBox();
+            this.submitButton = new System.Windows.Forms.Button();
+            this.pollSessionsListLabel1 = new System.Windows.Forms.Label();
+            this.pollPanel = new System.Windows.Forms.Panel();
             this.mainTabControl.SuspendLayout();
+            this.clientPage.SuspendLayout();
             this.editorPage.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -59,6 +64,10 @@
             // 
             // clientPage
             // 
+            this.clientPage.Controls.Add(this.pollPanel);
+            this.clientPage.Controls.Add(this.pollSessionsListLabel1);
+            this.clientPage.Controls.Add(this.submitButton);
+            this.clientPage.Controls.Add(this.pollSessionsListBox1);
             this.clientPage.Location = new System.Drawing.Point(4, 22);
             this.clientPage.Name = "clientPage";
             this.clientPage.Padding = new System.Windows.Forms.Padding(3);
@@ -171,7 +180,7 @@
             // 
             // menuStrip
             // 
-            this.menuStrip.BackColor = System.Drawing.Color.DarkSeaGreen;
+            this.menuStrip.BackColor = System.Drawing.Color.Silver;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsToolStripMenuItem,
             this.logoutToolStripMenuItem});
@@ -199,6 +208,41 @@
             this.logoutToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.logoutToolStripMenuItem.Click += new System.EventHandler(this.logoutToolStripMenuItem_Click);
             // 
+            // pollSessionsListBox1
+            // 
+            this.pollSessionsListBox1.FormattingEnabled = true;
+            this.pollSessionsListBox1.Location = new System.Drawing.Point(6, 24);
+            this.pollSessionsListBox1.Name = "pollSessionsListBox1";
+            this.pollSessionsListBox1.Size = new System.Drawing.Size(201, 303);
+            this.pollSessionsListBox1.TabIndex = 0;
+            this.pollSessionsListBox1.SelectedIndexChanged += new System.EventHandler(this.pollSessionsListBox1_SelectedIndexChanged);
+            // 
+            // submitButton
+            // 
+            this.submitButton.Location = new System.Drawing.Point(132, 333);
+            this.submitButton.Name = "submitButton";
+            this.submitButton.Size = new System.Drawing.Size(75, 23);
+            this.submitButton.TabIndex = 1;
+            this.submitButton.Text = "Select";
+            this.submitButton.UseVisualStyleBackColor = true;
+            this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
+            // 
+            // pollSessionsListLabel1
+            // 
+            this.pollSessionsListLabel1.AutoSize = true;
+            this.pollSessionsListLabel1.Location = new System.Drawing.Point(65, 8);
+            this.pollSessionsListLabel1.Name = "pollSessionsListLabel1";
+            this.pollSessionsListLabel1.Size = new System.Drawing.Size(85, 13);
+            this.pollSessionsListLabel1.TabIndex = 2;
+            this.pollSessionsListLabel1.Text = "PollSessionsList:";
+            // 
+            // pollPanel
+            // 
+            this.pollPanel.Location = new System.Drawing.Point(213, 24);
+            this.pollPanel.Name = "pollPanel";
+            this.pollPanel.Size = new System.Drawing.Size(373, 303);
+            this.pollPanel.TabIndex = 3;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -214,6 +258,8 @@
             this.Text = "PollClientGUI";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.mainTabControl.ResumeLayout(false);
+            this.clientPage.ResumeLayout(false);
+            this.clientPage.PerformLayout();
             this.editorPage.ResumeLayout(false);
             this.editorPage.PerformLayout();
             this.menuStrip.ResumeLayout(false);
@@ -239,6 +285,10 @@
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Label pollSessionsListLabel1;
+        private System.Windows.Forms.Button submitButton;
+        private System.Windows.Forms.ListBox pollSessionsListBox1;
+        private System.Windows.Forms.Panel pollPanel;
     }
 }
 
