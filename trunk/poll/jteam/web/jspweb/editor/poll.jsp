@@ -36,29 +36,26 @@ JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
 	}
         output="<form name=\"frmEdit\" id=\"frmEdit\" method=\"get\" action=\"noaction\">"+
 	"<table>"+
-	"<tr><td>Session Name:</td><td><input type=\"text\" name=\"SessName\" id=\"SessName\" disabled></td></tr>"+
-	"<tr><td>Allow Test Mode</td><td><INPUT TYPE=\"checkbox\" id=\"TestMode\" NAME=\"TestMode\" disabled onclick=\"onTestMode()\"></td></tr>"+
-	"<tr id='minscoretr'><td>Minimum Score</td><td><INPUT TYPE=\"text\" id=\"MinScore\" NAME=\"MinScore\" disabled ></td></tr>"+
+	"<tr><td>Session Name:</td><td><input type=\"text\" name=\"SessName\" id=\"SessName\" ></td></tr>"+
+	"<tr><td>Allow Test Mode</td><td><INPUT TYPE=\"checkbox\" id=\"TestMode\" NAME=\"TestMode\"  onclick=\"onTestMode()\"></td></tr>"+
+	"<tr id='minscoretr'><td>Minimum Score</td><td><INPUT TYPE=\"text\" id=\"MinScore\" NAME=\"MinScore\"  ></td></tr>"+
 	"</table>"+
 	"<table name=\"polltbl\" id=\"polltbl\">"+
-	"<tr id='plnm'><td>Poll Name:</td><td  colspan=2><input type=\"text\" name=\"PollName\" id=\"PollName\" disabled></td></tr>"+
-	"<tr id='pldsc'><td>Poll Desc:</td><td  colspan=2><input type=\"text\" name=\"PollDesc\" id=\"PollDesc\" disabled></td></tr>"+
-	"<tr id='cuc'><td>Allow custom choice</td><td colspan=2><INPUT TYPE=\"checkbox\" NAME=\"Custom\" id=\"Custom\" disabled ></td></tr>"+
+	"<tr id='plnm'><td>Poll Name:</td><td  colspan=2><input type=\"text\" name=\"PollName\" id=\"PollName\" ></td></tr>"+
+	"<tr id='pldsc'><td>Poll Desc:</td><td  colspan=2><input type=\"text\" name=\"PollDesc\" id=\"PollDesc\" ></td></tr>"+
+	"<tr id='cuc'><td>Allow custom choice</td><td colspan=2><INPUT TYPE=\"checkbox\" NAME=\"Custom\" id=\"Custom\"  ></td></tr>"+
 	"<tr id='coc'><td>Correct choice</td><td colspan=2>Choice option</td></tr>"+
 	"</table>"+
 	"<div style=\"text-align: center\">"+
-	"<input type=\"button\" name=\"cmdMoveFirst\" id=\"cmdMoveFirst\" class=\"navigation\" value=\"<<\" title=\"Move First\" disabled onclick=\"navigateUserList(\'first\')\">"+
-    "<input type=\"button\" name=\"cmdMovePrevious\" id=\"cmdMovePrevious\" class=\"navigation\" value=\"<\" title=\"Move Previous\" disabled onclick=\"navigateUserList(\'previous\')\">"+
-    "<input type=\"button\" name=\"cmdMoveNext\" id=\"cmdMoveNext\" class=\"navigation\" value=\">\" title=\"Move Next\" disabled onclick=\"navigateUserList(\'next\')\">"+
-    "<input type=\"button\" name=\"cmdMoveLast\" id=\"cmdMoveLast\" class=\"navigation\" value=\">>\" title=\"Move Last\" disabled onclick=\"navigateUserList(\'last\')\">"+
+	"<input type=\"button\" name=\"cmdMoveFirst\" id=\"cmdMoveFirst\" class=\"navigation\" value=\"<<\" title=\"Move First\"  onclick=\"navigateUserList(\'first\')\">"+
+    "<input type=\"button\" name=\"cmdMovePrevious\" id=\"cmdMovePrevious\" class=\"navigation\" value=\"<\" title=\"Move Previous\"  onclick=\"navigateUserList(\'previous\')\">"+
+    "<input type=\"button\" name=\"cmdMoveNext\" id=\"cmdMoveNext\" class=\"navigation\" value=\">\" title=\"Move Next\"  onclick=\"navigateUserList(\'next\')\">"+
+    "<input type=\"button\" name=\"cmdMoveLast\" id=\"cmdMoveLast\" class=\"navigation\" value=\">>\" title=\"Move Last\"  onclick=\"navigateUserList(\'last\')\">"+
     "</div>"+
     "<div style=\"text-align: center\">"+
-    "<input type=\"button\" name=\"cmdAddNew\" id=\"cmdAddNew\" class=\"actionButton\" value=\"Add Poll\" title=\"Add New\" disabled onclick=\"cmdAddNewClicked()\">"+
-    "<input type=\"button\" name=\"cmdEdit\" id=\"cmdEdit\" class=\"actionButton\" value=\"Edit\" title=\"Edit\" disabled onclick=\"cmdEditClicked()\">"+
-    "<input type=\"button\" name=\"cmdDelete\" id=\"cmdDelete\" class=\"actionButton\" value=\"Delete\" title=\"Delete\" disabled onclick=\"cmdDeleteClicked()\">"+
-    "<input type=\"button\" name=\"cmdAddChoice\" id=\"cmdAddChoice\" class=\"actionButton\" value=\"Add Choice\" title=\"Add Choice\" disabled onclick=\"addUserRowToTable()\">"+
-    "<input type=\"button\" name=\"cmdCancel\" id=\"cmdCancel\" class=\"actionButton\" value=\"Cancel\" title=\"Cancel\" disabled onclick=\"cmdCancelClicked()\">"+
-    "<input type=\"button\" name=\"cmdSave\" id=\"cmdSave\" class=\"actionButton\" value=\"Save\" title=\"Save\" disabled onclick=\"cmdSaveClicked()\">"+
+    "<input type=\"button\" name=\"cmdAddNew\" id=\"cmdAddNew\" class=\"actionButton\" value=\"Add Poll\" title=\"Add New\"  onclick=\"cmdAddNewClicked()\">"+
+    "<input type=\"button\" name=\"cmdDelete\" id=\"cmdDelete\" class=\"actionButton\" value=\"Delete\" title=\"Delete\"  onclick=\"cmdDeleteClicked()\">"+
+    "<input type=\"button\" name=\"cmdAddChoice\" id=\"cmdAddChoice\" class=\"actionButton\" value=\"Add Choice\" title=\"Add Choice\"  onclick=\"addUserRowToTable()\">"+
     "</div>"+
     "<div style=\"text-align: center\"><input type=\"button\" name=\"cmdSend\" id=\"cmdSend\" class=\"actionButton\" value=\"Save Session\" title=\"Save Session\"  onclick=\"cmdSaveSessionClicked()\"></div>"+
     "<textarea id=\"txtDatabase\" style=\"display: none;\" rows=\"1\" cols=\"1 \">"+
