@@ -1,5 +1,5 @@
 var docRef = document.frmEdit;
-var gEditStatus = "";
+var gEditStatus = "edit";
 var gCurrentPoll;
 var gobjDatabaseDom;
 var gobjDatabaseDomTree;
@@ -7,25 +7,29 @@ var sess;
 var TestMode;
 var maxid;
 var contactNodeSet;
+var firstrun=false;
 function navigateUserList(direction) {
 		     switch (direction) {
         case "next":
-     
+     cmdSaveClicked();
     
             gCurrentPoll = gCurrentPoll.getNextSibling();
                
             break;
 
         case "previous":
+        cmdSaveClicked();
             gCurrentPoll = gCurrentPoll.getPreviousSibling();
             break;
 
         case "first":
+       if(!firstrun) cmdSaveClicked();
             contactNodeSet = gobjDatabaseDomTree.getChildNodes();
             gCurrentPoll = contactNodeSet.item(0);
             break;
 
         case "last":
+        cmdSaveClicked();
             gCurrentPoll = contactNodeSet.item(contactNodeSet.getLength() -1);
             break;
 
@@ -66,19 +70,20 @@ sess=user.getParentNode();
 	    if(sess.getAttribute("testMode")=="true") {
 var a=user.getElementsByTagName("choice").item(i).getAttribute("id")*1;
 var b=user.getAttribute("correctChoice")*1;
-alert(a+" "+b);
+
 		       if(a==b) {
-			       addRowToTable(name_ch,true,false);
+			       addRowToTable(name_ch,true,true);
 	     } else { 
-		     addRowToTable(name_ch,false,false);
+		     addRowToTable(name_ch,false,true);
 	     }
  }   
   else { 
-		     addRowToTable(name_ch,false,false);
+		     addRowToTable(name_ch,false,true);
 	     } 
 	     
 	    }
-
+TestMode=!TestMode;
+onTestMode();
 
 } // end function displayUserData
 function formInit() {
@@ -88,20 +93,22 @@ function formInit() {
     gobjDatabaseDomTree = gobjDatabaseDom.getDocumentElement();
     
        document.getElementById("cmdAddNew").disabled = false;
-    document.getElementById("cmdEdit").disabled = false;
+  //  document.getElementById("cmdEdit").disabled = false;
     document.getElementById("cmdDelete").disabled = false;
     if(document.getElementById("sessiontype").value=="new"){
 	    	    gCurrentPoll = gobjDatabaseDomTree;
-	     setNavigationButtonsDisabledState(true);
+	     //setNavigationButtonsDisabledState(true);
             document.getElementById("plnm").style.display='none';
             document.getElementById("pldsc").style.display='none';
             document.getElementById("cuc").style.display='none';
             document.getElementById("coc").style.display='none';
             document.getElementById("cmdSend").disabled=true;;
              document.getElementById("cmdDelete").disabled=true;;
-              document.getElementById("cmdEdit").disabled=true;;
+             //	 document.getElementById("cmdEdit").disabled=true;;
 	     contactNodeSet = gobjDatabaseDomTree.getChildNodes();
+	     
 	    } else {
+		  firstrun=true;
    navigateUserList("first");
 }
     // enable the add new button
@@ -110,6 +117,7 @@ function formInit() {
 } 
 function addRowToTable(name_ch,checked_is,state)
 {
+	state=true;
   var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
   // if there's no header row in the table, then iteration = lastRow + 1
@@ -226,9 +234,9 @@ function cmdEditClicked() {
 
     gSavedUserId = docRef.PollName.value;
 
-    setNavigationButtonsDisabledState(true);
+    //setNavigationButtonsDisabledState(true);
 
-    setEditBoxDisabledState(false);
+    //setEditBoxDisabledState(false);
 
     docRef.cmdAddNew.disabled = true;
     docRef.cmdAddChoice.disabled = false;
@@ -270,7 +278,7 @@ function cmdCancelClicked() {
     setNavigationButtonsDisabledState(false);
 
 
-    setEditBoxDisabledState(true);
+    //setEditBoxDisabledState(true);
 
     clearform();
 
@@ -320,6 +328,7 @@ function addUserRowToTable(){
   var lastRow = tbl.rows.length;
 			document.getElementById("Custom").checked=false;;
 			document.getElementById("minscoretr").style.display=(TestMode) ? '' : "none";
+			if(document.getElementById("MinScore").value=="") document.getElementById("MinScore").value="0.1";
 			document.getElementById("Custom").disabled=!TestMode;
 			var need=false;
 				 for (i=1;i<lastRow-3;i++){
@@ -345,10 +354,10 @@ function cmdAddNewClicked() {
 	gSavedUserId = docRef.PollName.value;
 
     //enable the edit boxes
-    setEditBoxDisabledState(false);
+    //setEditBoxDisabledState(false);
 
     //disable the navigation
-    setNavigationButtonsDisabledState(true);
+    //setNavigationButtonsDisabledState(true);
     clearform();
     
     
@@ -366,10 +375,10 @@ onTestMode();
             document.getElementById("cmdSend").disabled=false;;
     docRef.cmdAddNew.disabled = true;
      docRef.cmdAddChoice.disabled = false;
-    docRef.cmdEdit.disabled = true;
+    //docRef.cmdEdit.disabled = true;
     docRef.cmdDelete.disabled = true;
     docRef.cmdSave.disabled = false;
-    docRef.cmdCancel.disabled = false;
+    //docRef.cmdCancel.disabled = false;
 
     //set the focus to the first name
     docRef.PollName.focus();
@@ -406,7 +415,7 @@ var lastnode=false;
 	                           navigateUserList("next");
             }
 
-            docRef.cmdEdit.disabled = false;
+            //docRef.cmdEdit.disabled = false;
             docRef.cmdDelete.disabled = false;
             
         }
@@ -416,9 +425,9 @@ var lastnode=false;
             //do a insertNodeInto when/if I do an add
          
             gCurrentPoll = gobjDatabaseDomTree;
-            docRef.cmdEdit.disabled = true;
+            //docRef.cmdEdit.disabled = true;
             docRef.cmdDelete.disabled = true;
-            setNavigationButtonsDisabledState(true);
+            //setNavigationButtonsDisabledState(true);
             lastnode=true;
             document.getElementById("plnm").style.display='none';
             document.getElementById("pldsc").style.display='none';
@@ -428,8 +437,8 @@ var lastnode=false;
             
         }
 
-        docRef.cmdCancel.disabled = true;
-        docRef.cmdSave.disabled = true;
+       // docRef.cmdCancel.disabled = true;
+        //docRef.cmdSave.disabled = true;
     
        
 gobjDatabaseDomTree.removeChild(gDelPoll);
@@ -474,7 +483,7 @@ var tbl = document.getElementById('polltbl');
 
         if (gEditStatus == "edit") {
           gCurrentPoll.getParentNode().setAttribute("name",document.getElementById("SessName").value);
-          gCurrentPoll.getParentNode().setAttribute("testMode",TestMode+"");
+gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("TestMode").checked+"");
           gCurrentPoll.getParentNode().setAttribute("minScore",document.getElementById("MinScore").value+"");
 	          gCurrentPoll.setAttribute("name",pollName);
      gCurrentPoll.getElementsByTagName("description").item(0).getFirstChild().setNodeValue(pollDesc);
@@ -522,7 +531,7 @@ var newChoicesNode = gobjDatabaseDom.createElement('choices');
 
                 navigateUserList("first");
                   gCurrentPoll.getParentNode().setAttribute("name",document.getElementById("SessName").value);
-          gCurrentPoll.getParentNode().setAttribute("testMode",TestMode+"");
+          gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("TestMode").checked+"");
           gCurrentPoll.getParentNode().setAttribute("minScore",document.getElementById("MinScore").value+"");
             }
             else {
@@ -541,15 +550,15 @@ var newChoicesNode = gobjDatabaseDom.createElement('choices');
         }
 
         //disable the edit boxes
-        setEditBoxDisabledState(true);
+        //setEditBoxDisabledState(true);
 
         //enable the command buttons as appropriate
         docRef.cmdAddNew.disabled = false;
-        docRef.cmdEdit.disabled = false;
-          docRef.cmdAddChoice.disabled = true;
+       // docRef.cmdEdit.disabled = false;
+          //docRef.cmdAddChoice.disabled = true;
         docRef.cmdDelete.disabled = false;
-        docRef.cmdCancel.disabled = true;
-        docRef.cmdSave.disabled = true;
+        //docRef.cmdCancel.disabled = true;
+        //docRef.cmdSave.disabled = true;
     }
     else {
         alert("I was unable to save.\nThe error message reported was:\n" + strOKSave);
@@ -582,6 +591,7 @@ function checkSaveStatus() {
 
 }
 function cmdSaveSessionClicked(){
+	cmdSaveClicked();
 	document.getElementById("result").value=gCurrentPoll.getParentNode().getXML();
 	alert(gCurrentPoll.getParentNode().getXML());
 	document.getElementById("submitform").submit();
