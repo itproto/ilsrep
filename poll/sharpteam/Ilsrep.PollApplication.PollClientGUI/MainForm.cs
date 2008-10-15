@@ -39,6 +39,10 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// </summary>
         private ResultsList resultsList = new ResultsList();
         /// <summary>
+        /// Users choice
+        /// </summary>
+        private String customChoice = String.Empty;
+        /// <summary>
         /// History of changes
         /// </summary>
         private History history = new History();
@@ -222,84 +226,30 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <param name="e"></param>
         private void clientPage_Enter( object sender, EventArgs e )
         {
-            clientPage.Controls.Clear();
-            selectedChoice = -1;
             currentPoll = 0;
-            selectedPollSession = -1;
-
-            Label lblTopText = new Label();
-            lblTopText.Name = "lblTopText";
-            lblTopText.Text = "Please, select PollSession to pass test:";
-            lblTopText.Location = new System.Drawing.Point( 0, 5 );
-            lblTopText.Width = clientPage.Width;
-            lblTopText.TextAlign = ContentAlignment.MiddleCenter;
-            clientPage.Controls.Add( lblTopText );
-
-            
-            int index = 0;
-            
-            foreach ( PollSession curPollSession in pollSessionsList )
+            pollSessionsListBox1.Items.Clear();
+            pollPanel.Controls.Clear();
+            foreach (PollSession curPollSession in pollSessionsList)
             {
-                index++;
-
-                RadioButton radioButton = new RadioButton();
-                radioButton.Name = index.ToString();
-                radioButton.Text = index.ToString() + ". " + curPollSession.name;
-                radioButton.Location = new System.Drawing.Point( 5, 5 + lblTopText.Height + 20*(index-1) );
-                radioButton.CheckedChanged += delegate( Object sender2, EventArgs e2 )
-                {
-                    selectedPollSession = Convert.ToInt32( ((RadioButton)sender2).Name ) - 1;
-                };
-                clientPage.Controls.Add( radioButton );
-
-                //if ( index == 1 )
-                    //radioButton.Focus();
+                pollSessionsListBox1.Items.Add(curPollSession.name);
             }
-            
-            Button btnSubmit = new Button();
-            btnSubmit.Name = "btnSubmit";
-            btnSubmit.Text = "Select";
-            btnSubmit.Location = new System.Drawing.Point( 5, 5 + lblTopText.Height + 20*index + 10 );
-            btnSubmit.Click += delegate
-            {
-                try
-                {
-                    GetPollSession();
-                    GetPoll();
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            };
-            clientPage.Controls.Add( btnSubmit );
-            this.AcceptButton = btnSubmit;
-        }
 
-        /// <summary>
-        /// Get PollSession by the selected poll session index
-        /// </summary>
-        private void GetPollSession()
-        {
-            if (selectedPollSession != -1)
+            if (pollSessionsList.Count == 0)
             {
-                PollPacket pollPacket = new PollPacket();
-                pollPacket.request = new Request();
-                pollPacket.request.type = Request.GET_POLLSESSION;
-                pollPacket.request.id = pollSessionsList[selectedPollSession].id.ToString();
-                pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
-                pollSession = pollPacket.pollSession;
-                //this.Text = "PollClientGUI [" + PollClientGUI.userName + "] - " + pollSession.name;
+                submitButton.Enabled = false;
             }
             else
             {
-                throw new Exception("Please, select PollSession");
+                pollSessionsListBox1.SelectedIndex = 0;
+                submitButton.Enabled = true;
+                pollSessionsListBox1.Enabled = true;
+                this.AcceptButton = submitButton;
             }
         }
 
         private void GetPoll()
         {
-            clientPage.Controls.Clear();
+            pollPanel.Controls.Clear();
             selectedChoice = -1;
 
             Label lblTopText = new Label();
@@ -309,23 +259,23 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText.Text = "Poll #" + (currentPoll + 1);
             lblTopText.Location = new System.Drawing.Point( 0, 5 );
             lblTopText.Height = 14;
-            lblTopText.Width = clientPage.Width;
+            lblTopText.Width = pollPanel.Width;
             lblTopText.TextAlign = ContentAlignment.MiddleCenter;
-            clientPage.Controls.Add(lblTopText);
+            pollPanel.Controls.Add(lblTopText);
             lblTopText2.Name = "lblTopText2";
             lblTopText2.Text = "Name: " + pollSession.polls[currentPoll].name;
             lblTopText2.Location = new System.Drawing.Point( 0, lblTopText.Top + lblTopText.Height );
             lblTopText2.Height = 14;
-            lblTopText2.Width = clientPage.Width;
+            lblTopText2.Width = pollPanel.Width;
             lblTopText2.TextAlign = ContentAlignment.MiddleCenter;
-            clientPage.Controls.Add(lblTopText2);
+            pollPanel.Controls.Add(lblTopText2);
             lblTopText3.Name = "lblTopText3";
             lblTopText3.Text = "Description: " + pollSession.polls[currentPoll].description;
             lblTopText3.Location = new System.Drawing.Point( 0, lblTopText2.Top + lblTopText2.Height );
             lblTopText3.Height = 14;
-            lblTopText3.Width = clientPage.Width;
+            lblTopText3.Width = pollPanel.Width;
             lblTopText3.TextAlign = ContentAlignment.MiddleCenter;
-            clientPage.Controls.Add(lblTopText3);
+            pollPanel.Controls.Add(lblTopText3);
 
             int index = 0;
             foreach (Choice curChoice in pollSession.polls[currentPoll].choices)
@@ -340,24 +290,47 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 {
                     selectedChoice = Convert.ToInt32( ((RadioButton)sender2).Name ) - 1;
                 };
-                clientPage.Controls.Add( radioButton );
+                pollPanel.Controls.Add(radioButton);
 
                 if ( index == 1 )
                     radioButton.Focus();
+            }
 
-                //clientListBox.Items.Add(choiceIndex + ". " + curChoice.choice);
+            TextBox customChoiceBox = new TextBox();
+            if (!(pollSession.testMode) && (pollSession.polls[currentPoll].customChoiceEnabled))
+            {
+                index++;
+                RadioButton radioButton = new RadioButton();
+                radioButton.Name = index.ToString();
+                radioButton.Text = index.ToString() + ". " + "Other choice:";
+                radioButton.Location = new System.Drawing.Point(5, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
+                radioButton.CheckedChanged += delegate(Object sender2, EventArgs e2)
+                {
+                    selectedChoice = Convert.ToInt32(((RadioButton)sender2).Name) - 1;
+                };
+                customChoiceBox.Name = "customChoiceBox";
+                customChoiceBox.Text = String.Empty;
+                customChoiceBox.Location = new System.Drawing.Point(radioButton.Left + radioButton.Width + 10, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
+                customChoiceBox.Width = 200;
+                pollPanel.Controls.Add(radioButton);
+                pollPanel.Controls.Add(customChoiceBox);
             }
 
             Button btnSubmit = new Button();
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "Next";
-            btnSubmit.Location = new System.Drawing.Point( this.clientPage.Width - btnSubmit.Width, lblTopText3.Top + lblTopText.Height + 20*(index+1) );
+            btnSubmit.Location = new System.Drawing.Point( this.pollPanel.Width - btnSubmit.Width, lblTopText3.Top + lblTopText.Height + 20*(index+1) );
             btnSubmit.Click += delegate
             {
-                if ( selectedChoice == -1 )
+                if (selectedChoice == -1)
                 {
                     MessageBox.Show("Select a choice", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
+                }
+                
+                if (!(pollSession.testMode) && (pollSession.polls[currentPoll-1].customChoiceEnabled))
+                {
+                    customChoice = customChoiceBox.Text;
                 }
 
                 ProcessResult();
@@ -370,7 +343,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     ProcessResults();
                 }
             };
-            clientPage.Controls.Add( btnSubmit );
+            pollPanel.Controls.Add(btnSubmit);
             this.AcceptButton = btnSubmit;
 
             currentPoll++;
@@ -380,9 +353,19 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             PollResult result = new PollResult();
             result.questionId = pollSession.polls[currentPoll - 1].id;
-            result.answerId = pollSession.polls[currentPoll - 1].choices[selectedChoice].id;
+            
+            if (selectedChoice == pollSession.polls[currentPoll - 1].choices.Count())
+            {
+                result.answerId = -1;
+                result.customChoice = customChoice;
+            }
+            else
+            {
+                result.answerId = pollSession.polls[currentPoll - 1].choices[selectedChoice].id;
+            }
+            
             result.userName = PollClientGUI.userName;
-            resultsList.results.Add( result );
+            resultsList.results.Add(result);
         }
 
         private void ProcessResults()
@@ -396,13 +379,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
             PollClientGUI.ReceivePollPacket(sendPacket);
 
-            clientPage.Controls.Clear();
+            pollPanel.Controls.Clear();
             Label lblTopText = new Label();
             lblTopText.AutoSize = true;
             lblTopText.Name = "lblTopText";
-            lblTopText.Location = new System.Drawing.Point( 5, 5 );
+            lblTopText.Location = new System.Drawing.Point(5, 5);
             lblTopText.Text = "PollSession: " + pollSession.name + Environment.NewLine + "Here is your results:" + Environment.NewLine;
-            clientPage.Controls.Add( lblTopText );
+            pollPanel.Controls.Add(lblTopText);
 
             float correctAnswers = 0;
             int index = 0;
@@ -425,12 +408,19 @@ namespace Ilsrep.PollApplication.PollClientGUI
                         break;
                     choiceIndex++;
                 }
-                
-                lblTopText.Text += index + ". " + pollSession.polls[pollIndex].name + ": " + pollSession.polls[pollIndex].choices[choiceIndex].choice + Environment.NewLine;
-                
+
+                if (curResult.answerId == -1)
+                {
+                    lblTopText.Text += index + ". " + pollSession.polls[pollIndex].name + ": " + curResult.customChoice + Environment.NewLine;
+                }
+                else
+                {
+                    lblTopText.Text += index + ". " + pollSession.polls[pollIndex].name + ": " + pollSession.polls[pollIndex].choices[choiceIndex].choice + Environment.NewLine;
+                }
+
                 if (pollSession.testMode)
                 {
-                    if (pollSession.polls[pollIndex].choices[choiceIndex].id == pollSession.polls[pollIndex].correctChoiceID)
+                    if (choiceIndex == pollSession.polls[pollIndex].correctChoiceID)
                         correctAnswers++;
                 }
             }
@@ -455,12 +445,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "OK";
             btnSubmit.Click += new EventHandler( clientPage_Enter );
-            clientPage.Controls.Add( btnSubmit );
+            pollPanel.Controls.Add(btnSubmit);
             this.AcceptButton = btnSubmit;
 
             resultsList.results.Clear();
             currentPoll = -1;
-            selectedPollSession = -1;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
@@ -501,7 +490,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
             }
 
-            // ----- for synchronize with server(will fixed on future) -----
+            // ----- for synchronize with server(will be fixed on future) -----
             foreach (PollSession curPollSession in pollSessionsList)
             {
                 foreach (Poll curPoll in curPollSession.polls)
@@ -584,6 +573,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void editorPage_Enter(object sender, EventArgs e)
         {
             RefreshEditorList();
+        }
+
+        private void pollSessionsListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pollSession = pollSessionsList[pollSessionsListBox1.SelectedIndex];
+        }
+
+        private void submitButton_Click(object sender, EventArgs e)
+        {
+            GetPoll();
+            submitButton.Enabled = false;
+            pollSessionsListBox1.Enabled = false;
         }
     }
 }
