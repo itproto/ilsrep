@@ -30,6 +30,10 @@
         {
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.clientPage = new System.Windows.Forms.TabPage();
+            this.submitButton = new System.Windows.Forms.Button();
+            this.pollGroupBox = new System.Windows.Forms.GroupBox();
+            this.pollSessionsListLabel1 = new System.Windows.Forms.Label();
+            this.pollSessionsListBox1 = new System.Windows.Forms.ListBox();
             this.editorPage = new System.Windows.Forms.TabPage();
             this.cancelButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
@@ -42,10 +46,6 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pollSessionsListBox1 = new System.Windows.Forms.ListBox();
-            this.submitButton = new System.Windows.Forms.Button();
-            this.pollSessionsListLabel1 = new System.Windows.Forms.Label();
-            this.pollPanel = new System.Windows.Forms.Panel();
             this.mainTabControl.SuspendLayout();
             this.clientPage.SuspendLayout();
             this.editorPage.SuspendLayout();
@@ -64,9 +64,9 @@
             // 
             // clientPage
             // 
-            this.clientPage.Controls.Add(this.pollPanel);
-            this.clientPage.Controls.Add(this.pollSessionsListLabel1);
             this.clientPage.Controls.Add(this.submitButton);
+            this.clientPage.Controls.Add(this.pollGroupBox);
+            this.clientPage.Controls.Add(this.pollSessionsListLabel1);
             this.clientPage.Controls.Add(this.pollSessionsListBox1);
             this.clientPage.Location = new System.Drawing.Point(4, 22);
             this.clientPage.Name = "clientPage";
@@ -76,6 +76,43 @@
             this.clientPage.Text = "Start Poll";
             this.clientPage.UseVisualStyleBackColor = true;
             this.clientPage.Enter += new System.EventHandler(this.clientPage_Enter);
+            // 
+            // submitButton
+            // 
+            this.submitButton.Location = new System.Drawing.Point(132, 346);
+            this.submitButton.Name = "submitButton";
+            this.submitButton.Size = new System.Drawing.Size(75, 23);
+            this.submitButton.TabIndex = 1;
+            this.submitButton.Text = "Select";
+            this.submitButton.UseVisualStyleBackColor = true;
+            this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
+            // 
+            // pollGroupBox
+            // 
+            this.pollGroupBox.Location = new System.Drawing.Point(213, 18);
+            this.pollGroupBox.Name = "pollGroupBox";
+            this.pollGroupBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.pollGroupBox.Size = new System.Drawing.Size(373, 322);
+            this.pollGroupBox.TabIndex = 4;
+            this.pollGroupBox.TabStop = false;
+            // 
+            // pollSessionsListLabel1
+            // 
+            this.pollSessionsListLabel1.AutoSize = true;
+            this.pollSessionsListLabel1.Location = new System.Drawing.Point(65, 8);
+            this.pollSessionsListLabel1.Name = "pollSessionsListLabel1";
+            this.pollSessionsListLabel1.Size = new System.Drawing.Size(85, 13);
+            this.pollSessionsListLabel1.TabIndex = 2;
+            this.pollSessionsListLabel1.Text = "PollSessionsList:";
+            // 
+            // pollSessionsListBox1
+            // 
+            this.pollSessionsListBox1.FormattingEnabled = true;
+            this.pollSessionsListBox1.Location = new System.Drawing.Point(6, 24);
+            this.pollSessionsListBox1.Name = "pollSessionsListBox1";
+            this.pollSessionsListBox1.Size = new System.Drawing.Size(201, 316);
+            this.pollSessionsListBox1.TabIndex = 0;
+            this.pollSessionsListBox1.SelectedIndexChanged += new System.EventHandler(this.pollSessionsListBox1_SelectedIndexChanged);
             // 
             // editorPage
             // 
@@ -180,10 +217,12 @@
             // 
             // menuStrip
             // 
-            this.menuStrip.BackColor = System.Drawing.Color.Silver;
+            this.menuStrip.BackColor = System.Drawing.Color.Transparent;
+            this.menuStrip.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsToolStripMenuItem,
             this.logoutToolStripMenuItem});
+            this.menuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(618, 24);
@@ -207,41 +246,6 @@
             this.logoutToolStripMenuItem.Text = "&Logout";
             this.logoutToolStripMenuItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.logoutToolStripMenuItem.Click += new System.EventHandler(this.logoutToolStripMenuItem_Click);
-            // 
-            // pollSessionsListBox1
-            // 
-            this.pollSessionsListBox1.FormattingEnabled = true;
-            this.pollSessionsListBox1.Location = new System.Drawing.Point(6, 24);
-            this.pollSessionsListBox1.Name = "pollSessionsListBox1";
-            this.pollSessionsListBox1.Size = new System.Drawing.Size(201, 303);
-            this.pollSessionsListBox1.TabIndex = 0;
-            this.pollSessionsListBox1.SelectedIndexChanged += new System.EventHandler(this.pollSessionsListBox1_SelectedIndexChanged);
-            // 
-            // submitButton
-            // 
-            this.submitButton.Location = new System.Drawing.Point(132, 333);
-            this.submitButton.Name = "submitButton";
-            this.submitButton.Size = new System.Drawing.Size(75, 23);
-            this.submitButton.TabIndex = 1;
-            this.submitButton.Text = "Select";
-            this.submitButton.UseVisualStyleBackColor = true;
-            this.submitButton.Click += new System.EventHandler(this.submitButton_Click);
-            // 
-            // pollSessionsListLabel1
-            // 
-            this.pollSessionsListLabel1.AutoSize = true;
-            this.pollSessionsListLabel1.Location = new System.Drawing.Point(65, 8);
-            this.pollSessionsListLabel1.Name = "pollSessionsListLabel1";
-            this.pollSessionsListLabel1.Size = new System.Drawing.Size(85, 13);
-            this.pollSessionsListLabel1.TabIndex = 2;
-            this.pollSessionsListLabel1.Text = "PollSessionsList:";
-            // 
-            // pollPanel
-            // 
-            this.pollPanel.Location = new System.Drawing.Point(213, 24);
-            this.pollPanel.Name = "pollPanel";
-            this.pollPanel.Size = new System.Drawing.Size(373, 303);
-            this.pollPanel.TabIndex = 3;
             // 
             // MainForm
             // 
@@ -288,7 +292,7 @@
         private System.Windows.Forms.Label pollSessionsListLabel1;
         private System.Windows.Forms.Button submitButton;
         private System.Windows.Forms.ListBox pollSessionsListBox1;
-        private System.Windows.Forms.Panel pollPanel;
+        private System.Windows.Forms.GroupBox pollGroupBox;
     }
 }
 

@@ -66,6 +66,7 @@
     <Compile Include="Communication\Request.cs" />
     <Compile Include="Communication\ResultsList.cs" />
     <Compile Include="Helpers\CommandLineParametersHelper.cs" />
+    <Compile Include="Helpers\HistoryHelper.cs" />
     <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Helpers\PollDAL.cs" />
     <Compile Include="Helpers\PollSerializator.cs" />

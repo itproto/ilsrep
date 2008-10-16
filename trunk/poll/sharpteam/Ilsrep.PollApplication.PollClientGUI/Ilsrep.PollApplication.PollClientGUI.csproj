@@ -130,7 +130,8 @@
     <None Include="Resources\add.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+    </None>
     <None Include="Resources\tick.png" />
   </ItemGroup>
   <ItemGroup>

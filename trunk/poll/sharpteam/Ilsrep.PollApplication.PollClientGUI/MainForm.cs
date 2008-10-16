@@ -15,10 +15,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
     public partial class MainForm : Form
     {
         /// <summary>
-        /// Selected pollsession
-        /// </summary>
-        private int selectedPollSession = -1;
-        /// <summary>
         /// Selected choice
         /// </summary>
         private int selectedChoice = -1;
@@ -45,47 +41,19 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// History of changes
         /// </summary>
-        private History history = new History();
+        private HistoryHelper history = new HistoryHelper();
         /// <summary>
-        /// History item
+        /// IDGenerator
         /// </summary>
-        public class History
+        public static class IDGenerator
         {
-            public List<int> edited = new List<int>();
-            public List<int> deleted = new List<int>();
-
-            public void AddToEdited(int id)
+            private static int _id = 0;
+            public static int id
             {
-                foreach (int curId in edited)
+                get
                 {
-                    if (curId == id)
-                        return;
+                    return --_id;
                 }
-                edited.Add(id);
-            }
-
-            public void AddToDeleted(int id)
-            {
-                foreach (int curId in deleted)
-                {
-                    if (curId == id)
-                        return;
-                }
-                deleted.Add(id);
-            }
-
-            public void Exclude()
-            {
-                foreach (int idDeleted in deleted)
-                {
-                    edited.Remove(idDeleted);
-                }
-            }
-
-            public void Clear()
-            {
-                edited.Clear();
-                deleted.Clear();
             }
         }
 
@@ -176,8 +144,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void createButton_Click( object sender, EventArgs e )
         {
             PollSession pollSession = new PollSession();
-            pollSession.name = "newPollSession";
-            pollSession.id = -1;
+            int newId = IDGenerator.id;
+            pollSession.name = "newPollSession" + Math.Abs(newId).ToString();
+            pollSession.id = newId;
             pollSessionsList.Add(pollSession);
             propertyGrid.SelectedObject = pollSessionsList[pollSessionsList.Count - 1];
             RefreshEditorList();
@@ -213,7 +182,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void SelectedIndexChanged(object sender, EventArgs e)
         {
             propertyGrid.SelectedObject = pollSessionsList[pollSessionsListBox.SelectedIndex];
-            if (pollSessionsList[pollSessionsListBox.SelectedIndex].id != -1)
+            if (pollSessionsList[pollSessionsListBox.SelectedIndex].id >= 0)
             {
                 history.AddToEdited(pollSessionsList[pollSessionsListBox.SelectedIndex].id);
             }
@@ -228,7 +197,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             currentPoll = 0;
             pollSessionsListBox1.Items.Clear();
-            pollPanel.Controls.Clear();
+            pollGroupBox.Controls.Clear();
             foreach (PollSession curPollSession in pollSessionsList)
             {
                 pollSessionsListBox1.Items.Add(curPollSession.name);
@@ -249,7 +218,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void GetPoll()
         {
-            pollPanel.Controls.Clear();
+            pollGroupBox.Controls.Clear();
             selectedChoice = -1;
 
             Label lblTopText = new Label();
@@ -257,25 +226,25 @@ namespace Ilsrep.PollApplication.PollClientGUI
             Label lblTopText3 = new Label();
             lblTopText.Name = "lblTopText";
             lblTopText.Text = "Poll #" + (currentPoll + 1);
-            lblTopText.Location = new System.Drawing.Point( 0, 5 );
+            lblTopText.Location = new System.Drawing.Point(10, 15);
             lblTopText.Height = 14;
-            lblTopText.Width = pollPanel.Width;
-            lblTopText.TextAlign = ContentAlignment.MiddleCenter;
-            pollPanel.Controls.Add(lblTopText);
+            lblTopText.Width = pollGroupBox.Width;
+            lblTopText.TextAlign = ContentAlignment.MiddleLeft;
+            pollGroupBox.Controls.Add(lblTopText);
             lblTopText2.Name = "lblTopText2";
             lblTopText2.Text = "Name: " + pollSession.polls[currentPoll].name;
-            lblTopText2.Location = new System.Drawing.Point( 0, lblTopText.Top + lblTopText.Height );
+            lblTopText2.Location = new System.Drawing.Point( 10, lblTopText.Top + lblTopText.Height );
             lblTopText2.Height = 14;
-            lblTopText2.Width = pollPanel.Width;
-            lblTopText2.TextAlign = ContentAlignment.MiddleCenter;
-            pollPanel.Controls.Add(lblTopText2);
+            lblTopText2.Width = pollGroupBox.Width;
+            lblTopText2.TextAlign = ContentAlignment.MiddleLeft;
+            pollGroupBox.Controls.Add(lblTopText2);
             lblTopText3.Name = "lblTopText3";
             lblTopText3.Text = "Description: " + pollSession.polls[currentPoll].description;
-            lblTopText3.Location = new System.Drawing.Point( 0, lblTopText2.Top + lblTopText2.Height );
+            lblTopText3.Location = new System.Drawing.Point( 10, lblTopText2.Top + lblTopText2.Height );
             lblTopText3.Height = 14;
-            lblTopText3.Width = pollPanel.Width;
-            lblTopText3.TextAlign = ContentAlignment.MiddleCenter;
-            pollPanel.Controls.Add(lblTopText3);
+            lblTopText3.Width = pollGroupBox.Width;
+            lblTopText3.TextAlign = ContentAlignment.MiddleLeft;
+            pollGroupBox.Controls.Add(lblTopText3);
 
             int index = 0;
             foreach (Choice curChoice in pollSession.polls[currentPoll].choices)
@@ -285,12 +254,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 RadioButton radioButton = new RadioButton();
                 radioButton.Name = index.ToString();
                 radioButton.Text = index.ToString() + ". " + curChoice.choice;
-                radioButton.Location = new System.Drawing.Point( 5, lblTopText3.Top + lblTopText3.Height + 20*(index-1) );
-                radioButton.CheckedChanged += delegate( Object sender2, EventArgs e2 )
+                radioButton.Location = new System.Drawing.Point(10, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
+                radioButton.CheckedChanged += delegate(Object sender2, EventArgs e2)
                 {
-                    selectedChoice = Convert.ToInt32( ((RadioButton)sender2).Name ) - 1;
+                    selectedChoice = Convert.ToInt32(((RadioButton)sender2).Name) - 1;
                 };
-                pollPanel.Controls.Add(radioButton);
+                pollGroupBox.Controls.Add(radioButton);
 
                 if ( index == 1 )
                     radioButton.Focus();
@@ -303,7 +272,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 RadioButton radioButton = new RadioButton();
                 radioButton.Name = index.ToString();
                 radioButton.Text = index.ToString() + ". " + "Other choice:";
-                radioButton.Location = new System.Drawing.Point(5, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
+                radioButton.Location = new System.Drawing.Point(10, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
                 radioButton.CheckedChanged += delegate(Object sender2, EventArgs e2)
                 {
                     selectedChoice = Convert.ToInt32(((RadioButton)sender2).Name) - 1;
@@ -312,14 +281,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 customChoiceBox.Text = String.Empty;
                 customChoiceBox.Location = new System.Drawing.Point(radioButton.Left + radioButton.Width + 10, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
                 customChoiceBox.Width = 200;
-                pollPanel.Controls.Add(radioButton);
-                pollPanel.Controls.Add(customChoiceBox);
+                pollGroupBox.Controls.Add(radioButton);
+                pollGroupBox.Controls.Add(customChoiceBox);
             }
 
             Button btnSubmit = new Button();
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "Next";
-            btnSubmit.Location = new System.Drawing.Point( this.pollPanel.Width - btnSubmit.Width, lblTopText3.Top + lblTopText.Height + 20*(index+1) );
+            btnSubmit.Location = new System.Drawing.Point(this.pollGroupBox.Width - btnSubmit.Width-10, lblTopText3.Top + lblTopText.Height + 20 * (index + 1));
             btnSubmit.Click += delegate
             {
                 if (selectedChoice == -1)
@@ -343,7 +312,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     ProcessResults();
                 }
             };
-            pollPanel.Controls.Add(btnSubmit);
+            pollGroupBox.Controls.Add(btnSubmit);
             this.AcceptButton = btnSubmit;
 
             currentPoll++;
@@ -379,13 +348,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
             PollClientGUI.ReceivePollPacket(sendPacket);
 
-            pollPanel.Controls.Clear();
+            pollGroupBox.Controls.Clear();
             Label lblTopText = new Label();
             lblTopText.AutoSize = true;
             lblTopText.Name = "lblTopText";
-            lblTopText.Location = new System.Drawing.Point(5, 5);
+            lblTopText.Location = new System.Drawing.Point(10, 15);
             lblTopText.Text = "PollSession: " + pollSession.name + Environment.NewLine + "Here is your results:" + Environment.NewLine;
-            pollPanel.Controls.Add(lblTopText);
+            pollGroupBox.Controls.Add(lblTopText);
 
             float correctAnswers = 0;
             int index = 0;
@@ -441,11 +410,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
 
             Button btnSubmit = new Button();
-            btnSubmit.Location = new System.Drawing.Point( 5, 5 + lblTopText.Height + 30 );
+            btnSubmit.Location = new System.Drawing.Point( 10, 5 + lblTopText.Height + 30 );
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "OK";
-            btnSubmit.Click += new EventHandler( clientPage_Enter );
-            pollPanel.Controls.Add(btnSubmit);
+            btnSubmit.Click += new EventHandler(clientPage_Enter);
+            pollGroupBox.Controls.Add(btnSubmit);
             this.AcceptButton = btnSubmit;
 
             resultsList.results.Clear();
@@ -504,7 +473,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             // Save all new
             foreach (PollSession curPollSession in pollSessionsList)
             {
-                if (curPollSession.id == -1)
+                if (curPollSession.id < 0)
                 {
                     PollPacket pollPacket = new PollPacket();
                     pollPacket.request = new Request();

@@ -106,6 +106,11 @@
             list of choices for this poll
             </summary>
         </member>
+        <member name="T:Ilsrep.PollApplication.Model.Poll.CollectionTypeConverter">
+            <summary>
+            CollectionTypeConverter
+            </summary>
+        </member>
         <member name="T:Ilsrep.PollApplication.Model.PollResult">
             <summary>
             Holds results of user answer
@@ -135,6 +140,33 @@
             <summary>
             Date when result has been saved
             </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Helpers.SettingsHelper">
+            <summary>
+            Help to work with settings
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.host">
+            <summary>
+            Host
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.port">
+            <summary>
+            Port
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.LoadSettings(System.String)">
+            <summary>
+            Load settings from xml file
+            </summary>
+            <param name="pathToConfigFile">Path to xml file</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.SaveSettings(System.String)">
+            <summary>
+            Save settings to xml file
+            </summary>
+            <param name="pathToConfigFile">Path to xml file</param>
         </member>
         <member name="T:Ilsrep.PollApplication.Helpers.PollSerializator">
             <summary>
@@ -401,6 +433,11 @@
             Poll that choice belongs to
             </summary>
         </member>
+        <member name="T:Ilsrep.PollApplication.Model.Choice.CollectionTypeConverter">
+            <summary>
+            CollectionTypeConverter
+            </summary>
+        </member>
         <member name="M:Ilsrep.PollApplication.Helpers.InputHelper.AskQuestion(System.String,System.Int32,System.Int32)">
             <summary>
             Helper method to get answers on questions, where answer lies in a specific range
@@ -473,33 +510,6 @@
             <summary>
             User information is sent in the beginning of session to identify user
             </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Helpers.SettingsHelper">
-            <summary>
-            Help to work with settings
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.host">
-            <summary>
-            Host
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.port">
-            <summary>
-            Port
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.LoadSettings(System.String)">
-            <summary>
-            Load settings from xml file
-            </summary>
-            <param name="pathToConfigFile">Path to xml file</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.SaveSettings(System.String)">
-            <summary>
-            Save settings to xml file
-            </summary>
-            <param name="pathToConfigFile">Path to xml file</param>
         </member>
     </members>
 </doc>
