@@ -38,11 +38,6 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.selectedPollSession">
-            <summary>
-            Selected pollsession
-            </summary>
-        </member>
         <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.selectedChoice">
             <summary>
             Selected choice
@@ -68,12 +63,17 @@
             Where results are stored
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.currentAction">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.customChoice">
             <summary>
-            Action that user do at the moment
+            Users choice
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.RefreshPollSessionsList">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.history">
+            <summary>
+            History of changes
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.GetPollSessions">
             <summary>
             Get pollsession list and show them in the list box
             </summary>
@@ -81,13 +81,6 @@
         <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.createButton_Click(System.Object,System.EventArgs)">
             <summary>
             Function opens PollSessionForm and then send new PollSession to server
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.editButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens PollSessionForm and then send changed PollSession to server
             </summary>
             <param name="sender">object sender</param>
             <param name="e">EventArgs e</param>
@@ -113,9 +106,9 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.GetPollSession">
+        <member name="T:Ilsrep.PollApplication.PollClientGUI.MainForm.IDGenerator">
             <summary>
-            Get PollSession by the selected poll session index
+            IDGenerator
             </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.Properties.Resources">

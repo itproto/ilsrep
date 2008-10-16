@@ -12,6 +12,7 @@ namespace Ilsrep.PollApplication.Model
     /// Object that holds poll
     /// </summary>
     [XmlRoot("poll"), Serializable]
+    [TypeConverter(typeof(CollectionTypeConverter))]
     [DisplayName("Poll")]
     public class Poll
     {
@@ -150,5 +151,18 @@ namespace Ilsrep.PollApplication.Model
             
             return choiceIndex;
         }
+
+        /// <summary>
+        /// CollectionTypeConverter
+        /// </summary>
+        public class CollectionTypeConverter : TypeConverter
+        {
+            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+            {
+                return base.ConvertTo(context, culture, "Poll", typeof(String));
+            }
+        }
     }
+
+
 }

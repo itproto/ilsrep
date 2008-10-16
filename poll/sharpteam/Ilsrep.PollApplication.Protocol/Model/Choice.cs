@@ -11,6 +11,7 @@ namespace Ilsrep.PollApplication.Model
     /// Object that holds choice
     /// </summary>
     [XmlRoot("choice"), Serializable]
+    [TypeConverter(typeof(CollectionTypeConverter))]
     [DisplayName("Choice")]
     public class Choice
     {
@@ -60,6 +61,17 @@ namespace Ilsrep.PollApplication.Model
                 {
                     _choice = value;
                 }
+            }
+        }
+
+        /// <summary>
+        /// CollectionTypeConverter
+        /// </summary>
+        public class CollectionTypeConverter : TypeConverter
+        {
+            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+            {
+                return base.ConvertTo(context, culture, "Choice", typeof(String));
             }
         }
     }
