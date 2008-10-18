@@ -9,14 +9,19 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 /**
@@ -66,6 +71,12 @@ public class EditorTab extends JPanel {
     protected List<JComponent> userAnswersList = null;
 
     /**
+     * Holds references to {@link ChoicePanel} where user inputed choices and
+     * correct choice.
+     */
+    protected List<ChoicePanel> testModeCorrectChoices = null;
+
+    /**
      * Holds what poll number is edited now. -1 means editing pollsession info,
      * larger number then in {@link #currentSession}'s poll list - creating new.
      */
@@ -111,9 +122,17 @@ public class EditorTab extends JPanel {
     private EditorTab(MainWindow owningWindow, Pollsession session) {
         this.owningWindow = owningWindow;
         currentSession = session;
+
         userAnswersList = new ArrayList<JComponent>();
+        testModeCorrectChoices = new ArrayList<ChoicePanel>();
 
         creating = (session == null);
+
+        if (currentSession == null)
+            currentSession = new Pollsession();
+
+        setTestMode(currentSession.getTestMode() != null
+                && currentSession.getTestMode().equals("true"));
     }
 
     /**
@@ -335,6 +354,7 @@ public class EditorTab extends JPanel {
         removeAll();
 
         userAnswersList.clear();
+        testModeCorrectChoices.clear();
 
         Poll poll = currentSession.getPolls().get(id);
 
@@ -407,15 +427,29 @@ public class EditorTab extends JPanel {
             add(noPollsFiels, c);
         }
         else {
+            ButtonGroup correctChoicesRadioButtonGroup = new ButtonGroup();
+
             for (int i = 0; i < poll.getChoices().size(); i++) {
                 Choice choice = poll.getChoices().get(i);
-                JTextField choiceNameField = new JTextField(COLLUMNS_COUNT);
-                if (choice.getName() != null)
-                    choiceNameField.setText(choice.getName());
-                c.gridx = 0;
-                c.gridy++;
-                add(choiceNameField, c);
-                userAnswersList.add(choiceNameField);
+
+                if (pollsessionInTestMode()) {
+                    ChoicePanel choicePanel = new ChoicePanel(
+                            correctChoicesRadioButtonGroup, choice.getName(),
+                            choice.getName().equals(poll.getCorrectChoice()));
+                    c.gridx = 0;
+                    c.gridy++;
+                    add(choicePanel, c);
+                    testModeCorrectChoices.add(choicePanel);
+                }
+                else {
+                    JTextField choiceNameField = new JTextField(COLLUMNS_COUNT);
+                    if (choice.getName() != null)
+                        choiceNameField.setText(choice.getName());
+                    c.gridx = 0;
+                    c.gridy++;
+                    add(choiceNameField, c);
+                    userAnswersList.add(choiceNameField);
+                }
 
                 JButton removeChoiceButton = new JButton();
                 removeChoiceButton.setName("r" + i);
@@ -505,8 +539,9 @@ public class EditorTab extends JPanel {
                         .showWarningDialog("Entered value for minimal score is not valid!");
             }
 
-        currentSession.setTestMode(((JCheckBox) userAnswersList.get(2))
-                .isSelected() ? "true" : "false");
+        // currentSession.setTestMode(((JCheckBox) userAnswersList.get(2))
+        // .isSelected() ? "true" : "false");
+        setTestMode(((JCheckBox) userAnswersList.get(2)).isSelected());
 
         userAnswersList.clear();
     }
@@ -534,13 +569,27 @@ public class EditorTab extends JPanel {
         currentPoll.setCustomEnabled(((JCheckBox) userAnswersList.get(2))
                 .isSelected() ? "true" : "false");
 
-        for (int i = 3; i < userAnswersList.size(); i++) {
-            String newChoiceName = ((JTextField) userAnswersList.get(i))
-                    .getText();
+        if (testModeCorrectChoices.size() == 0)
+            for (int i = 3; i < userAnswersList.size(); i++) {
+                String newChoiceName = ((JTextField) userAnswersList.get(i))
+                        .getText();
 
-            if (!newChoiceName.isEmpty())
-                currentPoll.getChoices().get(i - 3).setName(newChoiceName);
-        }
+                if (!newChoiceName.isEmpty())
+                    currentPoll.getChoices().get(i - 3).setName(newChoiceName);
+            }
+        else
+            for (int i = 0; i < testModeCorrectChoices.size(); i++) {
+                String newChoiceName = testModeCorrectChoices.get(i)
+                        .getChoiceNameField().getText();
+
+                if (!newChoiceName.isEmpty()) {
+                    currentPoll.getChoices().get(i).setName(newChoiceName);
+
+                    if (testModeCorrectChoices.get(i)
+                            .isCorrectChoiceButtonSelected())
+                        currentPoll.setCorrectChoice(newChoiceName);
+                }
+            }
 
         userAnswersList.clear();
     }
@@ -550,6 +599,155 @@ public class EditorTab extends JPanel {
      */
     public void refreshTab() {
         update(getGraphics());
+    }
+
+    /**
+     * Sets if test mode is enabled in pollsesson and do other routines needed
+     * for saving correct choice.
+     * 
+     * @param testMode
+     */
+    protected void setTestMode(boolean testMode) {
+        currentSession.setTestMode(testMode ? "true" : "false");
+
+        if (currentSession.getPolls() == null)
+            currentSession.setPolls(new ArrayList<Poll>());
+
+        for (Poll poll : currentSession.getPolls()) {
+            if (testMode) {
+                Choice correctChoice = null;
+                if (poll.getCorrectChoice() != null
+                        && (correctChoice = poll.getChoiceById(poll
+                                .getCorrectChoice())) != null)
+                    poll.setCorrectChoice(correctChoice.getName());
+            }
+            else
+                poll.setCorrectChoice(null);
+        }
+    }
+
+    /**
+     * Checks if current pollsession is in test mode.
+     * 
+     * @return <code>true</code>, if current pollsession is in test mode.
+     */
+    protected boolean pollsessionInTestMode() {
+        return currentSession.getTestMode() != null
+                && currentSession.getTestMode().equals("true");
+    }
+
+    /**
+     * Represents radio button and text field for entering choice.<br>
+     * If field's text is empty you can't select radio button - cos when sending
+     * to server choice with empty name is removed.<br>
+     * Is only used if poll is in test mode.
+     * 
+     * @author TKOST
+     * 
+     */
+    private class ChoicePanel extends JPanel {
+
+        /**
+         * Button group for check box.
+         */
+        protected ButtonGroup buttonGroup = null;
+
+        /**
+         * Radio button to select if this choice is correct.
+         */
+        protected JRadioButton correctChoiceRadioButton = null;
+
+        /**
+         * Field to enter choice name.
+         */
+        protected JTextField choiceNameField = null;
+
+        /**
+         * Serial version UID.
+         */
+        private static final long serialVersionUID = -2331150865476639578L;
+
+        /**
+         * Creates new {@link ChoicePanel}.
+         * 
+         * @param group
+         *            Button group for this panel's radio button.
+         * @param initialName
+         *            Initial name of choice.
+         * @param selected
+         *            If radio button for correct choice is selected.
+         */
+        public ChoicePanel(ButtonGroup group, String initialName,
+                boolean selected) {
+            buttonGroup = group;
+
+            correctChoiceRadioButton = new JRadioButton();
+
+            if (selected)
+                correctChoiceRadioButton.setSelected(true);
+
+            buttonGroup.add(correctChoiceRadioButton);
+
+            choiceNameField = new JTextField(COLLUMNS_COUNT);
+
+            if (initialName != null)
+                choiceNameField.setText(initialName);
+            else
+                correctChoiceRadioButton.setEnabled(false);
+
+            choiceNameField.addKeyListener(new KeyAdapter() {
+
+                /**
+                 * @see java.awt.event.KeyAdapter#keyTyped(java.awt.event.KeyEvent)
+                 */
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    if (choiceNameField.getText().isEmpty()) {
+                        if (buttonGroup.getSelection() == correctChoiceRadioButton
+                                .getModel())
+                            buttonGroup.clearSelection();
+
+                        correctChoiceRadioButton.setEnabled(false);
+                    }
+                    else
+                        correctChoiceRadioButton.setEnabled(true);
+                }
+            });
+
+            BoxLayout choicePanelLayout = new BoxLayout(this,
+                    BoxLayout.LINE_AXIS);
+
+            setLayout(choicePanelLayout);
+
+            add(correctChoiceRadioButton);
+
+            add(choiceNameField);
+        }
+
+        /**
+         * @see #correctChoiceRadioButton
+         */
+        public JRadioButton getCorrectChoiceRadioButton() {
+            return correctChoiceRadioButton;
+        }
+
+        /**
+         * @see #choiceNameField
+         */
+        public JTextField getChoiceNameField() {
+            return choiceNameField;
+        }
+
+        /**
+         * Returns state of radio button that shows if this choice is correct.
+         * 
+         * @return <code>true</code> if radio button(that shows if this choice
+         *         is correct) is selected.
+         */
+        public boolean isCorrectChoiceButtonSelected() {
+            return correctChoiceRadioButton.isSelected();
+        }
+
     }
 
 }

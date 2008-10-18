@@ -165,6 +165,8 @@ public class MainWindow extends JFrame {
                 GUIUtilities.POLL_APPLICATION_LOGO_ICON).getImage());
 
         initAboutTab();
+
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -919,6 +921,13 @@ public class MainWindow extends JFrame {
         if (session.getPolls().size() == 0)
             return false;
 
+        for (Poll poll : session.getPolls())
+            for (Choice choice : poll.getChoices())
+                if (choice.getName().equals(poll.getCorrectChoice())) {
+                    poll.setCorrectChoice(choice.getId());
+                    break;
+                }
+
         if (connect())
             try {
                 if (session.getId() == null)
@@ -1083,6 +1092,8 @@ public class MainWindow extends JFrame {
                     .getComponents())
                 componentToSetKeyListener
                         .addKeyListener(closeDialogKeyListener);
+
+            setLocationRelativeTo(null);
         }
 
         /**
