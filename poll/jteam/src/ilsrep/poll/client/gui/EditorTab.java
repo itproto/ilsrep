@@ -435,7 +435,10 @@ public class EditorTab extends JPanel {
                 if (pollsessionInTestMode()) {
                     ChoicePanel choicePanel = new ChoicePanel(
                             correctChoicesRadioButtonGroup, choice.getName(),
-                            choice.getName().equals(poll.getCorrectChoice()));
+                            poll.getCorrectChoice() != null
+                                    && choice.getName() != null
+                                    && choice.getName().equals(
+                                            poll.getCorrectChoice()));
                     c.gridx = 0;
                     c.gridy++;
                     add(choicePanel, c);
