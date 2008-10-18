@@ -40,6 +40,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -48,6 +50,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel;
 
 /**
  * Main GUI for Poll program(combines client, editor and any other possible Poll
@@ -220,6 +223,9 @@ public class MainWindow extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (!checkServerSelected())
+                            return;
+
                         if (connect())
                             updateList();
 
@@ -235,6 +241,9 @@ public class MainWindow extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (!checkServerSelected())
+                            return;
+
                         startPollsession();
                     }
                 });
@@ -254,6 +263,9 @@ public class MainWindow extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (!checkServerSelected())
+                            return;
+
                         createPollsession();
                     }
                 });
@@ -266,6 +278,9 @@ public class MainWindow extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (!checkServerSelected())
+                            return;
+
                         editPollsession();
                     }
                 });
@@ -278,6 +293,9 @@ public class MainWindow extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (!checkServerSelected())
+                            return;
+
                         deletePollsession();
                     }
                 });
@@ -826,6 +844,8 @@ public class MainWindow extends JFrame {
              */
             @Override
             public void run() {
+                setPollApplicationLookAndFeel();
+
                 MainWindow gui = new MainWindow();
                 gui.setVisible(true);
                 gui.showSelectServerAndUserDialog();
@@ -1130,6 +1150,30 @@ public class MainWindow extends JFrame {
          */
         public boolean isCellEditable(int row, int column) {
             return false;
+        }
+    }
+
+    /**
+     * Set L&F for Poll Application.
+     */
+    public static void setPollApplicationLookAndFeel() {
+        try {
+            // UIManager.setLookAndFeel(UIManager
+            // .getCrossPlatformLookAndFeelClassName());
+
+            // UIManager.setLookAndFeel(UIManager.getInstalledLookAndFeels()[3]
+            // .getClassName());
+
+            UIManager.setLookAndFeel(SubstanceOfficeSilver2007LookAndFeel.class
+                    .getName());
+        }
+        catch (ClassNotFoundException e) {
+        }
+        catch (InstantiationException e) {
+        }
+        catch (IllegalAccessException e) {
+        }
+        catch (UnsupportedLookAndFeelException e) {
         }
     }
 

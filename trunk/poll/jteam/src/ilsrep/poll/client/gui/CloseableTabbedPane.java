@@ -203,7 +203,8 @@ public class CloseableTabbedPane extends JTabbedPane {
             g2.setColor(Color.BLACK);
 
             if (getModel().isRollover()) {
-                g2.setColor(Color.RED);
+                // g2.setColor(Color.RED);
+                g2.setColor(new Color(0xf7, 0xad, 0x6c));
             }
 
             int delta = 6;
