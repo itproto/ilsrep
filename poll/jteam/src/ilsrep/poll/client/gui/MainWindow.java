@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -75,6 +77,11 @@ public class MainWindow extends JFrame {
      * Serial version UID.
      */
     private static final long serialVersionUID = -8569069240045788600L;
+
+    /**
+     * Timeout for "double-click".
+     */
+    public static final int MOUSE_DOUBLE_CLICK_TIMEOUT = 200;
 
     /**
      * Menu of this window.
@@ -146,6 +153,11 @@ public class MainWindow extends JFrame {
      * Dialog for server/port and user/password selection.
      */
     protected ServerSelectDialog serverAndUserSelectDialog = null;
+
+    /**
+     * Time of last mouse click.
+     */
+    protected long lastMouseClickedTime = -1;
 
     /**
      * Creates main window.
@@ -487,11 +499,12 @@ public class MainWindow extends JFrame {
             }
             else {
 
-                Vector<Vector<String>> pollsessionTableData = new Vector<Vector<String>>();
+                Vector<Vector<Object>> pollsessionTableData = new Vector<Vector<Object>>();
 
                 for (Item pollsessionIdName : sessionList.getItems()) {
-                    Vector<String> sessionRow = new Vector<String>();
-                    sessionRow.add(pollsessionIdName.getId());
+                    Vector<Object> sessionRow = new Vector<Object>();
+                    // sessionRow.add(pollsessionIdName.getId());
+
                     sessionRow.add(pollsessionIdName.getName());
 
                     pollsessionTableData.add(sessionRow);
@@ -524,7 +537,7 @@ public class MainWindow extends JFrame {
                 Vector<String> collumnNames = null;
                 if (collumnNames == null) {
                     collumnNames = new Vector<String>();
-                    collumnNames.add("Id");
+                    // collumnNames.add("Id");
                     collumnNames.add("Name");
                 }
 
@@ -537,6 +550,25 @@ public class MainWindow extends JFrame {
                         .setPreferredWidth(
                                 (int) (0.25 * pollsessionTable.getSize()
                                         .getWidth()));
+
+                pollsessionTable.addMouseListener(new MouseAdapter() {
+
+                    /**
+                     * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+                     */
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if ((System.currentTimeMillis() - lastMouseClickedTime) < MOUSE_DOUBLE_CLICK_TIMEOUT) {
+                            if (!checkServerSelected())
+                                return;
+
+                            startPollsession();
+                        }
+
+                        lastMouseClickedTime = System.currentTimeMillis();
+                    }
+
+                });
 
                 listPanel.removeAll();
                 listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
