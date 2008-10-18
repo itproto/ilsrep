@@ -282,6 +282,9 @@ public class Poll {
      *         present.
      */
     public Choice getChoiceById(String choiceId) {
+        if (choices == null || choices.size() == 0)
+            return null;
+
         for (Choice choice : choices) {
             if (choice.getId().equals(choiceId))
                 return choice;
