@@ -555,5 +555,19 @@ namespace Ilsrep.PollApplication.PollClientGUI
             submitButton.Enabled = false;
             pollSessionsListBox1.Enabled = false;
         }
+
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics graphics = e.Graphics;
+            Pen pen = new Pen(ColorTranslator.FromHtml("#d8d2bd"), 1);
+            graphics.DrawLine(pen, 0, 24, 618, 24);
+            pen.Color = Color.White;
+            graphics.DrawLine(pen, 0, 25, 618, 25);
+        }
+
+        private void editorPage_Leave(object sender, EventArgs e)
+        {
+            cancelButton_Click(sender, e);
+        }
     }
 }
