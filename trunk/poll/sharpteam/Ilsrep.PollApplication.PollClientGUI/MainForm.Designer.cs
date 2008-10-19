@@ -130,6 +130,7 @@
             this.editorPage.TabIndex = 1;
             this.editorPage.Text = "Poll Editor";
             this.editorPage.UseVisualStyleBackColor = true;
+            this.editorPage.Leave += new System.EventHandler(this.editorPage_Leave);
             this.editorPage.Enter += new System.EventHandler(this.editorPage_Enter);
             // 
             // cancelButton
@@ -261,6 +262,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PollClientGUI";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
             this.mainTabControl.ResumeLayout(false);
             this.clientPage.ResumeLayout(false);
             this.clientPage.PerformLayout();
