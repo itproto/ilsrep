@@ -331,7 +331,9 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                         framePanel.add(resultsArea);
 
-                        framePanel.add(clickNextLabel);
+                        // framePanel.add(clickNextLabel);
+
+                        nextButton.setText("Send results");
                     }
                     else {
                         Poll poll = session.getPolls().get(currentFrame);

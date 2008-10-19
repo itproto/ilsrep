@@ -813,7 +813,7 @@ public class MainWindow extends JFrame {
 
             aboutTabPanel.setLayout(aboutTabPanelLayout);
 
-            JLabel logoAndNameLabel = new JLabel("Poll Application",
+            JLabel logoAndNameLabel = new JLabel("oll Application",
                     GUIUtilities
                             .loadIcon(GUIUtilities.POLL_APPLICATION_LOGO_ICON),
                     JLabel.LEFT);
