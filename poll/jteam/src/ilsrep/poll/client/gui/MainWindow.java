@@ -10,6 +10,7 @@ import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +39,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -808,15 +808,31 @@ public class MainWindow extends JFrame {
         if (aboutTabPanel == null) {
             aboutTabPanel = new JPanel();
 
-            JTextArea infoTextArea = new JTextArea();
+            BoxLayout aboutTabPanelLayout = new BoxLayout(aboutTabPanel,
+                    BoxLayout.PAGE_AXIS);
 
-            final char endl = '\n';
-            infoTextArea.setText("Poll Application" + endl + "GUI client"
-                    + endl + endl + "Version:"
+            aboutTabPanel.setLayout(aboutTabPanelLayout);
+
+            JLabel logoAndNameLabel = new JLabel("Poll Application",
+                    GUIUtilities
+                            .loadIcon(GUIUtilities.POLL_APPLICATION_LOGO_ICON),
+                    JLabel.LEFT);
+
+            Font labelsFont = logoAndNameLabel.getFont().deriveFont(Font.BOLD);
+
+            logoAndNameLabel.setFont(labelsFont);
+            aboutTabPanel.add(logoAndNameLabel);
+
+            JLabel guiClientLabel = new JLabel("GUI client");
+            guiClientLabel.setFont(labelsFont);
+            aboutTabPanel.add(guiClientLabel);
+
+            aboutTabPanel.add(Box.createVerticalStrut(20));
+
+            JLabel versionLabel = new JLabel("Version: "
                     + Versioning.getVersion(Versioning.COMPONENT_CLIENT_GUI));
-            infoTextArea.setEditable(false);
-
-            aboutTabPanel.add(infoTextArea);
+            versionLabel.setFont(labelsFont);
+            aboutTabPanel.add(versionLabel);
         }
 
         activateTab(aboutTabName, aboutTabPanel);

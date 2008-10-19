@@ -235,7 +235,10 @@ public class EditorTab extends JPanel {
 
                 JButton editPollButton = new JButton();
                 editPollButton.setName("e" + i);
-                editPollButton.setText("Edit");
+                // editPollButton.setText("Edit");
+                editPollButton.setToolTipText("Edit poll");
+                editPollButton.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.PENCIL_ICON));
                 editPollButton.addActionListener(new ActionListener() {
 
                     @Override
@@ -256,7 +259,10 @@ public class EditorTab extends JPanel {
 
                 JButton removePollButton = new JButton();
                 removePollButton.setName("r" + i);
-                removePollButton.setText("Remove");
+                // removePollButton.setText("Remove");
+                removePollButton.setToolTipText("Remove poll");
+                removePollButton.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.CANCEL_ICON));
                 removePollButton.addActionListener(new ActionListener() {
 
                     @Override
@@ -277,7 +283,9 @@ public class EditorTab extends JPanel {
         }
 
         JButton addPollButton = new JButton();
-        addPollButton.setText("Add new poll");
+        // addPollButton.setText("Add new poll");
+        addPollButton.setToolTipText("Add new poll");
+        addPollButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.ADD_ICON));
         addPollButton.addActionListener(new ActionListener() {
 
             @Override
@@ -456,7 +464,9 @@ public class EditorTab extends JPanel {
 
                 JButton removeChoiceButton = new JButton();
                 removeChoiceButton.setName("r" + i);
-                removeChoiceButton.setText("Remove");
+                removeChoiceButton.setToolTipText("Remove choice");
+                removeChoiceButton.setIcon(GUIUtilities
+                        .loadIcon(GUIUtilities.CANCEL_ICON));
                 removeChoiceButton.addActionListener(new ActionListener() {
 
                     @Override
@@ -480,7 +490,8 @@ public class EditorTab extends JPanel {
         }
 
         JButton addChoiceButton = new JButton();
-        addChoiceButton.setText("Add new choice");
+        addChoiceButton.setToolTipText("Add new choice");
+        addChoiceButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.ADD_ICON));
         addChoiceButton.addActionListener(new ActionListener() {
 
             @Override

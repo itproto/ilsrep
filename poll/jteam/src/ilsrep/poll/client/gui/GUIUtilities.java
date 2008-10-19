@@ -68,6 +68,21 @@ public class GUIUtilities {
     public static final String PAGE_WHITE_EDIT_ICON = "page_white_edit.png";
 
     /**
+     * Filename of <code>add.png</code>.
+     */
+    public static final String ADD_ICON = "add.png";
+
+    /**
+     * Filename of <code>cancel.png</code>.
+     */
+    public static final String CANCEL_ICON = "cancel.png";
+
+    /**
+     * Filename of <code>pencil.png</code>.
+     */
+    public static final String PENCIL_ICON = "pencil.png";
+
+    /**
      * Contains <code>Poll Application</code>, for window titles.
      */
     public static final String DIALOG_TITLE_BASE = "Poll Application";

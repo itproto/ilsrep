@@ -39,8 +39,9 @@ public class Versioning {
             version = attribs.getValue("Specification-Version");
         }
         catch (IOException e) {
-            version = "[Can't detect version of \"" + component
-                    + "\" Poll application component]";
+            // version = "[Can't detect version of \"" + component
+            // + "\" Poll application component]";
+            version = "[Can't detect version]";
         }
 
         return version;
