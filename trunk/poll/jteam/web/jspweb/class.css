@@ -74,7 +74,7 @@ width: 100%;
 
 th
 {
-background: #824900 url('images/thbg.gif') repeat-x;
+background: #a30313;/* url('images/thbg.gif') repeat-x;*/
 height: 29px;
 padding-left: 11px;
 padding-right: 11px;
@@ -133,8 +133,12 @@ margin: 0px auto 0px auto;
 
 #inner
 {
-background-image: url('images/cbg2.gif');
+	height:100%
+	padding: 0;
+background-color: #D4D0AD;	
+
 background-repeat: repeat-y;
+
 }
 
 #header
@@ -175,12 +179,12 @@ color: #A75300;
 #menu ul
 {
 list-style: none;
+
 }
 
 #menu li
 {
 float: left;
-border-left: solid 1px #A75300;
 padding-left: 8px;
 margin-left: 8px;
 }
@@ -220,9 +224,10 @@ z-index: 1;
 {
 position: relative;
 width: 500px;
-height: 400px;
+min-height: 400px;
 margin: 3px -500px 0px 0px;
 float: left;
+background-image: url('images/cbg2.gif');
 }
 
 #main_inner
@@ -230,6 +235,7 @@ float: left;
 padding: 31px 28px 18px 18px;
 position: relative;
 z-index: 5;
+
 }
 
 #main ul
@@ -326,17 +332,20 @@ margin-left: 242px;
 
 #side
 {
-position: relative;
+	
+
 float: right;
 width: 194px;
 margin: 3px 0px 0px 3px;
-height: 400px;
+height: 347px;
 background-image: url('images/il.gif');
+background-color: #D4D0AD;
+
 }
 
 #side h3
 {
-background-image: url('images/rhbg.gif');
+
 width: 180px;
 height: 23px;
 color: #fff;
@@ -346,21 +355,21 @@ padding: 9px 0px 0px 14px;
 
 #side .content
 {
-background-image: url('images/rhbg2.gif');
-background-repeat: repeat-x;
 padding: 22px 14px 0px 14px;
 margin: 3px 0px 20px 0px;
-
+height: 100%;
 }
 
 #side ul
 {
-list-style: none;
+
+
+
 }
 
 #side li
 {
-border-top: solid 1px #F6F3F1;
+
 padding-top: 5px;
 margin: 5px 0px 0px 0px;
 }
@@ -416,3 +425,11 @@ color: #E8FAFF;
 {
 	width:30%;
 }
+a.addButton:link img{
+	
+	background-image:url('images/butp.png');
+			}
+a.addButton:hover img{
+	
+	background-image:url('images/but.png');
+		}	

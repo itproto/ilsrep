@@ -35,29 +35,26 @@ JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
         output=output.replaceAll(">","&gt;");
 	}
         output="<form name=\"frmEdit\" id=\"frmEdit\" method=\"get\" action=\"noaction\">"+
-	"<table>"+
+	"<table id=\"polltbl\">"+
 	"<tr><td>Session Name:</td><td><input type=\"text\" name=\"SessName\" id=\"SessName\" ></td></tr>"+
 	"<tr><td>Allow Test Mode</td><td><INPUT TYPE=\"checkbox\" id=\"TestMode\" NAME=\"TestMode\"  onclick=\"onTestMode()\"></td></tr>"+
 	"<tr id='minscoretr'><td>Minimum Score</td><td><INPUT TYPE=\"text\" id=\"MinScore\" NAME=\"MinScore\"  ></td></tr>"+
+	"<tr id='adpolltosession'><td  align='center' COLSPAN=2><img src=\"../images/cmdSend.png\" name=\"cmdSend\" id=\"cmdSend\" onMouseover='navOver(\"cmdSend\")' onMouseout='navOut(\"cmdSend\")' onMousedown='navDown(\"cmdSend\")' onMouseup='navUp(\"cmdSend\")'  class=\"actionButton\" value=\"Save Session\" title=\"Save Session\"  onclick=\"cmdSaveSessionClicked()\"><img src=\"../images/cmdEditPoll.png\" name=\"cmdEditPoll\" id=\"cmdEditPoll\" onMouseover='navOver(\"cmdEditPoll\")' onMouseout='navOut(\"cmdEditPoll\")' onMousedown='navDown(\"cmdEditPoll\")' onMouseup='navUp(\"cmdEditPoll\")'  class=\"actionButton\"   onclick=\"cmdTogglePoll()\"><img src=\"../images/but.png\" name=\"cmdAddNew\" id=\"cmdAddNew\" class=\"actionButton\" value=\"Add Poll\" title=\"Add New\" onMouseover='hoverButPlus(\"cmdAddNew\")' onMouseout='outButPlus(\"cmdAddNew\")' onMousedown='pressButPlus(\"cmdAddNew\")' onMouseup='releaseButPlus(\"cmdAddNew\")' onclick=\"cmdAddNewClicked()\"><img src=\"../images/but2.png\" name=\"cmdDelete\" id=\"cmdDelete\" class=\"actionButton\" value=\"Delete\" title=\"Delete\" onMouseover='hoverButMin(\"cmdDelete\")' onMouseout='outButMin(\"cmdDelete\")' onMousedown='pressButMin(\"cmdDelete\")' onMouseup='releaseButMin(\"cmdDelete\")' onclick=\"cmdDeleteClicked()\"></td></tr>"+
+	"<tr id='pllname'><td>Poll Name:</td><td  colspan=2><input type=\"text\" name=\"PollName\" id=\"PollName\" ></td></tr>"+
+	"<tr id='polldescription'><td>Poll Desc:</td><td  colspan=2><input type=\"text\" name=\"PollDesc\" id=\"PollDesc\" ></td></tr>"+
+	"<tr id='customch'><td>Allow custom choice</td><td colspan=2><INPUT TYPE=\"checkbox\" NAME=\"Custom\" id=\"Custom\"  ></td></tr>"+
+	"<tr id='correctc'><td>Correct choice</td><td colspan=2>Choice option</td></tr>"+
+	"<tr id='adpolltosession'><td COLSPAN=2><img src=\"../images/but.png\" name=\"cmdAddChoice\" id=\"cmdAddChoice\" class=\"actionButton\" value=\"Add Choice\" title=\"Add Choice\"  onMouseover='hoverButPlus(\"cmdAddChoice\")' onMouseout='outButPlus(\"cmdAddChoice\")' onMousedown='pressButPlus(\"cmdAddChoice\")' onMouseup='releaseButPlus(\"cmdAddChoice\")' onclick=\"addUserRowToTable()\"></td></tr>"+
 	"</table>"+
-	"<table name=\"polltbl\" id=\"polltbl\">"+
-	"<tr id='plnm'><td>Poll Name:</td><td  colspan=2><input type=\"text\" name=\"PollName\" id=\"PollName\" ></td></tr>"+
-	"<tr id='pldsc'><td>Poll Desc:</td><td  colspan=2><input type=\"text\" name=\"PollDesc\" id=\"PollDesc\" ></td></tr>"+
-	"<tr id='cuc'><td>Allow custom choice</td><td colspan=2><INPUT TYPE=\"checkbox\" NAME=\"Custom\" id=\"Custom\"  ></td></tr>"+
-	"<tr id='coc'><td>Correct choice</td><td colspan=2>Choice option</td></tr>"+
-	"</table>"+
-	"<div style=\"text-align: center\">"+
-	"<input type=\"button\" name=\"cmdMoveFirst\" id=\"cmdMoveFirst\" class=\"navigation\" value=\"<<\" title=\"Move First\"  onclick=\"navigateUserList(\'first\')\">"+
-    "<input type=\"button\" name=\"cmdMovePrevious\" id=\"cmdMovePrevious\" class=\"navigation\" value=\"<\" title=\"Move Previous\"  onclick=\"navigateUserList(\'previous\')\">"+
-    "<input type=\"button\" name=\"cmdMoveNext\" id=\"cmdMoveNext\" class=\"navigation\" value=\">\" title=\"Move Next\"  onclick=\"navigateUserList(\'next\')\">"+
-    "<input type=\"button\" name=\"cmdMoveLast\" id=\"cmdMoveLast\" class=\"navigation\" value=\">>\" title=\"Move Last\"  onclick=\"navigateUserList(\'last\')\">"+
+	"<div id=\"navi\" style=\"text-align: center\">"+
+	"<img src=\"../images/cmdMoveFirst.png\" onMouseover='navOver(\"cmdMoveFirst\")' onMouseout='navOut(\"cmdMoveFirst\")' onMousedown='navDown(\"cmdMoveFirst\")' onMouseup='navUp(\"cmdMoveFirst\")' name=\"cmdMoveFirst\" id=\"cmdMoveFirst\" class=\"navigation\"   onclick=\"navigateUserList(\'first\')\">"+
+    "<img src=\"../images/cmdMovePrevious.png\"  onMouseover='navOver(\"cmdMovePrevious\")' onMouseout='navOut(\"cmdMovePrevious\")' onMousedown='navDown(\"cmdMovePrevious\")' onMouseup='navUp(\"cmdMovePrevious\")' name=\"cmdMovePrevious\" id=\"cmdMovePrevious\" class=\"navigation\"  onclick=\"navigateUserList(\'previous\')\">"+
+    "<img src=\"../images/cmdMoveNext.png\"  onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' name=\"cmdMoveNext\" id=\"cmdMoveNext\" class=\"navigation\"   onclick=\"navigateUserList(\'next\')\">"+
+    "<img src=\"../images/cmdMoveLast.png\"  onMouseover='navOver(\"cmdMoveLast\")' onMouseout='navOut(\"cmdMoveLast\")' onMousedown='navDown(\"cmdMoveLast\")' onMouseup='navUp(\"cmdMoveLast\")' name=\"cmdMoveLast\" id=\"cmdMoveLast\" class=\"navigation\"   onclick=\"navigateUserList(\'last\')\">"+
     "</div>"+
     "<div style=\"text-align: center\">"+
-    "<input type=\"button\" name=\"cmdAddNew\" id=\"cmdAddNew\" class=\"actionButton\" value=\"Add Poll\" title=\"Add New\"  onclick=\"cmdAddNewClicked()\">"+
-    "<input type=\"button\" name=\"cmdDelete\" id=\"cmdDelete\" class=\"actionButton\" value=\"Delete\" title=\"Delete\"  onclick=\"cmdDeleteClicked()\">"+
-    "<input type=\"button\" name=\"cmdAddChoice\" id=\"cmdAddChoice\" class=\"actionButton\" value=\"Add Choice\" title=\"Add Choice\"  onclick=\"addUserRowToTable()\">"+
+    ""+
     "</div>"+
-    "<div style=\"text-align: center\"><input type=\"button\" name=\"cmdSend\" id=\"cmdSend\" class=\"actionButton\" value=\"Save Session\" title=\"Save Session\"  onclick=\"cmdSaveSessionClicked()\"></div>"+
     "<textarea id=\"txtDatabase\" style=\"display: none;\" rows=\"1\" cols=\"1 \">"+
 	output+
  "</textarea>"+
