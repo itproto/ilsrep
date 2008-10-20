@@ -8,36 +8,44 @@ var TestMode;
 var maxid;
 var contactNodeSet;
 var firstrun=false;
+var toggle=true;
 function navigateUserList(direction) {
 		     switch (direction) {
         case "next":
      cmdSaveClicked();
-    
+    if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = gCurrentPoll.getNextSibling();
-               
+           }
             break;
 
         case "previous":
         cmdSaveClicked();
+        if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = gCurrentPoll.getPreviousSibling();
+        }
             break;
 
         case "first":
        if(!firstrun) cmdSaveClicked();
-            contactNodeSet = gobjDatabaseDomTree.getChildNodes();
+       if ((checkSaveStatus() == "OK_SAVE")||firstrun){  
+          contactNodeSet = gobjDatabaseDomTree.getChildNodes();
             gCurrentPoll = contactNodeSet.item(0);
+        }
             break;
 
         case "last":
         cmdSaveClicked();
+        if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = contactNodeSet.item(contactNodeSet.getLength() -1);
+        }
             break;
 
     } // end switch
 
-
-    if (gCurrentPoll != null ) {
+    if ((gCurrentPoll != null)&&((checkSaveStatus() == "OK_SAVE")||firstrun) ) {
+	    
         displayUserData(gCurrentPoll);
+        firstrun=false;
     }
 
     //decide what to do with the navigation forms
@@ -47,7 +55,14 @@ function displayUserData(user) {
 	clearform();
 sess=user.getParentNode();
 	 docRef.SessName.value=sess.getAttribute("name");
-	 docRef.MinScore.value=sess.getAttribute("minScore");
+	if(sess.getAttribute("testMode")=="true"){
+	  for (j=5;j>2;j--){
+		  
+	 docRef.MinScore.value=sess.getAttribute("minScore").substring(0,j);
+	 if(sess.getAttribute("minScore").substring(j,j+1)!="0") break;
+		
+ }
+}
 	  if(sess.getAttribute("testMode")=="true") {
 	    docRef.TestMode.checked=true;
 	      document.getElementById("minscoretr").style.display.visible="";
@@ -71,8 +86,10 @@ sess=user.getParentNode();
 var a=user.getElementsByTagName("choice").item(i).getAttribute("id")*1;
 var b=user.getAttribute("correctChoice")*1;
 
-		       if(a==b) {
+		       if((a*1)==(b*1)) {
+			     
 			       addRowToTable(name_ch,true,true);
+			     
 	     } else { 
 		     addRowToTable(name_ch,false,true);
 	     }
@@ -84,7 +101,7 @@ var b=user.getAttribute("correctChoice")*1;
 	    }
 TestMode=!TestMode;
 onTestMode();
-
+checkvis();
 } // end function displayUserData
 function formInit() {
     //first set up the database object. In this test case, I know I have data,
@@ -117,18 +134,28 @@ function formInit() {
 } 
 function addRowToTable(name_ch,checked_is,state)
 {
+	
 	state=true;
   var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
   // if there's no header row in the table, then iteration = lastRow + 1
-  var iteration = lastRow-3;
+  var iteration = lastRow-8;
   var row = tbl.insertRow(lastRow);
-  
+
   // left cell
   row.disbaled=true;
   row.id="row"+iteration;
+  row.deleted="not";
+  if (navigator.appName=="Microsoft Internet Explorer");
   var cellLeft = row.insertCell(0);
-  var el = document.createElement('input');
+  var el="";
+  if (navigator.appName=="Microsoft Internet Explorer"){
+  el = document.createElement("<input type=radio name=pollchoices>");
+} else {
+	el = document.createElement("input");
+	
+	}
+
   el.type = 'radio';
   el.checked=checked_is;
   el.name = 'pollchoices';
@@ -136,8 +163,8 @@ function addRowToTable(name_ch,checked_is,state)
   el.disabled=!state;
   el.value=name_ch;
   el.size = 40;
-  cellLeft.appendChild(el);
-  
+   cellLeft.appendChild(el);
+
   
   // right cell
   var cellRight = row.insertCell(1);
@@ -147,27 +174,33 @@ function addRowToTable(name_ch,checked_is,state)
   el.id = 'choiceRow' + iteration;
   el.disabled=!state;
   el.value=name_ch;
-  //el.size = 40;
+  //el.size = 4;
   cellRight.appendChild(el);
  
   // delete cell
-  var cellDel = row.insertCell(2);
-  el = document.createElement('input');
-  el.type = 'button';
+ var cellDel = row.insertCell(2);
+  el = document.createElement('img');
+  el.src = '../images/but2.png';
   el.id = 'choiceAct' + iteration;
   el.disabled=!state;
   el.onclick=delRow;
+  el.onmouseover=hoverButMinDynamic;
+  el.onmouseout=outButMinDynamic;
+   el.onmousedown=pressButMinDynamic;
+  el.onmouseup=releaseButMinDynamic;
   el.value="Delete";
   el.size = 40;
   el.parentform="row"+iteration;
   el.radio='choiceRadio' + iteration;
   cellDel.appendChild(el);
+if(checked_is) document.getElementById('choiceRadio' + iteration).checked=true;
+
  }
 function clearform() {
     document.getElementById("PollName").value = "";
     document.getElementById("PollDesc").value = "";
    docRef.Custom.checked=false;
-var lgh=document.getElementById('polltbl').rows.length-4;
+var lgh=document.getElementById('polltbl').rows.length-9;
  for(i=0;i<lgh;i++){
 	 	 	 RemoveRow();
 	 	 		 	 	
@@ -175,18 +208,22 @@ var lgh=document.getElementById('polltbl').rows.length-4;
 
 } 
 function delRow(){
+	if(document.getElementById(this.id).disabled!=true){
 	document.getElementById(this.parentform).style.display='none';
+	document.getElementById(this.parentform).deleted='none';
 	var delChecked=document.getElementById(this.radio).checked;
 	
 	var numvis=0;
 	  var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
-	for (i=lastRow-4;i>0;i--){
-		
+	for (i=lastRow-9;i>0;i--){
+		var chkd=true;
 	if  (document.getElementById("row"+i).style.display!='none'){
-		if(delChecked){
-			document.getElementById('choiceRadio' + i).checked=true;
+	
+		if((delChecked) && (chkd)){
 			
+			document.getElementById('choiceRadio' + i).checked=true;
+			chkd=false;
 			}
 			numvis++;
 		}
@@ -195,22 +232,57 @@ function delRow(){
 	}
 	
 	if((1*numvis)<3){
-		for (i=1;i<lastRow-3;i++){
+		
+		for (i=1;i<lastRow-8;i++){
+	   document.getElementById("choiceAct"+i).src="../images/but2d.png";
 	   document.getElementById("choiceAct"+i).disabled=true;
+	 
 	  }		
 		}
-	
+}
 	 
+
 	}
+	function checkvis() {
+		
+		var numvis=0;
+	  var tbl = document.getElementById('polltbl');
+  var lastRow = tbl.rows.length;
+	for (i=lastRow-9;i>0;i--){
+		
+	if  (document.getElementById("row"+i).style.display!='none'){
+					numvis++;
+		}
+		
+		
+	}
+	
+	if((1*numvis)<3){
+		
+		for (i=1;i<lastRow-8;i++){
+	   document.getElementById("choiceAct"+i).src="../images/but2d.png";
+	   document.getElementById("choiceAct"+i).disabled=true;
+	 
+	  }		
+		}
+}
+		
+		
+		
 function setNavigationButtonStateForEOFandBOF() {
     if (!gCurrentPoll.getPreviousSibling()) {
         //we're on the first record
         document.getElementById("cmdMoveFirst").disabled = true;
         document.getElementById("cmdMovePrevious").disabled = true;
+        document.getElementById("cmdMoveFirst").src = "../images/cmdMoveFirstd.png";
+        document.getElementById("cmdMovePrevious").src = "../images/cmdMovePreviousd.png";
+        
     }
     else {
        document.getElementById("cmdMoveFirst").disabled = false;
         document.getElementById("cmdMovePrevious").disabled = false;
+          document.getElementById("cmdMoveFirst").src = "../images/cmdMoveFirst.png";
+        document.getElementById("cmdMovePrevious").src = "../images/cmdMovePrevious.png";
     }
 
 
@@ -218,10 +290,14 @@ function setNavigationButtonStateForEOFandBOF() {
         //we're on the last record
        document.getElementById("cmdMoveLast").disabled = true;
        document.getElementById("cmdMoveNext").disabled = true;
+             document.getElementById("cmdMoveLast").src = "../images/cmdMoveLastd.png";
+        document.getElementById("cmdMoveNext").src = "../images/cmdMoveNextd.png";
     }
     else {
        document.getElementById("cmdMoveLast").disabled = false;
        document.getElementById("cmdMoveNext").disabled = false;
+            document.getElementById("cmdMoveLast").src = "../images/cmdMoveLast.png";
+        document.getElementById("cmdMoveNext").src = "../images/cmdMoveNext.png";
     }
 
 } 
@@ -266,7 +342,7 @@ function setEditBoxDisabledState(state) {
         docRef.TestMode.disabled = state;
     var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
-  for (i=1;i<lastRow-3;i++){
+  for (i=1;i<lastRow-8;i++){
 	  document.getElementById("choiceRow"+i).disabled=state;
 	  document.getElementById("choiceRadio"+i).disabled=state;
 	   document.getElementById("choiceAct"+i).disabled=state;
@@ -311,14 +387,17 @@ function cmdCancelClicked() {
 
 } 
 function addUserRowToTable(){
+
 	addRowToTable("",false,true);
+	
 	
 	  var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
 	
 	
-		for (i=1;i<lastRow-3;i++){
+		for (i=1;i<lastRow-8;i++){
 	   document.getElementById("choiceAct"+i).disabled=false;
+	   document.getElementById("choiceAct"+i).src="../images/but2.png";
 	  }		
 		}
 	
@@ -329,20 +408,27 @@ function addUserRowToTable(){
 			document.getElementById("Custom").checked=false;;
 			document.getElementById("minscoretr").style.display=(TestMode) ? '' : "none";
 			if(document.getElementById("MinScore").value=="") document.getElementById("MinScore").value="0.1";
-			document.getElementById("Custom").disabled=!TestMode;
+			document.getElementById("Custom").disabled=TestMode;
 			var need=false;
-				 for (i=1;i<lastRow-3;i++){
+				 for (i=1;i<lastRow-8;i++){
 		  document.getElementById("choiceRadio"+i).disabled=!TestMode;
-		  if (document.getElementById("choiceRadio"+i).checked=true){
+		  		  if (document.getElementById("choiceRadio"+i).checked==true){
+			  		 
 			  need=true;
 			  }
 	
 	  }
 	  
 	  if(!need){
-		  for (i=1;i<lastRow-3;i++){
-			  if (document.getElementById("choiceRadio"+i).style.display="") {
-				  document.getElementById("choiceRadio"+i).checked=true;
+		
+		  
+		
+		  for (i=1;i<lastRow-8;i++){
+		
+			  if (document.getElementById("row"+i).style.display=="") {
+				   document.getElementById("choiceRadio"+i).checked=true;
+				  chkd=false;
+			 
 				  break;
 				  }
 			  
@@ -351,6 +437,8 @@ function addUserRowToTable(){
 			
 			}
 function cmdAddNewClicked() {
+	cmdSaveClicked();
+	if(checkSaveStatus() == "OK_SAVE"){
 	gSavedUserId = docRef.PollName.value;
 
     //enable the edit boxes
@@ -368,23 +456,23 @@ addRowToTable("",false,true);
 TestMode=!TestMode;
 onTestMode();
     //set the buttons to be what they need to be
-    document.getElementById("plnm").style.display='';
-            document.getElementById("pldsc").style.display='';
-            document.getElementById("cuc").style.display='';
-            document.getElementById("coc").style.display='';
+    document.getElementById("pllname").style.display='';
+            document.getElementById("polldescription").style.display='';
+            document.getElementById("customch").style.display='';
+            document.getElementById("correctc").style.display='';
             document.getElementById("cmdSend").disabled=false;;
-    docRef.cmdAddNew.disabled = true;
-     docRef.cmdAddChoice.disabled = false;
+    //docRef.cmdAddNew.disabled = true;
+   //  docRef.cmdAddChoice.style.display = "none";
     //docRef.cmdEdit.disabled = true;
-    docRef.cmdDelete.disabled = true;
-    docRef.cmdSave.disabled = false;
+   // docRef.cmdDelete.disabled = true;
+    //docRef.cmdSave.disabled = false;
     //docRef.cmdCancel.disabled = false;
 
     //set the focus to the first name
     docRef.PollName.focus();
 
     gEditStatus = "new";
-
+}
 } // end function cmdAddNewClicked	
 	
 function cmdDeleteClicked() {
@@ -458,11 +546,16 @@ var tbl = document.getElementById('polltbl');
         var customChoice=docRef.Custom.checked.toString();
         var choices= new Array();
         var correct_num;
-        for (i=1;i<lastRow-3;i++){
-	  choices[i]=document.getElementById("choiceRow"+i).value;
+        var n=0;
+        for (i=1;i<lastRow-8;i++){
+	        if((document.getElementById("row"+i).deleted!='none')){
+		         n++;
+	  choices[n]=document.getElementById("choiceRow"+i).value;
+	    }
 	  if(document.getElementById("choiceRadio"+i).checked==true){
-		  correct_num=i;
+		  correct_num=n	;
 		  }
+		 
 		  }
 
         if (gEditStatus == "edit" ) {
@@ -562,6 +655,7 @@ var newChoicesNode = gobjDatabaseDom.createElement('choices');
     }
     else {
         alert("I was unable to save.\nThe error message reported was:\n" + strOKSave);
+       // this.src="../images/but.png";
     }
 
 } // end function cmdSaveClicked
@@ -587,14 +681,131 @@ function checkSaveStatus() {
         strRet = "Session Name required";
         return strRet;
     }
+    var num=false;
+    var tbl = document.getElementById('polltbl');
+  var lastRow = tbl.rows.length;
+    for (i=1;i<lastRow-8;i++){
+	        if((document.getElementById("choiceRow"+i).value=="")&&(document.getElementById("row"+i).style.display!='none')){
+	        num=true;
+		        }
+	  	    }
+	  	    if (num) strRet="Choices may not be empty"
     return strRet;
 
 }
 function cmdSaveSessionClicked(){
 	cmdSaveClicked();
+	if (checkSaveStatus() == "OK_SAVE"){
 	document.getElementById("result").value=gCurrentPoll.getParentNode().getXML();
-	alert(gCurrentPoll.getParentNode().getXML());
 	document.getElementById("submitform").submit();
-	
+}
 	}
 formInit();
+
+function hoverButPlus(obj){
+	document.getElementById(obj).src='../images/butp.png';
+	
+	}
+	function outButPlus(obj){
+	document.getElementById(obj).src='../images/but.png';
+	
+	}
+	
+	function hoverButMin(obj){
+	document.getElementById(obj).src='../images/but2p.png';
+	this.src='../images/but2p.png';
+	}
+	function outButMin(obj){
+	document.getElementById(obj).src='../images/but2.png';
+	this.src='../images/but2.png';
+	}
+	
+		function hoverButMinDynamic(){
+	if(document.getElementById(this.id).disabled!=true){
+	this.src='../images/but2p.png';
+	
+}
+	}
+	function outButMinDynamic(){
+if(document.getElementById(this.id).disabled!=true){
+	this.src='../images/but2.png';
+}
+	}
+
+	
+function pressButPlus(obj){
+	document.getElementById(obj).src='../images/butpr.png';
+	
+	}
+	function releaseButPlus(obj){
+	document.getElementById(obj).src='../images/butp.png';
+	
+	}
+	
+	function pressButMin(obj){
+	document.getElementById(obj).src='../images/but2pr.png';
+	
+	}
+	function releaseButMin(obj){
+	document.getElementById(obj).src='../images/but2.png';
+	
+	}
+	function pressButMinDynamic(obj){
+		if(document.getElementById(this.id).disabled!=true){
+this.src='../images/but2pr.png';
+
+}
+	
+	}
+	function releaseButMinDynamic(obj){
+		if(document.getElementById(this.id).disabled!=true){
+	this.src='../images/but2.png';
+}
+	
+	}
+	
+	
+	function navOver(obj){
+		if(document.getElementById(obj).disabled!=true){
+	document.getElementById(obj).src='../images/'+obj+'h.png';
+}
+		}
+		
+			function navOut(obj){
+		if(document.getElementById(obj).disabled!=true){
+	document.getElementById(obj).src='../images/'+obj+'.png';
+}
+		}
+		
+			function navDown(obj){
+		if(document.getElementById(obj).disabled!=true){
+	document.getElementById(obj).src='../images/'+obj+'p.png';
+}
+		}
+			function navUp(obj){
+		if(document.getElementById(obj).disabled!=true){
+	document.getElementById(obj).src='../images/'+obj+'.png';
+}
+		}
+		function cmdTogglePoll(){
+			toggle=!toggle;
+			state= toggle ? "" : "none";
+		var tbl = document.getElementById('polltbl');
+  var lastRow = tbl.rows.length;
+       document.getElementById('pllname').style.display=state;
+        document.getElementById('polldescription').style.display=state;
+               document.getElementById('customch').style.display=state;
+       document.getElementById('correctc').style.display=state;
+         document.getElementById('navi').style.display=state;
+           document.getElementById('cmdAddChoice').style.display=state;
+            document.getElementById('cmdDelete').style.display=state;
+             document.getElementById('cmdAddNew').style.display=state;
+              for (i=1;i<lastRow-8;i++){
+	        if((document.getElementById("row"+i).deleted!='none')){
+		      
+	  document.getElementById("row"+i).style.display=state;
+	    }
+			
+			}
+		}
+		cmdTogglePoll();

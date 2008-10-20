@@ -19,8 +19,13 @@
 		<h1><span>JSP</span><strong>jteam</strong>Poll</h1>
 		<div id="menu">
 			<ul>
-				<li class="first"><a href="./index.jsp?register=true">Register</a></li>
-				 <li><a href="./index.jsp?logout=true">Logout</a></li>
+					<%
+				
+			String reg="<li class=\"first\"><a href=\"./../index.jsp?register=true\">Register</a></li>";
+				 String logout="<li><a href=\"./index.jsp?logout=true\">Logout</a></li>";
+				 String res=(session.getAttribute("username")==null) ? reg : logout;
+				 out.println(res);
+				 %>
 				<li><a href="./editor/index.jsp">Poll Editor</a></li>
 			</ul>
 		</div>
@@ -66,7 +71,7 @@ out.println(login(session,request.getParameter("name"),request.getParameter("pas
 				
 			<!-- Side end -->
 		</div>
-		<div id="xbgB" class="foot"></div>
+		<div  class="foot"></div>
 	</div>
 
 </div>
@@ -75,6 +80,6 @@ out.println(login(session,request.getParameter("name"),request.getParameter("pas
 <div id="footer">
 	&copy; 2008 InterLogic. Design by Dracony
 </div>
-
+  <script type="text/javascript" src="./Nav.js"></script> 
 </body>
 </html>

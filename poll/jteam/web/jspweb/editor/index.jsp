@@ -19,8 +19,13 @@
 		<h1><span>JSP</span><strong>jteam</strong>Poll</h1>
 		<div id="menu">
 			<ul>
-				<li class="first"><a href="./../index.jsp?register=true">Register</a></li>
-				 <li><a href="./../index.jsp?logout=true">Logout</a></li>
+				<%
+				
+			String reg="<li class=\"first\"><a href=\"./../index.jsp?register=true\">Register</a></li>";
+				 String logout="<li><a href=\"./../index.jsp?logout=true\">Logout</a></li>";
+				 String res=(session.getAttribute("username")==null) ? reg : logout;
+				 out.println(res);
+				 %>
 				<li><a href="./../index.jsp">Poll Client</a></li> 
 			</ul>
 		</div>
@@ -49,7 +54,7 @@ if(request.getParameter("session")!=null){
 %>			
 
 				<!-- Main End -->
-				<div class="foot"></div>				
+								
 			</div>
 	
 		</div>
@@ -62,8 +67,8 @@ if(request.getParameter("session")!=null){
 %>
 				
 			<!-- Side end -->
-		</div>
-		<div id="xbgB" class="foot"></div>
+		</div> 
+		<div   class="foot"></div>
 	</div>
 
 </div>
@@ -76,5 +81,6 @@ if(request.getParameter("session")!=null){
     <script type="text/javascript" src="./xmlsax.js"></script>
    <script type="text/javascript" src="./formfunctions.js"></script> 
    <script type="text/javascript" src="./xmlEscape.js"></script> 
+ 
 </body>
 </html>
