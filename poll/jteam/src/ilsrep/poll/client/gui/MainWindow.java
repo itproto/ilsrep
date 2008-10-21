@@ -2,8 +2,6 @@ package ilsrep.poll.client.gui;
 
 import ilsrep.poll.client.TcpCommunicator;
 import ilsrep.poll.common.Versioning;
-import ilsrep.poll.common.model.Choice;
-import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Answers;
 import ilsrep.poll.common.protocol.Item;
@@ -22,8 +20,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -44,6 +40,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -160,6 +158,11 @@ public class MainWindow extends JFrame {
     protected long lastMouseClickedTime = -1;
 
     /**
+     * Decor panel.
+     */
+    protected JPanel decorPanel = null;
+
+    /**
      * Creates main window.
      */
     public MainWindow() {
@@ -182,6 +185,20 @@ public class MainWindow extends JFrame {
         initAboutTab();
 
         setLocationRelativeTo(null);
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (((CloseableTabbedPane) e.getSource())
+                        .getSelectedComponent() instanceof PollsessionTab)
+                    showDecor(((PollsessionTab) (((CloseableTabbedPane) e
+                            .getSource()).getSelectedComponent()))
+                            .isShowDecor());
+                else
+                    showDecor(false);
+            }
+        });
     }
 
     /**
@@ -426,6 +443,7 @@ public class MainWindow extends JFrame {
             selectNothingAndAlert(cannotConnectToServerString);
             logger.warn(cannotConnectToServerString);
             serverOk = false;
+            disconnect();
             return;
         }
 
@@ -435,6 +453,7 @@ public class MainWindow extends JFrame {
             selectNothingAndAlert(cannotConnectToServerString);
             logger.warn(cannotConnectToServerString);
             serverOk = false;
+            disconnect();
             return;
         }
         else
@@ -942,60 +961,6 @@ public class MainWindow extends JFrame {
      *         failed.
      */
     public boolean sendPollsession(Pollsession session) {
-        if (session.getName() == null || session.getName().isEmpty())
-            return false;
-
-        if (session.getTestMode() == null
-                || !session.getTestMode().equals("true"))
-            session.setTestMode("false");
-
-        if (session.getTestMode().equals("true"))
-            if (session.getMinScore() == null)
-                return false;
-
-        Collection<Poll> pollsToRemove = new ArrayList<Poll>();
-        for (Poll poll : session.getPolls()) {
-            if (poll.getName() == null || poll.getName().isEmpty()
-                    || poll.getDescription() == null
-                    || poll.getDescription().getValue() == null
-                    || poll.getDescription().getValue().isEmpty()) {
-                pollsToRemove.add(poll);
-                continue;
-            }
-
-            Collection<Choice> choicesToRemove = new ArrayList<Choice>();
-
-            for (Choice choice : poll.getChoices()) {
-                if (choice.getName() == null || choice.getName().isEmpty())
-                    choicesToRemove.add(choice);
-            }
-
-            poll.getChoices().removeAll(choicesToRemove);
-
-            if (poll.getChoices().size() == 0) {
-                pollsToRemove.add(poll);
-                continue;
-            }
-
-            for (int i = 1; i <= poll.getChoices().size(); i++)
-                poll.getChoices().get(i - 1).setId(Integer.toString(i));
-        }
-
-        session.getPolls().removeAll(pollsToRemove);
-
-        for (int i = 1; i <= session.getPolls().size(); i++)
-            session.getPolls().get(i - 1).setId(Integer.toString(i));
-
-        if (session.getPolls().size() == 0)
-            return false;
-
-        for (Poll poll : session.getPolls())
-            for (Choice choice : poll.getChoices())
-                if (choice.getName().equals(poll.getCorrectChoice())) {
-                    poll.setCorrectChoice(choice.getId());
-                    break;
-                }
-
         if (connect())
             try {
                 if (session.getId() == null)
@@ -1014,6 +979,43 @@ public class MainWindow extends JFrame {
             }
 
         return true;
+    }
+
+    /**
+     * Shows of hides decor in left bottom corner.
+     * 
+     * @param show
+     *            <code>true</code> to show decor.
+     */
+    public void showDecor(boolean show) {
+        if (decorPanel == null) {
+            JLabel decorLabel = new JLabel(GUIUtilities
+                    .loadIcon(GUIUtilities.DECOR_ICON));
+
+            JPanel decorRowPanel = new JPanel();
+            BoxLayout decorRowPanelLayout = new BoxLayout(decorRowPanel,
+                    BoxLayout.LINE_AXIS);
+            decorRowPanel.setLayout(decorRowPanelLayout);
+            decorRowPanel.add(decorLabel);
+            decorRowPanel.add(Box.createHorizontalGlue());
+
+            decorRowPanel.setOpaque(false);
+
+            decorPanel = new JPanel();
+            BoxLayout decorPanelLayout = new BoxLayout(decorPanel,
+                    BoxLayout.PAGE_AXIS);
+            decorPanel.setLayout(decorPanelLayout);
+            decorPanel.add(Box.createVerticalGlue());
+            decorPanel.add(decorRowPanel);
+
+            decorPanel.setOpaque(false);
+
+            // getRootPane().getLayeredPane().add(decorPanel,
+            // JLayeredPane.DEFAULT_LAYER);
+            getRootPane().setGlassPane(decorPanel);
+        }
+
+        getRootPane().getGlassPane().setVisible(show);
     }
 
     /**

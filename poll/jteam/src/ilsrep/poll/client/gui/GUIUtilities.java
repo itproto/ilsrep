@@ -93,6 +93,11 @@ public class GUIUtilities {
     public static final String POLL_APPLICATION_LOGO_ICON = "logo.png";
 
     /**
+     * Decor for pollsession tab.
+     */
+    public static final String DECOR_ICON = "decor.png";
+
+    /**
      * Shows warning dialog.
      * 
      * @param message
