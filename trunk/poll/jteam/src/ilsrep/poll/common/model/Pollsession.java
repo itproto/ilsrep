@@ -1,5 +1,6 @@
 package ilsrep.poll.common.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
@@ -40,7 +41,7 @@ public class Pollsession {
      * Date of creation.
      */
     protected String date = "";
-    
+
     /**
      * "True" indicates of test mode.
      */
@@ -92,7 +93,8 @@ public class Pollsession {
     public void setId(String id) {
         this.id = id;
     }
- @XmlAttribute(name = "date")
+
+    @XmlAttribute(name = "date")
     public String getDate() {
         return date;
     }
@@ -103,6 +105,7 @@ public class Pollsession {
     public void setDate(String date) {
         this.date = date;
     }
+
     /**
      * @see #testMode
      */
@@ -131,6 +134,28 @@ public class Pollsession {
      */
     public void setPolls(List<Poll> polls) {
         this.polls = polls;
+    }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Pollsession clonedPollsession = new Pollsession();
+
+        clonedPollsession.setId(id);
+        clonedPollsession.setName(name);
+        clonedPollsession.setMinScore(minScore);
+        clonedPollsession.setDate(date);
+        clonedPollsession.setTestMode(testMode);
+
+        ArrayList<Poll> clonedPolls = new ArrayList<Poll>();
+        for (Poll poll : polls)
+            clonedPolls.add((Poll) poll.clone());
+
+        clonedPollsession.setPolls(clonedPolls);
+
+        return clonedPollsession;
     }
 
 }

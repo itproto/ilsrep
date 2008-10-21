@@ -310,15 +310,30 @@ public class EditorTab extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!owningWindow.sendPollsession(currentSession))
+                savePollsessionRootChanges();
+
+                String prepareErrorMessage = preparePollsession(currentSession);
+
+                if (prepareErrorMessage != null) {
+                    GUIUtilities
+                            .showWarningDialog("Poll session is invalid, can't send! ("
+                                    + prepareErrorMessage + ")");
+                    editPollsession();
+                    return;
+                }
+
+                if (!owningWindow.sendPollsession(currentSession)) {
                     GUIUtilities
                             .showWarningDialog("Failed to send poll session!");
+                    editPollsession();
+                }
+                else {
+                    owningWindow.removeTabByInstance(EditorTab.this);
 
-                owningWindow.removeTabByInstance(EditorTab.this);
-
-                if (owningWindow.connect()) {
-                    owningWindow.updateList();
-                    owningWindow.disconnect();
+                    if (owningWindow.connect()) {
+                        owningWindow.updateList();
+                        owningWindow.disconnect();
+                    }
                 }
             }
         });
@@ -327,6 +342,100 @@ public class EditorTab extends JPanel {
         add(saveButton, c);
 
         refreshTab();
+    }
+
+    /**
+     * Prepares pollsession for sending(if pollsession is ok for sending fields
+     * of given pollsession are rewritten with prepared ones).
+     * 
+     * @param session
+     *            Pollsession to prepare.
+     * @return Error message if given pollsession is broken(not ready for
+     *         sending yet)
+     */
+    protected String preparePollsession(Pollsession originalSession) {
+        Pollsession clonedSession = null;
+        try {
+            clonedSession = (Pollsession) originalSession.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            return "can't clone poll session! (this shoudn't happen)";
+        }
+
+        if (clonedSession.getName() == null
+                || clonedSession.getName().isEmpty())
+            return "poll session name not entered";
+
+        if (clonedSession.getTestMode() == null
+                || !clonedSession.getTestMode().equals("true"))
+            clonedSession.setTestMode("false");
+
+        if (clonedSession.getTestMode().equals("true")) {
+            if (clonedSession.getMinScore() == null)
+                return "poll session is in test mode, but minimal score not entered";
+            else {
+                try {
+                    float minScore = Float.parseFloat(clonedSession
+                            .getMinScore());
+
+                    if (minScore <= 0 || minScore > 1)
+                        throw new NumberFormatException();
+                }
+                catch (NumberFormatException e) {
+                    return "entered value for minimal score"
+                            + " should be in range (0.0, 1.0]";
+                }
+            }
+        }
+
+        if (clonedSession.getPolls() == null
+                || clonedSession.getPolls().size() == 0)
+            return "poll session have no polls";
+
+        for (Poll poll : clonedSession.getPolls()) {
+            if (poll.getName() == null || poll.getName().isEmpty()
+                    || poll.getDescription() == null
+                    || poll.getDescription().getValue() == null
+                    || poll.getDescription().getValue().isEmpty())
+                return "name or description of poll(" + poll.getName()
+                        + ") not entered";
+
+            if (poll.getChoices() == null || poll.getChoices().size() == 0)
+                return "poll(" + poll.getName() + ") have no choices";
+
+            for (Choice choice : poll.getChoices())
+                if (choice.getName() == null || choice.getName().isEmpty())
+                    return "one of poll's(" + poll.getName()
+                            + ") choices name not entered";
+
+            for (int i = 1; i <= poll.getChoices().size(); i++)
+                poll.getChoices().get(i - 1).setId(Integer.toString(i));
+        }
+
+        for (int i = 1; i <= clonedSession.getPolls().size(); i++)
+            clonedSession.getPolls().get(i - 1).setId(Integer.toString(i));
+
+        for (Poll poll : clonedSession.getPolls())
+            for (Choice choice : poll.getChoices())
+                if (choice.getName().equals(poll.getCorrectChoice())) {
+                    poll.setCorrectChoice(choice.getId());
+                    break;
+                }
+
+        if (clonedSession.getTestMode().equals("true"))
+            for (Poll poll : clonedSession.getPolls())
+                if (poll.getCorrectChoice().equals("-1"))
+                    return "poll(" + poll.getName()
+                            + ") have no selected correct choice";
+
+        originalSession.setId(clonedSession.getId());
+        originalSession.setName(clonedSession.getName());
+        originalSession.setDate(clonedSession.getDate());
+        originalSession.setMinScore(clonedSession.getMinScore());
+        originalSession.setTestMode(clonedSession.getTestMode());
+        originalSession.setPolls(clonedSession.getPolls());
+
+        return null;
     }
 
     /**
@@ -532,29 +641,15 @@ public class EditorTab extends JPanel {
 
     /**
      * Saves results stored in {@link #userAnswersList} for pollsession root.
+     * 
+     * @return <code>true</code>, if all values entered were correct.
      */
     protected void savePollsessionRootChanges() {
-        String newName = ((JTextField) userAnswersList.get(0)).getText();
+        currentSession.setName(((JTextField) userAnswersList.get(0)).getText());
 
-        if (!newName.isEmpty())
-            currentSession.setName(newName);
+        currentSession.setMinScore(((JTextField) userAnswersList.get(1))
+                .getText());
 
-        String newMinScore = ((JTextField) userAnswersList.get(1)).getText();
-
-        if (!newMinScore.isEmpty())
-            try {
-                // Checking if entered number is float.
-                Float.parseFloat(newMinScore);
-
-                currentSession.setMinScore(newMinScore);
-            }
-            catch (NumberFormatException e) {
-                GUIUtilities
-                        .showWarningDialog("Entered value for minimal score is not valid!");
-            }
-
-        // currentSession.setTestMode(((JCheckBox) userAnswersList.get(2))
-        // .isSelected() ? "true" : "false");
         setTestMode(((JCheckBox) userAnswersList.get(2)).isSelected());
 
         userAnswersList.clear();
@@ -566,43 +661,33 @@ public class EditorTab extends JPanel {
     protected void saveCurrentPollEditingChanges() {
         Poll currentPoll = currentSession.getPolls().get(currentPollEditing);
 
-        String newName = ((JTextField) userAnswersList.get(0)).getText();
+        // if (!newName.isEmpty())
+        currentPoll.setName(((JTextField) userAnswersList.get(0)).getText());
 
-        if (!newName.isEmpty())
-            currentPoll.setName(newName);
+        if (currentPoll.getDescription() == null)
+            currentPoll.setDescription(new Description());
 
-        String newDescription = ((JTextField) userAnswersList.get(1)).getText();
-
-        if (!newDescription.isEmpty()) {
-            if (currentPoll.getDescription() == null)
-                currentPoll.setDescription(new Description());
-
-            currentPoll.getDescription().setValue(newDescription);
-        }
+        currentPoll.getDescription().setValue(
+                ((JTextField) userAnswersList.get(1)).getText());
 
         currentPoll.setCustomEnabled(((JCheckBox) userAnswersList.get(2))
                 .isSelected() ? "true" : "false");
 
         if (testModeCorrectChoices.size() == 0)
             for (int i = 3; i < userAnswersList.size(); i++) {
-                String newChoiceName = ((JTextField) userAnswersList.get(i))
-                        .getText();
-
-                if (!newChoiceName.isEmpty())
-                    currentPoll.getChoices().get(i - 3).setName(newChoiceName);
+                currentPoll.getChoices().get(i - 3).setName(
+                        ((JTextField) userAnswersList.get(i)).getText());
             }
         else
             for (int i = 0; i < testModeCorrectChoices.size(); i++) {
                 String newChoiceName = testModeCorrectChoices.get(i)
                         .getChoiceNameField().getText();
 
-                if (!newChoiceName.isEmpty()) {
-                    currentPoll.getChoices().get(i).setName(newChoiceName);
+                currentPoll.getChoices().get(i).setName(newChoiceName);
 
-                    if (testModeCorrectChoices.get(i)
-                            .isCorrectChoiceButtonSelected())
-                        currentPoll.setCorrectChoice(newChoiceName);
-                }
+                if (testModeCorrectChoices.get(i)
+                        .isCorrectChoiceButtonSelected())
+                    currentPoll.setCorrectChoice(newChoiceName);
             }
 
         userAnswersList.clear();
@@ -704,7 +789,7 @@ public class EditorTab extends JPanel {
 
             choiceNameField = new JTextField(COLLUMNS_COUNT);
 
-            if (initialName != null)
+            if (initialName != null && !initialName.isEmpty())
                 choiceNameField.setText(initialName);
             else
                 correctChoiceRadioButton.setEnabled(false);

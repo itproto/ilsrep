@@ -4,6 +4,7 @@ import ilsrep.poll.client.PollClient;
 import ilsrep.poll.client.gui.old.GUIUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -291,6 +292,28 @@ public class Poll {
         }
 
         return null;
+    }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Poll clonedPoll = new Poll();
+
+        clonedPoll.setId(id);
+        clonedPoll.setName(name);
+        clonedPoll.setDescription((Description) description.clone());
+        clonedPoll.setCustomEnabled(customEnabled);
+        clonedPoll.setCorrectChoice(correctChoice);
+
+        ArrayList<Choice> clonedChoices = new ArrayList<Choice>();
+        for (Choice choice : choices)
+            clonedChoices.add((Choice) choice.clone());
+
+        clonedPoll.setChoices(clonedChoices);
+
+        return clonedPoll;
     }
 
 }

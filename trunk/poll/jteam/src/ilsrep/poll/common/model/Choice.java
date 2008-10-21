@@ -30,7 +30,6 @@ public class Choice {
         return id;
     }
 
-    
     /**
      * @see #id
      */
@@ -38,7 +37,6 @@ public class Choice {
         this.id = id;
     }
 
-    
     /**
      * @see #name
      */
@@ -47,12 +45,23 @@ public class Choice {
         return name;
     }
 
-    
     /**
      * @see #name
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Choice clonedChoice = new Choice();
+        clonedChoice.setId(id);
+        clonedChoice.setName(name);
+
+        return clonedChoice;
     }
 
 }
