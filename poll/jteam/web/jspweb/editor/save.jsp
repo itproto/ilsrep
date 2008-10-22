@@ -10,6 +10,7 @@
 <%@page import="javax.xml.bind.JAXBException"%>
 <%@page import="javax.xml.bind.Unmarshaller"%>
 <%@page import="java.io.StringReader"%>
+<%@ include file="./links.jsp" %>
 <%!
 public String saveToDB(String session, String xml) throws Exception{
 	
@@ -21,12 +22,12 @@ JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
         StringReader reader = new StringReader(xml);
         sess=(Pollsession)mr.unmarshal(reader);
         if (session.equals("new")){
-db.storePollsession(sess);
-	        return("<h3>Session Created</h3>");	        
+ db.updatePollsession("-1",sess);
+	        return("<h3>Session Created</h3>"+links(false));	        
 	        } else {
         db.updatePollsession(sess.getId(),sess);
     
-       return("<h2>Session Updated</h2>");
+       return("<h2>Session Updated</h2>"+links(false));
 }   
 	
 	

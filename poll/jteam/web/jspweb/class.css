@@ -1,9 +1,4 @@
 
-{
-margin: 0px;
-padding: 0px;
-}
-
 body
 {
 //background: #fff url('images/bg.gif');
@@ -133,7 +128,7 @@ margin: 0px auto 0px auto;
 
 #inner
 {
-	height:100%
+	height:100%;
 	padding: 0;
 background-color: #D4D0AD;	
 
@@ -362,7 +357,7 @@ height: 100%;
 
 #side ul
 {
-
+list-style-image: url('images/flag_blue.gif');
 
 
 }
@@ -376,9 +371,16 @@ margin: 5px 0px 0px 0px;
 
 #side li.first
 {
+	list-style-image: url('images/flag_green.gif');
 border-top: 0px;
 margin-top: 0px;
 padding-top: 0px;
+}
+#side li.create
+{
+	list-style-image: url('images/flag_red.gif');
+padding-top: 5px;
+margin: 5px 0px 0px 0px;
 }
 
 #side .divider

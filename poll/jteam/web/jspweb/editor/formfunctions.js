@@ -10,56 +10,71 @@ var contactNodeSet;
 var firstrun=false;
 var toggle=true;
 var choicetoggle=false;
+var deleted=false;
+var num=0;
+var override=false;
+var maximum=0;
+var curr=0;
 function navigateUserList(direction) {
+	
+	var disabled=false;
 		     switch (direction) {
         case "next":
-		if(document.getElementById("cmdMoveNext").disabled==false){
-            cmdSaveClicked();
-    if (checkSaveStatus() == "OK_SAVE"){
+        
+		if(override||(document.getElementById("cmdMoveNext").disabled==false)){
+           if(!deleted) cmdSaveClicked();
+   if ((checkSaveStatus() == "OK_SAVE")||(deleted)){
+	override=false;
             gCurrentPoll = gCurrentPoll.getNextSibling();
-           }
-		   }
+            
+           } 
+		   } else disabled=true;
             break;
 
         case "previous":
 		if(document.getElementById("cmdMovePrevious").disabled==false){
-        cmdSaveClicked();
-        if (checkSaveStatus() == "OK_SAVE"){
+        if(!deleted) cmdSaveClicked();
+    if ((checkSaveStatus() == "OK_SAVE")||(deleted)){
             gCurrentPoll = gCurrentPoll.getPreviousSibling();
+            
         }
-		}
+		}else disabled=true;
             break;
 
         case "first":
 		if(firstrun || (document.getElementById("cmdMoveFirst").disabled==false)){
-       if(!firstrun) cmdSaveClicked();
-       if ((checkSaveStatus() == "OK_SAVE")||firstrun){  
+       if(!deleted) if(!firstrun) cmdSaveClicked();
+       if (deleted || (checkSaveStatus() == "OK_SAVE")||firstrun){  
 	      
           contactNodeSet = gobjDatabaseDomTree.getChildNodes();
             gCurrentPoll = contactNodeSet.item(0);
         }
-		}
+		}else disabled=true;
             break;
 
         case "last":
 		if(document.getElementById("cmdMoveLast").disabled==false){
-        cmdSaveClicked();
-        if (checkSaveStatus() == "OK_SAVE"){
+       if(!deleted)  cmdSaveClicked();
+        if ((checkSaveStatus() == "OK_SAVE")||(deleted)){
             gCurrentPoll = contactNodeSet.item(contactNodeSet.getLength() -1);
         }
-		}
+		}else disabled=true;
             break;
 
     } // end switch
-
-    if ((gCurrentPoll != null)&&((checkSaveStatus() == "OK_SAVE")||firstrun) ) {
-	    
+if(!disabled){
+	
+    if ((gCurrentPoll != null)&&((checkSaveStatus() == "OK_SAVE")||firstrun||deleted) ) {
+	    cmdToggleChoice();
+	  
         displayUserData(gCurrentPoll);
         firstrun=false;
+        cmdToggleChoice();
     }
-
+deleted=false;
     //decide what to do with the navigation forms
     setNavigationButtonStateForEOFandBOF();
+}
 }
 function displayUserData(user) {
 	 
@@ -113,6 +128,17 @@ var b=user.getAttribute("correctChoice")*1;
 TestMode=!TestMode;
 onTestMode();
 checkvis();
+
+if(deleted) {maximum--;
+curr--;
+} else {
+	maximum=contactNodeSet.getLength();
+		curr=0;
+		for (i=0;i<maximum;i++){
+	if (gCurrentPoll==contactNodeSet.item(i)) curr=i+1;
+	}
+	}
+	document.getElementById("position").innerHTML=" "+curr+" of "+maximum+" ";
 } // end function displayUserData
 function formInit() {
     //first set up the database object. In this test case, I know I have data,
@@ -127,22 +153,10 @@ function formInit() {
        document.getElementById("cmdAddNew").disabled = false;
   //  document.getElementById("cmdEdit").disabled = false;
     document.getElementById("cmdDelete").disabled = false;
-    if(document.getElementById("sessiontype").value=="new"){
-	    	    gCurrentPoll = gobjDatabaseDomTree;
-	     //setNavigationButtonsDisabledState(true);
-           /* document.getElementById("plnm").style.display='none';
-            document.getElementById("pldsc").style.display='none';
-            document.getElementById("cuc").style.display='none';
-            document.getElementById("coc").style.display='none';
-            document.getElementById("cmdSend").disabled=true;;
-             document.getElementById("cmdDelete").disabled=true;;
-             //	 document.getElementById("cmdEdit").disabled=true;;*/
-	     contactNodeSet = gobjDatabaseDomTree.getChildNodes();
-	     
-	    } else {
+   
 		  firstrun=true;
    navigateUserList("first");
-}
+
     // enable the add new button
  
 
@@ -229,7 +243,7 @@ function delRow(){
 	document.getElementById(this.parentform).style.display='none';
 	document.getElementById(this.parentform).deleted='none';
 	var delChecked=document.getElementById(this.radio).checked;
-	
+	/*
 	var numvis=0;
 	  var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
@@ -255,13 +269,13 @@ function delRow(){
 	   document.getElementById("choiceAct"+i).disabled=true;
 	 
 	  }		
-		}
+		}*/
 }
 	 
 
 	}
 	function checkvis() {
-		
+	/*	
 		var numvis=0;
 	  var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
@@ -281,7 +295,7 @@ function delRow(){
 	   document.getElementById("choiceAct"+i).disabled=true;
 	 
 	  }		
-		}
+		}*/
 }
 		
 		
@@ -486,17 +500,32 @@ onTestMode();
     //docRef.cmdCancel.disabled = false;
 
     //set the focus to the first name
-    docRef.PollName.focus();
+    //docRef.PollName.focus();
 
     gEditStatus = "new";
+    var maximum=contactNodeSet.getLength();
+var curr=0;
+for (i=0;i<maximum;i++){
+	if (gCurrentPoll==contactNodeSet.item(i)) curr=i+2;
+	}
+
+	maximum++;
+	document.getElementById("position").innerHTML=" "+curr+" of "+maximum+" ";
+	if (curr==2){
+	 document.getElementById("cmdMoveFirst").disabled = false;
+        document.getElementById("cmdMovePrevious").disabled = false;
+          document.getElementById("cmdMoveFirst").src = "../images/cmdMoveFirst.png";
+        document.getElementById("cmdMovePrevious").src = "../images/cmdMovePrevious.png";
+    }
 }
+
 } // end function cmdAddNewClicked	
 	
 function cmdDeleteClicked() {
     var id = docRef.PollName.value;
     if (confirm("Are you sure you would like to delete the Poll\n" + docRef.PollName.value + "\n" + docRef.PollDesc.value + "?") == true ) {
         // get the previous user if not at the start of the list. Otherwise, get the next
-
+deleted=true;
         clearform();
         var gDelPoll=gCurrentPoll;
         
@@ -534,12 +563,13 @@ var lastnode=false;
             docRef.cmdDelete.disabled = true;
             //setNavigationButtonsDisabledState(true);
             lastnode=true;
-            document.getElementById("plnm").style.display='none';
+         /*   document.getElementById("plnm").style.display='none';
             document.getElementById("pldsc").style.display='none';
             document.getElementById("cuc").style.display='none';
             document.getElementById("coc").style.display='none';
             document.getElementById("cmdSend").disabled=true;;
-            
+            */
+            deleted=false;
         }
 
        // docRef.cmdCancel.disabled = true;
@@ -554,7 +584,7 @@ if(!lastnode) setNavigationButtonStateForEOFandBOF();
     } // end confirming
 } // end function cmdDeleteClicked
 function cmdSaveClicked() {
-    var strOKSave = checkSaveStatus();
+	    var strOKSave = checkSaveStatus();
     if (strOKSave == "OK_SAVE") {
 var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
@@ -571,7 +601,7 @@ var tbl = document.getElementById('polltbl');
 	    }
 	  if(document.getElementById("choiceRadio"+i).checked==true){
 		  correct_num=n	;
-		  }
+		  } 
 		 
 		  }
 
@@ -608,15 +638,23 @@ gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("Te
 	         newChoicesNode.appendChild(newChoiceNode);
 	     }
 	     gCurrentPoll.appendChild(newChoicesNode);
-        navigateUserList("current");
+	     
+       // navigateUserList("current");
         }
         else {
-	      
+	        
+	      gEditStatus = "edit";
+	      deleted=true;
             // create new Poll Node
             var newPollNode = gobjDatabaseDom.createElement('poll');
 
             // create id attribute
             newPollNode.setAttribute('id', id);
+             gCurrentPoll.getParentNode().setAttribute("name",document.getElementById("SessName").value);
+gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("TestMode").checked+"");
+          gCurrentPoll.getParentNode().setAttribute("minScore",document.getElementById("MinScore").value+"");
+          
+	          newPollNode.setAttribute("name",pollName);
      newPollNode.setAttribute("customChoiceEnabled",""+customChoice);
      newPollNode.setAttribute("correctChoice",""+correct_num);
 
@@ -625,7 +663,7 @@ gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("Te
             newDescNode.appendChild(gobjDatabaseDom.createTextNode(pollDesc));
             newPollNode.appendChild(newDescNode);
 var newChoicesNode = gobjDatabaseDom.createElement('choices');
-     for(i=0;i<choices.length;i++){
+     for(i=1;i<choices.length;i++){
 	     var newChoiceNode = gobjDatabaseDom.createElement('choice');
 	     newChoiceNode.setAttribute("id",i);
 	     newChoiceNode.setAttribute("name",choices[i]);
@@ -633,29 +671,39 @@ var newChoicesNode = gobjDatabaseDom.createElement('choices');
 	     }
             newPollNode.appendChild(newChoicesNode);
 
-        
+     
             if (contactNodeSet.getLength() == 0) {
-
+   
                 //nobody in the list.
                 gobjDatabaseDomTree.appendChild(newPollNode);
 
-                navigateUserList("first");
+                
                   gCurrentPoll.getParentNode().setAttribute("name",document.getElementById("SessName").value);
           gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("TestMode").checked+"");
           gCurrentPoll.getParentNode().setAttribute("minScore",document.getElementById("MinScore").value+"");
             }
             else {
+	            override=true;
 	              gCurrentPoll.getParentNode().setAttribute("name",document.getElementById("SessName").value);
           gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("TestMode").checked+"");
           gCurrentPoll.getParentNode().setAttribute("minScore",document.getElementById("MinScore").value+"");
                 var nextSib = gCurrentPoll.getNextSibling();
                 if (nextSib) {
+	                
                   gobjDatabaseDomTree.insertBefore(newPollNode, nextSib);
+                  
+                  navigateUserList('next');
+                  
                 }
                 else {
-                  gobjDatabaseDomTree.appendChild(newPollNode);
+	                 
+	                                 gobjDatabaseDomTree.appendChild(newPollNode);
+	                                
+	                                 navigateUserList('next');
+	                                  
                 }
-                navigateUserList("next");
+                 
+                 
             }
         }
 
@@ -685,6 +733,10 @@ function checkSaveStatus() {
         strRet = "Poll Name required";
         return strRet;
     }
+     if (docRef.SessName.value=="") {
+        strRet = "Session Name required";
+        return strRet;
+    }
 
     if((docRef.MinScore.value < 0)||(docRef.MinScore.value > 1)) {
 	    strRet="Invalid minimal score (must be between 0 and 1)";
@@ -702,11 +754,26 @@ function checkSaveStatus() {
     var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
     for (i=1;i<lastRow-9;i++){
-	        if((document.getElementById("choiceRow"+i).value=="")&&(document.getElementById("row"+i).style.display!='none')){
+	        if((document.getElementById("choiceRow"+i).value=="")&&(document.getElementById("row"+i).deleted!='none')){
 	        num=true;
 		        }
 	  	    }
 	  	    if (num) strRet="Choices may not be empty"
+	  	    num=0;
+	  	     for (i=1;i<lastRow-9;i++) {
+		  	     if(document.getElementById("row"+i).deleted!='none') {num++;
+	  	     }
+  	     }
+	  	     if (num<2) strRet="unleast 2 choices needed";
+		  	     num=false;
+	  	     for (i=1;i<lastRow-9;i++){
+		  	      if((document.getElementById("choiceRadio"+i).checked==true)&&(document.getElementById("row"+i).deleted!='none')) {
+			  	      num=true;
+		  	     }			  	     
+	  	      }
+	  	    
+	  	      	  	     if((!num)&&(TestMode)) strRet="you have to select correct choice in test mode";
+	  	    
     return strRet;
 
 }
@@ -715,6 +782,9 @@ function cmdSaveSessionClicked(){
 	if (checkSaveStatus() == "OK_SAVE"){
 	document.getElementById("result").value=gCurrentPoll.getParentNode().getXML();
 	document.getElementById("submitform").submit();
+	
+	
+
 }
 	}
 //formInit();
