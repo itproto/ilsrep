@@ -1,0 +1,16 @@
+15 Oct 2008 16:39:33 INFO  [category:PollServer.PollServer] - Server started on host: 0.0.0.0:3320
+15 Oct 2008 16:39:34 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+15 Oct 2008 16:39:40 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:1195 connected
+15 Oct 2008 16:39:40 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+15 Oct 2008 16:40:20 INFO  [category:PollServer.PollServer] - New user created: test1
+15 Oct 2008 16:40:27 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:1195
+15 Oct 2008 16:40:42 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:1195
+15 Oct 2008 16:41:20 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:1195
+15 Oct 2008 16:41:29 INFO  [category:PollServer.PollServer] - Pollsession 2 changed by 127.0.0.1:1195
+15 Oct 2008 16:41:29 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:1195
+15 Oct 2008 16:41:42 INFO  [category:PollServer.PollServer] - Pollsession 2 removed by 127.0.0.1:1195
+15 Oct 2008 16:41:42 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:1195
+15 Oct 2008 16:43:16 INFO  [category:PollServer.PollServer] - Pollsession 3 created by 127.0.0.1:1195
+15 Oct 2008 16:43:16 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:1195
+15 Oct 2008 16:43:22 INFO  [category:PollServer.PollServer] - Pollsession 3 sent to 127.0.0.1:1195
+15 Oct 2008 16:43:44 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:1195 disconnected
