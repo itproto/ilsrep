@@ -75,7 +75,7 @@ resultingOutput+="<tr><td><input type='radio' name='choice' value='custom_choice
 if(!(Integer.parseInt(polli)<sess.getPolls().size()-1)) {
 	resultingOutput+="<tr><td><input type='hidden' value='1' name='res' ></td></tr>\n";
 	}
-resultingOutput+="<tr><td><Input type='hidden' name='poll' value='"+Integer.toString(Integer.parseInt(polli)+1)+"'><img src='./images/cmdMoveNext.png'onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' onClick='document.getElementById(\"polls\").submit();' name=\"cmdMoveNext\" id=\"cmdMoveNext\" ></td></tr></table>";
+resultingOutput+="<tr><td align=center><Input type='hidden' name='poll' value='"+Integer.toString(Integer.parseInt(polli)+1)+"'><img src='./images/cmdMoveNext.png'onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' onClick='document.getElementById(\"polls\").submit();' name=\"cmdMoveNext\" id=\"cmdMoveNext\" ></td></tr></table>";
 resultingOutput+="</div></form>";
 }
 if (Integer.parseInt(polli)==sess.getPolls().size()) resultingOutput=getRes(hsession.getAttribute("answers"));
