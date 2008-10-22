@@ -146,7 +146,7 @@ function addRowToTable(name_ch,checked_is,statetoggle)
   var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
   // if there's no header row in the table, then iteration = lastRow + 1
-  var iteration = lastRow-8;
+  var iteration = lastRow-9;
   var row = tbl.insertRow(lastRow);
 
   // left cell
@@ -209,7 +209,7 @@ function clearform() {
     document.getElementById("PollName").value = "";
     document.getElementById("PollDesc").value = "";
    docRef.Custom.checked=false;
-var lgh=document.getElementById('polltbl').rows.length-9;
+var lgh=document.getElementById('polltbl').rows.length-10;
  for(i=0;i<lgh;i++){
 	 	 	 RemoveRow();
 	 	 		 	 	
@@ -242,7 +242,7 @@ function delRow(){
 	
 	if((1*numvis)<3){
 		
-		for (i=1;i<lastRow-8;i++){
+		for (i=1;i<lastRow-9;i++){
 	   document.getElementById("choiceAct"+i).src="../images/but2d.png";
 	   document.getElementById("choiceAct"+i).disabled=true;
 	 
@@ -257,8 +257,8 @@ function delRow(){
 		var numvis=0;
 	  var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
-	for (i=lastRow-9;i>0;i--){
-		
+	for (i=lastRow-10;i>0;i--){
+
 	if  (document.getElementById("row"+i).style.display!='none'){
 					numvis++;
 		}
@@ -268,7 +268,7 @@ function delRow(){
 	
 	if((1*numvis)<3){
 		
-		for (i=1;i<lastRow-8;i++){
+		for (i=1;i<lastRow-9;i++){
 	   document.getElementById("choiceAct"+i).src="../images/but2d.png";
 	   document.getElementById("choiceAct"+i).disabled=true;
 	 
@@ -351,7 +351,7 @@ function setEditBoxDisabledState(state) {
         docRef.TestMode.disabled = state;
     var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
-  for (i=1;i<lastRow-8;i++){
+  for (i=1;i<lastRow-9;i++){
 	  document.getElementById("choiceRow"+i).disabled=state;
 	  document.getElementById("choiceRadio"+i).disabled=state;
 	   document.getElementById("choiceAct"+i).disabled=state;
@@ -404,7 +404,7 @@ function addUserRowToTable(){
   var lastRow = tbl.rows.length;
 	
 	
-		for (i=1;i<lastRow-8;i++){
+		for (i=1;i<lastRow-9;i++){
 	   document.getElementById("choiceAct"+i).disabled=false;
 	   document.getElementById("choiceAct"+i).src="../images/but2.png";
 	  }		
@@ -419,7 +419,7 @@ function addUserRowToTable(){
 			if(document.getElementById("MinScore").value=="") document.getElementById("MinScore").value="0.1";
 			document.getElementById("Custom").disabled=TestMode;
 			var need=false;
-				 for (i=1;i<lastRow-8;i++){
+				 for (i=1;i<lastRow-9;i++){
 		  document.getElementById("choiceRadio"+i).disabled=!TestMode;
 		  		  if (document.getElementById("choiceRadio"+i).checked==true){
 			  		 
@@ -432,7 +432,7 @@ function addUserRowToTable(){
 		
 		  
 		
-		  for (i=1;i<lastRow-8;i++){
+		  for (i=1;i<lastRow-9;i++){
 		
 			  if (document.getElementById("row"+i).style.display=="") {
 				   document.getElementById("choiceRadio"+i).checked=true;
@@ -556,7 +556,7 @@ var tbl = document.getElementById('polltbl');
         var choices= new Array();
         var correct_num;
         var n=0;
-        for (i=1;i<lastRow-8;i++){
+        for (i=1;i<lastRow-9;i++){
 	        if((document.getElementById("row"+i).deleted!='none')){
 		         n++;
 	  choices[n]=document.getElementById("choiceRow"+i).value;
@@ -693,7 +693,7 @@ function checkSaveStatus() {
     var num=false;
     var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
-    for (i=1;i<lastRow-8;i++){
+    for (i=1;i<lastRow-9;i++){
 	        if((document.getElementById("choiceRow"+i).value=="")&&(document.getElementById("row"+i).style.display!='none')){
 	        num=true;
 		        }
@@ -810,7 +810,7 @@ this.src='../images/but2pr.png';
             document.getElementById('cmdDelete').style.display=state;
              document.getElementById('cmdAddNew').style.display=state;
              
-              for (i=1;i<lastRow-8;i++){
+              for (i=1;i<lastRow-9;i++){
 	        if((document.getElementById("row"+i).deleted!='none')){
 		      
 	  document.getElementById("row"+i).style.display='none';
@@ -829,7 +829,7 @@ this.src='../images/but2pr.png';
   var lastRow = tbl.rows.length;
 		choicetoggle=!choicetoggle;
 			state= choicetoggle ? "" : "none";
-			     for (i=1;i<lastRow-8;i++){
+			     for (i=1;i<lastRow-9;i++){
 		 if((document.getElementById("row"+i).deleted!='none')){
 		      
 	  document.getElementById("row"+i).style.display=state;
