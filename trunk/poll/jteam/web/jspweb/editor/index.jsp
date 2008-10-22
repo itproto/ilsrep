@@ -10,8 +10,22 @@
 <meta name="keywords" content="jsp, jteam, poll" />
 <meta name="description" content="jteam jsp poll client" />
 <link rel="stylesheet" type="text/css" href="../class.css" />
+<script type='text/javascript'>
+var start=0;
+function allow(){
+	start++;
+	if ((start==5)&&(document.getElementById("frmEdit")!=null)) startedit();
+	}
+
+</script>
+  <script type="text/javascript" src="./xmlw3cdom.js" onload="allow();"></script>
+    <script type="text/javascript" src="./xmlsax.js" onload="allow();" ></script>
+   <script type="text/javascript" src="./formfunctions.js" onload="allow();"></script> 
+   <script type="text/javascript" src="./xmlEscape.js" onload="allow();"></script> 
+   <!--[if IE]><script defer src="ie_onload.js"></script><![endif]-->
+
 </head>
-<body>
+<body onload="allow();">
 
 <div id="outer">
 
@@ -26,7 +40,8 @@
 				 String res=(session.getAttribute("username")==null) ? reg : logout;
 				 out.println(res);
 				 %>
-				<li><a href="./../index.jsp">Poll Client</a></li> 
+				<li><a href="./../index.jsp">Poll Client</a> <font color=white>| 
+				Poll Editor </font> </li> 
 			</ul>
 		</div>
 	</div>
@@ -77,10 +92,7 @@ if(request.getParameter("session")!=null){
 <div id="footer">
 	&copy; 2008 InterLogic. Design by Dracony
 </div>
-    <script type="text/javascript" src="./xmlw3cdom.js"></script>
-    <script type="text/javascript" src="./xmlsax.js"></script>
-   <script type="text/javascript" src="./formfunctions.js"></script> 
-   <script type="text/javascript" src="./xmlEscape.js"></script> 
+  
  
 </body>
 </html>

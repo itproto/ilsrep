@@ -9,10 +9,11 @@ var maxid;
 var contactNodeSet;
 var firstrun=false;
 var toggle=true;
+var choicetoggle=false;
 function navigateUserList(direction) {
 		     switch (direction) {
         case "next":
-     cmdSaveClicked();
+            cmdSaveClicked();
     if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = gCurrentPoll.getNextSibling();
            }
@@ -28,6 +29,7 @@ function navigateUserList(direction) {
         case "first":
        if(!firstrun) cmdSaveClicked();
        if ((checkSaveStatus() == "OK_SAVE")||firstrun){  
+	      
           contactNodeSet = gobjDatabaseDomTree.getChildNodes();
             gCurrentPoll = contactNodeSet.item(0);
         }
@@ -52,6 +54,7 @@ function navigateUserList(direction) {
     setNavigationButtonStateForEOFandBOF();
 }
 function displayUserData(user) {
+	 
 	clearform();
 sess=user.getParentNode();
 	 docRef.SessName.value=sess.getAttribute("name");
@@ -87,15 +90,15 @@ var a=user.getElementsByTagName("choice").item(i).getAttribute("id")*1;
 var b=user.getAttribute("correctChoice")*1;
 
 		       if((a*1)==(b*1)) {
-			     
-			       addRowToTable(name_ch,true,true);
+			     			       addRowToTable(name_ch,true,choicetoggle);
+			     			       
 			     
 	     } else { 
-		     addRowToTable(name_ch,false,true);
+		     addRowToTable(name_ch,false,choicetoggle);
 	     }
  }   
   else { 
-		     addRowToTable(name_ch,false,true);
+		     addRowToTable(name_ch,false,choicetoggle);
 	     } 
 	     
 	    }
@@ -106,6 +109,10 @@ checkvis();
 function formInit() {
     //first set up the database object. In this test case, I know I have data,
     var parser = new DOMImplementation();
+    docRef = document.getElementById("frmEdit");
+    gEditStatus = "edit";
+ firstrun=false;
+ toggle=true;
     gobjDatabaseDom = parser.loadXML(docRef.txtDatabase.value);
     gobjDatabaseDomTree = gobjDatabaseDom.getDocumentElement();
     
@@ -115,13 +122,13 @@ function formInit() {
     if(document.getElementById("sessiontype").value=="new"){
 	    	    gCurrentPoll = gobjDatabaseDomTree;
 	     //setNavigationButtonsDisabledState(true);
-            document.getElementById("plnm").style.display='none';
+           /* document.getElementById("plnm").style.display='none';
             document.getElementById("pldsc").style.display='none';
             document.getElementById("cuc").style.display='none';
             document.getElementById("coc").style.display='none';
             document.getElementById("cmdSend").disabled=true;;
              document.getElementById("cmdDelete").disabled=true;;
-             //	 document.getElementById("cmdEdit").disabled=true;;
+             //	 document.getElementById("cmdEdit").disabled=true;;*/
 	     contactNodeSet = gobjDatabaseDomTree.getChildNodes();
 	     
 	    } else {
@@ -132,9 +139,9 @@ function formInit() {
  
 
 } 
-function addRowToTable(name_ch,checked_is,state)
+function addRowToTable(name_ch,checked_is,statetoggle)
 {
-	
+	statetoggle=statetoggle ? "" : "none";
 	state=true;
   var tbl = document.getElementById('polltbl');
   var lastRow = tbl.rows.length;
@@ -146,6 +153,7 @@ function addRowToTable(name_ch,checked_is,state)
   row.disbaled=true;
   row.id="row"+iteration;
   row.deleted="not";
+  row.style.display=statetoggle;
   if (navigator.appName=="Microsoft Internet Explorer");
   var cellLeft = row.insertCell(0);
   var el="";
@@ -157,6 +165,7 @@ function addRowToTable(name_ch,checked_is,state)
 	}
 
   el.type = 'radio';
+  el.correct=checked_is;
   el.checked=checked_is;
   el.name = 'pollchoices';
   el.id = 'choiceRadio' + iteration;
@@ -388,7 +397,7 @@ function cmdCancelClicked() {
 } 
 function addUserRowToTable(){
 
-	addRowToTable("",false,true);
+	addRowToTable("",false,choicetoggle);
 	
 	
 	  var tbl = document.getElementById('polltbl');
@@ -449,9 +458,9 @@ function cmdAddNewClicked() {
     clearform();
     
     
-addRowToTable("",true,true);
-addRowToTable("",false,true);
-addRowToTable("",false,true);
+addRowToTable("",true,choicetoggle);
+addRowToTable("",false,choicetoggle);
+addRowToTable("",false,choicetoggle);
 
 TestMode=!TestMode;
 onTestMode();
@@ -591,7 +600,7 @@ gCurrentPoll.getParentNode().setAttribute("testMode",document.getElementById("Te
 	         newChoicesNode.appendChild(newChoiceNode);
 	     }
 	     gCurrentPoll.appendChild(newChoicesNode);
-          navigateUserList("current");
+        navigateUserList("current");
         }
         else {
 	      
@@ -700,7 +709,7 @@ function cmdSaveSessionClicked(){
 	document.getElementById("submitform").submit();
 }
 	}
-formInit();
+//formInit();
 
 function hoverButPlus(obj){
 	document.getElementById(obj).src='../images/butp.png';
@@ -795,17 +804,39 @@ this.src='../images/but2pr.png';
        document.getElementById('pllname').style.display=state;
         document.getElementById('polldescription').style.display=state;
                document.getElementById('customch').style.display=state;
-       document.getElementById('correctc').style.display=state;
+       document.getElementById('correctc').style.display="none";
          document.getElementById('navi').style.display=state;
-           document.getElementById('cmdAddChoice').style.display=state;
+           document.getElementById('adpolltosession').style.display=state;
             document.getElementById('cmdDelete').style.display=state;
              document.getElementById('cmdAddNew').style.display=state;
+             
               for (i=1;i<lastRow-8;i++){
 	        if((document.getElementById("row"+i).deleted!='none')){
 		      
-	  document.getElementById("row"+i).style.display=state;
+	  document.getElementById("row"+i).style.display='none';
 	    }
 			
 			}
+			choicetoggle=false;
 		}
-		cmdTogglePoll();
+		function startedit(){
+	formInit();
+				cmdTogglePoll();
+				
+	}
+	function cmdToggleChoice() {
+		 var tbl = document.getElementById('polltbl');
+  var lastRow = tbl.rows.length;
+		choicetoggle=!choicetoggle;
+			state= choicetoggle ? "" : "none";
+			     for (i=1;i<lastRow-8;i++){
+		 if((document.getElementById("row"+i).deleted!='none')){
+		      
+	  document.getElementById("row"+i).style.display=state;
+	 
+	    }
+			
+			}
+		document.getElementById('cmdAddChoice').style.display=state;
+		document.getElementById('correctc').style.display=state;
+		}
