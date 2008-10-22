@@ -809,7 +809,7 @@ this.src='../images/but2pr.png';
            document.getElementById('adpolltosession').style.display=state;
             document.getElementById('cmdDelete').style.display=state;
              document.getElementById('cmdAddNew').style.display=state;
-             
+             document.getElementById('cmdAddChoice').style.display='none';
               for (i=1;i<lastRow-9;i++){
 	        if((document.getElementById("row"+i).deleted!='none')){
 		      
