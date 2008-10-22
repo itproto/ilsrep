@@ -21,12 +21,13 @@
 			<ul>
 					<%
 				
-			String reg="<li class=\"first\"><a href=\"./../index.jsp?register=true\">Register</a></li>";
+			String reg="<li class=\"first\"><a href=\"./index.jsp?register=true\">Register</a></li>";
 				 String logout="<li><a href=\"./index.jsp?logout=true\">Logout</a></li>";
 				 String res=(session.getAttribute("username")==null) ? reg : logout;
 				 out.println(res);
 				 %>
-				<li><a href="./editor/index.jsp">Poll Editor</a></li>
+				<li> <font color=white> Poll Client | </font>
+				<a href="./editor/index.jsp">Poll Editor</a></li>
 			</ul>
 		</div>
 	</div>
