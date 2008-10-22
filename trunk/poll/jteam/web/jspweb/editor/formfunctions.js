@@ -13,33 +13,41 @@ var choicetoggle=false;
 function navigateUserList(direction) {
 		     switch (direction) {
         case "next":
+		if(document.getElementById("cmdMoveNext").disabled==false){
             cmdSaveClicked();
     if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = gCurrentPoll.getNextSibling();
            }
+		   }
             break;
 
         case "previous":
+		if(document.getElementById("cmdMovePrevious").disabled==false){
         cmdSaveClicked();
         if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = gCurrentPoll.getPreviousSibling();
         }
+		}
             break;
 
         case "first":
+		if(firstrun || (document.getElementById("cmdMoveFirst").disabled==false)){
        if(!firstrun) cmdSaveClicked();
        if ((checkSaveStatus() == "OK_SAVE")||firstrun){  
 	      
           contactNodeSet = gobjDatabaseDomTree.getChildNodes();
             gCurrentPoll = contactNodeSet.item(0);
         }
+		}
             break;
 
         case "last":
+		if(document.getElementById("cmdMoveLast").disabled==false){
         cmdSaveClicked();
         if (checkSaveStatus() == "OK_SAVE"){
             gCurrentPoll = contactNodeSet.item(contactNodeSet.getLength() -1);
         }
+		}
             break;
 
     } // end switch
