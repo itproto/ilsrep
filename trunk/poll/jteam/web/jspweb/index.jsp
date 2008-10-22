@@ -20,10 +20,26 @@
 		<div id="menu">
 			<ul>
 					<%
-				
+					String output="";
+						if ((request.getParameter("logout")!=null)) {
+				session.removeAttribute("username");
+				output=(login(session,request.getParameter("name"),request.getParameter("password")));
+					} else {
+				if(request.getParameter("register")==null){
+if((request.getParameter("session")!=null) && (request.getParameter("poll")!=null ) && (session.getAttribute("username")!=null)) {
+output=(getPoll(request.getParameter("session"),request.getParameter("poll"),  session, request.getParameter("choice"),request.getParameter("custom")));
+} else {
+
+output=(login(session,request.getParameter("name"),request.getParameter("password")));
+}
+} else {
+	output=(register(request.getParameter("name"),request.getParameter("password"),request.getParameter("password2")));
+	}
+}
+
 			String reg="<li class=\"first\"><a href=\"./index.jsp?register=true\">Register</a></li>";
 				 String logout="<li><a href=\"./index.jsp?logout=true\">Logout</a></li>";
-				 String res=(session.getAttribute("username")==null) ? reg : logout;
+				 String res=((session.getAttribute("username")==null)||(request.getParameter("logout")!=null)) ? reg : logout;
 				 out.println(res);
 				 %>
 				<li> <font color=white> Poll Client | </font>
@@ -42,21 +58,7 @@
 				<!-- Main start -->
 	
 				<%
-				if ((request.getParameter("logout")!=null)) {
-				session.removeAttribute("username");
-				out.println(login(session,request.getParameter("name"),request.getParameter("password")));
-					} else {
-				if(request.getParameter("register")==null){
-if((request.getParameter("session")!=null) && (request.getParameter("poll")!=null ) && (session.getAttribute("username")!=null)) {
-out.println(getPoll(request.getParameter("session"),request.getParameter("poll"),  session, request.getParameter("choice"),request.getParameter("custom")));
-} else {
-
-out.println(login(session,request.getParameter("name"),request.getParameter("password")));
-}
-} else {
-	out.println(register(request.getParameter("name"),request.getParameter("password"),request.getParameter("password2")));
-	}
-}
+		out.println(output);
  %>				
 				
 				<!-- Main End -->

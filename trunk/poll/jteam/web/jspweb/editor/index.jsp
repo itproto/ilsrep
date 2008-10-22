@@ -1,5 +1,4 @@
 <%@ include file="./poll.jsp" %>
-<%@ include file="./links.jsp" %>
 <%@ include file="./save.jsp" %>
 <%@page import="javax.servlet.ServletRequest"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -37,7 +36,7 @@ function allow(){
 				
 			String reg="<li class=\"first\"><a href=\"./../index.jsp?register=true\">Register</a></li>";
 				 String logout="<li><a href=\"./../index.jsp?logout=true\">Logout</a></li>";
-				 String res=(session.getAttribute("username")==null) ? reg : logout;
+				 String res=((session.getAttribute("username")==null)||(request.getParameter("logout")!=null)) ? reg : logout;
 				 out.println(res);
 				 %>
 				<li><a href="./../index.jsp">Poll Client</a> <font color=white>| 
@@ -59,7 +58,7 @@ if(request.getParameter("result")==null){
 if(request.getParameter("session")!=null){
 	out.println(editPoll(request.getParameter("session"),(String)session.getAttribute("username")));
 	} else {
-	out.println(links()); 
+	out.println(links(false)); 
 	
 		}
 		} else {
@@ -77,7 +76,7 @@ if(request.getParameter("session")!=null){
 		<div id="side">
 			<!-- Side start -->
 
-<% out.println(links()); 
+<% out.println(links(true)); 
 
 %>
 				
