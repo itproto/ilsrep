@@ -43,16 +43,16 @@ JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
 	"<tr id='pllname'><td>Poll Name:</td><td  colspan=2><input type=\"text\" name=\"PollName\" id=\"PollName\" ></td></tr>"+
 	"<tr id='polldescription'><td>Poll Desc:</td><td  colspan=2><input type=\"text\" name=\"PollDesc\" id=\"PollDesc\" ></td></tr>"+
 	"<tr id='customch'><td>Allow custom choice</td><td colspan=2><INPUT TYPE=\"checkbox\" NAME=\"Custom\" id=\"Custom\"  ></td></tr>"+
-	"<tr id='correctc'><td>Correct choice</td><td colspan=2>Choice option</td></tr>"+
-	"<tr id='adpolltosession'><td COLSPAN=2><img src=\"../images/but.png\" name=\"cmdAddChoice\" id=\"cmdAddChoice\" class=\"actionButton\" value=\"Add Choice\" title=\"Add Choice\"  onMouseover='hoverButPlus(\"cmdAddChoice\")' onMouseout='outButPlus(\"cmdAddChoice\")' onMousedown='pressButPlus(\"cmdAddChoice\")' onMouseup='releaseButPlus(\"cmdAddChoice\")' onclick=\"addUserRowToTable()\"><img src=\"../images/cmdEditChoice.png\" name=\"cmdEditChoice\" id=\"cmdEditChoice\" onMouseover='navOver(\"cmdEditChoice\")' onMouseout='navOut(\"cmdEditChoice\")' onMousedown='navDown(\"cmdEditChoice\")' onMouseup='navUp(\"cmdEditChoice\")'  class=\"actionButton\"   onclick=\"cmdToggleChoice()\"></td></tr>"+
-	"</table>"+
-	"<div id=\"navi\" style=\"text-align: center\">"+
+	"<tr id=\"navi\" style=\"text-align: center\"><td colspan=2>"+
 	"<img src=\"../images/cmdMoveFirst.png\" onMouseover='navOver(\"cmdMoveFirst\")' onMouseout='navOut(\"cmdMoveFirst\")' onMousedown='navDown(\"cmdMoveFirst\")' onMouseup='navUp(\"cmdMoveFirst\")' name=\"cmdMoveFirst\" id=\"cmdMoveFirst\" class=\"navigation\"   onclick=\"navigateUserList(\'first\')\">"+
     "<img src=\"../images/cmdMovePrevious.png\"  onMouseover='navOver(\"cmdMovePrevious\")' onMouseout='navOut(\"cmdMovePrevious\")' onMousedown='navDown(\"cmdMovePrevious\")' onMouseup='navUp(\"cmdMovePrevious\")' name=\"cmdMovePrevious\" id=\"cmdMovePrevious\" class=\"navigation\"  onclick=\"navigateUserList(\'previous\')\">"+
     "<img src=\"../images/cmdMoveNext.png\"  onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' name=\"cmdMoveNext\" id=\"cmdMoveNext\" class=\"navigation\"   onclick=\"navigateUserList(\'next\')\">"+
     "<img src=\"../images/cmdMoveLast.png\"  onMouseover='navOver(\"cmdMoveLast\")' onMouseout='navOut(\"cmdMoveLast\")' onMousedown='navDown(\"cmdMoveLast\")' onMouseup='navUp(\"cmdMoveLast\")' name=\"cmdMoveLast\" id=\"cmdMoveLast\" class=\"navigation\"   onclick=\"navigateUserList(\'last\')\">"+
-    "</div>"+
-    "<div style=\"text-align: center\">"+
+    "</td></tr>"+
+	"<tr id='correctc'><td>Correct choice</td><td colspan=2>Choice option</td></tr>"+
+	"<tr id='adpolltosession'><td COLSPAN=2><img src=\"../images/but.png\" name=\"cmdAddChoice\" id=\"cmdAddChoice\" class=\"actionButton\" value=\"Add Choice\" title=\"Add Choice\"  onMouseover='hoverButPlus(\"cmdAddChoice\")' onMouseout='outButPlus(\"cmdAddChoice\")' onMousedown='pressButPlus(\"cmdAddChoice\")' onMouseup='releaseButPlus(\"cmdAddChoice\")' onclick=\"addUserRowToTable()\"><img src=\"../images/cmdEditChoice.png\" name=\"cmdEditChoice\" id=\"cmdEditChoice\" onMouseover='navOver(\"cmdEditChoice\")' onMouseout='navOut(\"cmdEditChoice\")' onMousedown='navDown(\"cmdEditChoice\")' onMouseup='navUp(\"cmdEditChoice\")'  class=\"actionButton\"   onclick=\"cmdToggleChoice()\"></td></tr>"+
+	"</table>"+
+	"<div style=\"text-align: center\">"+
     ""+
     "</div>"+
     "<textarea id=\"txtDatabase\" style=\"display: none;\" rows=\"1\" cols=\"1 \">"+
