@@ -592,7 +592,7 @@ var tbl = document.getElementById('polltbl');
         var pollDesc = docRef.PollDesc.value;
         var customChoice=docRef.Custom.checked.toString();
         var choices= new Array();
-        var correct_num;
+        var correct_num=1;
         var n=0;
         for (i=1;i<lastRow-9;i++){
 	        if((document.getElementById("row"+i).deleted!='none')){
