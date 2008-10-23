@@ -43,7 +43,7 @@ public partial class _Default : System.Web.UI.Page
                     curResult.answerId = Convert.ToInt32(Request["choice"]);
                     resultsList.results.Add(curResult);
 
-                    if (Convert.ToInt32(Session["pollIndex"]) == pollSession.polls.Count - 1)
+                    if (Convert.ToInt32(Session["pollIndex"]) == pollSession.Polls.Count - 1)
                     {
                         Response.Redirect("?action=showresults");
                     }
@@ -57,7 +57,7 @@ public partial class _Default : System.Web.UI.Page
                     pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
                     Session["pollSession"] = pollSession;
                     Session["pollIndex"] = 0;
-                    resultsList.pollsessionId = pollSession.id;
+                    resultsList.pollsessionId = pollSession.Id;
                     Session["resultsList"] = resultsList;
                 }
                 break;

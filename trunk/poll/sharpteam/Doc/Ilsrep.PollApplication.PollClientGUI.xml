@@ -73,6 +73,11 @@
             History of changes
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.idGenerator">
+            <summary>
+            Generate new negative PollSession id
+            </summary>
+        </member>
         <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.GetPollSessions">
             <summary>
             Get pollsession list and show them in the list box
@@ -105,11 +110,6 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
-        </member>
-        <member name="T:Ilsrep.PollApplication.PollClientGUI.MainForm.IDGenerator">
-            <summary>
-            IDGenerator
-            </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.Properties.Resources">
             <summary>

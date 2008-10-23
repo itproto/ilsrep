@@ -53,5 +53,10 @@
             checks if client is connected
             </summary>
         </member>
+        <member name="T:Ilsrep.Common.IDGenerator">
+            <summary>
+            IDGenerator
+            </summary>
+        </member>
     </members>
 </doc>

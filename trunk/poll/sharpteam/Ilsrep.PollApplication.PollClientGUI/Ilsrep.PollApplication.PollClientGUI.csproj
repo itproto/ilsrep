@@ -136,6 +136,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\delete.png" />
+    <None Include="Resources\bullet_go.png" />
+    <None Include="Resources\accept.png" />
+    <None Include="Resources\cancel.png" />
     <Content Include="Settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

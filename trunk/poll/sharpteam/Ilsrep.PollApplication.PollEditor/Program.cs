@@ -120,17 +120,17 @@ namespace Ilsrep.PollApplication.PollEditor
                 pollSession = pollPacket.pollSession;
             }
 
-            pollSession.name = InputHelper.AskQuestion("Enter pollsession name:", pollSession.name, null);
-            pollSession.testMode = InputHelper.ToBoolean(InputHelper.AskQuestion("Test mode[y/n]?", InputHelper.ToString(pollSession.testMode), new string[] { STRING_YES, STRING_NO }));
+            pollSession.Name = InputHelper.AskQuestion("Enter pollsession name:", pollSession.Name, null);
+            pollSession.TestMode = InputHelper.ToBoolean(InputHelper.AskQuestion("Test mode[y/n]?", InputHelper.ToString(pollSession.TestMode), new string[] { STRING_YES, STRING_NO }));
 
-            if (pollSession.testMode == true)
+            if (pollSession.TestMode == true)
             {
                 while (true)
                 {
                     try
                     {
-                        pollSession.minScore = Convert.ToDouble(InputHelper.AskQuestion("Min score to pass test:", Convert.ToString(pollSession.minScore, cultureInfo), null), cultureInfo);
-                        if (pollSession.minScore > 1 || pollSession.minScore < 0)
+                        pollSession.MinScore = Convert.ToDouble(InputHelper.AskQuestion("Min score to pass test:", Convert.ToString(pollSession.MinScore, cultureInfo), null), cultureInfo);
+                        if (pollSession.MinScore > 1 || pollSession.MinScore < 0)
                             throw new Exception("min score must be between 0 and 1");
                         break;
                     }
@@ -144,9 +144,9 @@ namespace Ilsrep.PollApplication.PollEditor
             
             while(true)
             {
-                Console.WriteLine("Poll session contains {0} polls.", pollSession.polls.Count);
+                Console.WriteLine("Poll session contains {0} polls.", pollSession.Polls.Count);
                 
-                if (pollSession.polls.Count > 0)
+                if (pollSession.Polls.Count > 0)
                 {
                     Console.WriteLine( "Actions:" );
                     Console.WriteLine( "1. Add new poll" );
@@ -167,10 +167,10 @@ namespace Ilsrep.PollApplication.PollEditor
                         case 2:
                             index = 0;
                             Console.WriteLine("List of polls:");
-                            foreach (Poll poll in pollSession.polls)
+                            foreach (Poll poll in pollSession.Polls)
                             {
                                 index++;
-                                Console.WriteLine("{0}. {1}", index, poll.name);
+                                Console.WriteLine("{0}. {1}", index, poll.Name);
                             }
 
                             userChoice = InputHelper.AskQuestion(String.Format("Choose which one to edit [1-{0}]:", index), 1, index);
@@ -180,13 +180,13 @@ namespace Ilsrep.PollApplication.PollEditor
                         case 3:
                             index = 0;
                             Console.WriteLine("List of polls:");
-                            foreach (Poll poll in pollSession.polls)
+                            foreach (Poll poll in pollSession.Polls)
                             {
                                 index++;
-                                Console.WriteLine("{0}. {1}", index, poll.name);
+                                Console.WriteLine("{0}. {1}", index, poll.Name);
                             }
 
-                            pollSession.polls.RemoveAt(InputHelper.AskQuestion(String.Format("Choose which one to delete [1-{0}]:", index), 1, index)-1);
+                            pollSession.Polls.RemoveAt(InputHelper.AskQuestion(String.Format("Choose which one to delete [1-{0}]:", index), 1, index)-1);
                         break;
                     }
                 }
@@ -227,29 +227,29 @@ namespace Ilsrep.PollApplication.PollEditor
 
             if ( index == -1 )
             {
-                pollSession.polls.Add( new Poll() );
-                index = pollSession.polls.Count - 1;
+                pollSession.Polls.Add( new Poll() );
+                index = pollSession.Polls.Count - 1;
 
-                newPoll = pollSession.polls[index];
+                newPoll = pollSession.Polls[index];
 
-                newPoll.id = 0;
-                newPoll.correctChoiceID = 0;
+                newPoll.Id = 0;
+                newPoll.CorrectChoiceID = 0;
             }
             else
             {
-                newPoll = pollSession.polls[index];
+                newPoll = pollSession.Polls[index];
             }
 
 
-            newPoll.name = InputHelper.AskQuestion( "Poll name:", newPoll.name, null );
-            newPoll.description = InputHelper.AskQuestion( "Poll description:", newPoll.description, null );
+            newPoll.Name = InputHelper.AskQuestion( "Poll name:", newPoll.Name, null );
+            newPoll.Description = InputHelper.AskQuestion( "Poll description:", newPoll.Description, null );
 
             while ( true )
             {
                 int choiceIndex;
-                Console.WriteLine( "Poll contains {0} choices.", newPoll.choices.Count );
+                Console.WriteLine( "Poll contains {0} choices.", newPoll.Choices.Count );
 
-                if ( newPoll.choices.Count >= (pollSession.testMode ? 2 : 0) )
+                if ( newPoll.Choices.Count >= (pollSession.TestMode ? 2 : 0) )
                 {
                     Console.WriteLine( "Actions:" );
                     Console.WriteLine( "1. Add new choice" );
@@ -264,23 +264,23 @@ namespace Ilsrep.PollApplication.PollEditor
                     switch ( userChoice )
                     {
                         case 1:
-                            choiceIndex = newPoll.choices.Count;
-                            newPoll.choices.Add( new Choice() );
-                            newPoll.choices[choiceIndex].id = 0;
-                            newPoll.choices[choiceIndex].choice = InputHelper.AskQuestion( "Choice name:", null );
-                            newPoll.choices[choiceIndex].parent = newPoll;
+                            choiceIndex = newPoll.Choices.Count;
+                            newPoll.Choices.Add( new Choice() );
+                            newPoll.Choices[choiceIndex].Id = 0;
+                            newPoll.Choices[choiceIndex].choice = InputHelper.AskQuestion( "Choice name:", null );
+                            newPoll.Choices[choiceIndex].parent = newPoll;
 
                             Console.WriteLine( "Choice added!" );
                             break;
                         case 2:
                             choiceIndex = newPoll.GetChoiceId();
-                            newPoll.choices[choiceIndex-1].choice = InputHelper.AskQuestion( "Choice name:", newPoll.choices[choiceIndex-1].choice, null );
+                            newPoll.Choices[choiceIndex-1].choice = InputHelper.AskQuestion( "Choice name:", newPoll.Choices[choiceIndex-1].choice, null );
 
                             Console.WriteLine( "Choice edited!" );
                             break;
                         case 3:
                             choiceIndex = newPoll.GetChoiceId();
-                            newPoll.choices.RemoveAt( choiceIndex-1 );
+                            newPoll.Choices.RemoveAt( choiceIndex-1 );
 
                             Console.WriteLine( "Choice deleted!" );
                             break;
@@ -292,26 +292,26 @@ namespace Ilsrep.PollApplication.PollEditor
                     if ( addNewChoice == false )
                         break;*/
 
-                    choiceIndex = newPoll.choices.Count;
-                    newPoll.choices.Add( new Choice() );
-                    newPoll.choices[choiceIndex].id = 0;
-                    newPoll.choices[choiceIndex].choice = InputHelper.AskQuestion( "Choice name:", null );
-                    newPoll.choices[choiceIndex].parent = newPoll;
+                    choiceIndex = newPoll.Choices.Count;
+                    newPoll.Choices.Add( new Choice() );
+                    newPoll.Choices[choiceIndex].Id = 0;
+                    newPoll.Choices[choiceIndex].choice = InputHelper.AskQuestion( "Choice name:", null );
+                    newPoll.Choices[choiceIndex].parent = newPoll;
 
                     Console.WriteLine( "Choice added!" );
                 }
             }
 
-            if ( pollSession.testMode == false )
+            if ( pollSession.TestMode == false )
             {
                 // Enable CustomChoice automaticly if user doesn't inputed any choice
-                if ( newPoll.choices.Count == 0 )
+                if ( newPoll.Choices.Count == 0 )
                 {
-                    newPoll.customChoiceEnabled = true;
+                    newPoll.CustomChoiceEnabled = true;
                 }
                 else
                 {
-                    newPoll.customChoiceEnabled = InputHelper.ToBoolean( InputHelper.AskQuestion( "Enable custom choice for this poll[y/n]?", InputHelper.ToString( newPoll.customChoiceEnabled ), new string[] { STRING_YES, STRING_NO } ) );
+                    newPoll.CustomChoiceEnabled = InputHelper.ToBoolean( InputHelper.AskQuestion( "Enable custom choice for this poll[y/n]?", InputHelper.ToString( newPoll.CustomChoiceEnabled ), new string[] { STRING_YES, STRING_NO } ) );
                 }
             }
             else
@@ -323,7 +323,7 @@ namespace Ilsrep.PollApplication.PollEditor
 
                 // Ask correct choice
                 Console.WriteLine("Which one is correct?");
-                newPoll.correctChoiceID = newPoll.GetChoiceId();
+                newPoll.CorrectChoiceID = newPoll.GetChoiceId();
             }
         }
 
