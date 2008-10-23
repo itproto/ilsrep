@@ -289,15 +289,15 @@ namespace Ilsrep.PollApplication.PollServer
                         break;
                     case Request.GET_POLLSESSION:
                         sendPacket.pollSession = PollDAL.GetPollSession(Convert.ToInt32(receivedPacket.request.id));
-                        log.Info(String.Format("Pollsession {0} sent to {1}", sendPacket.pollSession.id, client.ipAddress));
+                        log.Info(String.Format("Pollsession {0} sent to {1}", sendPacket.pollSession.Id, client.ipAddress));
                         break;
                     case Request.EDIT_POLLSESSION:
                         PollDAL.EditPollSession(receivedPacket.pollSession);
-                        log.Info(String.Format("Pollsession {0} changed by {1}", receivedPacket.pollSession.id, client.ipAddress));
+                        log.Info(String.Format("Pollsession {0} changed by {1}", receivedPacket.pollSession.Id, client.ipAddress));
                         break;
                     case Request.CREATE_POLLSESSION:
-                        receivedPacket.pollSession.id = PollDAL.CreatePollSession(receivedPacket.pollSession);
-                        log.Info(String.Format("Pollsession {0} created by {1}", receivedPacket.pollSession.id, client.ipAddress));
+                        receivedPacket.pollSession.Id = PollDAL.CreatePollSession(receivedPacket.pollSession);
+                        log.Info(String.Format("Pollsession {0} created by {1}", receivedPacket.pollSession.Id, client.ipAddress));
                         break;
                     case Request.REMOVE_POLLSESSION:
                         PollDAL.RemovePollSession(Convert.ToInt32(receivedPacket.request.id));

@@ -313,15 +313,15 @@ namespace Ilsrep.PollApplication.PollServer
                         break;
                     case Request.GET_POLLSESSION:
                         sendPacket.pollSession = PollDAL.GetPollSession( Convert.ToInt32( receivedPacket.request.id ) );
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} sent to {1}", sendPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} sent to {1}", sendPacket.pollSession.Id, client.ipAddress ), EventLogEntryType.Information );
                         break;
 					case Request.EDIT_POLLSESSION:
 						PollDAL.EditPollSession(receivedPacket.pollSession);
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} changed by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} changed by {1}", receivedPacket.pollSession.Id, client.ipAddress ), EventLogEntryType.Information );
 						break;
                     case Request.CREATE_POLLSESSION:
-                        receivedPacket.pollSession.id = PollDAL.CreatePollSession( receivedPacket.pollSession );
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} created by {1}", receivedPacket.pollSession.id, client.ipAddress ), EventLogEntryType.Information );
+                        receivedPacket.pollSession.Id = PollDAL.CreatePollSession( receivedPacket.pollSession );
+                        EventLog.WriteEntry( String.Format( "Pollsession {0} created by {1}", receivedPacket.pollSession.Id, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     case Request.REMOVE_POLLSESSION:
                         PollDAL.RemovePollSession( Convert.ToInt32( receivedPacket.request.id ) );

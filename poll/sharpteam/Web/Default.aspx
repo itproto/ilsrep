@@ -29,14 +29,14 @@
                         <%
                             if (Request["action"] == "showpollsession")
                             {
-                                Response.Write("<li><h3>" + pollSession.name + ":</h3></li>");
+                                Response.Write("<li><h3>" + pollSession.Name + ":</h3></li>");
                                 int index = 1;
-                                foreach (Ilsrep.PollApplication.Model.Poll curPoll in pollSession.polls)
+                                foreach (Ilsrep.PollApplication.Model.Poll curPoll in pollSession.Polls)
                                 {
                                     if (Convert.ToInt32(Session["pollIndex"]) == index - 1)
-                                        Response.Write("<li><b>" + index + ". " + curPoll.name + "</b></li>");
+                                        Response.Write("<li><b>" + index + ". " + curPoll.Name + "</b></li>");
                                     else
-                                        Response.Write("<li>" + index + ". " + curPoll.name + "</li>");
+                                        Response.Write("<li>" + index + ". " + curPoll.Name + "</li>");
                                     index++;
                                 }
                             }
@@ -61,10 +61,10 @@
                     {
                 %>
                     <form class="choices" method="post" action="Default.aspx?action=showpollsession&do=submitpoll">
-                    <label><h3><%=pollSession.polls[Convert.ToInt32(Session["pollIndex"])].description%></h3></label>
+                    <label><h3><%=pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Description%></h3></label>
                     <%
                         int index = 0;
-                        foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.polls[Convert.ToInt32(Session["pollIndex"])].choices)
+                        foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Choices)
                         {
                     %>
                             <label for="choice_<%=index%>"><input type="radio" onfocus="this.blur();" name="choice" id="choice_<%=index%>" value="<%=index%>" /><%=curChoice.choice%></label><br />
@@ -85,20 +85,20 @@
                         foreach (Ilsrep.PollApplication.Model.PollResult curResult in resultsList.results)
                         {
                             index++;                            
-                            Response.Write(index + ". " + pollSession.polls[curResult.questionId].name + ": " + pollSession.polls[curResult.questionId].choices[curResult.answerId].choice + "<br />");
-                            if (pollSession.testMode)
+                            Response.Write(index + ". " + pollSession.Polls[curResult.questionId].Name + ": " + pollSession.Polls[curResult.questionId].Choices[curResult.answerId].choice + "<br />");
+                            if (pollSession.TestMode)
                             {
-                                if (pollSession.polls[curResult.questionId].choices[curResult.answerId].id == pollSession.polls[curResult.questionId].correctChoiceID)
+                                if (pollSession.Polls[curResult.questionId].Choices[curResult.answerId].Id == pollSession.Polls[curResult.questionId].CorrectChoiceID)
                                     correctAnswers++;
                             }
                         }
 
-                        if (pollSession.testMode)
+                        if (pollSession.TestMode)
                         {
-                            double userScore = correctAnswers / pollSession.polls.Count;
+                            double userScore = correctAnswers / pollSession.Polls.Count;
                             Response.Write("<br />Your score: " + Convert.ToInt32(userScore * 100) + "%");
 
-                            if (userScore >= pollSession.minScore)
+                            if (userScore >= pollSession.MinScore)
                             {
                                 Response.Write("<br />Congratulations!!! You PASSED the test");
                             }

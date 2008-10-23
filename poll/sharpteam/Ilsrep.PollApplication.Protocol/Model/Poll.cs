@@ -5,6 +5,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Helpers;
 using System.ComponentModel;
+using System.Diagnostics;
+using Ilsrep.Common;
 
 namespace Ilsrep.PollApplication.Model
 {
@@ -40,10 +42,27 @@ namespace Ilsrep.PollApplication.Model
         /// list of choices for this poll
         /// </summary>
         private List<Choice> _choices = new List<Choice>();
+        /// <summary>
+        /// Generate new negative Poll id
+        /// </summary>
+        public static IDGenerator pollIDGenerator = new IDGenerator();
+
+        public Poll()
+        {
+            int newPollID = pollIDGenerator.id;
+            Name = "newPoll" + Math.Abs(newPollID);
+            Description = "<description>";
+            Id = newPollID;
+        }
+
+        public Poll(string name)
+        {
+            Name = name;
+        }
 
         [ReadOnly(true)]
         [XmlAttribute("id")]
-        public int id
+        public int Id
         {
             get
             {
@@ -56,7 +75,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlAttribute("name")]
-        public string name
+        public string Name
         {
             get
             {
@@ -76,7 +95,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlElement("description")]
-        public string description
+        public string Description
         {
             get
             {
@@ -96,9 +115,9 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlAttribute("correctChoiceID")]
-        [DisplayName("correctChoiceIndex")]
+        [DisplayName("CorrectChoiceIndex")]
         [Description("Sequence number of correct choice. Choices indexing begins from 0-index")]
-        public int correctChoiceID
+        public int CorrectChoiceID
         {
             get
             {
@@ -112,7 +131,7 @@ namespace Ilsrep.PollApplication.Model
         
         [TypeConverter(typeof(bool))]
         [XmlAttribute("customChoiceEnabled")]
-        public bool customChoiceEnabled
+        public bool CustomChoiceEnabled
         {
             get
             {
@@ -125,7 +144,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlArray("choices"), XmlArrayItem("choice")]
-        public List<Choice> choices
+        public List<Choice> Choices
         {
             get
             {
@@ -142,7 +161,7 @@ namespace Ilsrep.PollApplication.Model
             int index = 0;
             
             Console.WriteLine( "Poll Choices:" );
-            foreach ( Choice curChoice in choices )
+            foreach ( Choice curChoice in Choices )
             {
                 index++;
                 Console.WriteLine( index + ". " + curChoice.choice );
@@ -159,10 +178,12 @@ namespace Ilsrep.PollApplication.Model
         {
             public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
             {
-                return base.ConvertTo(context, culture, "Poll", typeof(String));
+                if (!(value is Poll))
+                {
+                    Debug.Fail("Value must have Poll type");
+                }
+                return base.ConvertTo(context, culture, (value as Poll).Name, typeof(String));
             }
         }
     }
-
-
 }

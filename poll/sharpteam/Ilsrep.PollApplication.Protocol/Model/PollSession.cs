@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using Ilsrep.Common;
 
 namespace Ilsrep.PollApplication.Model
 {
@@ -37,7 +38,7 @@ namespace Ilsrep.PollApplication.Model
 
         [ReadOnly(true)]
         [XmlAttribute("id")]
-        public int id
+        public int Id
         {
             get
             {
@@ -50,7 +51,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlAttribute("name")]
-        public string name
+        public string Name
         {
             get
             {
@@ -71,7 +72,7 @@ namespace Ilsrep.PollApplication.Model
 
         [TypeConverter(typeof(bool))]
         [XmlAttribute("testMode")]
-        public bool testMode
+        public bool TestMode
         {
             get
             {
@@ -85,7 +86,7 @@ namespace Ilsrep.PollApplication.Model
 
         [TypeConverter(typeof(double))]
         [XmlAttribute("minScore")]
-        public double minScore
+        public double MinScore
         {
             get
             {
@@ -105,7 +106,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlElement("poll", typeof(Poll))]
-        public List<Poll> polls
+        public List<Poll> Polls
         {
             get
             {
@@ -116,7 +117,7 @@ namespace Ilsrep.PollApplication.Model
                 int index = 0;
                 foreach (Poll curPoll in value)
                 {
-                    if (curPoll.choices.Count == 0)
+                    if (curPoll.Choices.Count == 0)
                     {
                         throw new Exception("Poll #" + index + " contains 0 choices");
                     }

@@ -4,6 +4,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Diagnostics;
+using Ilsrep.Common;
 
 namespace Ilsrep.PollApplication.Model
 {
@@ -29,10 +31,28 @@ namespace Ilsrep.PollApplication.Model
         [XmlIgnore]
         [Browsable(false)]
         public Poll parent;
+        /// <summary>
+        /// Generate new negative Choice id
+        /// </summary>
+        [XmlIgnore]
+        [Browsable(false)]
+        public static IDGenerator choiceIDGenerator = new IDGenerator();
+
+        public Choice()
+        {
+            int newChoiceID = choiceIDGenerator.id;
+            choice = "newChoice" + Math.Abs(newChoiceID);
+            Id = newChoiceID;
+        }
+
+        public Choice(string pChoice)
+        {
+            choice = pChoice;
+        }
 
         [ReadOnly(true)]
         [XmlAttribute("id")]
-        public int id
+        public int Id
         {
             get
             {
@@ -45,6 +65,7 @@ namespace Ilsrep.PollApplication.Model
         }
 
         [XmlAttribute("name")]
+        [DisplayName("Choice")]
         public string choice
         {
             get
@@ -71,7 +92,11 @@ namespace Ilsrep.PollApplication.Model
         {
             public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
             {
-                return base.ConvertTo(context, culture, "Choice", typeof(String));
+                if (!(value is Choice))
+                {
+                    Debug.Fail("Value must have Choice type");
+                }
+                return base.ConvertTo(context, culture, (value as Choice).choice, typeof(String));
             }
         }
     }

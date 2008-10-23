@@ -30,9 +30,9 @@ namespace Ilsrep.PollApplication.Helpers
 
                 pollSession = (PollSession)xmlSerializer.Deserialize(memoryStream);
 
-                foreach (Poll poll in pollSession.polls)
+                foreach (Poll poll in pollSession.Polls)
                 {
-                    foreach (Choice choice in poll.choices)
+                    foreach (Choice choice in poll.Choices)
                     {
                         choice.parent = poll;
                     }
@@ -88,9 +88,9 @@ namespace Ilsrep.PollApplication.Helpers
 
                 if (pollPacket.pollSession != null)
                 {
-                    foreach (Poll poll in pollPacket.pollSession.polls)
+                    foreach (Poll poll in pollPacket.pollSession.Polls)
                     {
-                        foreach (Choice choice in poll.choices)
+                        foreach (Choice choice in poll.Choices)
                         {
                             choice.parent = poll;
                         }
