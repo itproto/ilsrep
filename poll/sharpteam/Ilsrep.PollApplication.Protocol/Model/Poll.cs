@@ -45,14 +45,18 @@ namespace Ilsrep.PollApplication.Model
         /// <summary>
         /// Generate new negative Poll id
         /// </summary>
+        [XmlIgnore]
         public static IDGenerator pollIDGenerator = new IDGenerator();
 
         public Poll()
         {
-            int newPollID = pollIDGenerator.id;
-            Name = "newPoll" + Math.Abs(newPollID);
             Description = "<description>";
-            Id = newPollID;
+            if (!(PollSession.isSerialized))
+            {
+                int newPollID = pollIDGenerator.id;
+                Name = "newPoll" + Math.Abs(newPollID);
+                Id = newPollID;
+            }
         }
 
         public Poll(string name)
