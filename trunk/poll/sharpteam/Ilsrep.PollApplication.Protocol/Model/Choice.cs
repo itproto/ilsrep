@@ -40,9 +40,12 @@ namespace Ilsrep.PollApplication.Model
 
         public Choice()
         {
-            int newChoiceID = choiceIDGenerator.id;
-            choice = "newChoice" + Math.Abs(newChoiceID);
-            Id = newChoiceID;
+            if (!(PollSession.isSerialized))
+            {
+                int newChoiceID = choiceIDGenerator.id;
+                choice = "newChoice" + Math.Abs(newChoiceID);
+                Id = newChoiceID;
+            }
         }
 
         public Choice(string pChoice)

@@ -35,6 +35,10 @@ namespace Ilsrep.PollApplication.Model
         /// list of polls that this poll session holds
         /// </summary>
         private List<Poll> _polls = new List<Poll>();
+        /// <summary>
+        /// Is object serialized
+        /// </summary>
+        public static bool isSerialized = false;
 
         [ReadOnly(true)]
         [XmlAttribute("id")]

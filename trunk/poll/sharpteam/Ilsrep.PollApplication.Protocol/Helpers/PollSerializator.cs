@@ -78,6 +78,7 @@ namespace Ilsrep.PollApplication.Helpers
         public static PollPacket DeserializePacket(string xmlString)
         {
             PollPacket pollPacket = new PollPacket();
+            PollSession.isSerialized = true;
             try
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(PollPacket));
@@ -99,9 +100,11 @@ namespace Ilsrep.PollApplication.Helpers
             }
             catch (Exception)
             {
+                PollSession.isSerialized = false;
                 return null;
             }
-            
+
+            PollSession.isSerialized = false;
             return pollPacket;
         }
 
