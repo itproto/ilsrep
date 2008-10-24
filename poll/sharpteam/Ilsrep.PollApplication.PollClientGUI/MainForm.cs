@@ -207,6 +207,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
         }
 
+
+
         private void GetPoll()
         {
             pollGroupBox.Controls.Clear();
@@ -234,13 +236,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText2.Height = 17;
             pollGroupBox.Controls.Add(lblTopText2);
             lblTopText3.Name = "lblTopText3";
-            lblTopText3.Text = "Description: " + pollSession.Polls[currentPoll].Description;
+            lblTopText3.Text = StringWorkHelper.WrapString("Description: " + pollSession.Polls[currentPoll].Description,65);
             lblTopText3.Location = new System.Drawing.Point( 10, lblTopText2.Top + lblTopText2.Height );
             lblTopText3.Width = pollGroupBox.Width;
             lblTopText3.TextAlign = ContentAlignment.MiddleLeft;
             lblTopText3.ForeColor = Color.Green;
             lblTopText3.Font = new Font("Times New Roman", 11);
-            lblTopText3.Height = 17;
+            //lblTopText3.Height = 17;
+            lblTopText3.AutoSize = true;
             pollGroupBox.Controls.Add(lblTopText3);
 
             int index = 0;
@@ -354,9 +357,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText.AutoSize = true;
             lblTopText.Name = "lblTopText";
             lblTopText.Location = new System.Drawing.Point(10, 15);
-            lblTopText.Text = "PollSession: " + pollSession.Name + Environment.NewLine + "Here is your results:" + Environment.NewLine;
+            lblTopText.Text = "PollSession: " + pollSession.Name;
             pollGroupBox.Controls.Add(lblTopText);
 
+            Label lblTopTextResults = new Label();
+            lblTopTextResults.AutoSize = true;
+            lblTopTextResults.Name = "lblTopTextResults";
+            lblTopTextResults.Location = new System.Drawing.Point(10, lblTopText.Top + lblTopText.Height + 10);
+            lblTopTextResults.Text = "Here are your PollSession results: " + Environment.NewLine;
+            pollGroupBox.Controls.Add(lblTopTextResults);
+
+            Label lblTestResults = new Label();
+            lblTestResults.Text = String.Empty;
             float correctAnswers = 0;
             int index = 0;
             foreach (PollResult curResult in resultsList.results)
@@ -381,11 +393,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                 if (curResult.answerId == -1)
                 {
-                    lblTopText.Text += index + ". " + pollSession.Polls[pollIndex].Name + ": " + curResult.customChoice + Environment.NewLine;
+                    lblTopTextResults.Text += index + ". " + pollSession.Polls[pollIndex].Name + ": " + curResult.customChoice + Environment.NewLine;
                 }
                 else
                 {
-                    lblTopText.Text += index + ". " + pollSession.Polls[pollIndex].Name + ": " + pollSession.Polls[pollIndex].Choices[choiceIndex].choice + Environment.NewLine;
+                    lblTopTextResults.Text += index + ". " + pollSession.Polls[pollIndex].Name + ": " + pollSession.Polls[pollIndex].Choices[choiceIndex].choice + Environment.NewLine;
                 }
 
                 if (pollSession.TestMode)
@@ -398,20 +410,25 @@ namespace Ilsrep.PollApplication.PollClientGUI
             if (pollSession.TestMode)
             {
                 double userScore = correctAnswers / pollSession.Polls.Count;
-                lblTopText.Text += Environment.NewLine + "Your score: " + Convert.ToInt32(userScore*100) + "%";
+                lblTestResults.Text += "Your score: " + Convert.ToInt32(userScore * 100) + "%";
 
                 if (userScore >= pollSession.MinScore)
                 {
-                    lblTopText.Text += Environment.NewLine + "Congratulations!!! You PASSED the test";
+                    lblTestResults.Text += Environment.NewLine + "Congratulations!!! You PASSED the test";
                 }
                 else
                 {
-                    lblTopText.Text += Environment.NewLine + "Sorry, try again... you FAILED";
+                    lblTestResults.Text += Environment.NewLine + "Sorry, try again... you FAILED";
                 }
             }
 
+            lblTestResults.AutoSize = true;
+            lblTestResults.Name = "lblTestResults";
+            lblTestResults.Location = new System.Drawing.Point(10, lblTopTextResults.Top + lblTopTextResults.Height + 10);
+            pollGroupBox.Controls.Add(lblTestResults);
+
             Button btnSubmit = new Button();
-            btnSubmit.Location = new System.Drawing.Point( 10, 5 + lblTopText.Height + 30 );
+            btnSubmit.Location = new System.Drawing.Point(10, lblTestResults.Top + lblTestResults.Height + 10);
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "OK";
             btnSubmit.TextAlign = ContentAlignment.MiddleRight;
