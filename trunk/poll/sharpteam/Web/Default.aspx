@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"  CodeFile="Default.aspx.cs" Inherits="_Default" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head runat="server">
+<head>
     <title>PollClientASP</title>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link href="css/style.css" type="text/css" rel="stylesheet" />
@@ -14,10 +14,10 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="?action=start_poll" onfocus="this.blur()">Start poll |</a>
+                        <a href="?action=start_poll" class="button">Start poll |</a>
                     </li>
                     <li>
-                        <a href="#" onfocus="this.blur()">Poll editor</a>
+                        <a href="PollEditor.aspx" class="button">Poll editor</a>
                     </li>
                 </ul>
             </div>
@@ -29,7 +29,10 @@
                         <%
                             if (Request["action"] == "showpollsession")
                             {
-                                Response.Write("<li><h3>" + pollSession.Name + ":</h3></li>");
+                        
+                        %>
+                        <li><h3><%=pollSession.Name%>:</h3></li>
+                        <%
                                 int index = 1;
                                 foreach (Ilsrep.PollApplication.Model.Poll curPoll in pollSession.Polls)
                                 {
@@ -49,7 +52,7 @@
                                     <a href="Default.aspx?action=showpollsession&id=<%=curItem.id%>" onfocus="this.blur()"><%=curItem.name%></a>
                                 </li>
                         <%    
-                            }
+                                }
                             }
                         %>
                     </ul>
@@ -61,7 +64,7 @@
                     {
                 %>
                     <form class="choices" method="post" action="Default.aspx?action=showpollsession&do=submitpoll">
-                    <label><h3><%=pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Description%></h3></label>
+                    <h3><%=pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Description%></h3>
                     <%
                         int index = 0;
                         foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Choices)
@@ -72,16 +75,18 @@
                             index++;
                         }
                     %>
-                        <input type="Submit" class="submitButton" value="Continue" onfocus="this.blur();" onclick="return CheckIfSelectedChoice();" />
+                        <input type="submit" class="submitButton" value="Continue" onfocus="this.blur();" onclick="return CheckIfSelectedChoice();" />
                     </form>
                 <%
                     }
                     else if (Request["action"] == "showresults")
                     {
-                        Response.Write("<div class='text'>");
+                %>
+                <div class='inner'>
+                    <h3>Here is your PollSession results:<br /></h3>
+                <%
                         float correctAnswers = 0;
                         int index = 0;
-                        Response.Write("<h3>Here is your PollSession results:<br /></h3>");
                         foreach (Ilsrep.PollApplication.Model.PollResult curResult in resultsList.results)
                         {
                             index++;                            
@@ -107,11 +112,13 @@
                                 Response.Write("<br />Sorry, try again... you FAILED");
                             }
                         }
-                        Response.Write("</div>");
+                %>
+                </div>
+                <%
                     }
                     else if (Request["action"] == "start_poll")
                     {
-                        Response.Write("<div class='text'><h3>Please, select PollSession</h3></div>");
+                        Response.Write("<div class='inner'><h3>Please, select PollSession</h3></div>");
                     }
                 %>
             </div>

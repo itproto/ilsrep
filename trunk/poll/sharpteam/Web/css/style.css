@@ -1,3 +1,30 @@
+a img
+{
+	border: 0;
+	vertical-align: middle;	
+}
+
+h3
+{
+	color: #7f7f64;	
+	font-size: 20px;
+	font-weight: lighter;
+	font-family: Times New Roman, Verdana, Tahoma;
+	text-align: left;
+}
+
+input.text
+{
+	font-size: 10px;
+	border: 1px solid #85b1de;
+	background-color: #fcf4a2;
+}
+
+input.text:hover
+{
+	border: 1px solid #f00;
+}
+
 .home
 {
 	background-color: #FFFFFF;
@@ -15,15 +42,6 @@
 	border: solid 1px #808080;
 	width: 800px;
 	height: 100%;
-}
-
-h3
-{
-	color: #7f7f64;	
-	font-size: 20px;
-	font-weight: lighter;
-	font-family: Times New Roman, Verdana, Tahoma;
-	text-align: left;
 }
 
 .logo
@@ -107,7 +125,7 @@ h3
 	padding: 0px;
 }
 
-.leftMenu a
+.leftMenu a.button
 {
 	color: #FFFFFF;
 	background-color: #a30313;
@@ -135,6 +153,11 @@ h3
 	margin-left: 250px;
 	height: 100%;
 	min-height: 500px;
+}
+
+.content .inner
+{
+	padding: 20px 40px;	
 }
 
 .footer
@@ -172,7 +195,8 @@ h3
 	margin-left: 100px;
 }
 
-.text
+.error
 {
-	padding: 20px 40px;	
+	color: #fff;
+	text-align: center;
 }
