@@ -242,7 +242,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText3.TextAlign = ContentAlignment.MiddleLeft;
             lblTopText3.ForeColor = Color.Green;
             lblTopText3.Font = new Font("Times New Roman", 11);
-            //lblTopText3.Height = 17;
             lblTopText3.AutoSize = true;
             pollGroupBox.Controls.Add(lblTopText3);
 
@@ -357,6 +356,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText.AutoSize = true;
             lblTopText.Name = "lblTopText";
             lblTopText.Location = new System.Drawing.Point(10, 15);
+            lblTopText.ForeColor = Color.Brown;
+            lblTopText.Font = new Font("Times New Roman", 11, FontStyle.Bold);
             lblTopText.Text = "PollSession: " + pollSession.Name;
             pollGroupBox.Controls.Add(lblTopText);
 
@@ -415,20 +416,23 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 if (userScore >= pollSession.MinScore)
                 {
                     lblTestResults.Text += Environment.NewLine + "Congratulations!!! You PASSED the test";
+                    lblTestResults.ForeColor = Color.Green;
                 }
                 else
                 {
                     lblTestResults.Text += Environment.NewLine + "Sorry, try again... you FAILED";
+                    lblTestResults.ForeColor = Color.Red;
                 }
+
+                lblTestResults.AutoSize = true;
+                lblTestResults.Name = "lblTestResults";
+                lblTestResults.Location = new System.Drawing.Point(10, lblTopTextResults.Top + lblTopTextResults.Height + 10);
+                pollGroupBox.Controls.Add(lblTestResults);
             }
 
-            lblTestResults.AutoSize = true;
-            lblTestResults.Name = "lblTestResults";
-            lblTestResults.Location = new System.Drawing.Point(10, lblTopTextResults.Top + lblTopTextResults.Height + 10);
-            pollGroupBox.Controls.Add(lblTestResults);
-
             Button btnSubmit = new Button();
-            btnSubmit.Location = new System.Drawing.Point(10, lblTestResults.Top + lblTestResults.Height + 10);
+            int top = ((pollSession.TestMode) ? lblTestResults.Top : lblTopTextResults.Top) + ((pollSession.TestMode) ? lblTestResults.Height : lblTopTextResults.Height);
+            btnSubmit.Location = new System.Drawing.Point(10, top + 10);
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "OK";
             btnSubmit.TextAlign = ContentAlignment.MiddleRight;
@@ -466,7 +470,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
             }
 
-            // ----- for synchronize with server(will be fixed on future) -----
+            // ----- for synchronize with server -----
             foreach (PollSession curPollSession in pollSessionsList)
             {
                 foreach (Poll curPoll in curPollSession.Polls)
