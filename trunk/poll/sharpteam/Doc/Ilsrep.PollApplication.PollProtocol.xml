@@ -49,6 +49,11 @@
             list of polls that this poll session holds
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.Model.PollSession.isSerialized">
+            <summary>
+            Is object serialized
+            </summary>
+        </member>
         <member name="T:Ilsrep.PollApplication.Communication.PollSessionList">
             <summary>
             Holds a list of poll session ids and names
