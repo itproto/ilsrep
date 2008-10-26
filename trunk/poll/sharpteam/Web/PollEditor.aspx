@@ -93,9 +93,9 @@
                             function addPoll(dialog) {
                                 var fields = $("#addPollDialog :text");
                                 var branches = $("<li><span class='folder'>" + $(fields[0]).val() + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a> <a href='#'><img src='js/treeview/images/page_white_edit.png' /></a> <a href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div></li>")
-                                                .appendTo("#pollsession_tree li:first ul");
+                                                .appendTo("#pollsession_tree>li>ul");
                                 $.post("PollEditor.aspx?do=add&what=poll&pollsession_id=<%= selectedPollsession.Id %>", fields);
-                                $("#pollsession_tree li:first ul").treeview({
+                                $("#pollsession_tree>li>ul").treeview({
                                     add: branches
                                 });
                                 $(this).dialog("close");
