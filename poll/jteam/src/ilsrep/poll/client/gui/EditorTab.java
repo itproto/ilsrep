@@ -157,11 +157,13 @@ public class EditorTab extends JPanel {
         // GridBag layout constraints.
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel pollsessionLabel = new JLabel("Editing poll session");
+        JLabel pollsessionLabel = PollsessionTab.createColoredLabel(null,
+                "Editing poll session");
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.gridx = 0;
         c.gridy = 0;
         c.insets.bottom = 32;
+        c.insets.left = COMPONENT_SPACE;
         add(pollsessionLabel, c);
 
         JLabel nameLabel = new JLabel("Name");
@@ -297,7 +299,7 @@ public class EditorTab extends JPanel {
 
                 currentSession.getPolls().add(new Poll());
 
-                editPollsession();
+                editPoll(currentSession.getPolls().size() - 1);
             }
         });
         c.gridx = 0;
@@ -306,6 +308,7 @@ public class EditorTab extends JPanel {
 
         JButton saveButton = new JButton();
         saveButton.setText(creating ? "Create" : "Save");
+        saveButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.TICK_ICON));
         saveButton.addActionListener(new ActionListener() {
 
             @Override
@@ -337,8 +340,9 @@ public class EditorTab extends JPanel {
                 }
             }
         });
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy++;
+        c.anchor = GridBagConstraints.LINE_END;
         add(saveButton, c);
 
         refreshTab();
@@ -477,11 +481,13 @@ public class EditorTab extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel pollsessionLabel = new JLabel("Editing poll");
+        JLabel pollsessionLabel = PollsessionTab.createColoredLabel(null,
+                "Editing poll");
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.gridx = 0;
         c.gridy = 0;
         c.insets.bottom = 32;
+        c.insets.left = COMPONENT_SPACE;
         add(pollsessionLabel, c);
 
         JLabel nameLabel = new JLabel("Name");
@@ -624,6 +630,7 @@ public class EditorTab extends JPanel {
 
         JButton backButton = new JButton();
         backButton.setText("Back");
+        backButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.ARROW_LEFT));
         backButton.addActionListener(new ActionListener() {
 
             @Override
@@ -632,8 +639,9 @@ public class EditorTab extends JPanel {
                 editPollsession();
             }
         });
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy++;
+        c.anchor = GridBagConstraints.LINE_END;
         add(backButton, c);
 
         refreshTab();

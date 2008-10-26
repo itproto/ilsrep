@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -139,6 +140,16 @@ public class PollsessionTab extends JPanel implements ActionListener {
     private boolean showDecor = false;
 
     /**
+     * If render header in each frame.
+     */
+    private boolean showHeader = false;
+
+    /**
+     * If render footer in each frame.
+     */
+    private boolean showFooter = false;
+
+    /**
      * Creates new <code>PollsessionTab</code>, for passing given pollsession.
      * 
      * @param session
@@ -169,10 +180,13 @@ public class PollsessionTab extends JPanel implements ActionListener {
         // Creating frame header.
         header = new JPanel();
 
-        header.add(new JLabel(session.getName()/*
-                                                * + " (ID: " + session.getId() +
-                                                * ")"
-                                                */));
+        BoxLayout headerLayout = new BoxLayout(header, BoxLayout.LINE_AXIS);
+        header.setLayout(headerLayout);
+
+        header.setBorder(BorderFactory.createEmptyBorder(6, 6, 0, 0));
+
+        header.add(createColoredLabel("Poll session", session.getName()));
+        header.add(Box.createHorizontalGlue());
 
         // Creating frame footer.
         footer = new JPanel();
@@ -183,7 +197,7 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
         footer.add(Box.createHorizontalGlue());
 
-        nextButton = new JButton("Next");
+        nextButton = new JButton("Start");
         nextButton.setActionCommand(NEXT_ACTION);
         nextButton.addActionListener(this);
 
@@ -195,7 +209,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
         final int borderThickness = 6;
 
         nextButtonPanel.setBorder(BorderFactory.createEmptyBorder(
-                borderThickness, 0, borderThickness, borderThickness));
+                borderThickness, borderThickness, borderThickness,
+                borderThickness));
 
         footer.add(nextButtonPanel);
 
@@ -225,11 +240,13 @@ public class PollsessionTab extends JPanel implements ActionListener {
                 // pollsessionIdField.setText(session.getId());
                 // pollsessionIdField.setEditable(false);
 
-                JLabel pollsessionNameLabel = new JLabel("Name");
+                // JLabel pollsessionNameLabel = new
+                // JLabel("Poll session name");
 
-                JTextField pollsessionNameField = new JTextField(collumsCount);
-                pollsessionNameField.setText(session.getName());
-                pollsessionNameField.setEditable(false);
+                // JTextField pollsessionNameField = new
+                // JTextField(collumsCount);
+                // pollsessionNameField.setText(session.getName());
+                // pollsessionNameField.setEditable(false);
 
                 // JLabel pollsessionDateLabel = new JLabel("Date of creation");
                 //
@@ -238,24 +255,24 @@ public class PollsessionTab extends JPanel implements ActionListener {
                 // pollsessionDateField.setText(session.getDate());
                 // pollsessionDateField.setEditable(false);
 
-                JLabel pollsessionLabel = new JLabel("Get ready to pass");
-                JLabel infoLabel = new JLabel("poll session");
+                // JLabel pollsessionLabel = new JLabel("Get ready to pass");
+                // JLabel infoLabel = new JLabel("poll session");
 
                 framePanel.setLayout(new GridBagLayout());
 
                 GridBagConstraints c = new GridBagConstraints();
 
-                c.anchor = GridBagConstraints.LAST_LINE_END;
-                c.gridx = 0;
-                c.gridy = 0;
-                c.insets.bottom = componentSpace;
-                framePanel.add(pollsessionLabel, c);
-
-                c.anchor = GridBagConstraints.LAST_LINE_START;
-                c.gridx = 1;
-                c.gridy = 0;
-                c.insets.left = componentSpace;
-                framePanel.add(infoLabel, c);
+                // c.anchor = GridBagConstraints.LAST_LINE_END;
+                // c.gridx = 0;
+                // c.gridy = 0;
+                // c.insets.bottom = componentSpace;
+                // framePanel.add(pollsessionLabel, c);
+                //
+                // c.anchor = GridBagConstraints.LAST_LINE_START;
+                // c.gridx = 1;
+                // c.gridy = 0;
+                // c.insets.left = componentSpace;
+                // framePanel.add(infoLabel, c);
 
                 // c.anchor = GridBagConstraints.FIRST_LINE_START;
                 // c.gridx = 0;
@@ -268,14 +285,19 @@ public class PollsessionTab extends JPanel implements ActionListener {
                 // c.gridy = 1;
                 // framePanel.add(pollsessionIdField, c);
 
-                c.anchor = GridBagConstraints.FIRST_LINE_START;
+                c.gridx = 0;
+                c.gridy = 0;
+                framePanel.add(header, c);
+
+                // c.gridx = 1;
+                // c.gridy = 0;
+                // framePanel.add(pollsessionNameField, c);
+
                 c.gridx = 0;
                 c.gridy = 1;
-                framePanel.add(pollsessionNameLabel, c);
-
-                c.gridx = 1;
-                c.gridy = 1;
-                framePanel.add(pollsessionNameField, c);
+                c.anchor = GridBagConstraints.CENTER;
+                c.insets = new Insets(6, 6, 0, 0);
+                framePanel.add(nextButton, c);
 
                 owningWindow.showDecor(true);
                 showDecor = true;
@@ -291,6 +313,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
             else
                 if (currentFrame >= 0
                         && currentFrame <= session.getPolls().size()) {
+                    showHeader = true;
+
                     String radioBoxChoice = null;
 
                     if (choices != null) {
@@ -335,7 +359,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
                     }
 
                     if (currentFrame == session.getPolls().size()) {
-                        // Show results and "Click "Next" to send results".
+                        showFooter = true;
+                        footer.add(nextButton);
 
                         BoxLayout pageLayout = new BoxLayout(framePanel,
                                 BoxLayout.PAGE_AXIS);
@@ -344,6 +369,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
                                 pollResultList, session));
                         resultsArea.setFont(new Font(resultsArea.getFont()
                                 .getName(), Font.PLAIN, 14));
+                        //resultsArea.setBorder(BorderFactory.createEmptyBorder(
+                        // 0, 0, 6, 0));
 
                         // JLabel clickNextLabel = new JLabel(
                         // "Click \"Next\" to send results");
@@ -359,82 +386,56 @@ public class PollsessionTab extends JPanel implements ActionListener {
                         // framePanel.add(clickNextLabel);
 
                         nextButton.setText("Send results");
+                        nextButton.setIcon(GUIUtilities
+                                .loadIcon(GUIUtilities.TICK_ICON));
                     }
                     else {
                         Poll poll = session.getPolls().get(currentFrame);
 
-                        // JLabel pollIdLabel = new JLabel("Id");
-                        // JTextField pollIdField = new
-                        // JTextField(collumsCount);
-                        // pollIdField.setText(poll.getId());
-                        // pollIdField.setEditable(false);
+                        JLabel pollNameLabel = new JLabel("Poll:");
 
-                        JLabel pollNameLabel = new JLabel("Name");
-                        JTextField pollNameField = new JTextField(collumsCount);
-                        pollNameField.setText(poll.getName());
-                        pollNameField.setEditable(false);
+                        JLabel pollNameColorLabel = createColoredLabel(null,
+                                poll.getName());
 
-                        JLabel pollDescriptionLabel = new JLabel("Description");
-                        JTextField pollDescriptionField = new JTextField(
-                                collumsCount);
-                        pollDescriptionField.setText(poll.getDescription()
-                                .getValue());
-                        pollDescriptionField.setEditable(false);
+                        JLabel pollDescriptionLabel = new JLabel("Description:");
+
+                        JLabel pollDescriptionColorLabel = createColoredLabel(
+                                null, poll.getDescription().getValue());
 
                         GridBagLayout layout = new GridBagLayout();
                         framePanel.setLayout(layout);
 
                         GridBagConstraints c = new GridBagConstraints();
 
-                        JLabel pollLabel = new JLabel("Please answer");
-                        JLabel infoLabel = new JLabel("poll");
-
-                        c.anchor = GridBagConstraints.LAST_LINE_END;
-                        c.gridx = 0;
-                        c.gridy = 0;
-                        c.insets.bottom = componentSpace;
-                        framePanel.add(pollLabel, c);
-
-                        c.anchor = GridBagConstraints.LAST_LINE_START;
-                        c.gridx = 1;
-                        c.gridy = 0;
-                        c.insets.left = componentSpace;
-                        framePanel.add(infoLabel, c);
-
-                        // c.gridx = 0;
-                        // c.gridy = 1;
-                        // c.insets.left = 0;
-                        // c.insets.right = componentSpace;
-                        // c.anchor = GridBagConstraints.FIRST_LINE_START;
-                        // framePanel.add(pollIdLabel, c);
-                        //
-                        // c.gridx = 1;
-                        // c.gridy = 1;
-                        // framePanel.add(pollIdField, c);
-
                         c.anchor = GridBagConstraints.FIRST_LINE_START;
+                        c.insets.bottom = componentSpace;
+                        c.insets.left = componentSpace;
                         c.gridx = 0;
-                        c.gridy = 2;
+                        c.gridy = 0;
                         framePanel.add(pollNameLabel, c);
 
                         c.gridx = 1;
-                        c.gridy = 2;
-                        framePanel.add(pollNameField, c);
+                        c.gridy = 0;
+                        framePanel.add(pollNameColorLabel, c);
 
                         c.gridx = 0;
-                        c.gridy = 3;
+                        c.gridy = 1;
                         framePanel.add(pollDescriptionLabel, c);
 
                         c.gridx = 1;
-                        c.gridy = 3;
-                        framePanel.add(pollDescriptionField, c);
+                        c.gridy = 1;
+                        framePanel.add(pollDescriptionColorLabel, c);
 
                         // Creating and adding choices.
                         choices = new ButtonGroup();
 
-                        int lastYGridPosition = 3;
+                        JPanel choicesPanel = new JPanel();
+                        choicesPanel.setLayout(new GridBagLayout());
 
-                        c.gridx = 0;
+                        GridBagConstraints choicesConstr = new GridBagConstraints();
+                        choicesConstr.gridx = 0;
+                        choicesConstr.gridy = -1;
+                        choicesConstr.anchor = GridBagConstraints.LINE_START;
 
                         for (Choice choice : poll.getChoices()) {
                             JRadioButton choiceRadioButton = new JRadioButton();
@@ -446,8 +447,8 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                             choices.add(choiceRadioButton);
 
-                            c.gridy = ++lastYGridPosition;
-                            framePanel.add(choiceRadioButton, c);
+                            choicesConstr.gridy++;
+                            choicesPanel.add(choiceRadioButton, choicesConstr);
                         }
 
                         if (poll.checkCustomEnabled()) {
@@ -464,15 +465,45 @@ public class PollsessionTab extends JPanel implements ActionListener {
                             customChoiceField = new JTextField(collumsCount);
                             customChoiceField.setEnabled(false);
 
-                            c.gridy = ++lastYGridPosition;
-                            framePanel.add(customChoiceRadioButton, c);
+                            choicesConstr.gridy++;
+                            choicesPanel.add(customChoiceRadioButton,
+                                    choicesConstr);
 
-                            c.gridx = 1;
-                            framePanel.add(customChoiceField, c);
+                            choicesConstr.gridx = 1;
+                            choicesPanel.add(customChoiceField, choicesConstr);
                         }
+
+                        choicesConstr.gridx = 0;
+                        choicesConstr.gridy++;
+                        choicesConstr.gridwidth = 2;
+                        choicesConstr.fill = GridBagConstraints.HORIZONTAL;
+                        choicesPanel.add(Box.createRigidArea(new Dimension(390,
+                                0)), choicesConstr);
+
+                        JPanel choicesPanelWrapper = new JPanel();
+                        choicesPanelWrapper.setLayout(new BoxLayout(
+                                choicesPanelWrapper, BoxLayout.PAGE_AXIS));
+                        choicesPanelWrapper.add(choicesPanel);
+                        choicesPanelWrapper.setBorder(BorderFactory
+                                .createTitledBorder("Please select choice"));
+
+                        c.gridx = 0;
+                        c.gridy = 2;
+                        c.gridwidth = 4;
+                        c.fill = GridBagConstraints.HORIZONTAL;
+                        framePanel.add(choicesPanelWrapper, c);
+
+                        c.gridx = 3;
+                        c.gridy = 3;
+                        c.anchor = GridBagConstraints.LINE_END;
+                        c.gridwidth = 1;
+                        c.fill = GridBagConstraints.NONE;
+                        framePanel.add(nextButton, c);
 
                         owningWindow.showDecor(true);
                         showDecor = true;
+
+                        nextButton.setText("Select");
                     }
                 }
                 else {
@@ -485,20 +516,20 @@ public class PollsessionTab extends JPanel implements ActionListener {
                     framePanel.setLayout(pageLayout);
 
                     JLabel resultsSentLabel = new JLabel("Results sent!");
-                    JLabel clickFinishLabel = new JLabel(
-                            "Click \"Finish\" to close tab.");
 
                     resultsSentLabel.setFont(bigLabelsFont);
-                    clickFinishLabel.setFont(bigLabelsFont);
 
+                    framePanel.add(Box.createVerticalGlue());
                     framePanel.add(resultsSentLabel);
                     framePanel.add(Box.createRigidArea(new Dimension(0, 16)));
-                    framePanel.add(clickFinishLabel);
+                    framePanel.add(nextButton);
 
                     owningWindow.sendResults(pollResultList);
 
                     owningWindow.showDecor(true);
                     showDecor = true;
+
+                    showFooter = false;
                 }
 
             currentFrame++;
@@ -510,11 +541,16 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
             removeAll();
 
-            add(header);
-            // add(Box.createVerticalGlue());
+            if (showHeader)
+                add(header);
+            else
+                add(Box.createVerticalGlue());
+
             add(framePanel);
             add(Box.createVerticalGlue());
-            add(footer);
+
+            if (showFooter)
+                add(footer);
         }
         else
             if (e.getActionCommand().equals(FINISH_ACTION)) {
@@ -605,6 +641,25 @@ public class PollsessionTab extends JPanel implements ActionListener {
      */
     public boolean isShowDecor() {
         return showDecor;
+    }
+
+    /**
+     * Creates label with not colored and colored parts, separated with
+     * <code>: </code>.
+     * 
+     * @param notColoredPart
+     *            Not colored part. <code>null</code> for no colored part and no
+     *            separator.
+     * @param coloredPart
+     *            Colored part.
+     * @return Label, as described.
+     */
+    public static JLabel createColoredLabel(String notColoredPart,
+            String coloredPart) {
+        return new JLabel("<html>"
+                + (notColoredPart != null ? (notColoredPart + ": ") : "")
+                + "<font color=#b42700><b>" + coloredPart
+                + "</b></font></html>");
     }
 
 }

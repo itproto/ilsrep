@@ -43,6 +43,11 @@ public class GUIUtilities {
     public static final String ARROW_ROTATE_CLOCKWISE_ICON = "arrow_rotate_clockwise.png";
 
     /**
+     * Filename of <code>arrow_left.png</code>.
+     */
+    public static final String ARROW_LEFT = "arrow_left.png";
+
+    /**
      * Filename of <code>door_out.png</code>.
      */
     public static final String DOOR_OUT_ICON = "door_out.png";
@@ -81,6 +86,11 @@ public class GUIUtilities {
      * Filename of <code>pencil.png</code>.
      */
     public static final String PENCIL_ICON = "pencil.png";
+
+    /**
+     * Filename of <code>tick.png</code>.
+     */
+    public static final String TICK_ICON = "tick.png";
 
     /**
      * Contains <code>Poll Application</code>, for window titles.
