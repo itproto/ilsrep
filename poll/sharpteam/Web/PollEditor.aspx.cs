@@ -43,16 +43,13 @@ public partial class PollEditor : System.Web.UI.Page
     {
         switch (what)
         {
-            case "addpollsession":
-                ShowPage = "addpollsession";
-
-                break;
             case "editpollsession":
                 int id = Convert.ToInt32(Request["id"]);
 
                 if (id == -1)
                 {// from session
-                    selectedPollsession = Session["newPollSession"] as PollSession;
+                    selectedPollsession = new PollSession();
+                    selectedPollsession.Id = -1;
                 }
                 else
                 {
@@ -70,17 +67,6 @@ public partial class PollEditor : System.Web.UI.Page
         switch (what)
         {
             case "pollsession":
-                if (Request["pollsession_name"] == null || Request["pollsession_name"].ToString().Length == 0)
-                {
-                    Message = "Couldn't add Pollsession: Field `Pollsession Name` is empty!";
-                    Show("addpollsession");
-                }
-
-                Session["newPollSession"] = new PollSession();
-                (Session["newPollSession"] as PollSession).Name = Request["pollsession_name"];
-
-                Response.Redirect("PollEditor.aspx?do=show&what=editpollsession&id=-1");
-
                 break;
         }
     }
