@@ -8,6 +8,7 @@ import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -170,7 +171,11 @@ public class MainWindow extends JFrame {
 
         setJMenuBar(createMenu());
         logger.debug("Created and set menu.");
-        setSize(640, 480);
+
+        Dimension mainWindowMinimalSize = new Dimension(640, 480);
+        setSize(mainWindowMinimalSize);
+        setMinimumSize(mainWindowMinimalSize);
+
         logger.debug("Set size to main window: " + getSize().getWidth() + "x"
                 + getSize().getHeight());
 
