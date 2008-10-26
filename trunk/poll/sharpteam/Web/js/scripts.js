@@ -13,3 +13,12 @@ function CheckIfSelectedChoice()
     alert("Please, select a choice!");
     return false;
 }
+
+function addHover()
+{
+    $(":text").focus(function() {
+        $(this).addClass("hover");
+    }).blur(function() {
+        $(this).removeClass("hover");
+    });
+}
