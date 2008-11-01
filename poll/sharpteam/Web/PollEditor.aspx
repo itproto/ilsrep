@@ -11,7 +11,7 @@
     <script src="js/treeview/jquery.treeview.min.js" type="text/javascript"></script>
     <script src="js/scripts.js" type="text/javascript"></script>
     <script type="text/javascript">
-        $(document).ready(addHover);
+    $(document).ready(addHover);
     </script>
 </head>
 <body class="home">
@@ -21,10 +21,10 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="Default.aspx?action=start_poll">Start poll</a> |
+                        <a onfocus="this.blur()" href="Default.aspx?action=start_poll">Start poll |</a>
                     </li>
                     <li>
-                        <a href="PollEditor.aspx">Poll editor</a>
+                        <a onfocus="this.blur()" href="PollEditor.aspx">Poll editor</a>
                     </li>
                 </ul>
             </div>
@@ -32,17 +32,19 @@
         <div class="centralBlock">
             <div class="leftBlock">
                 <div class="leftMenu">
-                    <h3>Select session to edit</h3>
+                    <h3>Select PollSession to edit:</h3>
                     <ul>
                     <%
                         int index = 1;
                         foreach (Ilsrep.PollApplication.Communication.Item pollSession in pollSessionsList)
                         {
-                            Response.Write("<li><a href='?do=show&what=editpollsession&id="+pollSession.id+"'>" + index + ". " + pollSession.name + "</a></li>");
+                            %>
+                                <li><a onfocus="this.blur()" href="?do=show&what=editpollsession&id=<%=pollSession.id%>"><%=index%>. <%=pollSession.name%></a></li>
+                            <%
                             ++index;
                         }
                     %>
-                        <li><a href="?do=show&what=editpollsession&id=-1">Add New</a></li>
+                        <li><a onfocus="this.blur()" href="?do=show&what=editpollsession&id=-1">Add new PollSession</a></li>
                     </ul>
                 </div>
             </div>
@@ -58,26 +60,46 @@
                             Pollsession Name: <input type="text" name="pollsession_name" value="<%= selectedPollsession.Name %>" class="text" /><br />
                             
                             <ul id="pollsession_tree" class="filetree treeview-famfamfam">
-                            <li><span class="folder">Polls</span> <div><a href='#' onclick='$("#addPollDialog").dialog("open"); return false;'><img alt="Add Poll" src='js/treeview/images/page_white_add.png' /></a></div>
-                            <ul>
-                                <%
-                                   foreach(Ilsrep.PollApplication.Model.Poll poll in selectedPollsession.Polls)
-                                   {
-                                       Response.Write("<li><span class='folder'>" + poll.Name + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a> <a href='#'><img src='js/treeview/images/page_white_edit.png' /></a> <a href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div><ul>");
-
-                                       foreach (Ilsrep.PollApplication.Model.Choice choice in poll.Choices)
-                                       {
-                                           Response.Write("<li><span class='file'>" + choice.choice + "</span> <div><a href='#'><img src='js/treeview/images/page_white_edit.png' /></a> <a href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div></li>");
-                                       }
-
-                                       Response.Write("</ul></li>");
-                                   }
-                                %>
+                                <li><span class="folder">Polls</span> 
+                                <div>
+                                    <a onfocus="this.blur()" href='#' onclick='$("#addPollDialog").dialog("open"); return false;'>
+                                        <img alt="Add Poll" src='js/treeview/images/page_white_add.png' />
+                                    </a>
+                                </div>
+                                    <ul>
+                                        <%
+                                           foreach(Ilsrep.PollApplication.Model.Poll poll in selectedPollsession.Polls)
+                                           {
+                                               %>
+                                               <li><span class='folder'><%=poll.Name%></span>
+                                                   <div>
+                                                       <a onfocus="this.blur()" href='#'><img src='js/treeview/images/page_white_add.png' /></a> 
+                                                       <a onfocus="this.blur()" href='#'><img src='js/treeview/images/page_white_edit.png' /></a> 
+                                                       <a onfocus="this.blur()" href='#'><img src='js/treeview/images/page_white_delete.png' /></a>
+                                                   </div>
+                                                   <ul>
+                                                   <%
+                                                   foreach (Ilsrep.PollApplication.Model.Choice choice in poll.Choices)
+                                                   {
+                                                       %>
+                                                       <li><span class='file'><%=choice.choice%></span>
+                                                       <div>
+                                                           <a onfocus="this.blur()" href='#'><img src='js/treeview/images/page_white_edit.png' /></a>
+                                                           <a onfocus="this.blur()" href='#'><img src='js/treeview/images/page_white_delete.png' /></a>
+                                                       </div>
+                                                       </li>
+                                                       <%
+                                                   }
+                                                   %>
+                                                   </ul>
+                                               </li>
+                                               <%
+                                           }
+                                        %>
+                                    </ul>
+                                </li>
                             </ul>
-                            </li>
-                            </ul>
-                            
-                            <input type="submit" value="<%= (selectedPollsession.Id == -1 ? "Add" : "Edit") %> Pollsession" class="button" />
+                            <input onfocus="this.blur()" type="submit" value="<%= (selectedPollsession.Id == -1 ? "Add" : "Edit") %> Pollsession" class="button" />
                         </form>
                         
                         <div id="addPollDialog" title="Add Poll">
@@ -85,19 +107,23 @@
                         </div>
                         
                         <script type="text/javascript">
-                            $(document).ready(function() {
-                                $("#pollsession_tree").treeview();
-                                $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
-                            });
+                            $(document).ready(function() 
+                                {
+                                    $("#pollsession_tree").treeview();
+                                    $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
+                                }
+                            );
 
-                            function addPoll(dialog) {
+                            function addPoll(dialog) 
+                            {
                                 var fields = $("#addPollDialog :text");
-                                var branches = $("<li><span class='folder'>" + $(fields[0]).val() + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a> <a href='#'><img src='js/treeview/images/page_white_edit.png' /></a> <a href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div></li>")
-                                                .appendTo("#pollsession_tree>li>ul");
-                                $.post("PollEditor.aspx?do=add&what=poll&pollsession_id=<%= selectedPollsession.Id %>", fields);
-                                $("#pollsession_tree>li>ul").treeview({
-                                    add: branches
-                                });
+                                var branches = $("<li><span class='folder'>" + $(fields[0]).val() + "</span> <div><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_add.png' /></a><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#pollsession_tree>li>ul");
+                                $.post("PollEditor.aspx?do=add&what=poll&pollsession_id=<%=selectedPollsession.Id%>", fields);
+                                $("#pollsession_tree>li>ul").treeview(
+                                    {
+                                        add: branches
+                                    }
+                                );
                                 $(this).dialog("close");
                             }
                         </script>
@@ -107,7 +133,7 @@
             </div>
             </div>
         </div>
-        <div class="footer">Copyright © Sharpteam 2008</div>
+        <div class="footer">Copyright &copy; Sharpteam 2008</div>
     </div>
 </body>
 </html>
