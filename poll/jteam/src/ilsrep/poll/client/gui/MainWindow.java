@@ -179,9 +179,14 @@ public class MainWindow extends JFrame {
     protected List<JMenuItem> menuItemsToDisable = null;
 
     /**
-     * 
+     * Indicates if item is selected in pollsession list.
      */
     protected boolean pollsessionListItemSelected = false;
+
+    /**
+     * Default font for Poll Application.
+     */
+    protected static Font defaultFont = null;
 
     /**
      * Creates main window.
@@ -241,6 +246,19 @@ public class MainWindow extends JFrame {
         });
 
         enableMenu(false);
+
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+
+            /**
+             * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent
+             *      )
+             */
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exitProgram();
+            }
+        });
     }
 
     /**
@@ -563,17 +581,16 @@ public class MainWindow extends JFrame {
                 String emptyList = "Server(" + server + ":" + port
                         + ") pollsession list is empty!";
                 JLabel listIsEmptyLabel = new JLabel(emptyList);
+                listIsEmptyLabel.setFont(getDefaultFont());
                 logger.warn(emptyList);
 
                 listPanel.add(listIsEmptyLabel);
             }
             else {
-
                 Vector<Vector<Object>> pollsessionTableData = new Vector<Vector<Object>>();
 
                 for (Item pollsessionIdName : sessionList.getItems()) {
                     Vector<Object> sessionRow = new Vector<Object>();
-                    // sessionRow.add(pollsessionIdName.getId());
 
                     sessionRow.add(pollsessionIdName.getName());
 
@@ -582,6 +599,7 @@ public class MainWindow extends JFrame {
 
                 JTable pollsessionTable = new JTable(
                         new NonEditableTableModel());
+                pollsessionTable.setFont(getDefaultFont());
 
                 pollsessionTable
                         .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -649,8 +667,12 @@ public class MainWindow extends JFrame {
                 listPanel.removeAll();
                 listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-                listPanel.add(new JLabel("Pollsession list on " + server + ":"
-                        + port));
+                JLabel serverPortLabel = new JLabel("Pollsession list on "
+                        + server + ":" + port);
+                serverPortLabel.setFont(getDefaultFont().deriveFont(
+                        (float) getDefaultFont().getSize() + 1));
+
+                listPanel.add(serverPortLabel);
                 listPanel.add(pollsessionTable);
             }
 
@@ -1109,6 +1131,22 @@ public class MainWindow extends JFrame {
     protected void enableMenu(boolean enable) {
         for (JMenuItem item : menuItemsToDisable)
             item.setEnabled(enable);
+    }
+
+    /**
+     * Returns default font for Poll Application.
+     * 
+     * @return Deafult font.
+     */
+    public static Font getDefaultFont() {
+        if (defaultFont == null) {
+            JLabel etalonLabel = new JLabel();
+
+            defaultFont = etalonLabel.getFont().deriveFont(
+                    (float) etalonLabel.getFont().getSize() + 1);
+        }
+
+        return defaultFont;
     }
 
     /**

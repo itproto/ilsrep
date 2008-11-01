@@ -6,8 +6,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import ilsrep.poll.client.gui.old.GUIUtil;
-
 /**
  * GUI utilities for Poll application.<br>
  * Replaces old buggy {@link GUIUtil}.
@@ -46,6 +44,11 @@ public class GUIUtilities {
      * Filename of <code>arrow_left.png</code>.
      */
     public static final String ARROW_LEFT = "arrow_left.png";
+
+    /**
+     * Filename of <code>arrow_right.png</code>.
+     */
+    public static final String ARROW_RIGHT = "arrow_right.png";
 
     /**
      * Filename of <code>door_out.png</code>.
