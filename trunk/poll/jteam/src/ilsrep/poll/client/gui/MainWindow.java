@@ -10,6 +10,8 @@ import ilsrep.poll.common.protocol.Pollsessionlist;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -81,6 +85,11 @@ public class MainWindow extends JFrame {
      * Timeout for "double-click".
      */
     public static final int MOUSE_DOUBLE_CLICK_TIMEOUT = 200;
+
+    /**
+     * Name of pollsession list tab.
+     */
+    public static final String POLLSESSION_LIST_TAB_TITLE = "Pollsession list";
 
     /**
      * Menu of this window.
@@ -164,6 +173,17 @@ public class MainWindow extends JFrame {
     protected JPanel decorPanel = null;
 
     /**
+     * This items are disabled when server is not selected or list is not loaded
+     * or user hadn't selected pollsession in list.
+     */
+    protected List<JMenuItem> menuItemsToDisable = null;
+
+    /**
+     * 
+     */
+    protected boolean pollsessionListItemSelected = false;
+
+    /**
      * Creates main window.
      */
     public MainWindow() {
@@ -195,6 +215,7 @@ public class MainWindow extends JFrame {
 
             @Override
             public void stateChanged(ChangeEvent e) {
+                // Setting decor for PollsessionTab.
                 if (((CloseableTabbedPane) e.getSource())
                         .getSelectedComponent() instanceof PollsessionTab)
                     showDecor(((PollsessionTab) (((CloseableTabbedPane) e
@@ -202,8 +223,24 @@ public class MainWindow extends JFrame {
                             .isShowDecor());
                 else
                     showDecor(false);
+
+                // Checking if list tab was closed and disabling menu elements.
+                CloseableTabbedPane tabbedPane = (CloseableTabbedPane) e
+                        .getSource();
+
+                if (pollsessionListItemSelected
+                        && tabbedPane.getSelectedIndex() >= 0)
+                    if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex())
+                            .equals(POLLSESSION_LIST_TAB_TITLE))
+                        enableMenu(true);
+                    else
+                        enableMenu(false);
+                else
+                    enableMenu(false);
             }
         });
+
+        enableMenu(false);
     }
 
     /**
@@ -214,6 +251,8 @@ public class MainWindow extends JFrame {
     private JMenuBar createMenu() {
         if (menu == null) {
             menu = new JMenuBar();
+
+            menuItemsToDisable = new ArrayList<JMenuItem>();
 
             JMenu fileMenu = new JMenu();
             fileMenu.setText("File");
@@ -281,6 +320,7 @@ public class MainWindow extends JFrame {
                         startPollsession();
                     }
                 });
+                menuItemsToDisable.add(startSession);
 
                 clientActions.add(updateItem);
                 clientActions.add(startSession);
@@ -305,7 +345,7 @@ public class MainWindow extends JFrame {
                 });
 
                 JMenuItem editExistingItem = new JMenuItem();
-                editExistingItem.setText("Edit existing poll session");
+                editExistingItem.setText("Edit selected poll session");
                 editExistingItem.setIcon(GUIUtilities
                         .loadIcon(GUIUtilities.PAGE_WHITE_EDIT_ICON));
                 editExistingItem.addActionListener(new ActionListener() {
@@ -318,9 +358,10 @@ public class MainWindow extends JFrame {
                         editPollsession();
                     }
                 });
+                menuItemsToDisable.add(editExistingItem);
 
                 JMenuItem deleteItem = new JMenuItem();
-                deleteItem.setText("Delete poll session");
+                deleteItem.setText("Delete selected poll session");
                 deleteItem.setIcon(GUIUtilities
                         .loadIcon(GUIUtilities.PAGE_WHITE_DELETE_ICON));
                 deleteItem.addActionListener(new ActionListener() {
@@ -333,6 +374,7 @@ public class MainWindow extends JFrame {
                         deletePollsession();
                     }
                 });
+                menuItemsToDisable.add(deleteItem);
 
                 editorActions.add(createNewItem);
                 editorActions.add(editExistingItem);
@@ -370,8 +412,10 @@ public class MainWindow extends JFrame {
      * Exits program.
      */
     private void exitProgram() {
-        dispose();
-        System.exit(0);
+        if (GUIUtilities.askYesNo("Exit Poll Application?")) {
+            dispose();
+            System.exit(0);
+        }
     }
 
     /**
@@ -478,6 +522,8 @@ public class MainWindow extends JFrame {
         port = -1;
         serverOk = false;
 
+        enableMenu(false);
+
         if (alertion != null)
             GUIUtilities.showWarningDialog(alertion);
     }
@@ -550,10 +596,16 @@ public class MainWindow extends JFrame {
                                         .getSource();
                                 if (lsm.isSelectionEmpty()) {
                                     selectedPollsession = POLLSESSION_NOT_SELECTED;
+
+                                    pollsessionListItemSelected = false;
+                                    enableMenu(false);
                                 }
                                 else {
                                     selectedPollsession = lsm
                                             .getMinSelectionIndex();
+
+                                    pollsessionListItemSelected = true;
+                                    enableMenu(true);
                                 }
                             }
                         });
@@ -602,6 +654,9 @@ public class MainWindow extends JFrame {
                 listPanel.add(pollsessionTable);
             }
 
+            enableMenu(false);
+            pollsessionListItemSelected = false;
+
             updateListTab();
 
             return true;
@@ -625,7 +680,7 @@ public class MainWindow extends JFrame {
      * this tab.
      */
     private void updateListTab() {
-        final String listTabName = "Pollsession list";
+        final String listTabName = POLLSESSION_LIST_TAB_TITLE;
 
         if (tabbedPane.indexOfComponent(listPanel) != -1)
             listPanel.update(listPanel.getGraphics());
@@ -832,31 +887,52 @@ public class MainWindow extends JFrame {
         if (aboutTabPanel == null) {
             aboutTabPanel = new JPanel();
 
-            BoxLayout aboutTabPanelLayout = new BoxLayout(aboutTabPanel,
-                    BoxLayout.PAGE_AXIS);
+            // BoxLayout aboutTabPanelLayout = new BoxLayout(aboutTabPanel,
+            // BoxLayout.PAGE_AXIS);
+            GridBagLayout aboutTabPanelLayout = new GridBagLayout();
 
             aboutTabPanel.setLayout(aboutTabPanelLayout);
 
-            JLabel logoAndNameLabel = new JLabel("oll Application",
-                    GUIUtilities
-                            .loadIcon(GUIUtilities.POLL_APPLICATION_LOGO_ICON),
+            JLabel logoLabel = new JLabel(GUIUtilities
+                    .loadIcon(GUIUtilities.POLL_APPLICATION_LOGO_ICON),
                     JLabel.LEFT);
+            JLabel nameLabel = new JLabel("Poll Application");
 
-            Font labelsFont = logoAndNameLabel.getFont().deriveFont(Font.BOLD);
+            Font labelsFont = nameLabel.getFont().deriveFont(Font.BOLD);
+            labelsFont = labelsFont
+                    .deriveFont(((float) labelsFont.getSize()) + 1);
 
-            logoAndNameLabel.setFont(labelsFont);
-            aboutTabPanel.add(logoAndNameLabel);
+            nameLabel.setFont(labelsFont.deriveFont(((float) labelsFont
+                    .getSize()) + 2));
+
+            GridBagConstraints c = new GridBagConstraints();
+
+            c.gridx = 0;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.CENTER;
+            aboutTabPanel.add(logoLabel, c);
+
+            c.gridx = 1;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.LINE_START;
+            aboutTabPanel.add(nameLabel, c);
 
             JLabel guiClientLabel = new JLabel("GUI client");
             guiClientLabel.setFont(labelsFont);
-            aboutTabPanel.add(guiClientLabel);
 
-            aboutTabPanel.add(Box.createVerticalStrut(20));
+            c.gridx = 0;
+            c.gridy = 1;
+            aboutTabPanel.add(guiClientLabel, c);
 
             JLabel versionLabel = new JLabel("Version: "
                     + Versioning.getVersion(Versioning.COMPONENT_CLIENT_GUI));
             versionLabel.setFont(labelsFont);
-            aboutTabPanel.add(versionLabel);
+
+            c.gridx = 0;
+            c.gridy = 2;
+            c.gridwidth = 2;
+            c.insets.top = 20;
+            aboutTabPanel.add(versionLabel, c);
         }
 
         activateTab(aboutTabName, aboutTabPanel);
@@ -1021,6 +1097,18 @@ public class MainWindow extends JFrame {
         }
 
         getRootPane().getGlassPane().setVisible(show);
+    }
+
+    /**
+     * Enables or disables menu items from {@link #menuItemsToDisable}.
+     * 
+     * @param enable
+     *            If enable or disable menu items from
+     *            {@link #menuItemsToDisable}.
+     */
+    protected void enableMenu(boolean enable) {
+        for (JMenuItem item : menuItemsToDisable)
+            item.setEnabled(enable);
     }
 
     /**
