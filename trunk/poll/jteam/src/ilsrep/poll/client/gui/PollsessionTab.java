@@ -163,9 +163,7 @@ public class PollsessionTab extends JPanel implements ActionListener {
         pollResultList.setAnswers(new ArrayList<AnswerItem>());
         pollResultList.setPollSesionId(session.getId());
 
-        // Label for getting default font name for label.
-        JLabel testLabel = new JLabel();
-        bigLabelsFont = new Font(testLabel.getFont().getName(), Font.BOLD, 16);
+        bigLabelsFont = new Font((new JLabel()).getName(), Font.BOLD, 16);
     }
 
     /**
@@ -200,6 +198,9 @@ public class PollsessionTab extends JPanel implements ActionListener {
         nextButton = new JButton("Start");
         nextButton.setActionCommand(NEXT_ACTION);
         nextButton.addActionListener(this);
+        nextButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.ARROW_RIGHT));
+        nextButton.setVerticalTextPosition(AbstractButton.CENTER);
+        nextButton.setHorizontalTextPosition(AbstractButton.LEADING);
 
         JPanel nextButtonPanel = new JPanel();
         nextButtonPanel.setLayout(new BoxLayout(nextButtonPanel,
@@ -234,64 +235,13 @@ public class PollsessionTab extends JPanel implements ActionListener {
         if (e == null || e.getActionCommand().equals(NEXT_ACTION)) {
             framePanel = new JPanel();
             if (currentFrame == -1) {
-                // JLabel pollsessionIdLabel = new JLabel("Id");
-                //
-                // JTextField pollsessionIdField = new JTextField(collumsCount);
-                // pollsessionIdField.setText(session.getId());
-                // pollsessionIdField.setEditable(false);
-
-                // JLabel pollsessionNameLabel = new
-                // JLabel("Poll session name");
-
-                // JTextField pollsessionNameField = new
-                // JTextField(collumsCount);
-                // pollsessionNameField.setText(session.getName());
-                // pollsessionNameField.setEditable(false);
-
-                // JLabel pollsessionDateLabel = new JLabel("Date of creation");
-                //
-                // JTextField pollsessionDateField = new
-                // JTextField(collumsCount);
-                // pollsessionDateField.setText(session.getDate());
-                // pollsessionDateField.setEditable(false);
-
-                // JLabel pollsessionLabel = new JLabel("Get ready to pass");
-                // JLabel infoLabel = new JLabel("poll session");
-
                 framePanel.setLayout(new GridBagLayout());
 
                 GridBagConstraints c = new GridBagConstraints();
 
-                // c.anchor = GridBagConstraints.LAST_LINE_END;
-                // c.gridx = 0;
-                // c.gridy = 0;
-                // c.insets.bottom = componentSpace;
-                // framePanel.add(pollsessionLabel, c);
-                //
-                // c.anchor = GridBagConstraints.LAST_LINE_START;
-                // c.gridx = 1;
-                // c.gridy = 0;
-                // c.insets.left = componentSpace;
-                // framePanel.add(infoLabel, c);
-
-                // c.anchor = GridBagConstraints.FIRST_LINE_START;
-                // c.gridx = 0;
-                // c.gridy = 1;
-                // c.insets.left = 0;
-                // c.insets.right = 5;
-                // framePanel.add(pollsessionIdLabel, c);
-                //
-                // c.gridx = 1;
-                // c.gridy = 1;
-                // framePanel.add(pollsessionIdField, c);
-
                 c.gridx = 0;
                 c.gridy = 0;
                 framePanel.add(header, c);
-
-                // c.gridx = 1;
-                // c.gridy = 0;
-                // framePanel.add(pollsessionNameField, c);
 
                 c.gridx = 0;
                 c.gridy = 1;
@@ -301,14 +251,6 @@ public class PollsessionTab extends JPanel implements ActionListener {
 
                 owningWindow.showDecor(true);
                 showDecor = true;
-
-                // c.gridx = 0;
-                // c.gridy = 3;
-                // framePanel.add(pollsessionDateLabel, c);
-                //
-                // c.gridx = 1;
-                // c.gridy = 3;
-                // framePanel.add(pollsessionDateField, c);
             }
             else
                 if (currentFrame >= 0
@@ -372,10 +314,6 @@ public class PollsessionTab extends JPanel implements ActionListener {
                         //resultsArea.setBorder(BorderFactory.createEmptyBorder(
                         // 0, 0, 6, 0));
 
-                        // JLabel clickNextLabel = new JLabel(
-                        // "Click \"Next\" to send results");
-                        // clickNextLabel.setFont(bigLabelsFont);
-
                         framePanel.setLayout(pageLayout);
 
                         framePanel.add(resultsArea);
@@ -383,11 +321,11 @@ public class PollsessionTab extends JPanel implements ActionListener {
                         owningWindow.showDecor(false);
                         showDecor = false;
 
-                        // framePanel.add(clickNextLabel);
-
                         nextButton.setText("Send results");
                         nextButton.setIcon(GUIUtilities
                                 .loadIcon(GUIUtilities.TICK_ICON));
+                        nextButton
+                                .setHorizontalTextPosition(AbstractButton.TRAILING);
                     }
                     else {
                         Poll poll = session.getPolls().get(currentFrame);
@@ -656,10 +594,13 @@ public class PollsessionTab extends JPanel implements ActionListener {
      */
     public static JLabel createColoredLabel(String notColoredPart,
             String coloredPart) {
-        return new JLabel("<html>"
+        JLabel coloredLabel = new JLabel("<html>"
                 + (notColoredPart != null ? (notColoredPart + ": ") : "")
                 + "<font color=#b42700><b>" + coloredPart
                 + "</b></font></html>");
-    }
 
+        coloredLabel.setFont(MainWindow.getDefaultFont());
+
+        return coloredLabel;
+    }
 }

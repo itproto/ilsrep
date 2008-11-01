@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -217,27 +218,37 @@ public class EditorTab extends JPanel {
         if (currentSession.getPolls() == null)
             currentSession.setPolls(new ArrayList<Poll>());
 
+        JPanel pollsPanel = new JPanel();
+        GridBagLayout pollsPanelLayout = new GridBagLayout();
+        pollsPanel.setLayout(pollsPanelLayout);
+        pollsPanel.setBorder(BorderFactory.createTitledBorder("Polls"));
+
+        // GridBagConstraints for pollsPanel.
+        GridBagConstraints cp = new GridBagConstraints();
+        cp.anchor = GridBagConstraints.LINE_START;
+        cp.insets.bottom = COMPONENT_SPACE;
+        cp.insets.left = COMPONENT_SPACE;
+
         if (currentSession.getPolls().size() == 0) {
-            JTextField noPollsFiels = new JTextField(COLLUMNS_COUNT);
-            noPollsFiels.setText("No polls yet");
-            noPollsFiels.setEditable(false);
-            c.gridx = 0;
-            c.gridy = 4;
-            add(noPollsFiels, c);
+            JLabel noPollsLabel = PollsessionTab.createColoredLabel(null,
+                    "No polls yet");
+            cp.gridx = 0;
+            cp.gridy = 0;
+            cp.anchor = GridBagConstraints.CENTER;
+            pollsPanel.add(noPollsLabel, cp);
         }
         else {
             for (int i = 0; i < currentSession.getPolls().size(); i++) {
                 Poll poll = currentSession.getPolls().get(i);
-                JTextField pollNameField = new JTextField(COLLUMNS_COUNT);
-                pollNameField.setText(poll.getName());
-                pollNameField.setEditable(false);
-                c.gridx = 0;
-                c.gridy++;
-                add(pollNameField, c);
+                JLabel pollNameLabel = PollsessionTab.createColoredLabel(null,
+                        poll.getName());
+                cp.gridx = 0;
+                cp.anchor = GridBagConstraints.CENTER;
+                cp.gridy++;
+                pollsPanel.add(pollNameLabel, cp);
 
                 JButton editPollButton = new JButton();
                 editPollButton.setName("e" + i);
-                // editPollButton.setText("Edit");
                 editPollButton.setToolTipText("Edit poll");
                 editPollButton.setIcon(GUIUtilities
                         .loadIcon(GUIUtilities.PENCIL_ICON));
@@ -256,12 +267,11 @@ public class EditorTab extends JPanel {
                     }
                 });
 
-                c.gridx = 1;
-                add(editPollButton, c);
+                cp.gridx = 1;
+                pollsPanel.add(editPollButton, cp);
 
                 JButton removePollButton = new JButton();
                 removePollButton.setName("r" + i);
-                // removePollButton.setText("Remove");
                 removePollButton.setToolTipText("Remove poll");
                 removePollButton.setIcon(GUIUtilities
                         .loadIcon(GUIUtilities.CANCEL_ICON));
@@ -279,14 +289,15 @@ public class EditorTab extends JPanel {
                         }
                     }
                 });
-                c.gridx = 2;
-                add(removePollButton, c);
+                cp.gridx = 2;
+                cp.insets.right = COMPONENT_SPACE;
+                pollsPanel.add(removePollButton, cp);
+                cp.insets.right = 0;
             }
         }
 
         JButton addPollButton = new JButton();
-        // addPollButton.setText("Add new poll");
-        addPollButton.setToolTipText("Add new poll");
+        addPollButton.setText("Add new poll");
         addPollButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.ADD_ICON));
         addPollButton.addActionListener(new ActionListener() {
 
@@ -302,9 +313,22 @@ public class EditorTab extends JPanel {
                 editPoll(currentSession.getPolls().size() - 1);
             }
         });
+        cp.gridx = 0;
+        cp.gridwidth = (currentSession.getPolls().size() == 0) ? 1 : 3;
+        cp.anchor = GridBagConstraints.CENTER;
+        cp.gridy++;
+        pollsPanel.add(addPollButton, cp);
+
+        // JScrollPane pollsScrollPane = new JScrollPane(pollsPanel,
+        // JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        // JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        // pollsPanel.setMinimumSize(new Dimension((int) pollsPanel
+        // .getPreferredSize().getWidth(), 200));
         c.gridx = 0;
-        c.gridy++;
-        add(addPollButton, c);
+        c.gridy = 5;
+        c.gridwidth = 3;
+        c.anchor = GridBagConstraints.CENTER;
+        add(pollsPanel, c);
 
         JButton saveButton = new JButton();
         saveButton.setText(creating ? "Create" : "Save");
@@ -340,9 +364,10 @@ public class EditorTab extends JPanel {
                 }
             }
         });
-        c.gridx = 2;
-        c.gridy++;
-        c.anchor = GridBagConstraints.LINE_END;
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 3;
+        c.insets.top = COMPONENT_SPACE * 3;
         add(saveButton, c);
 
         refreshTab();
@@ -541,13 +566,23 @@ public class EditorTab extends JPanel {
         if (poll.getChoices() == null)
             poll.setChoices(new ArrayList<Choice>());
 
+        JPanel choicesPanel = new JPanel();
+        GridBagLayout choicesPanelLayout = new GridBagLayout();
+        choicesPanel.setLayout(choicesPanelLayout);
+        choicesPanel.setBorder(BorderFactory.createTitledBorder("Choices"));
+
+        GridBagConstraints cp = new GridBagConstraints();
+        cp.anchor = GridBagConstraints.LINE_START;
+        cp.insets.bottom = COMPONENT_SPACE;
+        cp.insets.right = COMPONENT_SPACE;
+
         if (poll.getChoices().size() == 0) {
-            JTextField noPollsFiels = new JTextField(COLLUMNS_COUNT);
-            noPollsFiels.setText("No choices yet");
-            noPollsFiels.setEditable(false);
-            c.gridx = 0;
-            c.gridy = 4;
-            add(noPollsFiels, c);
+            JLabel noPollsLabel = PollsessionTab.createColoredLabel(null,
+                    "No choices yet");
+            cp.gridx = 0;
+            cp.gridy = 0;
+            cp.anchor = GridBagConstraints.CENTER;
+            choicesPanel.add(noPollsLabel, cp);
         }
         else {
             ButtonGroup correctChoicesRadioButtonGroup = new ButtonGroup();
@@ -562,18 +597,18 @@ public class EditorTab extends JPanel {
                                     && choice.getName() != null
                                     && choice.getName().equals(
                                             poll.getCorrectChoice()));
-                    c.gridx = 0;
-                    c.gridy++;
-                    add(choicePanel, c);
+                    cp.gridx = 0;
+                    cp.gridy++;
+                    choicesPanel.add(choicePanel, cp);
                     testModeCorrectChoices.add(choicePanel);
                 }
                 else {
                     JTextField choiceNameField = new JTextField(COLLUMNS_COUNT);
                     if (choice.getName() != null)
                         choiceNameField.setText(choice.getName());
-                    c.gridx = 0;
-                    c.gridy++;
-                    add(choiceNameField, c);
+                    cp.gridx = 0;
+                    cp.gridy++;
+                    choicesPanel.add(choiceNameField, cp);
                     userAnswersList.add(choiceNameField);
                 }
 
@@ -599,13 +634,13 @@ public class EditorTab extends JPanel {
                         }
                     }
                 });
-                c.gridx = 1;
-                add(removeChoiceButton, c);
+                cp.gridx = 1;
+                choicesPanel.add(removeChoiceButton, cp);
             }
         }
 
         JButton addChoiceButton = new JButton();
-        addChoiceButton.setToolTipText("Add new choice");
+        addChoiceButton.setText("Add new choice");
         addChoiceButton.setIcon(GUIUtilities.loadIcon(GUIUtilities.ADD_ICON));
         addChoiceButton.addActionListener(new ActionListener() {
 
@@ -624,9 +659,17 @@ public class EditorTab extends JPanel {
                 editPoll(currentPollEditing);
             }
         });
+        cp.gridx = 0;
+        cp.gridwidth = (poll.getChoices().size() == 0) ? 1 : 2;
+        cp.anchor = GridBagConstraints.CENTER;
+        cp.gridy++;
+        choicesPanel.add(addChoiceButton, cp);
+
         c.gridx = 0;
-        c.gridy++;
-        add(addChoiceButton, c);
+        c.gridy = 4;
+        c.gridwidth = 3;
+        c.anchor = GridBagConstraints.CENTER;
+        add(choicesPanel, c);
 
         JButton backButton = new JButton();
         backButton.setText("Back");
@@ -639,9 +682,10 @@ public class EditorTab extends JPanel {
                 editPollsession();
             }
         });
-        c.gridx = 2;
-        c.gridy++;
-        c.anchor = GridBagConstraints.LINE_END;
+        c.gridx = 0;
+        c.gridy = 5;
+        c.gridwidth = 3;
+        c.anchor = GridBagConstraints.CENTER;
         add(backButton, c);
 
         refreshTab();

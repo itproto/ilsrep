@@ -1,14 +1,11 @@
 package ilsrep.poll.common.model;
 
 import ilsrep.poll.client.PollClient;
-import ilsrep.poll.client.gui.old.GUIUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -176,59 +173,6 @@ public class Poll {
             this.pass = "PASS";
 
         System.out.println();
-        // return the selected element
-
-        return selection;
-    }
-
-    public String queryUserGUI(GUIUtil win) throws IOException {
-        String query = "<html>Name: " + this.getName() + "<br>Desription: "
-                + this.getDescription().getValue() + "<html>";
-
-        int pollNumber = 1;
-        ButtonGroup group = new ButtonGroup();
-        for (Choice cur : this.getChoices()) {
-            JRadioButton jrb = new JRadioButton(cur.getName());
-            // System.out.println(cur.getName() + "\n");
-            jrb.setActionCommand(Integer.toString(pollNumber));
-            group.add(jrb);
-            pollNumber++;
-        }
-        if (checkCustomEnabled()) {
-            JRadioButton jrb = new JRadioButton("your choice");
-            jrb.setActionCommand("0");
-            group.add(jrb);
-        }
-        String selection = null;
-        int selectionId = -1;
-        // reading input data
-        selectionId = Integer.parseInt(win.getChoice(group, query));
-
-        while (selectionId < 0 || selectionId > getChoices().size())
-            selectionId = Integer.parseInt(win.getChoice(group, query));
-
-        // checking whether to output custom choice line
-        if (checkCustomEnabled() && selectionId == 0) {
-            selectedId = 0;
-            selection = win.askUser("eneter your choice");
-
-        }
-        else {
-            selectionId = Integer.parseInt(getChoices().get(selectionId - 1)
-                    .getId());
-            selectedId = selectionId;
-            for (Choice cur : this.getChoices()) {
-                // converting selection number to what it represents
-
-                if (selectionId == Integer.parseInt(cur.getId()))
-                    selection = cur.getName();
-
-            }
-        }
-        if (selectionId == Integer.parseInt(this.getCorrectChoice()))
-            this.pass = "PASS";
-
-        // System.out.println();
         // return the selected element
 
         return selection;
