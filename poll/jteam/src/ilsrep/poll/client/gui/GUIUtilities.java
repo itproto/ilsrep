@@ -165,7 +165,7 @@ public class GUIUtilities {
         Object[] options = { "Yes", "No" };
         int selectedValue = JOptionPane.showOptionDialog(null, question,
                 DIALOG_TITLE_BASE, JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
         return (selectedValue == 0) ? true : false;
     }
 
