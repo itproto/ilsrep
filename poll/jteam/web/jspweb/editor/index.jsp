@@ -13,7 +13,11 @@
 var start=0;
 function allow(){
 	start++;
-	if ((start==5)&&(document.getElementById("frmEdit")!=null)) startedit();
+	if ((start==7)&&(document.getElementById("frmEdit")!=null)) {
+		$.fn.page.defaults.func = navigateUserList; 
+		$.fn.page.defaults.subject = '#main_inner'; 	
+		startedit();
+			}
 	}
 
 </script>
@@ -21,7 +25,9 @@ function allow(){
     <script type="text/javascript" src="./xmlsax.js" onload="allow();" ></script>
    <script type="text/javascript" src="./formfunctions.js" onload="allow();"></script> 
    <script type="text/javascript" src="./xmlEscape.js" onload="allow();"></script> 
-   <!--[if IE]><script defer src="ie_onload.js"></script><![endif]-->
+    <script type="text/javascript" src="./jquery.js" onload="allow();"></script> 
+    <script type="text/javascript" src="./jquery.page.js" onload="allow();"></script> 
+      <!--[if IE]><script defer src="ie_onload.js"></script><![endif]-->
 
 </head>
 <body onload="allow();">
