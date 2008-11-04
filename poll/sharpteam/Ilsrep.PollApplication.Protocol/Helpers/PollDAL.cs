@@ -277,7 +277,7 @@ namespace Ilsrep.PollApplication.DAL
                     index++;
                     sqliteCommand.Parameters[":name"].Value = curChoice.choice;
                     sqliteCommand.Parameters[":id"].Value = curChoice.Id;
-                    if (curChoice.Id < 0)
+                    if (curChoice.Id <= 0)
                     {
                         sqliteCommand.CommandText = "INSERT INTO " + CHOICES_TABLE + "(name) VALUES(:name)";
                         sqliteCommand.ExecuteNonQuery();
@@ -303,7 +303,7 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.AddWithValue(":description", curPoll.Description);
                 sqliteCommand.Parameters.AddWithValue(":correctchoice", curPoll.CorrectChoiceID);
                 sqliteCommand.Parameters.AddWithValue(":customenabled", curPoll.CustomChoiceEnabled);
-                if (curPoll.Id < 0)
+                if (curPoll.Id <= 0)
                 {
                     sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correctchoice, customenabled) VALUES(:name, :description, :correctchoice, :customenabled)";
                     sqliteCommand.ExecuteNonQuery();

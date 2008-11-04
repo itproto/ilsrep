@@ -36,6 +36,9 @@ public partial class PollEditor : System.Web.UI.Page
             case "edit":
                 Edit(Request["what"]);
                 break;
+            case "delete":
+                Delete(Request["what"]);
+                break;
         }
     }
 
@@ -46,18 +49,33 @@ public partial class PollEditor : System.Web.UI.Page
             case "editpollsession":
                 int id = Convert.ToInt32(Request["id"]);
 
-                if (id == -1)
+                if (id == 0)
                 {// from session
+                    int lastID = Convert.ToInt32(Session["lastID"]);
+                    
                     selectedPollsession = new PollSession();
-                    selectedPollsession.Id = -1;
+                    selectedPollsession.Id = --lastID;
+                    
+                    Session["lastID"] = lastID;
                 }
-                else
+                else if ((Session["pollsession_" + id] as PollSession) != null && Convert.ToInt32(Request["reset"]) != 1 )
+                {
+                    selectedPollsession = Session["pollsession_" + id] as PollSession;
+                }
+                else if (id > 0)
                 {
                     selectedPollsession = PollDAL.GetPollSession(id);
                 }
+                else
+                {
+                    selectedPollsession = new PollSession();
+                    selectedPollsession.Id = id;
+                }
+
+                if (Session["pollsession_" + selectedPollsession.Id] == null)
+                    Session["pollsession_" + selectedPollsession.Id] = selectedPollsession;
 
                 ShowPage = "editpollsession";
-
                 break;
         }
     }
@@ -66,7 +84,27 @@ public partial class PollEditor : System.Web.UI.Page
     {
         switch (what)
         {
-            case "pollsession":
+            case "poll":
+                string poll_name = Request["poll_name"];
+                string poll_desc = Request["poll_desc"];
+                int id = Convert.ToInt32(Request["pollsession_id"]);
+
+
+                if (poll_name == String.Empty || poll_desc == String.Empty)
+                {
+                    Response.Write("{ response: -1, error: 'At least one of the fields is empty!' }");
+                }
+                else
+                {
+                    Poll newPoll = new Poll();
+                    newPoll.Name = poll_name;
+                    newPoll.Description = poll_desc;
+
+                    (Session["pollsession_" + id] as PollSession).Polls.Add(newPoll);
+                    Response.Write("{ response: 1 }");
+                }
+
+                Response.End();
                 break;
         }
     }
@@ -76,7 +114,30 @@ public partial class PollEditor : System.Web.UI.Page
         switch (what)
         {
             case "pollsession":
-                
+                int id = Convert.ToInt32(Request["id"]);
+                PollDAL.EditPollSession(Session["pollsession_" + id] as PollSession);
+                Session["pollsession_" + id] = null;
+                break;
+        }
+    }
+
+    protected void Delete(string what)
+    {
+        switch (what)
+        {
+            case "poll":
+                int pollsession_id = Convert.ToInt32(Request["pollsession_id"]);
+                int poll_id = Convert.ToInt32(Request["poll_id"]);
+
+                foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                {
+                    if (poll.Id == poll_id)
+                    {
+                        (Session["pollsession_" + pollsession_id] as PollSession).Polls.Remove(poll);
+                        break;
+                    }
+                }
+
                 break;
         }
     }
