@@ -16,6 +16,10 @@ function allow(){
 	if ((start==7)&&(document.getElementById("frmEdit")!=null)) {
 		$.fn.page.defaults.func = navigateUserList; 
 		$.fn.page.defaults.subject = '#main_inner'; 	
+$('#cmdMoveFirst').click(function(){$(this).page({direction : 'first'})});
+$('#cmdMovePrevious').click(function(){$(this).page({direction : 'previous'})});
+$('#cmdMoveNext').click(function(){$(this).page({direction : 'next'})});
+$('#cmdMoveLast').click(function(){$(this).page({direction : 'last'})});
 		startedit();
 			}
 	}
