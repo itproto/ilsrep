@@ -14,7 +14,7 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a onfocus="this.blur()" href="?action=start_poll" class="button">Start poll |</a>
+                        <a onfocus="this.blur()" href="?action=startpoll" class="button">Start poll |</a>
                     </li>
                     <li>
                         <a onfocus="this.blur()" href="PollEditor.aspx" class="button">Poll editor</a>
@@ -27,115 +27,124 @@
                 <div class="leftMenu">
                     <ul>
                         <%
-                            if (Request["action"] == "showpollsession")
-                            {
-                                %>
-                                <li><h3><%=pollSession.Name%>:</h3></li>
-                                <%
-                            int index = 1;
+                        int index;
+                        if ((Request["action"] == "showpollsession") || (Request["action"] == "submitpoll"))
+                        {
+                            %>
+                            <li><h3><%=pollSession.Name%>:</h3></li>
+                            <%
+                            index = 1;
                             foreach (Ilsrep.PollApplication.Model.Poll curPoll in pollSession.Polls)
                             {
                                 if (Convert.ToInt32(Session["pollIndex"]) == index - 1)
                                 {
-                                        %>
-                                            <li><b><%=index%>. <%=curPoll.Name%></b></li>
-                                        <%
-                            }
+                                    %>
+                                    <li><b><%=index%>. <%=curPoll.Name%></b></li>
+                                    <%
+                                }
                                 else
                                 {
-                                        %>
-                                            <li><%=index%>. <%=curPoll.Name%></li>
-                                        <%
+                                    %>
+                                    <li><%=index%>. <%=curPoll.Name%></li>
+                                    <%
                             }
 
                                 index++;
                             }
-                            }
-                            else
+                        }
+                        else
+                        {
+                            %>
+                            <h3>Select PollSession:</h3>                                      
+                            <%
+                            index = 1;
+                            foreach (Ilsrep.PollApplication.Communication.Item curItem in pollSessionsList)
                             {
                                 %>
-                                    <h3>Select PollSession:</h3>                                      
-                                <%
-                                int index = 1;
-                                foreach (Ilsrep.PollApplication.Communication.Item curItem in pollSessionsList)
-                                {
-                                    %>
-                                        <li>
-                                            <a href="Default.aspx?action=showpollsession&id=<%=curItem.id%>" onfocus="this.blur()"><%=index%>. <%=curItem.name%></a>
-                                        </li>
-                                    <% 
-                                        index++;   
-                                }
+                                <li>
+                                    <a href="Default.aspx?action=showpollsession&id=<%=curItem.id%>" onfocus="this.blur()"><%=index%>. <%=curItem.name%></a>
+                                </li>
+                                <% 
+                            index++;
                             }
+                        }
                         %>
                     </ul>
                 </div>
             </div>
             <div class="content">
                 <%
-                    if (Request["action"] == "showpollsession")
-                    {
-                %>
-                    <form class="choices" method="post" action="Default.aspx?action=showpollsession&do=submitpoll">
+                if ((Request["action"] == "showpollsession") || (Request["action"] == "submitpoll"))
+                {
+                    %>
+                    <form class="choices" method="post" action="Default.aspx?action=submitpoll">
                     <h3><%=pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Description%></h3>
                     <%
-                        int index = 0;
-                        foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Choices)
-                        {
-                    %>
-                            <label for="choice_<%=index%>"><input type="radio" onfocus="this.blur();" name="choice" id="choice_<%=index%>" value="<%=index%>" /><%=curChoice.choice%></label><br />
-                    <%  
-                            index++;
-                        }
-                    %>
-                        <input type="submit" class="submitButton" value="Continue" onfocus="this.blur();" onclick="return CheckIfSelectedChoice();" />
-                    </form>
-                <%
-                    }
-                    else if (Request["action"] == "showresults")
+                    index = 0;
+                    foreach (Ilsrep.PollApplication.Model.Choice curChoice in pollSession.Polls[Convert.ToInt32(Session["pollIndex"])].Choices)
                     {
-                        %>
-                        <div class='inner'>
-                            <h3>Here is your PollSession results:<br /></h3>
-                        <%
-                            float correctAnswers = 0;
-                            int index = 0;
-                            foreach (Ilsrep.PollApplication.Model.PollResult curResult in resultsList.results)
-                            {
-                                index++;  
-                                %>                          
-                                    <%=index%>. <%=pollSession.Polls[curResult.questionId].Name%>: <%=pollSession.Polls[curResult.questionId].Choices[curResult.answerId].choice%><br />
-                                <%
-                                if (pollSession.TestMode)
-                                {
-                                    if (pollSession.Polls[curResult.questionId].Choices[curResult.answerId].Id == pollSession.Polls[curResult.questionId].CorrectChoiceID)
-                                        correctAnswers++;
-                                }
-                            }
-
-                            if (pollSession.TestMode)
-                            {
-                                double userScore = correctAnswers / pollSession.Polls.Count;
-                                %>
-                                    <br />Your score: <%=Convert.ToInt32(userScore * 100)%>%
-                                <%
-
-                                if (userScore >= pollSession.MinScore)
-                                {
-                                    %>
-                                        <br />Congratulations!!! You PASSED the test
-                                    <%
-                                }
-                                else
-                                {
-                                    %>
-                                        <br /><br />Sorry, try again... you FAILED
-                                    <%
-                                }
-                            }
+                        if (index == 0)
+                        {
+                            %>
+                            <label for="choice_<%=index%>"><input checked="true" type="radio" onfocus="this.blur();" name="choice" id="Radio1" value="<%=index%>" /><%=curChoice.choice%></label><br />
+                            <%  
+                        }
+                        else
+                        {
+                            %>
+                            <label for="choice_<%=index%>"><input type="radio" onfocus="this.blur();" name="choice" id="choice_<%=index%>" value="<%=index%>" /><%=curChoice.choice%></label><br />
+                            <%  
+                        }
+                        index++;
                     }
                     %>
-                    </div>
+                    <input type="submit" class="submitButton" value="Continue" onfocus="this.blur();" onclick="return CheckIfSelectedChoice();" />
+                    </form>
+                    <%
+                }
+                else if (Request["action"] == "showresults")
+                {
+                    %>
+                    <div class='inner'>
+                    <h3>Here is your PollSession results:<br /></h3>
+                    <%
+                    float correctAnswers = 0;
+                    index = 0;
+                    foreach (Ilsrep.PollApplication.Model.PollResult curResult in resultsList.results)
+                    {
+                        index++;  
+                        %>                          
+                        <%=index%>. <%=pollSession.Polls[curResult.questionId].Name%>: <%=pollSession.Polls[curResult.questionId].Choices[curResult.answerId].choice%><br />
+                        <%
+                        if (pollSession.TestMode)
+                        {
+                            if (pollSession.Polls[curResult.questionId].Choices[curResult.answerId].Id == pollSession.Polls[curResult.questionId].CorrectChoiceID)
+                                correctAnswers++;
+                        }
+                    }
+
+                    if (pollSession.TestMode)
+                    {
+                        double userScore = correctAnswers / pollSession.Polls.Count;
+                        %>
+                        <br />Your score: <%=Convert.ToInt32(userScore * 100)%>%
+                        <%
+                        if (userScore >= pollSession.MinScore)
+                        {
+                            %>
+                            <br />Congratulations!!! You PASSED the test
+                            <%
+                        }
+                        else
+                        {
+                            %>
+                            <br /><br />Sorry, try again... you FAILED
+                            <%
+                        }
+                    }
+                }
+                %>
+                </div>
             </div>
             <div class="footer">Copyright &copy; Sharpteam 2008</div>
         </div>

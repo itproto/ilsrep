@@ -23,6 +23,7 @@ public partial class _Default : System.Web.UI.Page
     public List<Item> pollSessionsList = new List<Item>();
     public PollSession pollSession = null;
     public ResultsList resultsList = null;
+    public string errorMessage = String.Empty;
 
     protected void Page_Load( object sender, EventArgs e )
     {
@@ -34,31 +35,26 @@ public partial class _Default : System.Web.UI.Page
             case "showpollsession":
                 pollSession = new PollSession();
                 resultsList = new ResultsList();
-                if (Request["do"] == "submitpoll")
+                pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
+                Session["pollSession"] = pollSession;
+                Session["pollIndex"] = 0;
+                resultsList.pollsessionId = pollSession.Id;
+                Session["resultsList"] = resultsList;
+                break;
+            case "submitpoll":
+                pollSession = (PollSession)Session["pollSession"];
+                resultsList = (ResultsList)Session["resultsList"];
+                PollResult curResult = new PollResult();
+                curResult.questionId = Convert.ToInt32(Session["pollIndex"]);
+                curResult.answerId = Convert.ToInt32(Request["choice"]);
+                resultsList.results.Add(curResult);
+                if (Convert.ToInt32(Session["pollIndex"]) == pollSession.Polls.Count - 1)
                 {
-                    pollSession = (PollSession)Session["pollSession"];
-                    resultsList = (ResultsList)Session["resultsList"];
-                    PollResult curResult = new PollResult();
-                    curResult.questionId = Convert.ToInt32(Session["pollIndex"]);
-                    curResult.answerId = Convert.ToInt32(Request["choice"]);
-                    resultsList.results.Add(curResult);
-
-                    if (Convert.ToInt32(Session["pollIndex"]) == pollSession.Polls.Count - 1)
-                    {
-                        Response.Redirect("?action=showresults");
-                    }
-                    else
-                    {
-                        Session["pollIndex"] = Convert.ToInt32(Session["pollIndex"]) + 1;
-                    }
+                    Response.Redirect("Default.aspx?action=showresults");
                 }
                 else
                 {
-                    pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
-                    Session["pollSession"] = pollSession;
-                    Session["pollIndex"] = 0;
-                    resultsList.pollsessionId = pollSession.Id;
-                    Session["resultsList"] = resultsList;
+                    Session["pollIndex"] = Convert.ToInt32(Session["pollIndex"]) + 1;
                 }
                 break;
             case "showresults":

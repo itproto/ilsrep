@@ -21,7 +21,7 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="Default.aspx?action=start_poll">Start poll |</a>
+                        <a href="Default.aspx?action=startpoll">Start poll |</a>
                     </li>
                     <li>
                         <a href="PollEditor.aspx">Poll editor</a>

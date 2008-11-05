@@ -89,7 +89,6 @@ public partial class PollEditor : System.Web.UI.Page
                 string poll_desc = Request["poll_desc"];
                 int id = Convert.ToInt32(Request["pollsession_id"]);
 
-
                 if (poll_name == String.Empty || poll_desc == String.Empty)
                 {
                     Response.Write("{ response: -1, error: 'At least one of the fields is empty!' }");
