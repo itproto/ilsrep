@@ -463,8 +463,12 @@ public abstract class DBManager {
                                 .prepareStatement("insert into polls (id, name, correctchoice, description, customenabled) values (?, ?, ?, ?, ?)");
                         pollsSt.setInt(1, (pollsLastId + 1));
                         pollsSt.setString(2, poll.getName());
+                        if(poll.getCorrectChoice().equals("undefined")) {
+	                        pollsSt.setInt(3,-1);
+	                        } else { 
                         pollsSt.setInt(3, Integer.parseInt(poll
                                 .getCorrectChoice()));
+                            }
                         pollsSt.setString(4, poll.getDescription().getValue());
                         pollsSt.setBoolean(5,
                                 poll.getCustomEnabled() != null
@@ -685,14 +689,15 @@ public abstract class DBManager {
                     break;
                 }
             }
-
+if(!(id.equals("-1"))){
             if (!idExist)
                 return;
-
+}
             int newId = storePollsession(sess);
-
+if(!(id.equals("-1"))){
             if (newId > 0)
                 removePollsession(id);
+        }
         }
         catch (SQLException e) {
         }

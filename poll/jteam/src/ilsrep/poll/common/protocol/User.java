@@ -32,8 +32,8 @@ public class User{
 * if user exists.
 */
 	protected Boolean isExist=false;
-
-/**
+	protected String action="exist";
+	/**
 * @see #userName
 */
     @XmlAttribute(name = "username")
@@ -94,6 +94,17 @@ public class User{
 
     public void setExist(String tmp) {
         this.isExist = tmp.equals("true")? true : false ;
+    }		
+	
+        @XmlAttribute(name = "action")
+    public String getAction() {
+       return this.action ;
+        
+	    
+    }
+
+    public void setAction(String tmp) {
+	    this.action=tmp;
     }		
 	
 	

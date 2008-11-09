@@ -175,7 +175,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                                 .getType().compareTo(
                                                         Request.TYPE_USER) == 0) {
                                             if ((receivedPacket.getUser()
-                                                    .getNew().equals("true"))) {
+                                                    .getAction().equals("new"))) {
                                                 serverInstance
                                                         .getDB()
                                                         .createUser(
@@ -189,7 +189,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                                 packetForSending
                                                         .setUser(receivedPacket
                                                                 .getUser());
-                                                sendPacket(packetForSending);
+                                                                                                                sendPacket(packetForSending);
                                                 logger
                                                         .info("User created. Name = "
                                                                 + receivedPacket
@@ -197,18 +197,10 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                                                         .getUserName());
                                             }
                                             else {
-                                                if (!(receivedPacket.getUser()
-                                                        .getExist()
-                                                        .equals("true"))) {
-                                                    receivedPacket
-                                                            .getUser()
-                                                            .setExist(
-                                                                    serverInstance
-                                                                            .getDB()
-                                                                            .checkUser(
-                                                                                    receivedPacket
-                                                                                            .getUser()
-                                                                                            .getUserName()));
+                                                if ((receivedPacket.getUser()
+                                                        .getAction()
+                                                        .equals("exist"))) {
+receivedPacket.getUser().setAction(serverInstance.getDB().checkUser(receivedPacket.getUser().getUserName()).equals("true")? "exist" :"new" );
                                                     Pollpacket packetForSending = new Pollpacket();
                                                     packetForSending
                                                             .setUser(receivedPacket
@@ -225,18 +217,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
                                                                             .getExist());
                                                 }
                                                 else {
-                                                    receivedPacket
-                                                            .getUser()
-                                                            .setAuth(
-                                                                    serverInstance
-                                                                            .getDB()
-                                                                            .authUser(
-                                                                                    receivedPacket
-                                                                                            .getUser()
-                                                                                            .getUserName(),
-                                                                                    receivedPacket
-                                                                                            .getUser()
-                                                                                            .getPass()));
+        receivedPacket.getUser().setAction(serverInstance.getDB().authUser(receivedPacket.getUser().getUserName(),receivedPacket.getUser().getPass()).equals("true")? "auth" : "exist");
                                                     Pollpacket packetForSending = new Pollpacket();
                                                     packetForSending
                                                             .setUser(receivedPacket
@@ -389,7 +370,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
 
         Unmarshaller um = pollPacketContext.createUnmarshaller();
         StringReader reader = new StringReader(inputBuffer.toString().trim());
-
+logger.warn(inputBuffer.toString());
         receivedPacket = (Pollpacket) um.unmarshal(reader);
 
         return receivedPacket;
@@ -416,7 +397,7 @@ public class PollClientHandler implements ClientHandler, Runnable {
         StringWriter wr = new StringWriter();
 
         mr.marshal(packet, wr);
-
+        logger.warn("SENDING "+wr.toString());
         outStream.write(wr.toString().getBytes());
         // JAXBContext pollPacketContext = JAXBContext
         // .newInstance(Pollpacket.class);
