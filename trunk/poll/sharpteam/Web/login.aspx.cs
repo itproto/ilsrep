@@ -22,10 +22,10 @@ public partial class login : System.Web.UI.Page
                 break;
         }
 
-        if (Request["ReturnUrl"] != null)
+        if (Request["ReturnUrl"] == "/Web/PollEditor.aspx")
         {
             backButton.Visible = true;
-            status.InnerText = "Sorry, this page is only for moderators";
+            message.InnerText = "Sorry, this page is only for moderators";
         }
     }
 
@@ -34,7 +34,7 @@ public partial class login : System.Web.UI.Page
         if (true)
             FormsAuthentication.RedirectFromLoginPage(username.Text, false);
         else
-            status.InnerHtml = "Invalid Login";
+            message.InnerHtml = "Invalid Login";
     }
 
     public void Back_Click(Object sender, EventArgs e)
