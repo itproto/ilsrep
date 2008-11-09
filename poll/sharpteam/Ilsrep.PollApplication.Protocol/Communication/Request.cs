@@ -41,6 +41,11 @@ namespace Ilsrep.PollApplication.Communication
         /// </summary>
         [XmlIgnore] public const string GET_RESULTS = "getResults";
         /// <summary>
+        /// Request type that sends user info
+        /// </summary>
+        [XmlIgnore]
+        public const string USER = "user";
+        /// <summary>
         /// string that specifies, which type of request it is
         /// </summary>
         [XmlAttribute("type")] public string type;

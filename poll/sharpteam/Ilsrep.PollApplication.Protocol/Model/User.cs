@@ -24,9 +24,8 @@ namespace Ilsrep.PollApplication.Model
         /// Action(used in user authorisation)
         /// </summary>
         [XmlAttribute("action")] public string action;
-        [XmlIgnore] public const string LOGIN = "login";
-        [XmlIgnore] public const string ACCEPTED = "accepted";
-        [XmlIgnore] public const string DENIED = "denied";
-        [XmlIgnore] public const string NEW_USER = "newUser";
+        [XmlIgnore] public const string AUTH = "auth";
+        [XmlIgnore] public const string NEW_USER = "new";
+        [XmlIgnore] public const string EXIST = "exist";
     }
 }

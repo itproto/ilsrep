@@ -443,11 +443,36 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.Add( new SQLiteParameter( ":password", user.password ) );
                 sqliteCommand.CommandText = "INSERT INTO " + USERS_TABLE + "(userName, password) VALUES (:userName, :password)";
                 SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
-                user.action = User.ACCEPTED;
+                user.action = User.AUTH;
             }
             catch (Exception)
             {
-                user.action = User.DENIED;
+                user.action = User.EXIST;
+            }
+
+            return user;
+        }
+
+        static public User ExistUser(User user)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add( new SQLiteParameter( ":userName", user.username ) );
+            sqliteCommand.CommandText = "SELECT * FROM " + USERS_TABLE + " WHERE userName=:userName";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+
+            // if user already exist
+            if ( sqliteReader.HasRows )
+            {
+                user.action = User.EXIST;                
+            }
+            else
+            {
+                user.action = User.NEW_USER;
             }
 
             return user;
@@ -470,16 +495,16 @@ namespace Ilsrep.PollApplication.DAL
             {
                 if ( sqliteReader["password"].ToString() == user.password )
                 {
-                    user.action = User.ACCEPTED;
+                    user.action = User.AUTH;
                 }
                 else
                 {
-                    user.action = User.DENIED;
+                    user.action = User.EXIST;
                 }
             }
             else
             {
-                user.action = User.NEW_USER;
+                user.action = User.EXIST;
             }
             return user;
         }
