@@ -348,8 +348,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.resultsList = resultsList;
             sendPacket.resultsList.userName = PollClientGUI.userName;
             sendPacket.resultsList.pollsessionId = pollSession.Id;
-
-            PollClientGUI.ReceivePollPacket(sendPacket);
+            PollClientGUI.client.Send(PollSerializator.SerializePacket(sendPacket));
+            
+            //PollClientGUI.ReceivePollPacket(sendPacket);
 
             pollGroupBox.Controls.Clear();
             Label lblTopText = new Label();

@@ -24,6 +24,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void AuthorizeUser()
         {
             PollPacket pollPacket = new PollPacket();
+            pollPacket.request = new Request();
+            pollPacket.request.type = Request.USER;
             pollPacket.user = new User();
             pollPacket.user.username = nameField.Text;
             pollPacket.user.password = passwordField.Text;
@@ -33,6 +35,21 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 if (passwordField.Text == confirmField.Text)
                 {
                     pollPacket.user.action = User.NEW_USER;
+                    pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
+
+                    switch (pollPacket.user.action)
+                    {
+                        case User.NEW_USER:
+                            PollClientGUI.isAuthorized = true;
+                            PollClientGUI.userName = nameField.Text;
+                            Close();
+                            return;
+                            break;
+                        case User.EXIST:
+                            MessageBox.Show("Error occured during registation", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                            break;
+                    }
                 }
                 else
                 {
@@ -42,34 +59,43 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             else
             {
-                pollPacket.user.action = User.LOGIN;
+                pollPacket.user.action = User.EXIST;
             }
             
             pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
 
             if (pollPacket == null)
                 return;
-
-            switch (pollPacket.user.action)
+            else if (pollPacket.user.action == User.EXIST)
             {
-                case User.ACCEPTED:
-                    PollClientGUI.isAuthorized = true;
-                    PollClientGUI.userName = nameField.Text;
-                    Close();
-                    break;
-                case User.DENIED:
-                    MessageBox.Show("Wrong password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-                case User.NEW_USER:
-                    MessageBox.Show("User not found in DB, program will create a new user", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    confirmField.Visible = true;
-                    confirmLabel.Visible = true;
-                    nameField.Enabled = false;
-                    this.Size = new Size(234, 150);
-                    submitButton.Top = 85;
-                    settingsButton.Top = 85;
-                    break;
-            }    
+                pollPacket.user.action = User.AUTH;
+                pollPacket.request = new Request();
+                pollPacket.request.type = Request.USER;
+                pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
+
+                switch (pollPacket.user.action)
+                {
+                    case User.AUTH:
+                        PollClientGUI.isAuthorized = true;
+                        PollClientGUI.userName = nameField.Text;
+                        Close();
+                        break;
+                    case User.EXIST:
+                        MessageBox.Show("Wrong password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                }
+            }
+            else
+            {
+                MessageBox.Show("User not found in DB, program will create a new user", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                confirmField.Visible = true;
+                confirmLabel.Visible = true;
+                nameField.Enabled = false;
+                this.Size = new Size(234, 150);
+                submitButton.Top = 85;
+                settingsButton.Top = 85;
+            }
+
         }
 
         private void submitButton_Click(object sender, EventArgs e)

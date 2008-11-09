@@ -257,24 +257,31 @@ namespace Ilsrep.PollApplication.PollServer
 
             if (!client.isAuthorized)
             {
-                switch (receivedPacket.user.action)
+                if (receivedPacket.request.type == Request.USER)
                 {
-                    case User.LOGIN:
-                        sendPacket.user = PollDAL.AuthorizeUser(receivedPacket.user);
-                        if (sendPacket.user.action == User.ACCEPTED)
-                        {
-                            client.isAuthorized = true;
-                            log.Info("User accepted: " + sendPacket.user.username);
-                        }
-                        break;
-                    case User.NEW_USER:
-                        sendPacket.user = PollDAL.RegisterUser(receivedPacket.user);
-                        if (sendPacket.user.action == User.ACCEPTED)
-                        {
-                            client.isAuthorized = true;
-                            log.Info("New user created: " + sendPacket.user.username);
-                        }
-                        break;
+                    switch (receivedPacket.user.action)
+                    {
+                        case User.EXIST:
+                            sendPacket.user = PollDAL.ExistUser(receivedPacket.user);
+
+                            break;
+                        case User.AUTH:
+                            sendPacket.user = PollDAL.AuthorizeUser(receivedPacket.user);
+                            if (sendPacket.user.action == User.AUTH)
+                            {
+                                client.isAuthorized = true;
+                                log.Info("User accepted: " + sendPacket.user.username);
+                            }
+                            break;
+                        case User.NEW_USER:
+                            sendPacket.user = PollDAL.RegisterUser(receivedPacket.user);
+                            if (sendPacket.user.action == User.AUTH)
+                            {
+                                client.isAuthorized = true;
+                                log.Info("New user created: " + sendPacket.user.username);
+                            }
+                            break;
+                    }
                 }
             }
             else
