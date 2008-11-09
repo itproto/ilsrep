@@ -43,7 +43,7 @@ public class PollClient {
      */
     public static void main(String[] args) throws JAXBException, IOException {
         List<AnswerItem> answers = new ArrayList<AnswerItem>();
-
+TcpCommunicator communicator = null;
         String serverPortString = null;
 
         System.out.println("Poll Client\nVersion: "
@@ -59,8 +59,9 @@ public class PollClient {
         Pollsession polls = null;
         boolean repeater = true;
         String yesNoChoice = readFromConsole("\nUse \n (1) server \n (2) local file \n[press enter for default (1)]");
-
+Boolean onServer=true;
         if ((yesNoChoice.compareTo("2") == 0)) {
+	        onServer=false;
             String fileName = readFromConsole("\nPlease enter filename to read"
                     + " poll xml from\n[press enter for default"
                     + " \"xml/Polls.xml\"]");
@@ -75,7 +76,7 @@ public class PollClient {
             serverPortString = readFromConsole("\nPlease enter server:port"
                     + " to connect to\n[press enter for"
                     + " default \"127.0.0.1:3320\"]");
-            TcpCommunicator communicator = null;
+            
 
             communicator = initTcpCommunicator(serverPortString);
 
@@ -87,14 +88,15 @@ public class PollClient {
             user = communicator.sendUser(user);
 
             // comm2.finalize();
-            if (user.getExist().equals("true")) {
+            if (user.getAction().equals("exist")) {
                 boolean notLogged = true;
                 while (notLogged) {
                     System.out.println("\nUser Exists.");
                     String password = readFromConsole("Enter password");
                     user.setPass(password);
+                    user.setAction("auth");
                     user = communicator.sendUser(user);
-                    if (user.getAuth().equals("true")) {
+                    if (user.getAction().equals("auth")) {
                         System.out.println("\nLogged in. Welcome!");
                         notLogged = false;
                     }
@@ -155,7 +157,7 @@ public class PollClient {
                             .println("\nCorrupted output from server.\nPossibly no such id or corrupted XML.\nTry again.\n");
                 }
             }
-            communicator.finalize();
+          //  communicator.finalize();
         }
 
         // Showing xml, generated from already read object model.
@@ -238,18 +240,18 @@ public class PollClient {
 
         System.out.println("\nSending results to server.");
 
-        TcpCommunicator communicator = initTcpCommunicator(serverPortString);
+       // TcpCommunicator communicator = initTcpCommunicator(serverPortString);
 
         Answers ans = new Answers();
         ans.setUsername(name);
         ans.setPollSesionId(polls.getId());
         ans.setAnswers(answers);
-
+if (onServer){
         communicator.sendResult(ans);
         communicator.finalize();
 
         System.out.println("\nResults sent.\nPress ENTER key to exit.");
-
+}
         // Making program wait till user press enter.
         BufferedReader consoleInputReader = new BufferedReader(
                 new InputStreamReader(System.in));
