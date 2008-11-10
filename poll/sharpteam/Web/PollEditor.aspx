@@ -74,7 +74,10 @@
                         <a href="Default.aspx?action=start_poll">Start poll |</a>
                     </li>
                     <li>
-                        <a href="PollEditor.aspx">Poll editor</a>
+                        <a href="PollEditor.aspx">Poll editor |</a>
+                    </li>
+                    <li>
+                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout(<%=User.Identity.Name%>)</a>
                     </li>
                 </ul>
             </div>

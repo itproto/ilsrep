@@ -6,67 +6,40 @@
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link href="css/style.css" type="text/css" rel="Stylesheet" />
     <script src="js/scripts.js" type="text/javascript"></script>
-    <style>      
-        .login_body
-        {
-	        background-color: #CCCC99;
-	        font-family: Verdana;
-	        font-size: 10px;
-	        text-align: center;
-	        margin: 0;
-	        padding: 0;
-        }
-              
-        .login_main
-        {
-        	background-color: #FFFFE6;
-        	color: #804000;
-        	width: 215px;
-        	border: 2px #BD2121 solid;
-        	text-align: right;
-        	margin: 100px auto;
-        	padding: 5px;
-        }
-        
-        .login_title
-        {
-        	text-align: center;
-        	font-weight: bold;
-        	font-size: 11px;
-        	margin: 0px;
-        	padding: 0px;
-        }           
-        
-        .login_field
-        {
-        	margin-top: 3px;
-        	padding: 0px;
-        }
-        
-        .login_message
-        {
-        	color: Red;
-        	margin-top: 3px;
-        }
-        
-        .login_buttons
-        {
-        	margin-top: 3px;
-        }
-    </style>
 </head>
 <body class="login_body">
-    <div class="login_main">    
-        <form id="loginForm" runat="server">
-            <div class="login_title">Login</div>
-            <div class="login_field">Username: <asp:textbox id="username" runat="Server"/></div>
-            <div class="login_field">Password: <asp:textbox id="password" textmode="Password" runat="Server"/></div>
-            <div class="login_message"><span id="message" runat="Server" /></div>
-            <div class="login_buttons">
-                <asp:Button ID="loginButton" OnClick="Login_Click" Text="  Login  " runat="server" />
-                <asp:Button ID="backButton" OnClick="Back_Click" Text="  Return  " runat="server" Visible="false" />
+    <%
+    switch (Request["action"])
+    {
+        case "registration":
+            %>
+            <div class="registration_main">
+                <form id="registrationForm" runat="server">
+                    <div class="login_title">Registration</div>
+                    <div class="login_field">Name: <asp:TextBox ID="TextBox1" runat="server" /></div>
+                    <div class="login_field">Password: <asp:TextBox ID="TextBox2" TextMode="Password" runat="server" /></div>
+                    <div class="login_field">Confirm password: <asp:TextBox ID="confirm_password" TextMode="Password" runat="server" /></div>
+                    <div class="login_message"><span id="Span1" runat="Server" /></div>            
+                    <div class="login_button"><asp:Button ID="registrationButton" Text="  Register  " runat="server" /></div>
+                </form>                    
             </div>
-        </form>
-    </div>
+            <%
+            break;
+        default:
+            %>
+            <div class="login_main">
+                <form id="loginForm" runat="server">
+                    <div class="login_title">Login</div>
+                    <div class="login_field">Username: <asp:textbox id="username" runat="Server"/></div>
+                    <div class="login_field">Password: <asp:textbox id="password" textmode="Password" runat="Server"/></div>
+                    <div class="login_message"><span id="message" runat="Server" /></div>
+                    <div class="login_registration"><a href="login.aspx?action=registration">Registration</a></div>
+                    <div class="login_button"><asp:Button ID="loginButton" OnClick="Login_Click" Text="  Login  " runat="server" /></div>
+                </form> 
+            </div>                   
+            <%
+            break;
+    }
+    %>
 </body>
 </html>
