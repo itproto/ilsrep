@@ -12,6 +12,56 @@
     <script src="js/scripts.js" type="text/javascript"></script>
     <script type="text/javascript">
     $(document).ready(addHover);
+    <%
+    if (ShowPage == "editpollsession")
+    {
+    %>
+        $(document).ready(function() 
+            {
+                $("#pollsession_tree").treeview();
+                $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
+                $("#link_add_poll").click( function() { $("#addPollDialog").dialog("open"); return false; } );
+                $("#pollsession_reset").click( function() { document.location='PollEditor.aspx?action=show&what=editpollsession&id=<%= selectedPollsession.Id %>&reset=1' });
+                $(".links_delete_poll").click( function () {
+                    var id = this.id.replace("link_delete_poll_", "");
+                    $("#poll_"+id).remove();
+                    $.post("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
+                });
+            }
+        );
+
+        function addPoll(dialog) 
+        {
+            var fields = $("#addPollDialog :input");
+            $.post("PollEditor.aspx?action=add&what=poll&pollsession_id=<%=selectedPollsession.Id%>", fields, addPollCallback, "json");
+            $(this).dialog("close");
+        }
+
+        function addPollCallback(data, textStatus)
+        {
+            if (data.response == -1)
+            {
+                alert(data.error);
+                return false;
+            }
+        
+            var fields = $("#addPollDialog :input");
+            var branches = $("<li id='poll_"+data.id+"'><span class='folder'>" + $(fields[0]).val() + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a><a href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a href='#' id='link_delete_poll_"+data.id+"' class='links_delete_poll'><img src='js/treeview/images/page_white_delete.png' /></a></div><ul></ul></li>").appendTo("#pollsession_tree>li>ul");
+            $("#link_delete_poll_" + data.id).click( function() {
+                var id = this.id.replace("link_delete_poll_", "");
+                $("#poll_"+id).remove();
+                $.post("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
+            });
+            $("#pollsession_tree").treeview(
+                {
+                    add: branches
+                }
+            );
+        }
+    <%
+    }
+                    
+    %>
     </script>
 </head>
 <body class="home">
@@ -21,7 +71,7 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a href="Default.aspx?action=startpoll">Start poll |</a>
+                        <a href="Default.aspx?action=start_poll">Start poll |</a>
                     </li>
                     <li>
                         <a href="PollEditor.aspx">Poll editor</a>
@@ -34,148 +84,85 @@
                 <div class="leftMenu">
                     <h3>Edit Pollsession:</h3>
                     <ul>
-                        <%
+                    <%
                         int index = 1;
                         foreach (Ilsrep.PollApplication.Communication.Item pollSession in pollSessionsList)
                         {
                             %>
-                            <li><a href="?editoraction=show&what=pollsession&id=<%=pollSession.id%>"><%=index%>. <%=pollSession.name%></a></li>
+                                <li><a href="?action=show&what=editpollsession&id=<%=pollSession.id%>"><%=index%>. <%=pollSession.name%></a></li>
                             <%
                             ++index;
                         }
-                        %>
-                        <li><a href="?editoraction=show&what=pollsession&id=0">Add New</a></li>
+                    %>
+                        <li><a href="?action=show&what=editpollsession&id=0">Add New</a></li>
                     </ul>
                 </div>
             </div>
             <div class="content">
             <div class="inner">
                 <%
-                if (Request["editoraction"] == "show")
-                {
+                    if (ShowPage == "editpollsession")
+                    {
                 %>
-                    <h3>Edit Pollsession</h3>
-                    <div class="error"><%= Message %></div>
-                    <form action="PollEditor.aspx?editoraction=edit&what=pollsession&id=<%= selectedPollsession.Id %>" method="post">
-                        Pollsession Name: <input type="text" name="pollsession_name" value="<%= selectedPollsession.Name %>" class="text" /><br />
-                        <ul id="pollsession_tree" class="filetree treeview-famfamfam">
-                            <li>
-                                <span class="folder">Polls</span> 
-                                <div>
-                                    <a href='#' onclick='$("#addPollDialog").dialog("open"); return false;'>
-                                        <img alt="Add Poll" src='js/treeview/images/page_white_add.png' />
-                                    </a>
-                                </div>
-                                <ul>
-                                    <%
-                                    foreach(Ilsrep.PollApplication.Model.Poll poll in selectedPollsession.Polls)
-                                    {
-                                        %>
-                                        <li><span class='folder'><%=poll.Name%></span>
-                                            <div>
-                                                <a href='#'><img alt="Add" onclick='$("#addChoiceDialog").dialog("open"); return true;' src='js/treeview/images/page_white_add.png' /></a> 
-                                                <a href='#'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a> 
-                                                <a href='#'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
-                                            </div>
-                                            <ul>
-                                            <%
-                                            foreach (Ilsrep.PollApplication.Model.Choice choice in poll.Choices)
-                                            {
-                                                %>
-                                                <li><span class='file'><%=choice.choice%></span>
-                                                <div>
-                                                    <a href='#'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>
-                                                    <a href='#'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
-                                                </div>
-                                                </li>
-                                                <%
-                                            }
-                                            %>
-                                            </ul>
-                                        </li>
-                                        <%
-                                   }
-                                   %>
-                                </ul>
-                            </li>
-                        </ul>
-                        
-                        <input type="submit" value="<%= (selectedPollsession.Id < 0 ? "Add" : "Edit") %> Pollsession" class="button" />
-                        <input type="button" value="Reset" onclick="document.location='PollEditor.aspx?editoraction=show&what=pollsession&id=<%=selectedPollsession.Id%>&reset=1'" class="button" />
-                    </form>
-                    
-                    <div id="addPollDialog" title="Add Poll">
-                        Poll Name: <input type="text" name="poll_name" class="text" /><br />
-                        Poll Description:<br />
-                        <textarea name="poll_description" rows="3" cols="30" class="text"></textarea>
-                    </div>
-                    
-                    <div id="addChoiceDialog" title="Add Choice">
-                        Choice: <input type="text" name="choice_name" class="text" /><br />
-                    </div>
-                    
-                    <script type="text/javascript">
-                        $(document).ready(function() 
-                            {
-                                $("#pollsession_tree").treeview();
-                                $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
-                                $("#addChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addChoice, "Cancel": function() { $(this).dialog("close"); } } });
-                            }
-                        );
-
-                        function addPoll(dialog) 
-                        {
-                            var fields = $("#addPollDialog :input");
-                            $.post("PollEditor.aspx?editoraction=add&what=poll&pollsession_id=<%=selectedPollsession.Id%>", fields, addPollCallback);
-                            $(this).dialog("close");
-                        }
-
-                        function addPollCallback(data, textStatus)
-                        {
-                            if (data != "")
-                            {
-                                alert(data);
-                                return false;
-                            }
+                        <h3>Edit Pollsession</h3>
+                        <div class="error"><%= Message %></div>
+                        <form action="PollEditor.aspx?action=edit&amp;what=pollsession&id=<%= selectedPollsession.Id %>" method="post">
+                            Pollsession Name: <input type="text" name="pollsession_name" value="<%= selectedPollsession.Name %>" class="text" /><br />
                             
-                            var fields = $("#addPollDialog :input");
-                            var branches = $("<li><span class='folder'>" + $(fields[0]).val() + 
-                            "</span> <div><a onfocus='this.blur()' href='#' onclick=`$('#addChoiceDialog').dialog('open'); return false;`><img src='js/treeview/images/page_white_add.png' /></a><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#pollsession_tree>li>ul");
-                            $("#pollsession_tree>li>ul").treeview(
-                                {
-                                    add: branches
-                                }
-                            );
-                        }
+                            <ul id="pollsession_tree" class="filetree treeview-famfamfam">
+                                <li>
+                                    <span class="folder">Polls</span> 
+                                    <div>
+                                        <a href='#' id='link_add_poll'>
+                                            <img alt="Add Poll" src='js/treeview/images/page_white_add.png' />
+                                        </a>
+                                    </div>
+                                    <ul>
+                                        <%
+                                           foreach(Ilsrep.PollApplication.Model.Poll poll in selectedPollsession.Polls)
+                                           {
+                                               %>
+                                               <li id='poll_<%=poll.Id %>'><span class='folder'><%=poll.Name%></span>
+                                                   <div>
+                                                       <a href='#'><img alt="Add" src='js/treeview/images/page_white_add.png' /></a> 
+                                                       <a href='#'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a> 
+                                                       <a href='#' id='link_delete_poll_<%=poll.Id %>' class='links_delete_poll'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
+                                                   </div>
+                                                   <ul>
+                                                   <%
+                                                   foreach (Ilsrep.PollApplication.Model.Choice choice in poll.Choices)
+                                                   {
+                                                       %>
+                                                       <li><span class='file'><%=choice.choice%></span>
+                                                       <div>
+                                                           <a href='#'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>
+                                                           <a href='#'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
+                                                       </div>
+                                                       </li>
+                                                       <%
+                                                   }
+                                                   %>
+                                                   </ul>
+                                               </li>
+                                               <%
+                                           }
+                                        %>
+                                    </ul>
+                                </li>
+                            </ul>
+                            
+                            <input type="submit" value="<%= (selectedPollsession.Id < 0 ? "Add" : "Edit") %> Pollsession" class="button" />
+                            <input type="button" id="pollsession_reset" value="Reset" class="button" />
+                        </form>
                         
-                        function addChoice(dialog) 
-                        {
-                            var fields = $("#addChoiceDialog :input");
-                            $.post("PollEditor.aspx?editoraction=add&what=choice&pollsession_id=<%=selectedPollsession.Id%>&poll_id=0", fields, addChoiceCallback);
-                            $(this).dialog("close");
-                        }
-
-                        function addChoiceCallback(data, textStatus)
-                        {
-                            if (data != "")
-                            {
-                                alert(data);
-                                return false;
-                            }
-
-                            var fields = $("#addChoiceDialog :input");
-                            var branches = $("<li><span class='file'>" + $(fields[0]).val() + 
-                            "</span><div><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a onfocus='this.blur()' href='#'><img src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#pollsession_tree>li>ul>li>ul");
-                            $("#pollsession_tree>li>ul>li>ul").treeview(
-                                {
-                                    add: branches
-                                }
-                            );
-                        }
-                    </script>
-            <%
-                }
-            %>
+                        <div id="addPollDialog" title="Add Poll">
+                            Poll Name: <input type="text" name="poll_name" class="text" /><br />
+                            Poll Description:<br />
+                            <textarea name="poll_desc" rows="3" cols="30" class="text"></textarea>
+                        </div>
+                <%
+                    }
+                %>
             </div>
             </div>
         </div>

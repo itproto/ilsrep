@@ -26,14 +26,14 @@ a:hover
 	padding-bottom: 0;
 }
 
-input.text
+.text
 {
 	font-size: 10px;
 	border: 1px solid #85b1de;
 	background-color: #fcf4a2;
 }
 
-input.text:hover
+.text:hover
 {
 	border: 1px solid #f00;
 }
