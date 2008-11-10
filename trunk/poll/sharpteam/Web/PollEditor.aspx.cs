@@ -25,7 +25,7 @@ public partial class PollEditor : System.Web.UI.Page
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath(ConfigurationSettings.AppSettings["dataSource"].ToString()) + "\"";
         pollSessionsList = PollDAL.GetPollSessions();
 
-        switch (Request["editoraction"])
+        switch(Request["action"])
         {
             case "show":
                 Show(Request["what"]);
@@ -46,7 +46,7 @@ public partial class PollEditor : System.Web.UI.Page
     {
         switch (what)
         {
-            case "pollsession":
+            case "editpollsession":
                 int id = Convert.ToInt32(Request["id"]);
 
                 if (id == 0)
@@ -75,6 +75,7 @@ public partial class PollEditor : System.Web.UI.Page
                 if (Session["pollsession_" + selectedPollsession.Id] == null)
                     Session["pollsession_" + selectedPollsession.Id] = selectedPollsession;
 
+                ShowPage = "editpollsession";
                 break;
         }
     }
@@ -85,65 +86,22 @@ public partial class PollEditor : System.Web.UI.Page
         {
             case "poll":
                 string poll_name = Request["poll_name"];
-                string poll_description = Request["poll_description"];
+                string poll_desc = Request["poll_desc"];
+                int id = Convert.ToInt32(Request["pollsession_id"]);
 
-                int id = 0;
-                try
-                {
-                    id = Convert.ToInt32(Request["pollsession_id"]);
-                }
-                catch (Exception)
-                {
-                    Response.Write("Error!");
-                    Response.End();
-                    return;
-                }
 
-                if (poll_name == String.Empty || poll_description == String.Empty)
+                if (poll_name == String.Empty || poll_desc == String.Empty)
                 {
-                    Response.Write("Error: At least one of the fields is empty!");
+                    Response.Write("{ response: -1, error: 'At least one of the fields is empty!' }");
                 }
                 else
                 {
                     Poll newPoll = new Poll();
                     newPoll.Name = poll_name;
-                    newPoll.Description = poll_description;
+                    newPoll.Description = poll_desc;
 
                     (Session["pollsession_" + id] as PollSession).Polls.Add(newPoll);
-                    Response.Write("");
-                }
-
-                Response.End();
-                break;
-
-            case "choice":
-                string choice = Request["choice_name"];
-
-                int pollsessionId = 0;
-                int pollId = 0;
-                try
-                {
-                    pollsessionId = Convert.ToInt32(Request["pollsession_id"]);
-                    pollId = Convert.ToInt32(Request["poll_id"]);
-                }
-                catch (Exception)
-                {
-                    Response.Write("Error!");
-                    Response.End();
-                    return;
-                }
-
-                if (choice == String.Empty)
-                {
-                    Response.Write("Error: Field is empty!");
-                }
-                else
-                {
-                    Choice newChoice = new Choice();
-                    newChoice.choice = choice;
-
-                    //(Session["pollsession_" + pollsessionId] as PollSession).Polls[pollId].Choices.Add(newChoice);
-                    Response.Write("");
+                    Response.Write("{ response: 1, id: "+newPoll.Id+" }");
                 }
 
                 Response.End();
