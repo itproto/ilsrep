@@ -24,8 +24,7 @@ public partial class login : System.Web.UI.Page
 
         if (Request["ReturnUrl"] == "/Web/PollEditor.aspx")
         {
-            backButton.Visible = true;
-            message.InnerText = "Sorry, this page is only for moderators";
+            Response.Redirect("messages.aspx?type=deny_access&redirect=Default.aspx");
         }
     }
 
@@ -35,10 +34,5 @@ public partial class login : System.Web.UI.Page
             FormsAuthentication.RedirectFromLoginPage(username.Text, false);
         else
             message.InnerHtml = "Invalid Login";
-    }
-
-    public void Back_Click(Object sender, EventArgs e)
-    {
-        Response.Redirect("Default.aspx");
     }
 }

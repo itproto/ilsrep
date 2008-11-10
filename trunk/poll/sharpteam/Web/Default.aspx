@@ -20,7 +20,7 @@
                         <a onfocus="this.blur()" href="PollEditor.aspx" class="button">Poll editor |</a>
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout(username)</a>
+                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout(<%=User.Identity.Name%>)</a>
                     </li>
                 </ul>
             </div>
