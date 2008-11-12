@@ -413,6 +413,11 @@
             Request type that is used to save result
             </summary>
         </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.USER">
+            <summary>
+            Request type that sends user info
+            </summary>
+        </member>
         <member name="F:Ilsrep.PollApplication.Communication.Request.type">
             <summary>
             string that specifies, which type of request it is

@@ -27,5 +27,13 @@ namespace Ilsrep.PollApplication.Model
         [XmlIgnore] public const string AUTH = "auth";
         [XmlIgnore] public const string NEW_USER = "new";
         [XmlIgnore] public const string EXIST = "exist";
+
+        // Those fields are to save Console Client and Editor functionnallities
+        [XmlIgnore]
+        public const string LOGIN = "login";
+        [XmlIgnore]
+        public const string ACCEPTED = "accepted";
+        [XmlIgnore]
+        public const string DENIED = "denied";
     }
 }
