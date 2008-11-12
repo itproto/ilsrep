@@ -196,6 +196,7 @@ input.button:hover
 	height: 15px;
 	text-align: center;
 	border-top: solid 1px #808080;
+	background-color: White;
 }
 
 .choices
@@ -398,7 +399,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
         {
         	background-color: #FFFFE6;
         	color: #804000;
-        	width: 215px;
+        	width: 225px;
         	border: 2px #BD2121 solid;
         	text-align: right;
         	margin: 100px auto;
@@ -409,7 +410,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
         {
         	background-color: #FFFFE6;
         	color: #804000;
-        	width: 255px;
+        	width: 265px;
         	border: 2px #BD2121 solid;
         	text-align: right;
         	margin: 100px auto;
@@ -434,6 +435,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
         {
         	color: Red;
         	margin-top: 3px;
+        	text-align: center;
         }
         
         .login_button
