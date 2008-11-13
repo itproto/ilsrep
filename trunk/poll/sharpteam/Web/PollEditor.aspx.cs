@@ -89,7 +89,6 @@ public partial class PollEditor : System.Web.UI.Page
                 string poll_desc = Request["poll_desc"];
                 int id = Convert.ToInt32(Request["pollsession_id"]);
 
-
                 if (poll_name == String.Empty || poll_desc == String.Empty)
                 {
                     Response.Write("{ response: -1, error: 'At least one of the fields is empty!' }");
@@ -101,12 +100,39 @@ public partial class PollEditor : System.Web.UI.Page
                     newPoll.Description = poll_desc;
 
                     (Session["pollsession_" + id] as PollSession).Polls.Add(newPoll);
-                    Response.Write("{ response: 1, id: "+newPoll.Id+" }");
+                    Response.Write("{ response: 1, id: "+newPoll.Id+", poll_name: '"+poll_name+"' }");
+                }
+                break;
+            case "choice":
+                string choice = Request["choice"];
+                int pollsession_id = Convert.ToInt32(Request["pollsession_id"]);
+                int poll_id = Convert.ToInt32(Request["poll_id"]);
+
+                if (choice == String.Empty)
+                {
+                    Response.Write("{ response: -1, error: 'Choice is empty!' }");
+                }
+                else
+                {
+                    Choice newChoice = new Choice();
+                    newChoice.choice = choice;
+
+                    foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                    {
+                        if (poll.Id == poll_id)
+                        {
+                            poll.Choices.Add(newChoice);
+                            break;
+                        }
+                    }
+
+                    Response.Write("{ response: 1, id: " + newChoice.Id + ", poll_id: "+poll_id+", choice: '"+choice+"' }");
                 }
 
-                Response.End();
                 break;
         }
+
+        Response.End();
     }
 
     protected void Edit(string what)
