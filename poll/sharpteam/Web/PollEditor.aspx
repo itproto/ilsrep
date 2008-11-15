@@ -17,32 +17,45 @@
     {
     %>
         $(document).ready(function() 
-            {
-                $("#pollsession_tree").treeview();
-                $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
-                $("#addChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addChoice, "Cancel": function() { $(this).dialog("close"); } } });
-                $("#pollsession_reset").click( function() { document.location='PollEditor.aspx?action=show&what=editpollsession&id=<%= selectedPollsession.Id %>&reset=1' });
-                $(".links_add_choice").click( function() {
-                    var id = this.id.replace("link_add_choice_", "");
-                    $("#addChoiceDialog").dialog("open");
-                    $("#addChoiceDialog :input[name=poll_id]").val(id);
-                    return false;
-                } );
-                $(".links_delete_choice").click( function () {
-                    var ids = this.id.replace("link_delete_choice_", "").split("_");
-                    $("#choice_"+ids[1]).remove();
-                    $.post("PollEditor.aspx?action=delete&what=choice&pollsession_id=<%=selectedPollsession.Id%>&poll_id="+ids[0]+"choice_id=" + ids[1]);
-                    return false;
-                });
-                $("#link_add_poll").click( function() { $("#addPollDialog").dialog("open"); return false; } );
-                $(".links_delete_poll").click( function () {
-                    var id = this.id.replace("link_delete_poll_", "");
-                    $("#poll_"+id).remove();
-                    $.post("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
-                    return false;
-                });
-            }
-        );
+        {
+            $("#pollsession_tree").treeview();
+            $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
+            $("#addChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addChoice, "Cancel": function() { $(this).dialog("close"); } } });
+            $("#editChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "edit": editChoice, "Cancel": function() { $(this).dialog("close"); } } });
+            
+            $("#pollsession_reset").click( function() { document.location='PollEditor.aspx?action=show&what=editpollsession&id=<%= selectedPollsession.Id %>&reset=1' });
+            
+            /* choice functions */
+            $(".links_add_choice").click( function() {
+                var id = this.id.replace("link_add_choice_", "");
+                $("#addChoiceDialog").dialog("open");
+                $("#addChoiceDialog :input[name=poll_id]").val(id);
+                return false;
+            } );
+            $(".links_edit_choice").click( function() {
+                var ids = this.id.replace("link_edit_choice_", "").split("_");
+                $("#editChoiceDialog").dialog("open");
+                $("#editChoiceDialog :input[name=poll_id]").val(ids[0]);
+                $("#editChoiceDialog :input[name=choice_id]").val(ids[1]);
+                $("#editChoiceDialog :input[name=choice]").val($("#choice_"+ids[1]).find("span").text());
+                return false;
+            } );
+            $(".links_delete_choice").click( function () {
+                var ids = this.id.replace("link_delete_choice_", "").split("_");
+                $("#choice_"+ids[1]).remove();
+                $.get("PollEditor.aspx?action=delete&what=choice&pollsession_id=<%=selectedPollsession.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
+                return false;
+            });
+            
+            /* poll functions */
+            $("#link_add_poll").click( function() { $("#addPollDialog").dialog("open"); return false; } );
+            $(".links_delete_poll").click( function () {
+                var id = this.id.replace("link_delete_poll_", "");
+                $("#poll_"+id).remove();
+                $.get("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
+                return false;
+            });
+        });
 
         function addPoll() 
         {
@@ -88,20 +101,44 @@
                 return false;
             }
             
-            //var fields = $("#addChoiceDialog :input");
-            var branches = $("<li><span class='file'>"+data.choice+"</span><div><a href='#'><img alt='Edit' src='js/treeview/images/page_white_edit.png' /></a><a href='#'><img alt='Delete' src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#pollsession_tree>li>ul #poll_" + data.poll_id);
-            console.log("#pollsession_tree>li>ul #poll_" + data.poll_id);
-            console.dir($("#pollsession_tree>li>ul #poll_" + data.poll_id));
-            /*$("#link_delete_poll_" + data.id).click( function() {
-                var id = this.id.replace("link_delete_poll_", "");
-                $("#poll_"+id).remove();
-                $.post("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
-            });*/
+            var branches = $("<li id='choice_"+data.id+"'><span class='file'>"+data.choice+"</span> <div><a href='#' id='link_edit_choice_"+data.poll_id+"_"+data.id+"' class='links_edit_choice'><img alt='Edit' src='js/treeview/images/page_white_edit.png' /></a> <a href='#' id='link_delete_choice_"+data.poll_id+"_"+data.id+"' class='links_delete_choice'><img alt='Delete' src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#pollsession_tree>li>ul #poll_" + data.poll_id + ">ul");
+            $("#link_edit_choice_"+data.poll_id+"_"+data.id).click( function() {
+                var ids = this.id.replace("link_edit_choice_", "").split("_");
+                $("#editChoiceDialog").dialog("open");
+                $("#editChoiceDialog :input[name=poll_id]").val(ids[0]);
+                $("#editChoiceDialog :input[name=choice_id]").val(ids[1]);
+                $("#editChoiceDialog :input[name=choice]").val($("#choice_"+ids[1]).find("span").text());
+                return false;
+            } );
+            $("#link_delete_choice_"+data.poll_id+"_"+data.id).click( function () {
+                var ids = this.id.replace("link_delete_choice_", "").split("_");
+                $("#choice_"+ids[1]).remove();
+                $.get("PollEditor.aspx?action=delete&what=choice&pollsession_id=<%=selectedPollsession.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
+                return false;
+            });
             $("#pollsession_tree").treeview(
                 {
                     add: branches
                 }
             );
+        }
+        
+        function editChoice()
+        {
+            var fields = $("#editChoiceDialog :input");
+            $.post("PollEditor.aspx?action=edit&what=choice&pollsession_id=<%=selectedPollsession.Id%>", fields, editChoiceCallback, "json");
+            $(this).dialog("close");
+        }
+        
+        function editChoiceCallback(data, textStatus)
+        {
+            if (data.response == -1)
+            {
+                alert(data.error);
+                return false;
+            }
+            
+            $("#choice_" + data.id + " span").text( data.choice );
         }
     <%
     }
@@ -119,21 +156,11 @@
                         <a href="Default.aspx?action=start_poll">Start poll</a> |
                     </li>
                     <li>
-<<<<<<< .mine
                         <a href="PollEditor.aspx">Poll editor</a> |
-=======
-                        <a href="PollEditor.aspx">Poll editor |</a>
->>>>>>> .r472
                     </li>
-<<<<<<< .mine
                     <li>
                         <a href="login.aspx?action=logout">Logout</a>
                     </li>
-=======
-                    <li>
-                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout(<%=User.Identity.Name%>)</a>
-                    </li>
->>>>>>> .r472
                 </ul>
             </div>
         </div>
@@ -183,7 +210,7 @@
                                                <li id='poll_<%=poll.Id %>'><span class='folder'><%=poll.Name%></span>
                                                    <div>
                                                        <a href='#' id='link_add_choice_<%=poll.Id %>' class='links_add_choice'><img alt="Add" src='js/treeview/images/page_white_add.png' /></a> 
-                                                       <a href='#'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a> 
+                                                       <a href='#' id='link_edit_poll_<%=poll.Id %>' class='links_edit_poll'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a> 
                                                        <a href='#' id='link_delete_poll_<%=poll.Id %>' class='links_delete_poll'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
                                                    </div>
                                                    <ul>
@@ -193,7 +220,7 @@
                                                        %>
                                                        <li id='choice_<%=choice.Id %>'><span class='file'><%=choice.choice %></span>
                                                        <div>
-                                                           <a href='#'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>
+                                                            <a href='#' id='link_edit_choice_<%=poll.Id %>_<%=choice.Id %>' class='links_edit_choice'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>
                                                            <a href='#' id='link_delete_choice_<%=poll.Id %>_<%=choice.Id %>' class='links_delete_choice'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
                                                        </div>
                                                        </li>
@@ -221,6 +248,12 @@
                         
                         <div id="addChoiceDialog" title="Add Choice">
                             <input type="hidden" name="poll_id" value="" />
+                            Choice: <input type="text" name="choice" class="text" /><br /> 
+                        </div>
+                        
+                        <div id="editChoiceDialog" title="Edit Choice">
+                            <input type="hidden" name="poll_id" value="" />
+                            <input type="hidden" name="choice_id" value="" />
                             Choice: <input type="text" name="choice" class="text" /><br /> 
                         </div>
                 <%
