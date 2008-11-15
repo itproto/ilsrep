@@ -126,7 +126,7 @@ public partial class PollEditor : System.Web.UI.Page
                         }
                     }
 
-                    Response.Write("{ response: 1, id: " + newChoice.Id + ", poll_id: "+poll_id+", choice: '"+choice+"' }");
+                    Response.Write("{ response: 1, id: " + newChoice.Id + ", poll_id: " + poll_id + ", choice: '" + choice + "' }");
                 }
 
                 break;
@@ -144,22 +144,70 @@ public partial class PollEditor : System.Web.UI.Page
                 PollDAL.EditPollSession(Session["pollsession_" + id] as PollSession);
                 Session["pollsession_" + id] = null;
                 break;
+            case "choice":
+                int pollsession_id = Convert.ToInt32(Request["pollsession_id"]);
+                int poll_id = Convert.ToInt32(Request["poll_id"]);
+                int choice_id = Convert.ToInt32(Request["choice_id"]);
+                string choice = Request["choice"];
+
+                foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                {
+                    if (poll.Id == poll_id)
+                    {
+                        foreach (Choice curChoice in poll.Choices)
+                        {
+                            if (curChoice.Id == choice_id)
+                            {
+                                curChoice.choice = choice;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                Response.Write("{ response: 1, id: " + choice_id + ", poll_id: " + poll_id + ", choice: '" + choice + "' }");
+                Response.End();
+                break;
         }
     }
 
     protected void Delete(string what)
     {
+        int pollsession_id, poll_id, choice_id;
+
         switch (what)
         {
             case "poll":
-                int pollsession_id = Convert.ToInt32(Request["pollsession_id"]);
-                int poll_id = Convert.ToInt32(Request["poll_id"]);
+                pollsession_id = Convert.ToInt32(Request.QueryString["pollsession_id"]);
+                poll_id = Convert.ToInt32(Request.QueryString["poll_id"]);
 
                 foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
                 {
                     if (poll.Id == poll_id)
                     {
                         (Session["pollsession_" + pollsession_id] as PollSession).Polls.Remove(poll);
+                        break;
+                    }
+                }
+
+                break;
+            case "choice":
+                pollsession_id = Convert.ToInt32(Request.QueryString["pollsession_id"]);
+                poll_id = Convert.ToInt32(Request.QueryString["poll_id"]);
+                choice_id = Convert.ToInt32(Request.QueryString["choice_id"]);
+
+                foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                {
+                    if (poll.Id == poll_id)
+                    {
+                        foreach (Choice curChoice in poll.Choices)
+                        {
+                            if (curChoice.Id == choice_id)
+                            {
+                                poll.Choices.Remove(curChoice);
+                                break;
+                            }
+                        }
                         break;
                     }
                 }
