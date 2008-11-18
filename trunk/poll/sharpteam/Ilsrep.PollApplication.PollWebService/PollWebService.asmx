@@ -1,0 +1,1 @@
+﻿<%@ WebService Language="C#" CodeBehind="PollWebService.asmx.cs" Class="Ilsrep.PollApplication.PollWebService.Service1" %>
