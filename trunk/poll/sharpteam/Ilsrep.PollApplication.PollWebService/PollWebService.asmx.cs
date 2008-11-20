@@ -33,9 +33,9 @@ namespace Ilsrep.PollApplication.PollWebService
         /// </summary>
         private static SQLiteConnection dbConnection = null;
         /// <summary>
-        /// Name of PollSessions table in database
+        /// Name of Surveys table in database
         /// </summary>
-        public const string POLLSESSIONS_TABLE = "pollsessions";
+        public const string SURVEYS_TABLE = "surveys";
         /// <summary>
         /// Name of Polls table in database
         /// </summary>
@@ -45,9 +45,9 @@ namespace Ilsrep.PollApplication.PollWebService
         /// </summary>
         public const string CHOICES_TABLE = "choices";
         /// <summary>
-        /// Name of PollSessions and Polls table in database
+        /// Name of Surveys and Polls table in database
         /// </summary>
-        public const string POLLSESSION_POLLS_TABLE = "pollsession_polls";
+        public const string SURVEY_POLLS_TABLE = "survey_polls";
         /// <summary>
         /// Name of Polls and Choices table in database
         /// </summary>
@@ -91,11 +91,11 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         /// <summary>
-        /// Gets names and IDs of Poll Sessions from database
+        /// Gets names and IDs of Surveys from database
         /// </summary>
-        /// <returns>List of Poll Sessions</returns>
+        /// <returns>List of Surveys</returns>
         [WebMethod]
-        public static List<Item> GetPollSessions()
+        public static List<Item> GetSurveys()
         {
             if (!isConnected)
             {
@@ -103,7 +103,7 @@ namespace Ilsrep.PollApplication.PollWebService
             }
 
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-            sqliteCommand.CommandText = "SELECT * FROM " + POLLSESSIONS_TABLE;
+            sqliteCommand.CommandText = "SELECT * FROM " + SURVEYS_TABLE;
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
             List<Item> items = new List<Item>();
 
@@ -119,12 +119,12 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         /// <summary>
-        /// Gets PollSession from database by PollSession ID
+        /// Gets Survey from database by Survey ID
         /// </summary>
-        /// <param name="pollSessionID">PollSession ID that tells which PollSession to get</param>
+        /// <param name="surveyID">Survey ID that tells which Survey to get</param>
         /// <returns></returns>
         [WebMethod]
-        public static PollSession GetPollSession(int pollSessionID)
+        public static Survey GetSurvey(int surveyID)
         {
             if (!isConnected)
             {
@@ -132,24 +132,24 @@ namespace Ilsrep.PollApplication.PollWebService
             }
 
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-            sqliteCommand.CommandText = "SELECT * FROM " + POLLSESSIONS_TABLE + " WHERE id=:id";
-            sqliteCommand.Parameters.AddWithValue(":id", pollSessionID.ToString());
-            SQLiteDataReader sqlitePollSession = sqliteCommand.ExecuteReader();
-            PollSession pollSession = new PollSession();
+            sqliteCommand.CommandText = "SELECT * FROM " + SURVEYS_TABLE + " WHERE id=:id";
+            sqliteCommand.Parameters.AddWithValue(":id", surveyID.ToString());
+            SQLiteDataReader sqliteSurvey = sqliteCommand.ExecuteReader();
+            Survey survey = new Survey();
 
-            if (!sqlitePollSession.HasRows)
+            if (!sqliteSurvey.HasRows)
             {
-                return pollSession;
+                return survey;
             }
 
-            pollSession.Id = Convert.ToInt32(sqlitePollSession["id"]);
-            pollSession.Name = sqlitePollSession["name"].ToString();
-            pollSession.TestMode = Convert.ToBoolean(sqlitePollSession["testmode"]);
-            pollSession.MinScore = Convert.ToDouble(sqlitePollSession["minscore"]);
-            pollSession.Polls = new List<Poll>();
-            sqlitePollSession.Close();
+            survey.Id = Convert.ToInt32(sqliteSurvey["id"]);
+            survey.Name = sqliteSurvey["name"].ToString();
+            survey.TestMode = Convert.ToBoolean(sqliteSurvey["testmode"]);
+            survey.MinScore = Convert.ToDouble(sqliteSurvey["minscore"]);
+            survey.Polls = new List<Poll>();
+            sqliteSurvey.Close();
 
-            sqliteCommand.CommandText = "SELECT p.* FROM " + POLLSESSION_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.pollsession_id=:id";
+            sqliteCommand.CommandText = "SELECT p.* FROM " + SURVEY_POLLS_TABLE + " pxp LEFT JOIN " + POLLS_TABLE + " p ON (pxp.poll_id=p.id) WHERE pxp.survey_id=:id";
             SQLiteDataReader sqlPolls = sqliteCommand.ExecuteReader();
 
             SQLiteCommand sqliteCommand2 = dbConnection.CreateCommand();
@@ -176,34 +176,34 @@ namespace Ilsrep.PollApplication.PollWebService
                 }
                 sqlChoices.Close();
 
-                pollSession.Polls.Add(newPoll);
+                survey.Polls.Add(newPoll);
             }
             sqlPolls.Close();
 
-            return pollSession;
+            return survey;
         }
 
         /// <summary>
-        /// Creates new PollSession in database
+        /// Creates new Survey in database
         /// </summary>
-        /// <param name="newPollSession">object of PollSession that is to be created in database</param>
+        /// <param name="newSurvey">object of Survey that is to be created in database</param>
         /// <returns></returns>
         [WebMethod]
-        public static int CreatePollSession(PollSession newPollSession)
+        public static int CreateSurvey(Survey newSurvey)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":name", newPollSession.Name));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", newPollSession.TestMode));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", newPollSession.MinScore));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":name", newSurvey.Name));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", newSurvey.TestMode));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", newSurvey.MinScore));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":date", DateTime.Now.ToString()));
-            sqliteCommand.CommandText = "INSERT INTO " + POLLSESSIONS_TABLE + "(name, testmode, minscore, date_created) VALUES(:name, :testmode, :minscore, :date)";
+            sqliteCommand.CommandText = "INSERT INTO " + SURVEYS_TABLE + "(name, testmode, minscore, date_created) VALUES(:name, :testmode, :minscore, :date)";
             sqliteCommand.ExecuteNonQuery();
 
             sqliteCommand.CommandText = "SELECT last_insert_rowid()";
-            newPollSession.Id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
+            newSurvey.Id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
 
-            foreach (Poll curPoll in newPollSession.Polls)
+            foreach (Poll curPoll in newSurvey.Polls)
             {
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
@@ -248,37 +248,37 @@ namespace Ilsrep.PollApplication.PollWebService
                 }
 
                 sqliteCommand.Parameters.Clear();
-                sqliteCommand.Parameters.AddWithValue(":pollsession_id", newPollSession.Id);
+                sqliteCommand.Parameters.AddWithValue(":survey_id", newSurvey.Id);
                 sqliteCommand.Parameters.AddWithValue(":poll_id", curPoll.Id);
-                sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsession_id, :poll_id)";
+                sqliteCommand.CommandText = "INSERT INTO " + SURVEY_POLLS_TABLE + "(survey_id, poll_id) VALUES(:survey_id, :poll_id)";
                 sqliteCommand.ExecuteNonQuery();
             }
 
-            return Convert.ToInt32(newPollSession.Id);
+            return Convert.ToInt32(newSurvey.Id);
         }
 
         /// <summary>
-        /// Save changed pollsession to database
+        /// Save changed survey to database
         /// </summary>
-        /// <param name="pollSession">PollSession object that is to be changed in database</param>
+        /// <param name="survey">Survey object that is to be changed in database</param>
         [WebMethod]
-        public static void EditPollSession(PollSession pollSession)
+        public static void EditSurvey(Survey survey)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
-            sqliteCommand.Parameters.AddWithValue(":pollsession_id", pollSession.Id);
-            sqliteCommand.CommandText = "DELETE FROM " + POLLSESSION_POLLS_TABLE + " WHERE pollsession_id=:pollsession_id";
+            sqliteCommand.Parameters.AddWithValue(":survey_id", survey.Id);
+            sqliteCommand.CommandText = "DELETE FROM " + SURVEY_POLLS_TABLE + " WHERE survey_id=:survey_id";
             sqliteCommand.ExecuteNonQuery();
 
             sqliteCommand.Parameters.Clear();
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":id", pollSession.Id));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":name", pollSession.Name));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", pollSession.TestMode));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", pollSession.MinScore));
-            sqliteCommand.CommandText = "UPDATE " + POLLSESSIONS_TABLE + " SET name=:name, testmode=:testmode, minscore=:minscore WHERE id=:id";
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":id", survey.Id));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":name", survey.Name));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":testmode", survey.TestMode));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":minscore", survey.MinScore));
+            sqliteCommand.CommandText = "UPDATE " + SURVEYS_TABLE + " SET name=:name, testmode=:testmode, minscore=:minscore WHERE id=:id";
             sqliteCommand.ExecuteNonQuery();
 
-            foreach (Poll curPoll in pollSession.Polls)
+            foreach (Poll curPoll in survey.Polls)
             {
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
@@ -345,20 +345,20 @@ namespace Ilsrep.PollApplication.PollWebService
                 }
 
                 sqliteCommand.Parameters.Clear();
-                sqliteCommand.Parameters.AddWithValue(":pollsession_id", pollSession.Id);
+                sqliteCommand.Parameters.AddWithValue(":survey_id", survey.Id);
                 sqliteCommand.Parameters.AddWithValue(":poll_id", curPoll.Id);
 
-                sqliteCommand.CommandText = "INSERT INTO " + POLLSESSION_POLLS_TABLE + "(pollsession_id, poll_id) VALUES(:pollsession_id, :poll_id)";
+                sqliteCommand.CommandText = "INSERT INTO " + SURVEY_POLLS_TABLE + "(survey_id, poll_id) VALUES(:survey_id, :poll_id)";
                 sqliteCommand.ExecuteNonQuery();
             }
         }
 
         /// <summary>
-        /// Receive from Client pollsession result and save it in database
+        /// Receive from Client survey result and save it in database
         /// </summary>
         /// <param name="resultsList">list of results</param>
         [WebMethod]
-        public static void SavePollSessionResult(ResultsList resultsList)
+        public static void SaveSurveyResult(ResultsList resultsList)
         {
             if (!isConnected)
             {
@@ -370,15 +370,15 @@ namespace Ilsrep.PollApplication.PollWebService
 
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
-            sqliteCommand.CommandText = "INSERT INTO " + RESULTS_TABLE + "(user_name, pollsession_id, question_id, answer_id, custom_choice, date) VALUES(:username, :pollsession, :question, :answer, :custom, :date)";
+            sqliteCommand.CommandText = "INSERT INTO " + RESULTS_TABLE + "(user_name, survey_id, question_id, answer_id, custom_choice, date) VALUES(:username, :survey, :question, :answer, :custom, :date)";
             sqliteCommand.Parameters.Add(new SQLiteParameter(":username", resultsList.userName));
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":pollsession", resultsList.pollsessionId.ToString()));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":survey", resultsList.surveyId.ToString()));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":date", DateTime.Now.ToString()));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":question"));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":answer"));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":custom"));
 
-            // Insert new pollSessionResult to database
+            // Insert new surveyResult to database
             foreach (PollResult result in resultsList.results)
             {
                 sqliteCommand.Parameters[":question"].Value = result.questionId.ToString();
@@ -389,12 +389,12 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         /// <summary>
-        /// Select from DB all results of needed PollSession
+        /// Select from DB all results of needed Survey
         /// </summary>
-        /// <param name="pollSessionId">Id of PollSession which results we need</param>
-        /// <returns>List of results of needed PollSession</returns>
+        /// <param name="surveyId">Id of Survey which results we need</param>
+        /// <returns>List of results of needed Survey</returns>
         [WebMethod]
-        public static ResultsList GetPollSessionResults(int pollSessionId)
+        public static ResultsList GetSurveyResults(int surveyId)
         {
             if (!isConnected)
             {
@@ -402,10 +402,10 @@ namespace Ilsrep.PollApplication.PollWebService
             }
 
             ResultsList resultsList = new ResultsList();
-            resultsList.pollsessionId = pollSessionId;
+            resultsList.surveyId = surveyId;
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":pollsession_id", pollSessionId));
-            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE pollsession_id=:pollsession_id";
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":survey_id", surveyId));
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE survey_id=:survey_id";
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
 
             // Save each result to resultsList
@@ -425,11 +425,11 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         /// <summary>
-        /// Removes PollSession from database
+        /// Removes Survey from database
         /// </summary>
-        /// <param name="pollSessionID">PollSession ID that is to be removed</param>
+        /// <param name="surveyID">Survey ID that is to be removed</param>
         [WebMethod]
-        public static void RemovePollSession(int pollSessionID)
+        public static void RemoveSurvey(int surveyID)
         {
             if (!isConnected)
             {
@@ -437,11 +437,11 @@ namespace Ilsrep.PollApplication.PollWebService
             }
 
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
-            sqliteCommand.Parameters.Add(new SQLiteParameter(":pollsession", pollSessionID));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":survey", surveyID));
 
-            sqliteCommand.CommandText = "DELETE FROM " + POLLSESSIONS_TABLE + " WHERE id=:pollsession";
+            sqliteCommand.CommandText = "DELETE FROM " + SURVEYS_TABLE + " WHERE id=:survey";
             sqliteCommand.ExecuteNonQuery();
-            sqliteCommand.CommandText = "DELETE FROM " + POLLSESSION_POLLS_TABLE + " WHERE pollsession_id=:pollsession";
+            sqliteCommand.CommandText = "DELETE FROM " + SURVEY_POLLS_TABLE + " WHERE survey_id=:survey";
             sqliteCommand.ExecuteNonQuery();
         }
 

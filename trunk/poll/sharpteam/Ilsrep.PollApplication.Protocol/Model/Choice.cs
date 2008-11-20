@@ -40,7 +40,7 @@ namespace Ilsrep.PollApplication.Model
 
         public Choice()
         {
-            if (!(PollSession.isSerialized))
+            if (!(Survey.isSerialized))
             {
                 int newChoiceID = choiceIDGenerator.id;
                 choice = "newChoice" + Math.Abs(newChoiceID);

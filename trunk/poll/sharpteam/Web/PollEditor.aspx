@@ -13,17 +13,17 @@
     <script type="text/javascript">
     $(document).ready(addHover);
     <%
-    if (ShowPage == "editpollsession")
+    if (ShowPage == "editsurvey")
     {
     %>
         $(document).ready(function() 
         {
-            $("#pollsession_tree").treeview();
+            $("#survey_tree").treeview();
             $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
             $("#addChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addChoice, "Cancel": function() { $(this).dialog("close"); } } });
             $("#editChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "edit": editChoice, "Cancel": function() { $(this).dialog("close"); } } });
             
-            $("#pollsession_reset").click( function() { document.location='PollEditor.aspx?action=show&what=editpollsession&id=<%= selectedPollsession.Id %>&reset=1' });
+            $("#survey_reset").click( function() { document.location='PollEditor.aspx?action=show&what=editsurvey&id=<%= selectedSurvey.Id %>&reset=1' });
             
             /* choice functions */
             $(".links_add_choice").click( function() {
@@ -43,7 +43,7 @@
             $(".links_delete_choice").click( function () {
                 var ids = this.id.replace("link_delete_choice_", "").split("_");
                 $("#choice_"+ids[1]).remove();
-                $.get("PollEditor.aspx?action=delete&what=choice&pollsession_id=<%=selectedPollsession.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
+                $.get("PollEditor.aspx?action=delete&what=choice&survey_id=<%=selectedSurvey.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
                 return false;
             });
             
@@ -52,7 +52,7 @@
             $(".links_delete_poll").click( function () {
                 var id = this.id.replace("link_delete_poll_", "");
                 $("#poll_"+id).remove();
-                $.get("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
+                $.get("PollEditor.aspx?action=delete&what=poll&survey_id=<%=selectedSurvey.Id%>&poll_id=" + id);
                 return false;
             });
         });
@@ -60,7 +60,7 @@
         function addPoll() 
         {
             var fields = $("#addPollDialog :input");
-            $.post("PollEditor.aspx?action=add&what=poll&pollsession_id=<%=selectedPollsession.Id%>", fields, addPollCallback, "json");
+            $.post("PollEditor.aspx?action=add&what=poll&survey_id=<%=selectedSurvey.Id%>", fields, addPollCallback, "json");
             $(this).dialog("close");
         }
 
@@ -73,13 +73,13 @@
             }
         
             //var fields = $("#addPollDialog :input");
-            var branches = $("<li id='poll_"+data.id+"'><span class='folder'>" + data.poll_name + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a><a href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a href='#' id='link_delete_poll_"+data.id+"' class='links_delete_poll'><img src='js/treeview/images/page_white_delete.png' /></a></div><ul></ul></li>").appendTo("#pollsession_tree>li>ul");
+            var branches = $("<li id='poll_"+data.id+"'><span class='folder'>" + data.poll_name + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a><a href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a href='#' id='link_delete_poll_"+data.id+"' class='links_delete_poll'><img src='js/treeview/images/page_white_delete.png' /></a></div><ul></ul></li>").appendTo("#survey_tree>li>ul");
             $("#link_delete_poll_" + data.id).click( function() {
                 var id = this.id.replace("link_delete_poll_", "");
                 $("#poll_"+id).remove();
-                $.post("PollEditor.aspx?action=delete&what=poll&pollsession_id=<%=selectedPollsession.Id%>&poll_id=" + id);
+                $.post("PollEditor.aspx?action=delete&what=poll&survey_id=<%=selectedSurvey.Id%>&poll_id=" + id);
             });
-            $("#pollsession_tree").treeview(
+            $("#survey_tree").treeview(
                 {
                     add: branches
                 }
@@ -89,7 +89,7 @@
         function addChoice()
         {
             var fields = $("#addChoiceDialog :input");
-            $.post("PollEditor.aspx?action=add&what=choice&pollsession_id=<%=selectedPollsession.Id%>", fields, addChoiceCallback, "json");
+            $.post("PollEditor.aspx?action=add&what=choice&survey_id=<%=selectedSurvey.Id%>", fields, addChoiceCallback, "json");
             $(this).dialog("close");
         }
         
@@ -101,7 +101,7 @@
                 return false;
             }
             
-            var branches = $("<li id='choice_"+data.id+"'><span class='file'>"+data.choice+"</span> <div><a href='#' id='link_edit_choice_"+data.poll_id+"_"+data.id+"' class='links_edit_choice'><img alt='Edit' src='js/treeview/images/page_white_edit.png' /></a> <a href='#' id='link_delete_choice_"+data.poll_id+"_"+data.id+"' class='links_delete_choice'><img alt='Delete' src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#pollsession_tree>li>ul #poll_" + data.poll_id + ">ul");
+            var branches = $("<li id='choice_"+data.id+"'><span class='file'>"+data.choice+"</span> <div><a href='#' id='link_edit_choice_"+data.poll_id+"_"+data.id+"' class='links_edit_choice'><img alt='Edit' src='js/treeview/images/page_white_edit.png' /></a> <a href='#' id='link_delete_choice_"+data.poll_id+"_"+data.id+"' class='links_delete_choice'><img alt='Delete' src='js/treeview/images/page_white_delete.png' /></a></div></li>").appendTo("#survey_tree>li>ul #poll_" + data.poll_id + ">ul");
             $("#link_edit_choice_"+data.poll_id+"_"+data.id).click( function() {
                 var ids = this.id.replace("link_edit_choice_", "").split("_");
                 $("#editChoiceDialog").dialog("open");
@@ -113,10 +113,10 @@
             $("#link_delete_choice_"+data.poll_id+"_"+data.id).click( function () {
                 var ids = this.id.replace("link_delete_choice_", "").split("_");
                 $("#choice_"+ids[1]).remove();
-                $.get("PollEditor.aspx?action=delete&what=choice&pollsession_id=<%=selectedPollsession.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
+                $.get("PollEditor.aspx?action=delete&what=choice&survey_id=<%=selectedSurvey.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
                 return false;
             });
-            $("#pollsession_tree").treeview(
+            $("#survey_tree").treeview(
                 {
                     add: branches
                 }
@@ -126,7 +126,7 @@
         function editChoice()
         {
             var fields = $("#editChoiceDialog :input");
-            $.post("PollEditor.aspx?action=edit&what=choice&pollsession_id=<%=selectedPollsession.Id%>", fields, editChoiceCallback, "json");
+            $.post("PollEditor.aspx?action=edit&what=choice&survey_id=<%=selectedSurvey.Id%>", fields, editChoiceCallback, "json");
             $(this).dialog("close");
         }
         
@@ -167,34 +167,34 @@
         <div class="centralBlock">
             <div class="leftBlock">
                 <div class="leftMenu">
-                    <h3>Edit Pollsession:</h3>
+                    <h3>Edit Survey:</h3>
                     <ul>
                     <%
                         int index = 1;
-                        foreach (Ilsrep.PollApplication.Communication.Item pollSession in pollSessionsList)
+                        foreach (Ilsrep.PollApplication.Communication.Item survey in surveysList)
                         {
                             %>
-                                <li><a href="?action=show&what=editpollsession&id=<%=pollSession.id%>"><%=index%>. <%=pollSession.name%></a></li>
+                                <li><a href="?action=show&what=editsurvey&id=<%=survey.id%>"><%=index%>. <%=survey.name%></a></li>
                             <%
                             ++index;
                         }
                     %>
-                        <li><a href="?action=show&what=editpollsession&id=0">Add New</a></li>
+                        <li><a href="?action=show&what=editsurvey&id=0">Add New</a></li>
                     </ul>
                 </div>
             </div>
             <div class="content">
             <div class="inner">
                 <%
-                    if (ShowPage == "editpollsession")
+                    if (ShowPage == "editsurvey")
                     {
                 %>
-                        <h3>Edit Pollsession</h3>
+                        <h3>Edit Survey</h3>
                         <div class="error"><%= Message %></div>
-                        <form action="PollEditor.aspx?action=edit&amp;what=pollsession&id=<%= selectedPollsession.Id %>" method="post">
-                            Pollsession Name: <input type="text" name="pollsession_name" value="<%= selectedPollsession.Name %>" class="text" /><br />
+                        <form action="PollEditor.aspx?action=edit&amp;what=survey&id=<%= selectedSurvey.Id %>" method="post">
+                            Survey Name: <input type="text" name="survey_name" value="<%= selectedSurvey.Name %>" class="text" /><br />
                             
-                            <ul id="pollsession_tree" class="filetree treeview-famfamfam">
+                            <ul id="survey_tree" class="filetree treeview-famfamfam">
                                 <li>
                                     <span class="folder">Polls</span> 
                                     <div>
@@ -204,7 +204,7 @@
                                     </div>
                                     <ul>
                                         <%
-                                           foreach(Ilsrep.PollApplication.Model.Poll poll in selectedPollsession.Polls)
+                                           foreach(Ilsrep.PollApplication.Model.Poll poll in selectedSurvey.Polls)
                                            {
                                                %>
                                                <li id='poll_<%=poll.Id %>'><span class='folder'><%=poll.Name%></span>
@@ -236,8 +236,8 @@
                                 </li>
                             </ul>
                             
-                            <input type="submit" value="<%= (selectedPollsession.Id < 0 ? "Add" : "Edit") %> Pollsession" class="button" />
-                            <input type="button" id="pollsession_reset" value="Reset" class="button" />
+                            <input type="submit" value="<%= (selectedSurvey.Id < 0 ? "Add" : "Edit") %> Survey" class="button" />
+                            <input type="button" id="survey_reset" value="Reset" class="button" />
                         </form>
                         
                         <div id="addPollDialog" title="Add Poll">

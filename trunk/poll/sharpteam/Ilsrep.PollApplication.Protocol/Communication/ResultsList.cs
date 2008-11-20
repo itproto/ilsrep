@@ -8,7 +8,7 @@ using Ilsrep.PollApplication.Model;
 namespace Ilsrep.PollApplication.Communication
 {
     /// <summary>
-    /// Result list after poll session
+    /// Result list after survey
     /// </summary>
     [XmlRoot("resultslist"), Serializable]
     public class ResultsList
@@ -22,8 +22,8 @@ namespace Ilsrep.PollApplication.Communication
         /// </summary>
         [XmlAttribute("username")] public string userName;
         /// <summary>
-        /// Poll session id, to which the results are related
+        /// Survey id, to which the results are related
         /// </summary>
-        [XmlAttribute("pollsessionid")] public int pollsessionId;
+        [XmlAttribute("surveyid")] public int surveyId;
     }
 }

@@ -33,11 +33,11 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// </summary>
         public static TcpClient client = new TcpClient();
         /// <summary>
-        /// holds pollsession that is read from server
+        /// holds survey that is read from server
         /// </summary>
-        public static PollSession pollSession = new PollSession();
+        public static Survey survey = new Survey();
         /// <summary>
-        /// holds user choices that he selects during poll session
+        /// holds user choices that he selects during survey
         /// </summary>
         public static List<Choice> userChoices = new List<Choice>();
         /// <summary>

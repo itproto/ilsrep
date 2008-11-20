@@ -62,7 +62,7 @@
   <ItemGroup>
     <Compile Include="Communication\Item.cs" />
     <Compile Include="Communication\PollPacket.cs" />
-    <Compile Include="Communication\PollSessionsList.cs" />
+    <Compile Include="Communication\SurveysList.cs" />
     <Compile Include="Communication\Request.cs" />
     <Compile Include="Communication\ResultsList.cs" />
     <Compile Include="Helpers\CommandLineParametersHelper.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="Model\Choice.cs" />
     <Compile Include="Model\Poll.cs" />
     <Compile Include="Model\PollResult.cs" />
-    <Compile Include="Model\PollSession.cs">
+    <Compile Include="Model\Survey.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\User.cs" />

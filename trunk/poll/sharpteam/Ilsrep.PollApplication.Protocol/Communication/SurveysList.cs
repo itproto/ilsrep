@@ -8,10 +8,10 @@ using Ilsrep.PollApplication.Helpers;
 namespace Ilsrep.PollApplication.Communication
 {
     /// <summary>
-    /// Holds a list of poll session ids and names
+    /// Holds a list of survey ids and names
     /// </summary>
-    [XmlRoot("pollsessionlist"), Serializable]
-    public class PollSessionList
+    [XmlRoot("surveylist"), Serializable]
+    public class SurveyList
     {
         /// <summary>
         /// a list of items that holds ids and names
@@ -30,20 +30,20 @@ namespace Ilsrep.PollApplication.Communication
         }
 
         /// <summary>
-        /// List poll sessions
+        /// List surveys
         /// </summary>
-        public int GetPollSessionId()
+        public int GetSurveyId()
         {
             int index = 0;
-            Console.WriteLine( "Poll Sessions:" );
+            Console.WriteLine( "Surveys:" );
             foreach (Item curItem in items)
             {
                 index++;
                 Console.WriteLine(index + ". " + curItem.name);
             }
-            int pollSessionIndex = InputHelper.AskQuestion( String.Format( "Choose pollsession [1-{0}]:", index ), 1, index );
-            return pollSessionIndex;
-            //return Convert.ToInt32( items[pollSessionIndex-1].id );
+            int surveyIndex = InputHelper.AskQuestion( String.Format( "Choose survey [1-{0}]:", index ), 1, index );
+            return surveyIndex;
+            //return Convert.ToInt32( items[surveyIndex-1].id );
         }
     }
 }

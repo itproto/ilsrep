@@ -15,22 +15,22 @@ namespace Ilsrep.PollApplication.Helpers
     public class PollSerializator
     {
         /// <summary>
-        /// Deserializes poll session from XML string into PollSession object
+        /// Deserializes survey from XML string into Survey object
         /// </summary>
-        /// <param name="xmlString">XML string, which holds serialized PollSession object</param>
-        /// <returns>Deserialized PollSession object</returns>
-        public static PollSession DeserializePollSession(string xmlString)
+        /// <param name="xmlString">XML string, which holds serialized Survey object</param>
+        /// <returns>Deserialized Survey object</returns>
+        public static Survey DeserializeSurvey(string xmlString)
         {
-            PollSession pollSession = new PollSession();
+            Survey survey = new Survey();
             try
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(PollSession));
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Survey));
                 MemoryStream memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(xmlString));
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.ASCII);
 
-                pollSession = (PollSession)xmlSerializer.Deserialize(memoryStream);
+                survey = (Survey)xmlSerializer.Deserialize(memoryStream);
 
-                foreach (Poll poll in pollSession.Polls)
+                foreach (Poll poll in survey.Polls)
                 {
                     foreach (Choice choice in poll.Choices)
                     {
@@ -42,24 +42,24 @@ namespace Ilsrep.PollApplication.Helpers
             {
                 return null;
             }
-            return pollSession;
+            return survey;
         }
 
         /// <summary>
-        /// Serializes poll session from PollSession object into XML string
+        /// Serializes survey from Survey object into XML string
         /// </summary>
-        /// <param name="pollSession">Poll Session oject</param>
-        /// <returns>XML string, which holds serialized PollSession object</returns>
-        public static String SerializePollSession(PollSession pollSession)
+        /// <param name="survey">Survey oject</param>
+        /// <returns>XML string, which holds serialized Survey object</returns>
+        public static String SerializeSurvey(Survey survey)
         {
             String XmlizedString = null;
             try
             {
                 MemoryStream memoryStream = new MemoryStream();
-                XmlSerializer xs = new XmlSerializer(typeof(PollSession));
+                XmlSerializer xs = new XmlSerializer(typeof(Survey));
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.ASCII);
 
-                xs.Serialize(xmlTextWriter, pollSession);
+                xs.Serialize(xmlTextWriter, survey);
                 memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
                 XmlizedString = Encoding.ASCII.GetString(memoryStream.ToArray());
             }
@@ -78,7 +78,7 @@ namespace Ilsrep.PollApplication.Helpers
         public static PollPacket DeserializePacket(string xmlString)
         {
             PollPacket pollPacket = new PollPacket();
-            PollSession.isSerialized = true;
+            Survey.isSerialized = true;
             try
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(PollPacket));
@@ -87,9 +87,9 @@ namespace Ilsrep.PollApplication.Helpers
 
                 pollPacket = (PollPacket)xmlSerializer.Deserialize(memoryStream);
 
-                if (pollPacket.pollSession != null)
+                if (pollPacket.survey != null)
                 {
-                    foreach (Poll poll in pollPacket.pollSession.Polls)
+                    foreach (Poll poll in pollPacket.survey.Polls)
                     {
                         foreach (Choice choice in poll.Choices)
                         {
@@ -100,11 +100,11 @@ namespace Ilsrep.PollApplication.Helpers
             }
             catch (Exception)
             {
-                PollSession.isSerialized = false;
+                Survey.isSerialized = false;
                 return null;
             }
 
-            PollSession.isSerialized = false;
+            Survey.isSerialized = false;
             return pollPacket;
         }
 

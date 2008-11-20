@@ -307,33 +307,33 @@ namespace Ilsrep.PollApplication.PollServer
                 switch ( receivedPacket.request.type )
                 {
                     case Request.GET_LIST:
-                        sendPacket.pollSessionList = new PollSessionList();
-                        sendPacket.pollSessionList.items = PollDAL.GetPollSessions();
-                        EventLog.WriteEntry( String.Format( "Pollsession List sent to {0}", client.ipAddress ), EventLogEntryType.Information );
+                        sendPacket.surveyList = new SurveyList();
+                        sendPacket.surveyList.items = PollDAL.GetSurveys();
+                        EventLog.WriteEntry( String.Format( "Survey List sent to {0}", client.ipAddress ), EventLogEntryType.Information );
                         break;
-                    case Request.GET_POLLSESSION:
-                        sendPacket.pollSession = PollDAL.GetPollSession( Convert.ToInt32( receivedPacket.request.id ) );
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} sent to {1}", sendPacket.pollSession.Id, client.ipAddress ), EventLogEntryType.Information );
+                    case Request.GET_SURVEY:
+                        sendPacket.survey = PollDAL.GetSurvey( Convert.ToInt32( receivedPacket.request.id ) );
+                        EventLog.WriteEntry( String.Format( "Survey {0} sent to {1}", sendPacket.survey.Id, client.ipAddress ), EventLogEntryType.Information );
                         break;
-					case Request.EDIT_POLLSESSION:
-						PollDAL.EditPollSession(receivedPacket.pollSession);
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} changed by {1}", receivedPacket.pollSession.Id, client.ipAddress ), EventLogEntryType.Information );
+					case Request.EDIT_SURVEY:
+						PollDAL.EditSurvey(receivedPacket.survey);
+                        EventLog.WriteEntry( String.Format( "Survey {0} changed by {1}", receivedPacket.survey.Id, client.ipAddress ), EventLogEntryType.Information );
 						break;
-                    case Request.CREATE_POLLSESSION:
-                        receivedPacket.pollSession.Id = PollDAL.CreatePollSession( receivedPacket.pollSession );
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} created by {1}", receivedPacket.pollSession.Id, client.ipAddress ), EventLogEntryType.Information );
+                    case Request.CREATE_SURVEY:
+                        receivedPacket.survey.Id = PollDAL.CreateSurvey( receivedPacket.survey );
+                        EventLog.WriteEntry( String.Format( "Survey {0} created by {1}", receivedPacket.survey.Id, client.ipAddress ), EventLogEntryType.Information );
                         break;
-                    case Request.REMOVE_POLLSESSION:
-                        PollDAL.RemovePollSession( Convert.ToInt32( receivedPacket.request.id ) );
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
+                    case Request.REMOVE_SURVEY:
+                        PollDAL.RemoveSurvey( Convert.ToInt32( receivedPacket.request.id ) );
+                        EventLog.WriteEntry( String.Format( "Survey {0} removed by {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     case Request.SAVE_RESULT:
-                        PollDAL.SavePollSessionResult( receivedPacket.resultsList );
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress ), EventLogEntryType.Information );
+                        PollDAL.SaveSurveyResult( receivedPacket.resultsList );
+                        EventLog.WriteEntry( String.Format( "Survey {0} results of user {1} sent by {2}", receivedPacket.resultsList.surveyId, receivedPacket.resultsList.userName, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     case Request.GET_RESULTS:
-                        sendPacket.resultsList = PollDAL.GetPollSessionResults(Convert.ToInt32(receivedPacket.request.id));
-                        EventLog.WriteEntry( String.Format( "Pollsession {0} results sent to {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
+                        sendPacket.resultsList = PollDAL.GetSurveyResults(Convert.ToInt32(receivedPacket.request.id));
+                        EventLog.WriteEntry( String.Format( "Survey {0} results sent to {1}", receivedPacket.request.id, client.ipAddress ), EventLogEntryType.Information );
                         break;
                     default:
                         EventLog.WriteEntry( String.Format( "Invalid option sent by {0}", client.ipAddress ), EventLogEntryType.Error );

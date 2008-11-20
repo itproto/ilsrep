@@ -24,12 +24,12 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// </summary>
         private int currentPoll = 0;
         /// <summary>
-        /// PollSession that will be filled
+        /// Survey that will be filled
         /// </summary>
-        public static PollSession pollSession = new PollSession();
-        /// List of PollSessions names
+        public static Survey survey = new Survey();
+        /// List of Surveys names
         /// </summary>
-        private List<PollSession> pollSessionsList = new List<PollSession>();
+        private List<Survey> surveysList = new List<Survey>();
         /// <summary>
         /// Where results are stored
         /// </summary>
@@ -43,7 +43,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// </summary>
         private HistoryHelper history = new HistoryHelper();
         /// <summary>
-        /// Generate new negative PollSession id
+        /// Generate new negative Survey id
         /// </summary>
         private IDGenerator idGenerator = new IDGenerator();
 
@@ -55,16 +55,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.Text += " [" + PollClientGUI.userName + "]";
-            GetPollSessions();
+            GetSurveys();
             history.Clear();
         }
 
         /// <summary>
-        /// Get pollsession list and show them in the list box
+        /// Get survey list and show them in the list box
         /// </summary>
-        private void GetPollSessions()
+        private void GetSurveys()
         {
-            // Get list of pollsessions
+            // Get list of surveys
             PollPacket pollPacket = new PollPacket();
             pollPacket.request = new Request();
             pollPacket.request.type = Request.GET_LIST;
@@ -73,18 +73,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
             if ( pollPacket == null )
                 return;
 
-            // Get pollSessionsList
-            pollSessionsList.Clear();
-            foreach (Item item in pollPacket.pollSessionList.items)
+            // Get surveysList
+            surveysList.Clear();
+            foreach (Item item in pollPacket.surveyList.items)
             {
                 pollPacket = new PollPacket();
                 pollPacket.request = new Request();
-                pollPacket.request.type = Request.GET_POLLSESSION;
+                pollPacket.request.type = Request.GET_SURVEY;
                 pollPacket.request.id = item.id;
                 pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
 
                 // Modify correctChoices
-                foreach (Poll curPoll in pollPacket.pollSession.Polls)
+                foreach (Poll curPoll in pollPacket.survey.Polls)
                 {
                     int choiceIndex = 0;
                     foreach (Choice curChoice in curPoll.Choices)
@@ -96,56 +96,56 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     curPoll.CorrectChoiceID = choiceIndex;
                 }
 
-                pollSessionsList.Add(pollPacket.pollSession);
+                surveysList.Add(pollPacket.survey);
             }
             RefreshEditorList();
         }
 
         private void RefreshEditorList()
         {
-            // Add PollSessions from list to pollSessionsListBox in Editor
-            pollSessionsListBox.Items.Clear();
+            // Add Surveys from list to surveysListBox in Editor
+            surveysListBox.Items.Clear();
 
             int index = 0;
-            foreach (PollSession curPollSession in pollSessionsList)
+            foreach (Survey curSurvey in surveysList)
             {
                 index++;
-                pollSessionsListBox.Items.Add(index + ". " + curPollSession.Name);
+                surveysListBox.Items.Add(index + ". " + curSurvey.Name);
             }
 
-            if (pollSessionsListBox.Items.Count == 0)
+            if (surveysListBox.Items.Count == 0)
             {
-                MessageBox.Show("No pollsessions in DB...", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                pollSessionsListBox.SelectedIndex = -1;
+                MessageBox.Show("No surveys in DB...", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                surveysListBox.SelectedIndex = -1;
                 removeButton.Enabled = false;
                 propertyGrid.SelectedObject = null;
             }
             else
             {
-                pollSessionsListBox.SelectedIndex = 0;
+                surveysListBox.SelectedIndex = 0;
                 removeButton.Enabled = true;
             }
         }
 
         /// <summary>
-        /// Function opens PollSessionForm and then send new PollSession to server
+        /// Function opens SurveyForm and then send new Survey to server
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
         private void createButton_Click( object sender, EventArgs e )
         {
-            PollSession pollSession = new PollSession();
+            Survey survey = new Survey();
             int newId = idGenerator.id;
-            pollSession.Name = "newPollSession" + Math.Abs(newId).ToString();
-            pollSession.Id = newId;
-            pollSessionsList.Add(pollSession);
-            propertyGrid.SelectedObject = pollSessionsList[pollSessionsList.Count - 1];
+            survey.Name = "newSurvey" + Math.Abs(newId).ToString();
+            survey.Id = newId;
+            surveysList.Add(survey);
+            propertyGrid.SelectedObject = surveysList[surveysList.Count - 1];
             RefreshEditorList();
-            pollSessionsListBox.SelectedIndex = pollSessionsList.Count - 1;
+            surveysListBox.SelectedIndex = surveysList.Count - 1;
         }
 
         /// <summary>
-        /// Function send request to server to remove selected PollSession
+        /// Function send request to server to remove selected Survey
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
@@ -153,29 +153,29 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             // Ask user confirmation
             DialogResult userChoice = new DialogResult();
-            userChoice = MessageBox.Show("Do you really want to remove pollsession \"" + pollSessionsList[pollSessionsListBox.SelectedIndex].Name + "\"?", "Remove PollSession?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            userChoice = MessageBox.Show("Do you really want to remove survey \"" + surveysList[surveysListBox.SelectedIndex].Name + "\"?", "Remove Survey?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (userChoice == DialogResult.Yes)
             {
-                if (pollSessionsList[pollSessionsListBox.SelectedIndex].Id != -1)
+                if (surveysList[surveysListBox.SelectedIndex].Id != -1)
                 {
-                    history.AddToDeleted(pollSessionsList[pollSessionsListBox.SelectedIndex].Id);
+                    history.AddToDeleted(surveysList[surveysListBox.SelectedIndex].Id);
                 }
-                pollSessionsList.Remove(pollSessionsList[pollSessionsListBox.SelectedIndex]);
+                surveysList.Remove(surveysList[surveysListBox.SelectedIndex]);
                 RefreshEditorList();
             }
         }
 
         /// <summary>
-        /// Change selectedPollSession if SelectedIndexChanged
+        /// Change selectedSurvey if SelectedIndexChanged
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
         private void SelectedIndexChanged(object sender, EventArgs e)
         {
-            propertyGrid.SelectedObject = pollSessionsList[pollSessionsListBox.SelectedIndex];
-            if (pollSessionsList[pollSessionsListBox.SelectedIndex].Id >= 0)
+            propertyGrid.SelectedObject = surveysList[surveysListBox.SelectedIndex];
+            if (surveysList[surveysListBox.SelectedIndex].Id >= 0)
             {
-                history.AddToEdited(pollSessionsList[pollSessionsListBox.SelectedIndex].Id);
+                history.AddToEdited(surveysList[surveysListBox.SelectedIndex].Id);
             }
         }
 
@@ -187,22 +187,22 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void clientPage_Enter(object sender, EventArgs e)
         {
             currentPoll = 0;
-            pollSessionsListBox1.Items.Clear();
+            surveysListBox1.Items.Clear();
             pollGroupBox.Controls.Clear();
-            foreach (PollSession curPollSession in pollSessionsList)
+            foreach (Survey curSurvey in surveysList)
             {
-                pollSessionsListBox1.Items.Add(curPollSession.Name);
+                surveysListBox1.Items.Add(curSurvey.Name);
             }
 
-            if (pollSessionsList.Count == 0)
+            if (surveysList.Count == 0)
             {
                 submitButton.Enabled = false;
             }
             else
             {
-                pollSessionsListBox1.SelectedIndex = 0;
+                surveysListBox1.SelectedIndex = 0;
                 submitButton.Enabled = true;
-                pollSessionsListBox1.Enabled = true;
+                surveysListBox1.Enabled = true;
                 this.AcceptButton = submitButton;
             }
         }
@@ -227,7 +227,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText.Height = 17;
             pollGroupBox.Controls.Add(lblTopText);
             lblTopText2.Name = "lblTopText2";
-            lblTopText2.Text = "Name: " + pollSession.Polls[currentPoll].Name;
+            lblTopText2.Text = "Name: " + survey.Polls[currentPoll].Name;
             lblTopText2.Location = new System.Drawing.Point( 10, lblTopText.Top + lblTopText.Height );
             lblTopText2.Width = pollGroupBox.Width;
             lblTopText2.TextAlign = ContentAlignment.MiddleLeft;
@@ -236,7 +236,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText2.Height = 17;
             pollGroupBox.Controls.Add(lblTopText2);
             lblTopText3.Name = "lblTopText3";
-            lblTopText3.Text = StringWorkHelper.WrapString("Description: " + pollSession.Polls[currentPoll].Description,65);
+            lblTopText3.Text = StringWorkHelper.WrapString("Description: " + survey.Polls[currentPoll].Description,65);
             lblTopText3.Location = new System.Drawing.Point( 10, lblTopText2.Top + lblTopText2.Height );
             lblTopText3.Width = pollGroupBox.Width;
             lblTopText3.TextAlign = ContentAlignment.MiddleLeft;
@@ -246,7 +246,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             pollGroupBox.Controls.Add(lblTopText3);
 
             int index = 0;
-            foreach (Choice curChoice in pollSession.Polls[currentPoll].Choices)
+            foreach (Choice curChoice in survey.Polls[currentPoll].Choices)
             {
                 index++;
 
@@ -265,7 +265,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
 
             TextBox customChoiceBox = new TextBox();
-            if (!(pollSession.TestMode) && (pollSession.Polls[currentPoll].CustomChoiceEnabled))
+            if (!(survey.TestMode) && (survey.Polls[currentPoll].CustomChoiceEnabled))
             {
                 index++;
                 RadioButton radioButton = new RadioButton();
@@ -300,13 +300,13 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     return;
                 }
                 
-                if (!(pollSession.TestMode) && (pollSession.Polls[currentPoll-1].CustomChoiceEnabled))
+                if (!(survey.TestMode) && (survey.Polls[currentPoll-1].CustomChoiceEnabled))
                 {
                     customChoice = customChoiceBox.Text;
                 }
 
                 ProcessResult();
-                if (currentPoll < pollSession.Polls.Count)
+                if (currentPoll < survey.Polls.Count)
                 {
                     GetPoll();
                 }
@@ -324,16 +324,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void ProcessResult()
         {
             PollResult result = new PollResult();
-            result.questionId = pollSession.Polls[currentPoll - 1].Id;
+            result.questionId = survey.Polls[currentPoll - 1].Id;
             
-            if (selectedChoice == pollSession.Polls[currentPoll - 1].Choices.Count())
+            if (selectedChoice == survey.Polls[currentPoll - 1].Choices.Count())
             {
                 result.answerId = -1;
                 result.customChoice = customChoice;
             }
             else
             {
-                result.answerId = pollSession.Polls[currentPoll - 1].Choices[selectedChoice].Id;
+                result.answerId = survey.Polls[currentPoll - 1].Choices[selectedChoice].Id;
             }
             
             result.userName = PollClientGUI.userName;
@@ -347,7 +347,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.request.type = Request.SAVE_RESULT;
             sendPacket.resultsList = resultsList;
             sendPacket.resultsList.userName = PollClientGUI.userName;
-            sendPacket.resultsList.pollsessionId = pollSession.Id;
+            sendPacket.resultsList.surveyId = survey.Id;
             PollClientGUI.ReceivePollPacket(sendPacket);
 
             pollGroupBox.Controls.Clear();
@@ -357,14 +357,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
             lblTopText.Location = new System.Drawing.Point(10, 15);
             lblTopText.ForeColor = Color.Brown;
             lblTopText.Font = new Font("Times New Roman", 11, FontStyle.Bold);
-            lblTopText.Text = "PollSession: " + pollSession.Name;
+            lblTopText.Text = "Survey: " + survey.Name;
             pollGroupBox.Controls.Add(lblTopText);
 
             Label lblTopTextResults = new Label();
             lblTopTextResults.AutoSize = true;
             lblTopTextResults.Name = "lblTopTextResults";
             lblTopTextResults.Location = new System.Drawing.Point(10, lblTopText.Top + lblTopText.Height + 10);
-            lblTopTextResults.Text = "Here are your PollSession results: " + Environment.NewLine;
+            lblTopTextResults.Text = "Here are your Survey results: " + Environment.NewLine;
             pollGroupBox.Controls.Add(lblTopTextResults);
 
             Label lblTestResults = new Label();
@@ -376,7 +376,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 index++;
 
                 int pollIndex = 0;
-                foreach (Poll curPoll in pollSession.Polls)
+                foreach (Poll curPoll in survey.Polls)
                 {
                     if (curPoll.Id == curResult.questionId)
                         break;
@@ -384,7 +384,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
 
                 int choiceIndex = 0;
-                foreach (Choice curChoice in pollSession.Polls[pollIndex].Choices)
+                foreach (Choice curChoice in survey.Polls[pollIndex].Choices)
                 {
                     if (curChoice.Id == curResult.answerId)
                         break;
@@ -393,26 +393,26 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                 if (curResult.answerId == -1)
                 {
-                    lblTopTextResults.Text += index + ". " + pollSession.Polls[pollIndex].Name + ": " + curResult.customChoice + Environment.NewLine;
+                    lblTopTextResults.Text += index + ". " + survey.Polls[pollIndex].Name + ": " + curResult.customChoice + Environment.NewLine;
                 }
                 else
                 {
-                    lblTopTextResults.Text += index + ". " + pollSession.Polls[pollIndex].Name + ": " + pollSession.Polls[pollIndex].Choices[choiceIndex].choice + Environment.NewLine;
+                    lblTopTextResults.Text += index + ". " + survey.Polls[pollIndex].Name + ": " + survey.Polls[pollIndex].Choices[choiceIndex].choice + Environment.NewLine;
                 }
 
-                if (pollSession.TestMode)
+                if (survey.TestMode)
                 {
-                    if (choiceIndex == pollSession.Polls[pollIndex].CorrectChoiceID)
+                    if (choiceIndex == survey.Polls[pollIndex].CorrectChoiceID)
                         correctAnswers++;
                 }
             }
 
-            if (pollSession.TestMode)
+            if (survey.TestMode)
             {
-                double userScore = correctAnswers / pollSession.Polls.Count;
+                double userScore = correctAnswers / survey.Polls.Count;
                 lblTestResults.Text += "Your score: " + Convert.ToInt32(userScore * 100) + "%";
 
-                if (userScore >= pollSession.MinScore)
+                if (userScore >= survey.MinScore)
                 {
                     lblTestResults.Text += Environment.NewLine + "Congratulations!!! You PASSED the test";
                     lblTestResults.ForeColor = Color.Green;
@@ -430,7 +430,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
 
             Button btnSubmit = new Button();
-            int top = ((pollSession.TestMode) ? lblTestResults.Top : lblTopTextResults.Top) + ((pollSession.TestMode) ? lblTestResults.Height : lblTopTextResults.Height);
+            int top = ((survey.TestMode) ? lblTestResults.Top : lblTopTextResults.Top) + ((survey.TestMode) ? lblTestResults.Height : lblTopTextResults.Height);
             btnSubmit.Location = new System.Drawing.Point(10, top + 10);
             btnSubmit.Name = "btnSubmit";
             btnSubmit.Text = "OK";
@@ -448,18 +448,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            // Verification of filling of pollsession's fields
-            foreach (PollSession curPollSession in pollSessionsList)
+            // Verification of filling of survey's fields
+            foreach (Survey curSurvey in surveysList)
             {
                 try
                 {
-                    if (curPollSession.Polls.Count == 0)
-                        throw new Exception("PollSession \"" + curPollSession.Name + "\" must have polls");
+                    if (curSurvey.Polls.Count == 0)
+                        throw new Exception("Survey \"" + curSurvey.Name + "\" must have polls");
 
-                    foreach (Poll curPoll in curPollSession.Polls)
+                    foreach (Poll curPoll in curSurvey.Polls)
                     {
                         if (curPoll.Choices.Count == 0)
-                            throw new Exception("PollSession \"" + curPollSession.Name + "\" -> Poll \"" + curPoll.Name + "\": poll must have choices");
+                            throw new Exception("Survey \"" + curSurvey.Name + "\" -> Poll \"" + curPoll.Name + "\": poll must have choices");
                     }
                 }
                 catch (Exception exception)
@@ -470,9 +470,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
 
             // ----- for synchronize with server -----
-            foreach (PollSession curPollSession in pollSessionsList)
+            foreach (Survey curSurvey in surveysList)
             {
-                foreach (Poll curPoll in curPollSession.Polls)
+                foreach (Poll curPoll in curSurvey.Polls)
                 {
                     curPoll.CorrectChoiceID += 1;
                 }
@@ -481,14 +481,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
             history.Exclude();
 
             // Save all new
-            foreach (PollSession curPollSession in pollSessionsList)
+            foreach (Survey curSurvey in surveysList)
             {
-                if (curPollSession.Id < 0)
+                if (curSurvey.Id < 0)
                 {
                     PollPacket pollPacket = new PollPacket();
                     pollPacket.request = new Request();
-                    pollPacket.request.type = Request.CREATE_POLLSESSION;
-                    pollPacket.pollSession = curPollSession;
+                    pollPacket.request.type = Request.CREATE_SURVEY;
+                    pollPacket.survey = curSurvey;
                     PollClientGUI.ReceivePollPacket(pollPacket);
                 }
             }
@@ -500,17 +500,17 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollPacket.request = new Request();
                 pollPacket.request.id = idEdited.ToString();
 
-                // Find needed PollSession in list
-                foreach (PollSession curPollSession in pollSessionsList)
+                // Find needed Survey in list
+                foreach (Survey curSurvey in surveysList)
                 {
-                    if (curPollSession.Id == idEdited)
+                    if (curSurvey.Id == idEdited)
                     {
-                        pollPacket.pollSession = curPollSession;
+                        pollPacket.survey = curSurvey;
                         break;
                     }
                 }
 
-                pollPacket.request.type = Request.EDIT_POLLSESSION;
+                pollPacket.request.type = Request.EDIT_SURVEY;
                 PollClientGUI.ReceivePollPacket(pollPacket);
             }
 
@@ -520,19 +520,19 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 PollPacket pollPacket = new PollPacket();
                 pollPacket.request = new Request();
                 pollPacket.request.id = idDeleted.ToString();
-                pollPacket.request.type = Request.REMOVE_POLLSESSION;
+                pollPacket.request.type = Request.REMOVE_SURVEY;
                 PollClientGUI.ReceivePollPacket(pollPacket);
             }
 
             MessageBox.Show("Changes successfully sent to server", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            GetPollSessions();
+            GetSurveys();
             history.Clear();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Changes has been canceled", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            GetPollSessions();
+            GetSurveys();
             history.Clear();
         }
 
@@ -554,16 +554,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
             RefreshEditorList();
         }
 
-        private void pollSessionsListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void surveysListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pollSession = pollSessionsList[pollSessionsListBox1.SelectedIndex];
+            survey = surveysList[surveysListBox1.SelectedIndex];
         }
 
         private void submitButton_Click(object sender, EventArgs e)
         {
             GetPoll();
             submitButton.Enabled = false;
-            pollSessionsListBox1.Enabled = false;
+            surveysListBox1.Enabled = false;
         }
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
@@ -577,7 +577,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
         private void editorPage_Leave(object sender, EventArgs e)
         {
-            GetPollSessions();
+            GetSurveys();
             history.Clear();
         }
     }
