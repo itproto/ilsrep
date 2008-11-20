@@ -78,6 +78,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             pollSessionsList.Clear();
             foreach (Item item in pollPacket.pollSessionList.items)
             {
+                pollPacket = new PollPacket();
                 pollPacket.request = new Request();
                 pollPacket.request.type = Request.GET_POLLSESSION;
                 pollPacket.request.id = item.id;

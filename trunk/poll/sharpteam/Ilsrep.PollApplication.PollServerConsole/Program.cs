@@ -255,36 +255,34 @@ namespace Ilsrep.PollApplication.PollServer
             // Packet to be sent back
             PollPacket sendPacket = new PollPacket();
 
-            if (!client.isAuthorized)
+            if (receivedPacket.request.type == Request.USER)
             {
-                if (receivedPacket.request.type == Request.USER)
+                switch (receivedPacket.user.action)
                 {
-                    switch (receivedPacket.user.action)
-                    {
-                        case User.EXIST:
-                            sendPacket.user = PollDAL.ExistUser(receivedPacket.user);
+                    case User.EXIST:
+                        sendPacket.user = PollDAL.ExistUser(receivedPacket.user);
 
-                            break;
-                        case User.AUTH:
-                            sendPacket.user = PollDAL.AuthorizeUser(receivedPacket.user);
-                            if (sendPacket.user.action == User.AUTH)
-                            {
-                                client.isAuthorized = true;
-                                log.Info("User accepted: " + sendPacket.user.username);
-                            }
-                            break;
-                        case User.NEW_USER:
-                            sendPacket.user = PollDAL.RegisterUser(receivedPacket.user);
-                            if (sendPacket.user.action == User.AUTH)
-                            {
-                                client.isAuthorized = true;
-                                log.Info("New user created: " + sendPacket.user.username);
-                            }
-                            break;
-                    }
+                        break;
+                    case User.AUTH:
+                        sendPacket.user = PollDAL.AuthorizeUser(receivedPacket.user);
+                        if (sendPacket.user.action == User.AUTH)
+                        {
+                            client.isAuthorized = true;
+                            log.Info("User accepted: " + sendPacket.user.username);
+                        }
+                        break;
+                    case User.NEW_USER:
+                        sendPacket.user = PollDAL.RegisterUser(receivedPacket.user);
+                        if (sendPacket.user.action == User.AUTH)
+                        {
+                            client.isAuthorized = true;
+                            log.Info("New user created: " + sendPacket.user.username);
+                        }
+                        break;
                 }
             }
-            else
+
+            if (client.isAuthorized)
             {
                 // Select option
                 switch (receivedPacket.request.type)

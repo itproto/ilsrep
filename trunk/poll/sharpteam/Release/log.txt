@@ -14,3 +14,33 @@
 15 Oct 2008 16:43:16 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:1195
 15 Oct 2008 16:43:22 INFO  [category:PollServer.PollServer] - Pollsession 3 sent to 127.0.0.1:1195
 15 Oct 2008 16:43:44 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:1195 disconnected
+20 Nov 2008 09:12:27 INFO  [category:PollServer.PollServer] - Server started on host: 0.0.0.0:3320
+20 Nov 2008 09:12:27 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:13:49 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:55899 connected
+20 Nov 2008 09:13:49 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:13:56 INFO  [category:PollServer.PollServer] - New user created: vladykx
+20 Nov 2008 09:19:29 INFO  [category:PollServer.PollServer] - Server started on host: 0.0.0.0:3320
+20 Nov 2008 09:19:29 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:19:44 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:56205 connected
+20 Nov 2008 09:19:44 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:20:03 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:56205 disconnected
+20 Nov 2008 09:21:40 INFO  [category:PollServer.PollServer] - Server started on host: 0.0.0.0:3320
+20 Nov 2008 09:21:40 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:21:43 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:56279 connected
+20 Nov 2008 09:21:43 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:21:51 INFO  [category:PollServer.PollServer] - New user created: vladykx
+20 Nov 2008 09:22:29 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:56279
+20 Nov 2008 09:22:29 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:56279
+20 Nov 2008 09:22:35 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:56279 disconnected
+20 Nov 2008 09:23:26 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:56298 connected
+20 Nov 2008 09:23:26 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+20 Nov 2008 09:23:26 INFO  [category:PollServer.PollServer] - User accepted: vladykx
+20 Nov 2008 09:23:26 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:56298
+20 Nov 2008 09:23:26 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:56298
+20 Nov 2008 09:24:18 INFO  [category:PollServer.PollServer] - Pollsession 2 changed by 127.0.0.1:56298
+20 Nov 2008 09:24:20 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:56298
+20 Nov 2008 09:24:20 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:56298
+20 Nov 2008 09:24:31 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:56298
+20 Nov 2008 09:24:31 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:56298
+20 Nov 2008 09:24:37 INFO  [category:PollServer.PollServer] - Pollsession 2 results of user vladykx sent by 127.0.0.1:56298
+20 Nov 2008 09:24:41 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:56298 disconnected
