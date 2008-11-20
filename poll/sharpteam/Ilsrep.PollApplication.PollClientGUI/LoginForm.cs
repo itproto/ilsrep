@@ -39,16 +39,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                     switch (pollPacket.user.action)
                     {
-                        case User.NEW_USER:
+                        case User.AUTH:
                             PollClientGUI.isAuthorized = true;
                             PollClientGUI.userName = nameField.Text;
                             Close();
                             return;
-                            break;
                         case User.EXIST:
                             MessageBox.Show("Error occured during registation", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
-                            break;
                     }
                 }
                 else
