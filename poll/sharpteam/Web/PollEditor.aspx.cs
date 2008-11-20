@@ -15,15 +15,15 @@ using System.Data.SQLite;
 public partial class PollEditor : System.Web.UI.Page
 {
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
-    public List<Item> pollSessionsList = new List<Item>();
-    public PollSession selectedPollsession = null;
+    public List<Item> surveysList = new List<Item>();
+    public Survey selectedSurvey = null;
     public string Message = String.Empty;
     public string ShowPage = String.Empty;
 
     protected void Page_Load(object sender, EventArgs e)
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath(ConfigurationSettings.AppSettings["dataSource"].ToString()) + "\"";
-        pollSessionsList = PollDAL.GetPollSessions();
+        surveysList = PollDAL.GetSurveys();
 
         switch(Request["action"])
         {
@@ -46,36 +46,36 @@ public partial class PollEditor : System.Web.UI.Page
     {
         switch (what)
         {
-            case "editpollsession":
+            case "editsurvey":
                 int id = Convert.ToInt32(Request["id"]);
 
                 if (id == 0)
                 {// from session
                     int lastID = Convert.ToInt32(Session["lastID"]);
                     
-                    selectedPollsession = new PollSession();
-                    selectedPollsession.Id = --lastID;
+                    selectedSurvey = new Survey();
+                    selectedSurvey.Id = --lastID;
                     
                     Session["lastID"] = lastID;
                 }
-                else if ((Session["pollsession_" + id] as PollSession) != null && Convert.ToInt32(Request["reset"]) != 1 )
+                else if ((Session["survey_" + id] as Survey) != null && Convert.ToInt32(Request["reset"]) != 1 )
                 {
-                    selectedPollsession = Session["pollsession_" + id] as PollSession;
+                    selectedSurvey = Session["survey_" + id] as Survey;
                 }
                 else if (id > 0)
                 {
-                    selectedPollsession = PollDAL.GetPollSession(id);
+                    selectedSurvey = PollDAL.GetSurvey(id);
                 }
                 else
                 {
-                    selectedPollsession = new PollSession();
-                    selectedPollsession.Id = id;
+                    selectedSurvey = new Survey();
+                    selectedSurvey.Id = id;
                 }
 
-                if (Session["pollsession_" + selectedPollsession.Id] == null)
-                    Session["pollsession_" + selectedPollsession.Id] = selectedPollsession;
+                if (Session["survey_" + selectedSurvey.Id] == null)
+                    Session["survey_" + selectedSurvey.Id] = selectedSurvey;
 
-                ShowPage = "editpollsession";
+                ShowPage = "editsurvey";
                 break;
         }
     }
@@ -87,7 +87,7 @@ public partial class PollEditor : System.Web.UI.Page
             case "poll":
                 string poll_name = Request["poll_name"];
                 string poll_desc = Request["poll_desc"];
-                int id = Convert.ToInt32(Request["pollsession_id"]);
+                int id = Convert.ToInt32(Request["survey_id"]);
 
                 if (poll_name == String.Empty || poll_desc == String.Empty)
                 {
@@ -99,13 +99,13 @@ public partial class PollEditor : System.Web.UI.Page
                     newPoll.Name = poll_name;
                     newPoll.Description = poll_desc;
 
-                    (Session["pollsession_" + id] as PollSession).Polls.Add(newPoll);
+                    (Session["survey_" + id] as Survey).Polls.Add(newPoll);
                     Response.Write("{ response: 1, id: "+newPoll.Id+", poll_name: '"+poll_name+"' }");
                 }
                 break;
             case "choice":
                 string choice = Request["choice"];
-                int pollsession_id = Convert.ToInt32(Request["pollsession_id"]);
+                int survey_id = Convert.ToInt32(Request["survey_id"]);
                 int poll_id = Convert.ToInt32(Request["poll_id"]);
 
                 if (choice == String.Empty)
@@ -117,7 +117,7 @@ public partial class PollEditor : System.Web.UI.Page
                     Choice newChoice = new Choice();
                     newChoice.choice = choice;
 
-                    foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                    foreach (Poll poll in (Session["survey_" + survey_id] as Survey).Polls)
                     {
                         if (poll.Id == poll_id)
                         {
@@ -139,18 +139,18 @@ public partial class PollEditor : System.Web.UI.Page
     {
         switch (what)
         {
-            case "pollsession":
+            case "survey":
                 int id = Convert.ToInt32(Request["id"]);
-                PollDAL.EditPollSession(Session["pollsession_" + id] as PollSession);
-                Session["pollsession_" + id] = null;
+                PollDAL.EditSurvey(Session["survey_" + id] as Survey);
+                Session["survey_" + id] = null;
                 break;
             case "choice":
-                int pollsession_id = Convert.ToInt32(Request["pollsession_id"]);
+                int survey_id = Convert.ToInt32(Request["survey_id"]);
                 int poll_id = Convert.ToInt32(Request["poll_id"]);
                 int choice_id = Convert.ToInt32(Request["choice_id"]);
                 string choice = Request["choice"];
 
-                foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                foreach (Poll poll in (Session["survey_" + survey_id] as Survey).Polls)
                 {
                     if (poll.Id == poll_id)
                     {
@@ -173,30 +173,30 @@ public partial class PollEditor : System.Web.UI.Page
 
     protected void Delete(string what)
     {
-        int pollsession_id, poll_id, choice_id;
+        int survey_id, poll_id, choice_id;
 
         switch (what)
         {
             case "poll":
-                pollsession_id = Convert.ToInt32(Request.QueryString["pollsession_id"]);
+                survey_id = Convert.ToInt32(Request.QueryString["survey_id"]);
                 poll_id = Convert.ToInt32(Request.QueryString["poll_id"]);
 
-                foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                foreach (Poll poll in (Session["survey_" + survey_id] as Survey).Polls)
                 {
                     if (poll.Id == poll_id)
                     {
-                        (Session["pollsession_" + pollsession_id] as PollSession).Polls.Remove(poll);
+                        (Session["survey_" + survey_id] as Survey).Polls.Remove(poll);
                         break;
                     }
                 }
 
                 break;
             case "choice":
-                pollsession_id = Convert.ToInt32(Request.QueryString["pollsession_id"]);
+                survey_id = Convert.ToInt32(Request.QueryString["survey_id"]);
                 poll_id = Convert.ToInt32(Request.QueryString["poll_id"]);
                 choice_id = Convert.ToInt32(Request.QueryString["choice_id"]);
 
-                foreach (Poll poll in (Session["pollsession_" + pollsession_id] as PollSession).Polls)
+                foreach (Poll poll in (Session["survey_" + survey_id] as Survey).Polls)
                 {
                     if (poll.Id == poll_id)
                     {

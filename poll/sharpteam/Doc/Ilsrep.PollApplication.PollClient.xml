@@ -39,14 +39,14 @@
             handles connection to server
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.pollSession">
+        <member name="F:Ilsrep.PollApplication.PollClient.PollClient.survey">
             <summary>
-            holds pollsession that is read from server
+            holds survey that is read from server
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollClient.PollClient.userChoices">
             <summary>
-            holds user choices that he selects during poll session
+            holds user choices that he selects during survey
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.AskQuestion(System.String,System.String[])">
@@ -60,7 +60,7 @@
         </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.RunUserPoll">
             <summary>
-            Interaction with user. Gets answers to pollsession
+            Interaction with user. Gets answers to survey
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.ConnectToServer">
@@ -80,14 +80,14 @@
             <param name="sendPacket">PollPacket with request to send</param>
             <returns>PollPacket receivedPacket</returns>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.GetPollSession">
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.GetSurvey">
             <summary>
-            Server sends list of available poll sessions. User picks one and client gets that poll session from server.
+            Server sends list of available surveys. User picks one and client gets that survey from server.
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.SavePollSessionResults">
+        <member name="M:Ilsrep.PollApplication.PollClient.PollClient.SaveSurveyResults">
             <summary>
-            Send results of pollsession to server
+            Send results of survey to server
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollClient.PollClient.Main">

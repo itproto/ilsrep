@@ -20,35 +20,35 @@ using System.Data.SQLite;
 public partial class _Default : System.Web.UI.Page
 {
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
-    public List<Item> pollSessionsList = new List<Item>();
-    public PollSession pollSession = null;
+    public List<Item> surveysList = new List<Item>();
+    public Survey survey = null;
     public ResultsList resultsList = null;
     public string errorMessage = String.Empty;
 
     protected void Page_Load( object sender, EventArgs e )
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
-        pollSessionsList = PollDAL.GetPollSessions();
+        surveysList = PollDAL.GetSurveys();
 
         switch (Request["action"])
         {
-            case "showpollsession":
-                pollSession = new PollSession();
+            case "showsurvey":
+                survey = new Survey();
                 resultsList = new ResultsList();
-                pollSession = PollDAL.GetPollSession(Convert.ToInt32(Request["id"]));
-                Session["pollSession"] = pollSession;
+                survey = PollDAL.GetSurvey(Convert.ToInt32(Request["id"]));
+                Session["survey"] = survey;
                 Session["pollIndex"] = 0;
-                resultsList.pollsessionId = pollSession.Id;
+                resultsList.surveyId = survey.Id;
                 Session["resultsList"] = resultsList;
                 break;
             case "submitpoll":
-                pollSession = (PollSession)Session["pollSession"];
+                survey = (Survey)Session["survey"];
                 resultsList = (ResultsList)Session["resultsList"];
                 PollResult curResult = new PollResult();
                 curResult.questionId = Convert.ToInt32(Session["pollIndex"]);
                 curResult.answerId = Convert.ToInt32(Request["choice"]);
                 resultsList.results.Add(curResult);
-                if (Convert.ToInt32(Session["pollIndex"]) == pollSession.Polls.Count - 1)
+                if (Convert.ToInt32(Session["pollIndex"]) == survey.Polls.Count - 1)
                 {
                     Response.Redirect("Default.aspx?action=showresults");
                 }
@@ -58,7 +58,7 @@ public partial class _Default : System.Web.UI.Page
                 }
                 break;
             case "showresults":
-                pollSession = (PollSession)Session["pollSession"];
+                survey = (Survey)Session["survey"];
                 resultsList = (ResultsList)Session["resultsList"];
                 // Save results to DB
                 break;

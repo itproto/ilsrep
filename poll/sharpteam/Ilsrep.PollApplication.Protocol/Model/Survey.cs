@@ -9,22 +9,22 @@ using Ilsrep.Common;
 namespace Ilsrep.PollApplication.Model
 {
     /// <summary>
-    /// Object that holds poll session
+    /// Object that holds survey
     /// </summary>
-    [XmlRoot("pollsession"), Serializable]
-    [DisplayName("PollSession")]
-    public class PollSession
+    [XmlRoot("survey"), Serializable]
+    [DisplayName("Survey")]
+    public class Survey
     {
         /// <summary>
-        /// poll session id
+        /// survey id
         /// </summary>
         private int _id;
         /// <summary>
-        /// poll session name
+        /// survey name
         /// </summary>
         private string _name;
         /// <summary>
-        /// if this poll session is a test
+        /// if this survey is a test
         /// </summary>
         private bool _testMode;
         /// <summary>
@@ -32,7 +32,7 @@ namespace Ilsrep.PollApplication.Model
         /// </summary>
         private double _minScore;
         /// <summary>
-        /// list of polls that this poll session holds
+        /// list of polls that this survey holds
         /// </summary>
         private List<Poll> _polls = new List<Poll>();
         /// <summary>
@@ -65,7 +65,7 @@ namespace Ilsrep.PollApplication.Model
             {
                 if (value == String.Empty)
                 {
-                    throw new Exception("PollSession name can't be empty");
+                    throw new Exception("Survey name can't be empty");
                 }
                 else
                 {

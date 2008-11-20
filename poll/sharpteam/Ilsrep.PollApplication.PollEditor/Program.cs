@@ -10,14 +10,14 @@ using Ilsrep.Common;
 namespace Ilsrep.PollApplication.PollEditor
 {
     /// <summary>
-    /// Editor of pollsessions
+    /// Editor of surveys
     /// </summary>
     public class PollEditor
     {
         private static System.Globalization.CultureInfo cultureInfo = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.CurrentCulture.Clone();
         private static string userName = String.Empty;
         private static string userPassword = String.Empty;
-        private static PollSession pollSession = new PollSession();
+        private static Survey survey = new Survey();
         private const string HOST = "localhost";
         private const int PORT = 3320;
         private static TcpClient client;
@@ -29,7 +29,7 @@ namespace Ilsrep.PollApplication.PollEditor
         /// </summary>
         public static void RunUserDialog()
         {
-            // Get list of pollsessions from server and write they in console
+            // Get list of surveys from server and write they in console
             PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.GET_LIST;
@@ -38,12 +38,12 @@ namespace Ilsrep.PollApplication.PollEditor
             receivedPacket = ReceivePollPacket(sendPacket);
 
             // Check if list is not empty
-            if (receivedPacket.pollSessionList.items.Count == 0)
+            if (receivedPacket.surveyList.items.Count == 0)
             {
-                Console.WriteLine("Sorry, but data base is empty, no pollsessions...");
-                if (InputHelper.AskQuestion(String.Format("Would you create new pollsession[{0}/{1}]?", STRING_YES, STRING_NO), new string[] { STRING_YES, STRING_NO }) == STRING_YES)
+                Console.WriteLine("Sorry, but data base is empty, no surveys...");
+                if (InputHelper.AskQuestion(String.Format("Would you create new survey[{0}/{1}]?", STRING_YES, STRING_NO), new string[] { STRING_YES, STRING_NO }) == STRING_YES)
                 {
-                    EditPollsession(0);
+                    EditSurvey(0);
                 }
                 else
                 {
@@ -54,24 +54,24 @@ namespace Ilsrep.PollApplication.PollEditor
                 return;
             }
 
-            Console.WriteLine( "1. Create new pollsession" );
-            Console.WriteLine( "2. Edit pollsession" );
-            Console.WriteLine( "3. Remove pollsession" );
+            Console.WriteLine( "1. Create new survey" );
+            Console.WriteLine( "2. Edit survey" );
+            Console.WriteLine( "3. Remove survey" );
             int action = InputHelper.AskQuestion( "Choose action [1-3]:", 1, 3 );
 
-            int pollSessionIndex;
+            int surveyIndex;
             switch (action)
             {
                 case 1:
-                    EditPollsession( 0 );
+                    EditSurvey( 0 );
                     break;
                 case 2:
-                    pollSessionIndex = receivedPacket.pollSessionList.GetPollSessionId();
-                    EditPollsession( Convert.ToInt32( receivedPacket.pollSessionList[pollSessionIndex-1].id ) );                    
+                    surveyIndex = receivedPacket.surveyList.GetSurveyId();
+                    EditSurvey( Convert.ToInt32( receivedPacket.surveyList[surveyIndex-1].id ) );                    
                     break;
                 case 3:
-                    pollSessionIndex = receivedPacket.pollSessionList.GetPollSessionId();
-                    RemovePollsession( receivedPacket.pollSessionList[pollSessionIndex-1] );                    
+                    surveyIndex = receivedPacket.surveyList.GetSurveyId();
+                    RemoveSurvey( receivedPacket.surveyList[surveyIndex-1] );                    
                     break;
                 default:
                     Console.WriteLine("Invalid action!");
@@ -80,57 +80,57 @@ namespace Ilsrep.PollApplication.PollEditor
         }
 
         /// <summary>
-        /// Remove pollsession
+        /// Remove survey
         /// </summary>
-        public static void RemovePollsession( Item item )
+        public static void RemoveSurvey( Item item )
         {
             // Ask if user is sure
-            if ( InputHelper.AskQuestion( "Do you really want to remove pollsession \"" + item.name + "\" [y/n]?", new string[] { STRING_YES, STRING_NO } ) == "n" )
+            if ( InputHelper.AskQuestion( "Do you really want to remove survey \"" + item.name + "\" [y/n]?", new string[] { STRING_YES, STRING_NO } ) == "n" )
             {
                 return;
             }
 
             PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
-            sendPacket.request.type = Request.REMOVE_POLLSESSION;
+            sendPacket.request.type = Request.REMOVE_SURVEY;
             sendPacket.request.id = item.id.ToString();
             string sendString = PollSerializator.SerializePacket(sendPacket);
             client.Send(sendString);
         }
 
         /// <summary>
-        /// Adds or edits poll session and saves it to server
+        /// Adds or edits survey and saves it to server
         /// </summary>
-        /// <param name="pollSessionID">id of session to edit</param>
-        public static void EditPollsession( int pollSessionID )
+        /// <param name="surveyID">id of session to edit</param>
+        public static void EditSurvey( int surveyID )
         {
-            PollSession pollSession;
+            Survey survey;
 
-            if ( pollSessionID == 0 )
+            if ( surveyID == 0 )
             {
-                pollSession = new PollSession();
+                survey = new Survey();
             }
             else
             {
                 PollPacket pollPacket = new PollPacket();
                 pollPacket.request = new Request();
-                pollPacket.request.type = Request.GET_POLLSESSION;
-                pollPacket.request.id = pollSessionID.ToString();
+                pollPacket.request.type = Request.GET_SURVEY;
+                pollPacket.request.id = surveyID.ToString();
                 pollPacket = ReceivePollPacket( pollPacket );
-                pollSession = pollPacket.pollSession;
+                survey = pollPacket.survey;
             }
 
-            pollSession.Name = InputHelper.AskQuestion("Enter pollsession name:", pollSession.Name, null);
-            pollSession.TestMode = InputHelper.ToBoolean(InputHelper.AskQuestion("Test mode[y/n]?", InputHelper.ToString(pollSession.TestMode), new string[] { STRING_YES, STRING_NO }));
+            survey.Name = InputHelper.AskQuestion("Enter survey name:", survey.Name, null);
+            survey.TestMode = InputHelper.ToBoolean(InputHelper.AskQuestion("Test mode[y/n]?", InputHelper.ToString(survey.TestMode), new string[] { STRING_YES, STRING_NO }));
 
-            if (pollSession.TestMode == true)
+            if (survey.TestMode == true)
             {
                 while (true)
                 {
                     try
                     {
-                        pollSession.MinScore = Convert.ToDouble(InputHelper.AskQuestion("Min score to pass test:", Convert.ToString(pollSession.MinScore, cultureInfo), null), cultureInfo);
-                        if (pollSession.MinScore > 1 || pollSession.MinScore < 0)
+                        survey.MinScore = Convert.ToDouble(InputHelper.AskQuestion("Min score to pass test:", Convert.ToString(survey.MinScore, cultureInfo), null), cultureInfo);
+                        if (survey.MinScore > 1 || survey.MinScore < 0)
                             throw new Exception("min score must be between 0 and 1");
                         break;
                     }
@@ -144,9 +144,9 @@ namespace Ilsrep.PollApplication.PollEditor
             
             while(true)
             {
-                Console.WriteLine("Poll session contains {0} polls.", pollSession.Polls.Count);
+                Console.WriteLine("Survey contains {0} polls.", survey.Polls.Count);
                 
-                if (pollSession.Polls.Count > 0)
+                if (survey.Polls.Count > 0)
                 {
                     Console.WriteLine( "Actions:" );
                     Console.WriteLine( "1. Add new poll" );
@@ -162,12 +162,12 @@ namespace Ilsrep.PollApplication.PollEditor
                     switch (userChoice)
                     {
                         case 1:
-                            EditPoll( ref pollSession, -1 );
+                            EditPoll( ref survey, -1 );
                         break;
                         case 2:
                             index = 0;
                             Console.WriteLine("List of polls:");
-                            foreach (Poll poll in pollSession.Polls)
+                            foreach (Poll poll in survey.Polls)
                             {
                                 index++;
                                 Console.WriteLine("{0}. {1}", index, poll.Name);
@@ -175,42 +175,42 @@ namespace Ilsrep.PollApplication.PollEditor
 
                             userChoice = InputHelper.AskQuestion(String.Format("Choose which one to edit [1-{0}]:", index), 1, index);
                             
-                            EditPoll( ref pollSession, userChoice-1 );
+                            EditPoll( ref survey, userChoice-1 );
                         break;
                         case 3:
                             index = 0;
                             Console.WriteLine("List of polls:");
-                            foreach (Poll poll in pollSession.Polls)
+                            foreach (Poll poll in survey.Polls)
                             {
                                 index++;
                                 Console.WriteLine("{0}. {1}", index, poll.Name);
                             }
 
-                            pollSession.Polls.RemoveAt(InputHelper.AskQuestion(String.Format("Choose which one to delete [1-{0}]:", index), 1, index)-1);
+                            survey.Polls.RemoveAt(InputHelper.AskQuestion(String.Format("Choose which one to delete [1-{0}]:", index), 1, index)-1);
                         break;
                     }
                 }
                 else
                 {
-                    EditPoll( ref pollSession, -1 );
+                    EditPoll( ref survey, -1 );
                 }
             }
 
-            // Save poll session to server
-            if (InputHelper.AskQuestion("Do you want to save this pollsession to server [y/n]?", new string[] { STRING_YES, STRING_NO }) == STRING_YES)
+            // Save survey to server
+            if (InputHelper.AskQuestion("Do you want to save this survey to server [y/n]?", new string[] { STRING_YES, STRING_NO }) == STRING_YES)
             {
                 PollPacket sendPacket = new PollPacket();
                 sendPacket.request = new Request();
-                if (pollSessionID == 0)
+                if (surveyID == 0)
                 {
-                    sendPacket.request.type = Request.CREATE_POLLSESSION;
+                    sendPacket.request.type = Request.CREATE_SURVEY;
                 }
                 else
                 {
-                    sendPacket.request.type = Request.EDIT_POLLSESSION;
+                    sendPacket.request.type = Request.EDIT_SURVEY;
                 }
-                sendPacket.request.id = pollSessionID.ToString();
-                sendPacket.pollSession = pollSession;
+                sendPacket.request.id = surveyID.ToString();
+                sendPacket.survey = survey;
                 string sendString = PollSerializator.SerializePacket(sendPacket);
                 client.Send(sendString);
             }
@@ -219,25 +219,25 @@ namespace Ilsrep.PollApplication.PollEditor
         /// <summary>
         /// Adds or edits a poll
         /// </summary>
-        /// <param name="pollSession">Poll session conected to poll</param>
-        /// <param name="index">index of poll in poll session poll list</param>
-        public static void EditPoll( ref PollSession pollSession, int index )
+        /// <param name="survey">Survey conected to poll</param>
+        /// <param name="index">index of poll in survey poll list</param>
+        public static void EditPoll( ref Survey survey, int index )
         {
             Poll newPoll;
 
             if ( index == -1 )
             {
-                pollSession.Polls.Add( new Poll() );
-                index = pollSession.Polls.Count - 1;
+                survey.Polls.Add( new Poll() );
+                index = survey.Polls.Count - 1;
 
-                newPoll = pollSession.Polls[index];
+                newPoll = survey.Polls[index];
 
                 newPoll.Id = 0;
                 newPoll.CorrectChoiceID = 0;
             }
             else
             {
-                newPoll = pollSession.Polls[index];
+                newPoll = survey.Polls[index];
             }
 
 
@@ -249,7 +249,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 int choiceIndex;
                 Console.WriteLine( "Poll contains {0} choices.", newPoll.Choices.Count );
 
-                if ( newPoll.Choices.Count >= (pollSession.TestMode ? 2 : 0) )
+                if ( newPoll.Choices.Count >= (survey.TestMode ? 2 : 0) )
                 {
                     Console.WriteLine( "Actions:" );
                     Console.WriteLine( "1. Add new choice" );
@@ -302,7 +302,7 @@ namespace Ilsrep.PollApplication.PollEditor
                 }
             }
 
-            if ( pollSession.TestMode == false )
+            if ( survey.TestMode == false )
             {
                 // Enable CustomChoice automaticly if user doesn't inputed any choice
                 if ( newPoll.Choices.Count == 0 )

@@ -4,6 +4,142 @@
         <name>Ilsrep.PollApplication.PollClientGUI</name>
     </assembly>
     <members>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.LoginForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.selectedChoice">
+            <summary>
+            Selected choice
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.currentPoll">
+            <summary>
+            Currently poll that is being processed
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.survey">
+            <summary>
+            Survey that will be filled
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Ilsrep.PollApplication.PollClientGUI.MainForm.surveysList" -->
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.resultsList">
+            <summary>
+            Where results are stored
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.customChoice">
+            <summary>
+            Users choice
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.history">
+            <summary>
+            History of changes
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.idGenerator">
+            <summary>
+            Generate new negative Survey id
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.GetSurveys">
+            <summary>
+            Get survey list and show them in the list box
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.createButton_Click(System.Object,System.EventArgs)">
+            <summary>
+            Function opens SurveyForm and then send new Survey to server
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.removeButton_Click(System.Object,System.EventArgs)">
+            <summary>
+            Function send request to server to remove selected Survey
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.SelectedIndexChanged(System.Object,System.EventArgs)">
+            <summary>
+            Change selectedSurvey if SelectedIndexChanged
+            </summary>
+            <param name="sender">object sender</param>
+            <param name="e">EventArgs e</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.clientPage_Enter(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:Ilsrep.PollApplication.PollClientGUI.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Ilsrep.PollApplication.PollClientGUI.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Ilsrep.PollApplication.PollClientGUI.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.SettingsForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.SettingsForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.SettingsForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.CONSOLE_YES">
             <summary>
             String that states yes
@@ -24,14 +160,14 @@
             handles connection to server
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.pollSession">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.survey">
             <summary>
-            holds pollsession that is read from server
+            holds survey that is read from server
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.userChoices">
             <summary>
-            holds user choices that he selects during poll session
+            holds user choices that he selects during survey
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isAuthorized">
@@ -69,142 +205,6 @@
         <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.Main">
             <summary>
             The main entry point for the application.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.selectedChoice">
-            <summary>
-            Selected choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.currentPoll">
-            <summary>
-            Currently poll that is being processed
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.pollSession">
-            <summary>
-            PollSession that will be filled
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "F:Ilsrep.PollApplication.PollClientGUI.MainForm.pollSessionsList" -->
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.resultsList">
-            <summary>
-            Where results are stored
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.customChoice">
-            <summary>
-            Users choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.history">
-            <summary>
-            History of changes
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.idGenerator">
-            <summary>
-            Generate new negative PollSession id
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.GetPollSessions">
-            <summary>
-            Get pollsession list and show them in the list box
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.createButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function opens PollSessionForm and then send new PollSession to server
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.removeButton_Click(System.Object,System.EventArgs)">
-            <summary>
-            Function send request to server to remove selected PollSession
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.SelectedIndexChanged(System.Object,System.EventArgs)">
-            <summary>
-            Change selectedPollSession if SelectedIndexChanged
-            </summary>
-            <param name="sender">object sender</param>
-            <param name="e">EventArgs e</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.MainForm.clientPage_Enter(System.Object,System.EventArgs)">
-            <summary>
-            
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.LoginForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.PollClientGUI.Properties.Resources">
-            <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
-            </summary>
-        </member>
-        <member name="P:Ilsrep.PollApplication.PollClientGUI.Properties.Resources.ResourceManager">
-            <summary>
-              Returns the cached ResourceManager instance used by this class.
-            </summary>
-        </member>
-        <member name="P:Ilsrep.PollApplication.PollClientGUI.Properties.Resources.Culture">
-            <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.SettingsForm.components">
-            <summary>
-            Required designer variable.
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.SettingsForm.Dispose(System.Boolean)">
-            <summary>
-            Clean up any resources being used.
-            </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.SettingsForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
             </summary>
         </member>
     </members>

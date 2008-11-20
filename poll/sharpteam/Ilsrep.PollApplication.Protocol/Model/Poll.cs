@@ -31,7 +31,7 @@ namespace Ilsrep.PollApplication.Model
         /// </summary>
         private string _description;
         /// <summary>
-        /// if poll session in test mode, id of the correct choice
+        /// if survey in test mode, id of the correct choice
         /// </summary>
         private int _correctChoiceID;
         /// <summary>
@@ -51,7 +51,7 @@ namespace Ilsrep.PollApplication.Model
         public Poll()
         {
             Description = "<description>";
-            if (!(PollSession.isSerialized))
+            if (!(Survey.isSerialized))
             {
                 int newPollID = pollIDGenerator.id;
                 Name = "newPoll" + Math.Abs(newPollID);

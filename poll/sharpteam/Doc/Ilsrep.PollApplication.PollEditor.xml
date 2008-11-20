@@ -6,7 +6,7 @@
     <members>
         <member name="T:Ilsrep.PollApplication.PollEditor.PollEditor">
             <summary>
-            Editor of pollsessions
+            Editor of surveys
             </summary>
         </member>
         <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RunUserDialog">
@@ -14,23 +14,23 @@
             Run conversation with user
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RemovePollsession(Ilsrep.PollApplication.Communication.Item)">
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.RemoveSurvey(Ilsrep.PollApplication.Communication.Item)">
             <summary>
-            Remove pollsession
+            Remove survey
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.EditPollsession(System.Int32)">
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.EditSurvey(System.Int32)">
             <summary>
-            Adds or edits poll session and saves it to server
+            Adds or edits survey and saves it to server
             </summary>
-            <param name="pollSessionID">id of session to edit</param>
+            <param name="surveyID">id of session to edit</param>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.EditPoll(Ilsrep.PollApplication.Model.PollSession@,System.Int32)">
+        <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.EditPoll(Ilsrep.PollApplication.Model.Survey@,System.Int32)">
             <summary>
             Adds or edits a poll
             </summary>
-            <param name="pollSession">Poll session conected to poll</param>
-            <param name="index">index of poll in poll session poll list</param>
+            <param name="survey">Survey conected to poll</param>
+            <param name="index">index of poll in survey poll list</param>
         </member>
         <member name="M:Ilsrep.PollApplication.PollEditor.PollEditor.ConnectToServer">
             <summary>

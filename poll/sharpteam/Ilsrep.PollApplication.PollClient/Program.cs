@@ -47,11 +47,11 @@ namespace Ilsrep.PollApplication.PollClient
         /// </summary>
         static TcpClient client;
         /// <summary>
-        /// holds pollsession that is read from server
+        /// holds survey that is read from server
         /// </summary>
-        static PollSession pollSession = new PollSession();
+        static Survey survey = new Survey();
         /// <summary>
-        /// holds user choices that he selects during poll session
+        /// holds user choices that he selects during survey
         /// </summary>
         static List<Choice> userChoices = new List<Choice>();
 
@@ -86,11 +86,11 @@ namespace Ilsrep.PollApplication.PollClient
         }
 
         /// <summary>
-        /// Interaction with user. Gets answers to pollsession
+        /// Interaction with user. Gets answers to survey
         /// </summary>
         public static void RunUserPoll()
         {
-            foreach (Poll curentPoll in pollSession.Polls)
+            foreach (Poll curentPoll in survey.Polls)
             {
                 // Clear screen and write this poll's question
                 Console.Clear();
@@ -167,8 +167,8 @@ namespace Ilsrep.PollApplication.PollClient
 
             // go through choices and display them
             Console.Clear();
-            Console.WriteLine(userName + ", here is your PollSession results:");
-            bool isTestMode = pollSession.TestMode;
+            Console.WriteLine(userName + ", here is your Survey results:");
+            bool isTestMode = survey.TestMode;
 
             int index1 = 0;
             foreach(Choice userChoice in userChoices)
@@ -203,7 +203,7 @@ namespace Ilsrep.PollApplication.PollClient
 
                 // Check if is passed
                 double userScore = Convert.ToDouble(correctAnswersCount) / Convert.ToDouble(userChoices.Count);
-                bool isPassed = (userScore >= pollSession.MinScore);
+                bool isPassed = (userScore >= survey.MinScore);
                 if (isPassed)
                 {
                     Console.WriteLine("PASSED");
@@ -213,7 +213,7 @@ namespace Ilsrep.PollApplication.PollClient
                     Console.WriteLine("Sorry, try again...");
                 }
                 Console.WriteLine("Your scores: " + userScore);
-                Console.WriteLine("Minimal needed scores: " + pollSession.MinScore);
+                Console.WriteLine("Minimal needed scores: " + survey.MinScore);
             }
         }
 
@@ -313,9 +313,9 @@ namespace Ilsrep.PollApplication.PollClient
         }
 
         /// <summary>
-        /// Server sends list of available poll sessions. User picks one and client gets that poll session from server.
+        /// Server sends list of available surveys. User picks one and client gets that survey from server.
         /// </summary>
-        public static void GetPollSession()
+        public static void GetSurvey()
         {
             PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
@@ -325,9 +325,9 @@ namespace Ilsrep.PollApplication.PollClient
             receivedPacket = ReceivePollPacket(sendPacket);
 
             // Check if list is not empty
-            if (receivedPacket.pollSessionList.items.Count == 0)
+            if (receivedPacket.surveyList.items.Count == 0)
             {
-                Console.WriteLine("Sorry, but data base is empty, no pollsessions...");
+                Console.WriteLine("Sorry, but data base is empty, no surveys...");
                 client.Disconnect();
                 Console.WriteLine("- Disconnected from server");
                 Console.WriteLine("Press any key to exit...");
@@ -335,10 +335,10 @@ namespace Ilsrep.PollApplication.PollClient
                 Environment.Exit(-1);
             }
 
-            // Output list of poll sessions
-            Console.WriteLine("List of pollsessions:");
+            // Output list of surveys
+            Console.WriteLine("List of surveys:");
             int index = 0;
-            foreach (Item curItem in receivedPacket.pollSessionList.items)
+            foreach (Item curItem in receivedPacket.surveyList.items)
             {
                 index++;
                 Console.WriteLine(index + ". " + curItem.name);
@@ -346,24 +346,24 @@ namespace Ilsrep.PollApplication.PollClient
             
             while (true)
             {
-                Console.WriteLine("Please select poll session[1-{0}]:", receivedPacket.pollSessionList.items.Count);
-                // Let user input poll session id
+                Console.WriteLine("Please select survey[1-{0}]:", receivedPacket.surveyList.items.Count);
+                // Let user input survey id
                 string userAnswer = Console.ReadLine();
 
                 try
                 {
                     index = Convert.ToInt32(userAnswer);
 
-                    if (index > 0 && index <= receivedPacket.pollSessionList.items.Count)
+                    if (index > 0 && index <= receivedPacket.surveyList.items.Count)
                     {
-                        string pollSessionID = receivedPacket.pollSessionList.items[index - 1].id;
-                        sendPacket.request.type = Request.GET_POLLSESSION;
-                        sendPacket.request.id = pollSessionID;
+                        string surveyID = receivedPacket.surveyList.items[index - 1].id;
+                        sendPacket.request.type = Request.GET_SURVEY;
+                        sendPacket.request.id = surveyID;
                         break;
                     }
                     else
                     {
-                        throw new Exception("Invalid poll session id! Please, input correct id");
+                        throw new Exception("Invalid survey id! Please, input correct id");
                     }
                 }
                 catch (Exception exception)
@@ -374,40 +374,40 @@ namespace Ilsrep.PollApplication.PollClient
 
             // Receive poll
             receivedPacket = ReceivePollPacket(sendPacket);
-            pollSession = receivedPacket.pollSession;
-            Console.WriteLine("<- PollSession received");
+            survey = receivedPacket.survey;
+            Console.WriteLine("<- Survey received");
         }
 
         /// <summary>
-        /// Send results of pollsession to server
+        /// Send results of survey to server
         /// </summary>
-        public static void SavePollSessionResults()
+        public static void SaveSurveyResults()
         {
             PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.SAVE_RESULT;
             sendPacket.resultsList = new ResultsList();
             sendPacket.resultsList.userName = userName;
-            sendPacket.resultsList.pollsessionId = pollSession.Id;
+            sendPacket.resultsList.surveyId = survey.Id;
 
             foreach (Choice userChoice in userChoices)
             {
-                PollResult curPollSessionResult = new PollResult();
-                curPollSessionResult.questionId = userChoice.parent.Id;
+                PollResult curSurveyResult = new PollResult();
+                curSurveyResult.questionId = userChoice.parent.Id;
                 if (userChoice.Id == 0)
                 {
-                    curPollSessionResult.answerId = 0;
-                    curPollSessionResult.customChoice = userChoice.choice;
+                    curSurveyResult.answerId = 0;
+                    curSurveyResult.customChoice = userChoice.choice;
                 }
                 else
                 {
-                    curPollSessionResult.answerId = userChoice.Id;
+                    curSurveyResult.answerId = userChoice.Id;
                 }
-                sendPacket.resultsList.results.Add(curPollSessionResult);
+                sendPacket.resultsList.results.Add(curSurveyResult);
             }
             string sendString = PollSerializator.SerializePacket(sendPacket);
             client.Send(sendString);
-            Console.WriteLine("-> Result of pollsession successfully sent to server");
+            Console.WriteLine("-> Result of survey successfully sent to server");
         }
 
         public static void AuthorizeUser()
@@ -459,9 +459,9 @@ namespace Ilsrep.PollApplication.PollClient
 
             Console.Clear();
             Console.WriteLine("Glad to meet you, " + userName);
-            Console.WriteLine(userName + ", let's start the poll session?[y/n]");
+            Console.WriteLine(userName + ", let's start the survey?[y/n]");
 
-            // Ask user if he want to start the poll session
+            // Ask user if he want to start the survey
             while (true)
             {
                 string userInput = Console.ReadLine();
@@ -479,10 +479,10 @@ namespace Ilsrep.PollApplication.PollClient
             ConnectToServer();
             AuthorizeUser();
 
-            GetPollSession();
+            GetSurvey();
             RunUserPoll();
 
-            SavePollSessionResults();
+            SaveSurveyResults();
             DisconnectFromServer();
 
             Console.WriteLine("Press any key to exit...");

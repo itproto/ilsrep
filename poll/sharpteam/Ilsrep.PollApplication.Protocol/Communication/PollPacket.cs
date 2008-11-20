@@ -18,13 +18,13 @@ namespace Ilsrep.PollApplication.Communication
         /// </summary>
         [XmlElement("request")] public Request request = null;
         /// <summary>
-        /// PollSessionList is sent on GET_LIST request
+        /// SurveyList is sent on GET_LIST request
         /// </summary>
-        [XmlElement("pollsessionlist")] public PollSessionList pollSessionList = null;
+        [XmlElement("surveylist")] public SurveyList surveyList = null;
         /// <summary>
-        /// PollSession is sent on GET_POLLSESSION request
+        /// Survey is sent on GET_SURVEY request
         /// </summary>
-        [XmlElement("pollsession")] public PollSession pollSession = null;
+        [XmlElement("survey")] public Survey survey = null;
         /// <summary>
         /// Results list is sent when user finishes poll in poll client
         /// </summary>

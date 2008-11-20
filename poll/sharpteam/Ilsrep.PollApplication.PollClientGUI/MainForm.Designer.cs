@@ -32,16 +32,16 @@
             this.clientPage = new System.Windows.Forms.TabPage();
             this.submitButton = new System.Windows.Forms.Button();
             this.pollGroupBox = new System.Windows.Forms.GroupBox();
-            this.pollSessionsListLabel1 = new System.Windows.Forms.Label();
-            this.pollSessionsListBox1 = new System.Windows.Forms.ListBox();
+            this.surveysListLabel1 = new System.Windows.Forms.Label();
+            this.surveysListBox1 = new System.Windows.Forms.ListBox();
             this.editorPage = new System.Windows.Forms.TabPage();
             this.cancelButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.pollSessionsListLabel = new System.Windows.Forms.Label();
+            this.surveysListLabel = new System.Windows.Forms.Label();
             this.removeButton = new System.Windows.Forms.Button();
             this.createButton = new System.Windows.Forms.Button();
-            this.pollSessionsListBox = new System.Windows.Forms.ListBox();
+            this.surveysListBox = new System.Windows.Forms.ListBox();
             this.statisticsPage = new System.Windows.Forms.TabPage();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,8 +66,8 @@
             // 
             this.clientPage.Controls.Add(this.submitButton);
             this.clientPage.Controls.Add(this.pollGroupBox);
-            this.clientPage.Controls.Add(this.pollSessionsListLabel1);
-            this.clientPage.Controls.Add(this.pollSessionsListBox1);
+            this.clientPage.Controls.Add(this.surveysListLabel1);
+            this.clientPage.Controls.Add(this.surveysListBox1);
             this.clientPage.Location = new System.Drawing.Point(4, 22);
             this.clientPage.Name = "clientPage";
             this.clientPage.Padding = new System.Windows.Forms.Padding(3);
@@ -100,33 +100,33 @@
             this.pollGroupBox.TabIndex = 4;
             this.pollGroupBox.TabStop = false;
             // 
-            // pollSessionsListLabel1
+            // surveysListLabel1
             // 
-            this.pollSessionsListLabel1.AutoSize = true;
-            this.pollSessionsListLabel1.Location = new System.Drawing.Point(65, 8);
-            this.pollSessionsListLabel1.Name = "pollSessionsListLabel1";
-            this.pollSessionsListLabel1.Size = new System.Drawing.Size(85, 13);
-            this.pollSessionsListLabel1.TabIndex = 2;
-            this.pollSessionsListLabel1.Text = "PollSessionsList:";
+            this.surveysListLabel1.AutoSize = true;
+            this.surveysListLabel1.Location = new System.Drawing.Point(65, 8);
+            this.surveysListLabel1.Name = "surveysListLabel1";
+            this.surveysListLabel1.Size = new System.Drawing.Size(85, 13);
+            this.surveysListLabel1.TabIndex = 2;
+            this.surveysListLabel1.Text = "SurveysList:";
             // 
-            // pollSessionsListBox1
+            // surveysListBox1
             // 
-            this.pollSessionsListBox1.FormattingEnabled = true;
-            this.pollSessionsListBox1.Location = new System.Drawing.Point(6, 24);
-            this.pollSessionsListBox1.Name = "pollSessionsListBox1";
-            this.pollSessionsListBox1.Size = new System.Drawing.Size(201, 316);
-            this.pollSessionsListBox1.TabIndex = 0;
-            this.pollSessionsListBox1.SelectedIndexChanged += new System.EventHandler(this.pollSessionsListBox1_SelectedIndexChanged);
+            this.surveysListBox1.FormattingEnabled = true;
+            this.surveysListBox1.Location = new System.Drawing.Point(6, 24);
+            this.surveysListBox1.Name = "surveysListBox1";
+            this.surveysListBox1.Size = new System.Drawing.Size(201, 316);
+            this.surveysListBox1.TabIndex = 0;
+            this.surveysListBox1.SelectedIndexChanged += new System.EventHandler(this.surveysListBox1_SelectedIndexChanged);
             // 
             // editorPage
             // 
             this.editorPage.Controls.Add(this.cancelButton);
             this.editorPage.Controls.Add(this.saveButton);
             this.editorPage.Controls.Add(this.propertyGrid);
-            this.editorPage.Controls.Add(this.pollSessionsListLabel);
+            this.editorPage.Controls.Add(this.surveysListLabel);
             this.editorPage.Controls.Add(this.removeButton);
             this.editorPage.Controls.Add(this.createButton);
-            this.editorPage.Controls.Add(this.pollSessionsListBox);
+            this.editorPage.Controls.Add(this.surveysListBox);
             this.editorPage.Location = new System.Drawing.Point(4, 22);
             this.editorPage.Name = "editorPage";
             this.editorPage.Padding = new System.Windows.Forms.Padding(3);
@@ -172,14 +172,14 @@
             this.propertyGrid.Size = new System.Drawing.Size(305, 345);
             this.propertyGrid.TabIndex = 9;
             // 
-            // pollSessionsListLabel
+            // surveysListLabel
             // 
-            this.pollSessionsListLabel.AutoSize = true;
-            this.pollSessionsListLabel.Location = new System.Drawing.Point(88, 11);
-            this.pollSessionsListLabel.Name = "pollSessionsListLabel";
-            this.pollSessionsListLabel.Size = new System.Drawing.Size(84, 13);
-            this.pollSessionsListLabel.TabIndex = 8;
-            this.pollSessionsListLabel.Text = "PollSessions list:";
+            this.surveysListLabel.AutoSize = true;
+            this.surveysListLabel.Location = new System.Drawing.Point(88, 11);
+            this.surveysListLabel.Name = "surveysListLabel";
+            this.surveysListLabel.Size = new System.Drawing.Size(84, 13);
+            this.surveysListLabel.TabIndex = 8;
+            this.surveysListLabel.Text = "Surveys list:";
             // 
             // removeButton
             // 
@@ -201,15 +201,15 @@
             this.createButton.UseVisualStyleBackColor = true;
             this.createButton.Click += new System.EventHandler(this.createButton_Click);
             // 
-            // pollSessionsListBox
+            // surveysListBox
             // 
-            this.pollSessionsListBox.FormattingEnabled = true;
-            this.pollSessionsListBox.HorizontalScrollbar = true;
-            this.pollSessionsListBox.Location = new System.Drawing.Point(6, 27);
-            this.pollSessionsListBox.Name = "pollSessionsListBox";
-            this.pollSessionsListBox.Size = new System.Drawing.Size(269, 316);
-            this.pollSessionsListBox.TabIndex = 4;
-            this.pollSessionsListBox.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
+            this.surveysListBox.FormattingEnabled = true;
+            this.surveysListBox.HorizontalScrollbar = true;
+            this.surveysListBox.Location = new System.Drawing.Point(6, 27);
+            this.surveysListBox.Name = "surveysListBox";
+            this.surveysListBox.Size = new System.Drawing.Size(269, 316);
+            this.surveysListBox.TabIndex = 4;
+            this.surveysListBox.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // statisticsPage
             // 
@@ -285,19 +285,19 @@
         private System.Windows.Forms.TabPage clientPage;
         private System.Windows.Forms.TabPage editorPage;
         private System.Windows.Forms.TabPage statisticsPage;
-        private System.Windows.Forms.ListBox pollSessionsListBox;
+        private System.Windows.Forms.ListBox surveysListBox;
         private System.Windows.Forms.Button removeButton;
         private System.Windows.Forms.Button createButton;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logoutToolStripMenuItem;
-        private System.Windows.Forms.Label pollSessionsListLabel;
+        private System.Windows.Forms.Label surveysListLabel;
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Label pollSessionsListLabel1;
+        private System.Windows.Forms.Label surveysListLabel1;
         private System.Windows.Forms.Button submitButton;
-        private System.Windows.Forms.ListBox pollSessionsListBox1;
+        private System.Windows.Forms.ListBox surveysListBox1;
         private System.Windows.Forms.GroupBox pollGroupBox;
     }
 }

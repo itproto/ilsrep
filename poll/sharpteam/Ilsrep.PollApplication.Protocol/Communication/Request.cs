@@ -13,25 +13,25 @@ namespace Ilsrep.PollApplication.Communication
     public class Request
     {
         /// <summary>
-        /// Request type that is used to get list of poll session
+        /// Request type that is used to get list of survey
         /// </summary>
         [XmlIgnore] public const string GET_LIST = "getList";
         /// <summary>
-        /// Request type that is used to get a specific poll session by id
+        /// Request type that is used to get a specific survey by id
         /// </summary>
-        [XmlIgnore] public const string GET_POLLSESSION = "getPollsession";
+        [XmlIgnore] public const string GET_SURVEY = "getSurvey";
         /// <summary>
-        /// Request type that is used to create a poll session
+        /// Request type that is used to create a survey
         /// </summary>
-        [XmlIgnore] public const string CREATE_POLLSESSION = "createPollsession";
+        [XmlIgnore] public const string CREATE_SURVEY = "createSurvey";
         /// <summary>
-        /// Request type that is used to edit a poll session
+        /// Request type that is used to edit a survey
         /// </summary>
-        [XmlIgnore] public const string EDIT_POLLSESSION = "editPollsession";
+        [XmlIgnore] public const string EDIT_SURVEY = "editSurvey";
         /// <summary>
-        /// Request type that is used to remove a poll session by id
+        /// Request type that is used to remove a survey by id
         /// </summary>
-        [XmlIgnore] public const string REMOVE_POLLSESSION = "removePollsession";
+        [XmlIgnore] public const string REMOVE_SURVEY = "removeSurvey";
         /// <summary>
         /// Request type that is used to save result
         /// </summary>
