@@ -281,44 +281,46 @@ namespace Ilsrep.PollApplication.PollServer
                         break;
                 }
             }
-
-            if (client.isAuthorized)
+            else
             {
-                // Select option
-                switch (receivedPacket.request.type)
+                if (client.isAuthorized)
                 {
-                    case Request.GET_LIST:
-                        sendPacket.pollSessionList = new PollSessionList();
-                        sendPacket.pollSessionList.items = PollDAL.GetPollSessions();
-                        log.Info(String.Format("Pollsession List sent to {0}", client.ipAddress));
-                        break;
-                    case Request.GET_POLLSESSION:
-                        sendPacket.pollSession = PollDAL.GetPollSession(Convert.ToInt32(receivedPacket.request.id));
-                        log.Info(String.Format("Pollsession {0} sent to {1}", sendPacket.pollSession.Id, client.ipAddress));
-                        break;
-                    case Request.EDIT_POLLSESSION:
-                        PollDAL.EditPollSession(receivedPacket.pollSession);
-                        log.Info(String.Format("Pollsession {0} changed by {1}", receivedPacket.pollSession.Id, client.ipAddress));
-                        break;
-                    case Request.CREATE_POLLSESSION:
-                        receivedPacket.pollSession.Id = PollDAL.CreatePollSession(receivedPacket.pollSession);
-                        log.Info(String.Format("Pollsession {0} created by {1}", receivedPacket.pollSession.Id, client.ipAddress));
-                        break;
-                    case Request.REMOVE_POLLSESSION:
-                        PollDAL.RemovePollSession(Convert.ToInt32(receivedPacket.request.id));
-                        log.Info(String.Format("Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress));
-                        break;
-                    case Request.SAVE_RESULT:
-                        PollDAL.SavePollSessionResult(receivedPacket.resultsList);
-                        log.Info(String.Format("Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress));
-                        break;
-                    case Request.GET_RESULTS:
-                        sendPacket.resultsList = PollDAL.GetPollSessionResults(Convert.ToInt32(receivedPacket.request.id));
-                        log.Info(String.Format("Pollsession {0} results sent to {1}", receivedPacket.request.id, client.ipAddress));
-                        break;
-                    default:
-                        log.Error("Invalid option sent by client");
-                        break;
+                    // Select option
+                    switch (receivedPacket.request.type)
+                    {
+                        case Request.GET_LIST:
+                            sendPacket.pollSessionList = new PollSessionList();
+                            sendPacket.pollSessionList.items = PollDAL.GetPollSessions();
+                            log.Info(String.Format("Pollsession List sent to {0}", client.ipAddress));
+                            break;
+                        case Request.GET_POLLSESSION:
+                            sendPacket.pollSession = PollDAL.GetPollSession(Convert.ToInt32(receivedPacket.request.id));
+                            log.Info(String.Format("Pollsession {0} sent to {1}", sendPacket.pollSession.Id, client.ipAddress));
+                            break;
+                        case Request.EDIT_POLLSESSION:
+                            PollDAL.EditPollSession(receivedPacket.pollSession);
+                            log.Info(String.Format("Pollsession {0} changed by {1}", receivedPacket.pollSession.Id, client.ipAddress));
+                            break;
+                        case Request.CREATE_POLLSESSION:
+                            receivedPacket.pollSession.Id = PollDAL.CreatePollSession(receivedPacket.pollSession);
+                            log.Info(String.Format("Pollsession {0} created by {1}", receivedPacket.pollSession.Id, client.ipAddress));
+                            break;
+                        case Request.REMOVE_POLLSESSION:
+                            PollDAL.RemovePollSession(Convert.ToInt32(receivedPacket.request.id));
+                            log.Info(String.Format("Pollsession {0} removed by {1}", receivedPacket.request.id, client.ipAddress));
+                            break;
+                        case Request.SAVE_RESULT:
+                            PollDAL.SavePollSessionResult(receivedPacket.resultsList);
+                            log.Info(String.Format("Pollsession {0} results of user {1} sent by {2}", receivedPacket.resultsList.pollsessionId, receivedPacket.resultsList.userName, client.ipAddress));
+                            break;
+                        case Request.GET_RESULTS:
+                            sendPacket.resultsList = PollDAL.GetPollSessionResults(Convert.ToInt32(receivedPacket.request.id));
+                            log.Info(String.Format("Pollsession {0} results sent to {1}", receivedPacket.request.id, client.ipAddress));
+                            break;
+                        default:
+                            log.Error("Invalid option sent by client");
+                            break;
+                    }
                 }
             }
 

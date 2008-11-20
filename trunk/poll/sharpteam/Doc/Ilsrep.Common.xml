@@ -4,6 +4,11 @@
         <name>Ilsrep.Common</name>
     </assembly>
     <members>
+        <member name="T:Ilsrep.Common.IDGenerator">
+            <summary>
+            IDGenerator
+            </summary>
+        </member>
         <member name="T:Ilsrep.Common.TcpClient">
             <summary>
             Tcp Client that is used to connect to server
@@ -51,11 +56,6 @@
         <member name="P:Ilsrep.Common.TcpClient.isConnected">
             <summary>
             checks if client is connected
-            </summary>
-        </member>
-        <member name="T:Ilsrep.Common.IDGenerator">
-            <summary>
-            IDGenerator
             </summary>
         </member>
     </members>

@@ -27,7 +27,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// PollSession that will be filled
         /// </summary>
         public static PollSession pollSession = new PollSession();
-        /// <summary>
         /// List of PollSessions names
         /// </summary>
         private List<PollSession> pollSessionsList = new List<PollSession>();
@@ -349,9 +348,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             sendPacket.resultsList = resultsList;
             sendPacket.resultsList.userName = PollClientGUI.userName;
             sendPacket.resultsList.pollsessionId = pollSession.Id;
-            PollClientGUI.client.Send(PollSerializator.SerializePacket(sendPacket));
-            
-            //PollClientGUI.ReceivePollPacket(sendPacket);
+            PollClientGUI.ReceivePollPacket(sendPacket);
 
             pollGroupBox.Controls.Clear();
             Label lblTopText = new Label();
