@@ -4,21 +4,6 @@
         <name>Ilsrep.PollApplication.PollProtocol</name>
     </assembly>
     <members>
-        <member name="T:Ilsrep.PollApplication.Communication.Item">
-            <summary>
-            Item is a generic class to send some data about some object
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Item.id">
-            <summary>
-            ID of an item
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Item.name">
-            <summary>
-            Name of an item
-            </summary>
-        </member>
         <member name="T:Ilsrep.PollApplication.Model.PollSession">
             <summary>
             Object that holds poll session
@@ -54,72 +39,32 @@
             Is object serialized
             </summary>
         </member>
-        <member name="T:Ilsrep.PollApplication.Communication.PollSessionList">
+        <member name="T:Ilsrep.PollApplication.Helpers.SettingsHelper">
             <summary>
-            Holds a list of poll session ids and names
+            Help to work with settings
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Communication.PollSessionList.items">
+        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.host">
             <summary>
-            a list of items that holds ids and names
+            Host
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.Communication.PollSessionList.GetPollSessionId">
+        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.port">
             <summary>
-            List poll sessions
+            Port
             </summary>
         </member>
-        <member name="P:Ilsrep.PollApplication.Communication.PollSessionList.Item(System.Int32)">
+        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.LoadSettings(System.String)">
             <summary>
-            Allows quick access to items
+            Load settings from xml file
             </summary>
-            <param name="index">index of item</param>
-            <returns>Item in specified index</returns>
+            <param name="pathToConfigFile">Path to xml file</param>
         </member>
-        <member name="T:Ilsrep.PollApplication.Model.Poll">
+        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.SaveSettings(System.String)">
             <summary>
-            Object that holds poll
+            Save settings to xml file
             </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll._id">
-            <summary>
-            poll id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll._name">
-            <summary>
-            poll name
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll._description">
-            <summary>
-            poll description
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll._correctChoiceID">
-            <summary>
-            if poll session in test mode, id of the correct choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll._customChoiceEnabled">
-            <summary>
-            if custom choice is enabled for this poll
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll._choices">
-            <summary>
-            list of choices for this poll
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Poll.pollIDGenerator">
-            <summary>
-            Generate new negative Poll id
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Model.Poll.CollectionTypeConverter">
-            <summary>
-            CollectionTypeConverter
-            </summary>
+            <param name="pathToConfigFile">Path to xml file</param>
         </member>
         <member name="T:Ilsrep.PollApplication.Model.PollResult">
             <summary>
@@ -151,97 +96,35 @@
             Date when result has been saved
             </summary>
         </member>
-        <member name="T:Ilsrep.PollApplication.Helpers.SettingsHelper">
+        <member name="T:Ilsrep.PollApplication.Model.Choice">
             <summary>
-            Help to work with settings
+            Object that holds choice
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.host">
+        <member name="F:Ilsrep.PollApplication.Model.Choice._id">
             <summary>
-            Host
+            Choice id
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Helpers.SettingsHelper.port">
+        <member name="F:Ilsrep.PollApplication.Model.Choice._choice">
             <summary>
-            Port
+            Choice
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.LoadSettings(System.String)">
+        <member name="F:Ilsrep.PollApplication.Model.Choice.parent">
             <summary>
-            Load settings from xml file
-            </summary>
-            <param name="pathToConfigFile">Path to xml file</param>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.SettingsHelper.SaveSettings(System.String)">
-            <summary>
-            Save settings to xml file
-            </summary>
-            <param name="pathToConfigFile">Path to xml file</param>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Helpers.PollSerializator">
-            <summary>
-            Class that serializes objects concering poll
+            Poll that choice belongs to
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePollSession(System.String)">
+        <member name="F:Ilsrep.PollApplication.Model.Choice.choiceIDGenerator">
             <summary>
-            Deserializes poll session from XML string into PollSession object
-            </summary>
-            <param name="xmlString">XML string, which holds serialized PollSession object</param>
-            <returns>Deserialized PollSession object</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePollSession(Ilsrep.PollApplication.Model.PollSession)">
-            <summary>
-            Serializes poll session from PollSession object into XML string
-            </summary>
-            <param name="pollSession">Poll Session oject</param>
-            <returns>XML string, which holds serialized PollSession object</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePacket(System.String)">
-            <summary>
-            Deserializes poll packet from XML string into PollPacket object 
-            </summary>
-            <param name="xmlString">XML string, which holds serialized PollPacket object</param>
-            <returns>Deserialized PollPacket object</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePacket(Ilsrep.PollApplication.Communication.PollPacket)">
-            <summary>
-            Serializes poll packet from PollPacket object into XML string
-            </summary>
-            <param name="pollPacket">PollPacket object</param>
-            <returns>XML string, which holds serialized PollPacket object</returns>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Model.User">
-            <summary>
-            Object that holds user information
+            Generate new negative Choice id
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Model.User.username">
+        <member name="T:Ilsrep.PollApplication.Model.Choice.CollectionTypeConverter">
             <summary>
-            User name
+            CollectionTypeConverter
             </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.User.password">
-            <summary>
-            Password
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.User.action">
-            <summary>
-            Action(used in user authorisation)
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper">
-            <summary>
-            Helper that parses command line parameters
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper.Parse(System.String[])">
-            <summary>
-            Parse command line parameters from -var1 value1 -var2 value2 to NameValueCollection
-            </summary>
-            <param name="args">list of arguments in Array as passed to Main method ("-var1", "value1", "-var2", "value2")</param>
-            <returns>NameValueCollection of arguments as NameValueCollection["var1"]="value1"</returns>
         </member>
         <member name="T:Ilsrep.PollApplication.DAL.PollDAL">
             <summary>
@@ -353,110 +236,17 @@
             Property that tells if database connection is active
             </summary>
         </member>
-        <member name="T:Ilsrep.PollApplication.Communication.ResultsList">
+        <member name="T:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper">
             <summary>
-            Result list after poll session
+            Helper that parses command line parameters
             </summary>
         </member>
-        <member name="F:Ilsrep.PollApplication.Communication.ResultsList.results">
+        <member name="M:Ilsrep.PollApplication.Helpers.CommandLineParametersHelper.Parse(System.String[])">
             <summary>
-            List of the poll results
+            Parse command line parameters from -var1 value1 -var2 value2 to NameValueCollection
             </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.ResultsList.userName">
-            <summary>
-            Username of the user, submiting the results
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.ResultsList.pollsessionId">
-            <summary>
-            Poll session id, to which the results are related
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Communication.Request">
-            <summary>
-            Request object is used to query server
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_LIST">
-            <summary>
-            Request type that is used to get list of poll session
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_POLLSESSION">
-            <summary>
-            Request type that is used to get a specific poll session by id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.CREATE_POLLSESSION">
-            <summary>
-            Request type that is used to create a poll session
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.EDIT_POLLSESSION">
-            <summary>
-            Request type that is used to edit a poll session
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.REMOVE_POLLSESSION">
-            <summary>
-            Request type that is used to remove a poll session by id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.SAVE_RESULT">
-            <summary>
-            Request type that is used to save result
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_RESULTS">
-            <summary>
-            Request type that is used to save result
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.USER">
-            <summary>
-            Request type that sends user info
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.type">
-            <summary>
-            string that specifies, which type of request it is
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.Request.id">
-            <summary>
-            string that holds an id, which is needed by some of requests
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Model.Choice">
-            <summary>
-            Object that holds choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice._id">
-            <summary>
-            Choice id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice._choice">
-            <summary>
-            Choice
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice.parent">
-            <summary>
-            Poll that choice belongs to
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Choice.choiceIDGenerator">
-            <summary>
-            Generate new negative Choice id
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Model.Choice.CollectionTypeConverter">
-            <summary>
-            CollectionTypeConverter
-            </summary>
+            <param name="args">list of arguments in Array as passed to Main method ("-var1", "value1", "-var2", "value2")</param>
+            <returns>NameValueCollection of arguments as NameValueCollection["var1"]="value1"</returns>
         </member>
         <member name="M:Ilsrep.PollApplication.Helpers.InputHelper.AskQuestion(System.String,System.Int32,System.Int32)">
             <summary>
@@ -529,6 +319,216 @@
         <member name="F:Ilsrep.PollApplication.Communication.PollPacket.user">
             <summary>
             User information is sent in the beginning of session to identify user
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Communication.Item">
+            <summary>
+            Item is a generic class to send some data about some object
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Item.id">
+            <summary>
+            ID of an item
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Item.name">
+            <summary>
+            Name of an item
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.Poll">
+            <summary>
+            Object that holds poll
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll._id">
+            <summary>
+            poll id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll._name">
+            <summary>
+            poll name
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll._description">
+            <summary>
+            poll description
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll._correctChoiceID">
+            <summary>
+            if poll session in test mode, id of the correct choice
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll._customChoiceEnabled">
+            <summary>
+            if custom choice is enabled for this poll
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll._choices">
+            <summary>
+            list of choices for this poll
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Poll.pollIDGenerator">
+            <summary>
+            Generate new negative Poll id
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.Poll.CollectionTypeConverter">
+            <summary>
+            CollectionTypeConverter
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Communication.ResultsList">
+            <summary>
+            Result list after poll session
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.ResultsList.results">
+            <summary>
+            List of the poll results
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.ResultsList.userName">
+            <summary>
+            Username of the user, submiting the results
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.ResultsList.pollsessionId">
+            <summary>
+            Poll session id, to which the results are related
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Communication.PollSessionList">
+            <summary>
+            Holds a list of poll session ids and names
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.PollSessionList.items">
+            <summary>
+            a list of items that holds ids and names
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Communication.PollSessionList.GetPollSessionId">
+            <summary>
+            List poll sessions
+            </summary>
+        </member>
+        <member name="P:Ilsrep.PollApplication.Communication.PollSessionList.Item(System.Int32)">
+            <summary>
+            Allows quick access to items
+            </summary>
+            <param name="index">index of item</param>
+            <returns>Item in specified index</returns>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.User">
+            <summary>
+            Object that holds user information
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.username">
+            <summary>
+            User name
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.password">
+            <summary>
+            Password
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.User.action">
+            <summary>
+            Action(used in user authorisation)
+            </summary>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Helpers.PollSerializator">
+            <summary>
+            Class that serializes objects concering poll
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePollSession(System.String)">
+            <summary>
+            Deserializes poll session from XML string into PollSession object
+            </summary>
+            <param name="xmlString">XML string, which holds serialized PollSession object</param>
+            <returns>Deserialized PollSession object</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePollSession(Ilsrep.PollApplication.Model.PollSession)">
+            <summary>
+            Serializes poll session from PollSession object into XML string
+            </summary>
+            <param name="pollSession">Poll Session oject</param>
+            <returns>XML string, which holds serialized PollSession object</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.DeserializePacket(System.String)">
+            <summary>
+            Deserializes poll packet from XML string into PollPacket object 
+            </summary>
+            <param name="xmlString">XML string, which holds serialized PollPacket object</param>
+            <returns>Deserialized PollPacket object</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Helpers.PollSerializator.SerializePacket(Ilsrep.PollApplication.Communication.PollPacket)">
+            <summary>
+            Serializes poll packet from PollPacket object into XML string
+            </summary>
+            <param name="pollPacket">PollPacket object</param>
+            <returns>XML string, which holds serialized PollPacket object</returns>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Communication.Request">
+            <summary>
+            Request object is used to query server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_LIST">
+            <summary>
+            Request type that is used to get list of poll session
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_POLLSESSION">
+            <summary>
+            Request type that is used to get a specific poll session by id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.CREATE_POLLSESSION">
+            <summary>
+            Request type that is used to create a poll session
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.EDIT_POLLSESSION">
+            <summary>
+            Request type that is used to edit a poll session
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.REMOVE_POLLSESSION">
+            <summary>
+            Request type that is used to remove a poll session by id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.SAVE_RESULT">
+            <summary>
+            Request type that is used to save result
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.GET_RESULTS">
+            <summary>
+            Request type that is used to save result
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.USER">
+            <summary>
+            Request type that sends user info
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.type">
+            <summary>
+            string that specifies, which type of request it is
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.Request.id">
+            <summary>
+            string that holds an id, which is needed by some of requests
             </summary>
         </member>
     </members>
