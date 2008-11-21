@@ -20,11 +20,11 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// SurveyList is sent on GET_LIST request
         /// </summary>
-        [XmlElement("surveylist")] public SurveyList surveyList = null;
+        [XmlElement("pollsessionlist")] public SurveyList surveyList = null; // <-- surveylist
         /// <summary>
         /// Survey is sent on GET_SURVEY request
         /// </summary>
-        [XmlElement("survey")] public Survey survey = null;
+        [XmlElement("pollsession")] public Survey survey = null; // <-- survey
         /// <summary>
         /// Results list is sent when user finishes poll in poll client
         /// </summary>

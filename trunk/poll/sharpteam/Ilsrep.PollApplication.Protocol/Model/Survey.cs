@@ -11,7 +11,7 @@ namespace Ilsrep.PollApplication.Model
     /// <summary>
     /// Object that holds survey
     /// </summary>
-    [XmlRoot("survey"), Serializable]
+    [XmlRoot("pollsession"), Serializable] // <-- survey
     [DisplayName("Survey")]
     public class Survey
     {

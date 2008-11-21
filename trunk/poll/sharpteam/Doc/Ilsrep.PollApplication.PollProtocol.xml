@@ -154,6 +154,28 @@
             <param name="pollPacket">PollPacket object</param>
             <returns>XML string, which holds serialized PollPacket object</returns>
         </member>
+        <member name="T:Ilsrep.PollApplication.Communication.SurveyList">
+            <summary>
+            Holds a list of survey ids and names
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Communication.SurveyList.items">
+            <summary>
+            a list of items that holds ids and names
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.Communication.SurveyList.GetSurveyId">
+            <summary>
+            List surveys
+            </summary>
+        </member>
+        <member name="P:Ilsrep.PollApplication.Communication.SurveyList.Item(System.Int32)">
+            <summary>
+            Allows quick access to items
+            </summary>
+            <param name="index">index of item</param>
+            <returns>Item in specified index</returns>
+        </member>
         <member name="T:Ilsrep.PollApplication.Model.User">
             <summary>
             Object that holds user information
@@ -185,6 +207,41 @@
             </summary>
             <param name="args">list of arguments in Array as passed to Main method ("-var1", "value1", "-var2", "value2")</param>
             <returns>NameValueCollection of arguments as NameValueCollection["var1"]="value1"</returns>
+        </member>
+        <member name="T:Ilsrep.PollApplication.Model.Survey">
+            <summary>
+            Object that holds survey
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Survey._id">
+            <summary>
+            survey id
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Survey._name">
+            <summary>
+            survey name
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Survey._testMode">
+            <summary>
+            if this survey is a test
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Survey._minScore">
+            <summary>
+            if in test mode how much is needed to pass the test
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Survey._polls">
+            <summary>
+            list of polls that this survey holds
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.Model.Survey.isSerialized">
+            <summary>
+            Is object serialized
+            </summary>
         </member>
         <member name="T:Ilsrep.PollApplication.DAL.PollDAL">
             <summary>
@@ -472,63 +529,6 @@
         <member name="F:Ilsrep.PollApplication.Communication.PollPacket.user">
             <summary>
             User information is sent in the beginning of session to identify user
-            </summary>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Communication.SurveyList">
-            <summary>
-            Holds a list of survey ids and names
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Communication.SurveyList.items">
-            <summary>
-            a list of items that holds ids and names
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.Communication.SurveyList.GetSurveyId">
-            <summary>
-            List surveys
-            </summary>
-        </member>
-        <member name="P:Ilsrep.PollApplication.Communication.SurveyList.Item(System.Int32)">
-            <summary>
-            Allows quick access to items
-            </summary>
-            <param name="index">index of item</param>
-            <returns>Item in specified index</returns>
-        </member>
-        <member name="T:Ilsrep.PollApplication.Model.Survey">
-            <summary>
-            Object that holds survey
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Survey._id">
-            <summary>
-            survey id
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Survey._name">
-            <summary>
-            survey name
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Survey._testMode">
-            <summary>
-            if this survey is a test
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Survey._minScore">
-            <summary>
-            if in test mode how much is needed to pass the test
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Survey._polls">
-            <summary>
-            list of polls that this survey holds
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.Model.Survey.isSerialized">
-            <summary>
-            Is object serialized
             </summary>
         </member>
     </members>

@@ -10,7 +10,7 @@ namespace Ilsrep.PollApplication.Communication
     /// <summary>
     /// Holds a list of survey ids and names
     /// </summary>
-    [XmlRoot("surveylist"), Serializable]
+    [XmlRoot("pollsessionlist"), Serializable] // <-- surveylist
     public class SurveyList
     {
         /// <summary>
