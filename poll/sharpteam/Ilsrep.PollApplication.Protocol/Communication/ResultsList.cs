@@ -24,6 +24,6 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// Survey id, to which the results are related
         /// </summary>
-        [XmlAttribute("surveyid")] public int surveyId;
+        [XmlAttribute("pollsessionid")] public int surveyId; // <-- surveyid
     }
 }

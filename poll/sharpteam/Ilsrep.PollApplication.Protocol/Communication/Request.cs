@@ -19,19 +19,19 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// Request type that is used to get a specific survey by id
         /// </summary>
-        [XmlIgnore] public const string GET_SURVEY = "getSurvey";
+        [XmlIgnore] public const string GET_SURVEY = "getPollsession"; // <-- getSurvey
         /// <summary>
         /// Request type that is used to create a survey
         /// </summary>
-        [XmlIgnore] public const string CREATE_SURVEY = "createSurvey";
+        [XmlIgnore] public const string CREATE_SURVEY = "createPollsession"; // <-- createSurvey
         /// <summary>
         /// Request type that is used to edit a survey
         /// </summary>
-        [XmlIgnore] public const string EDIT_SURVEY = "editSurvey";
+        [XmlIgnore] public const string EDIT_SURVEY = "editPollsession"; // <-- editSurvey
         /// <summary>
         /// Request type that is used to remove a survey by id
         /// </summary>
-        [XmlIgnore] public const string REMOVE_SURVEY = "removeSurvey";
+        [XmlIgnore] public const string REMOVE_SURVEY = "removePollsession"; // <-- removeSurvey
         /// <summary>
         /// Request type that is used to save result
         /// </summary>
