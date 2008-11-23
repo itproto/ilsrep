@@ -22,6 +22,11 @@ public class SQLiteDBManager extends DBManager {
     public static final String SQLite_DRIVER_CLASS_NAME = "org.sqlite.JDBC";
 
     /**
+     * Default file with database.
+     */
+    public static final String DEFAULT_DB_FILE = "db/pollserver.db";
+
+    /**
      * Creates <code>SQLiteDBWorker</code> w/o connecting to DB, but stores
      * connection parameters.
      * 

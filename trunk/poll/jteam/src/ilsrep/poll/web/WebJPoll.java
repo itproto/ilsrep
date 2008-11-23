@@ -1,4 +1,4 @@
-package ilsrep.poll.server;
+package ilsrep.poll.web;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import ilsrep.poll.common.model.Poll;

@@ -137,6 +137,26 @@ public class Pollsession {
     }
 
     /**
+     * Returns poll by id.
+     * 
+     * @param pollId
+     *            Id of poll.
+     * @return Choice matching given id or <code>null</code>, if such one not
+     *         present.
+     */
+    public Poll getPollById(String pollId) {
+        if (polls == null || polls.size() == 0 || pollId == null)
+            return null;
+
+        for (Poll poll : polls) {
+            if (poll.getId() != null && poll.getId().equals(pollId))
+                return poll;
+        }
+
+        return null;
+    }
+
+    /**
      * @see java.lang.Object#clone()
      */
     @Override
