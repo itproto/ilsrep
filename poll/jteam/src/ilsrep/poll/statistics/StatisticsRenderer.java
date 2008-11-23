@@ -201,7 +201,7 @@ public class StatisticsRenderer {
         if (successPolls != -1) {
             DefaultKeyedValuesDataset dataSet = new DefaultKeyedValuesDataset();
 
-            dataSet.setValue("Correct answered polls %", successPolls);
+            dataSet.setValue("Correctly answered polls %", successPolls);
             dataSet.setValue("Failed polls %", failPolls);
 
             PiePlot piePlot = new PiePlot(dataSet);

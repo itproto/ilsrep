@@ -10,6 +10,6 @@ PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
     </servlet>
     <servlet-mapping>
         <servlet-name>StatisticsServlet</servlet-name>
-        <url-pattern>/stats.jsp</url-pattern>
+        <url-pattern>/stats/stats.png</url-pattern>
     </servlet-mapping>
 </web-app>
