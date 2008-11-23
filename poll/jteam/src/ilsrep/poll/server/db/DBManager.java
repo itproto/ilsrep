@@ -80,6 +80,11 @@ public abstract class DBManager {
     protected PollServer srvInstance = null;
 
     /**
+     * Routine fix, due to featureless SQLite...
+     */
+    public static final ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<Connection>();
+
+    /**
      * Server instance to read configuration from.
      * 
      * @param srvInstance
@@ -118,10 +123,10 @@ public abstract class DBManager {
                         "poolMaxActive"));
             }
             else {
-               // dbPool.setMinIdle(DEFAULT_MIN_IDLE);
-                //dbPool.setInitialSize(1);
-                //dbPool.setMaxIdle(DEFAULT_MAX_IDLE);
-                //dbPool.setMaxActive(DEFAULT_MAX_ACTIVE);
+                dbPool.setMinIdle(DEFAULT_MIN_IDLE);
+                dbPool.setInitialSize(1);
+                dbPool.setMaxIdle(DEFAULT_MAX_IDLE);
+                dbPool.setMaxActive(DEFAULT_MAX_ACTIVE);
             }
         }
     }
@@ -138,7 +143,12 @@ public abstract class DBManager {
     public Pollsession getPollsessionById(String id) throws SQLException {
         connect(); // If connection isn't established yet this connects to DB.
 
-        Connection conn = dataSource.getConnection();
+        Connection conn = null;
+        if (threadLocalConnection.get() == null)
+            conn = dataSource.getConnection();
+        else
+            conn = threadLocalConnection.get();
+
         Statement stat = conn.createStatement();
         ResultSet rs = stat
                 .executeQuery("select name,testmode,minscore,date from pollsession where id="
@@ -154,6 +164,10 @@ public abstract class DBManager {
                 sess.setDate(rs.getString("date"));
                 if (rs.getBoolean("testmode"))
                     sess.setMinScore(rs.getString("minscore"));
+
+                stat.close();
+
+                stat = conn.createStatement();
                 List<Poll> polls = new ArrayList<Poll>();
                 rs = stat
                         .executeQuery("select polls.* from polls left join pollsessions_polls on (polls.id=pollsessions_polls.poll_id) where pollsessions_polls.pollsession_id="
@@ -186,6 +200,9 @@ public abstract class DBManager {
                         choice.setName(chrs3.getString("name"));
                         choices.add(choice);
                     }
+
+                    stater2.close();
+
                     poll.setChoices(choices);
                     polls.add(poll);
                 }
@@ -203,7 +220,7 @@ public abstract class DBManager {
         }
 
         try {
-            if (conn != null)
+            if (threadLocalConnection.get() == null && conn != null)
                 conn.close();
         }
         catch (SQLException e) {
@@ -463,12 +480,13 @@ public abstract class DBManager {
                                 .prepareStatement("insert into polls (id, name, correctchoice, description, customenabled) values (?, ?, ?, ?, ?)");
                         pollsSt.setInt(1, (pollsLastId + 1));
                         pollsSt.setString(2, poll.getName());
-                        if(poll.getCorrectChoice().equals("undefined")) {
-	                        pollsSt.setInt(3,-1);
-	                        } else { 
-                        pollsSt.setInt(3, Integer.parseInt(poll
-                                .getCorrectChoice()));
-                            }
+                        if (poll.getCorrectChoice().equals("undefined")) {
+                            pollsSt.setInt(3, -1);
+                        }
+                        else {
+                            pollsSt.setInt(3, Integer.parseInt(poll
+                                    .getCorrectChoice()));
+                        }
                         pollsSt.setString(4, poll.getDescription().getValue());
                         pollsSt.setBoolean(5,
                                 poll.getCustomEnabled() != null
@@ -689,18 +707,31 @@ public abstract class DBManager {
                     break;
                 }
             }
-if(!(id.equals("-1"))){
-            if (!idExist)
-                return;
-}
+            if (!(id.equals("-1"))) {
+                if (!idExist)
+                    return;
+            }
             int newId = storePollsession(sess);
-if(!(id.equals("-1"))){
-            if (newId > 0)
-                removePollsession(id);
-        }
+            if (!(id.equals("-1"))) {
+                if (newId > 0)
+                    removePollsession(id);
+            }
         }
         catch (SQLException e) {
         }
+    }
+
+    /**
+     * Creates connection to DB.
+     * 
+     * @return Connection to DB.
+     * @throws SQLException
+     *             If connection can't be established.
+     */
+    public Connection getConnection() throws SQLException {
+        connect();
+
+        return dataSource.getConnection();
     }
 
     /**
