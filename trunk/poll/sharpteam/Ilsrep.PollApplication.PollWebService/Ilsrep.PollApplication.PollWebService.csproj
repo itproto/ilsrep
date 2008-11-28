@@ -68,7 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AppData\pollserver.db" />
+    <None Include="AppData\pollserver.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ilsrep.PollApplication.Protocol\Ilsrep.PollApplication.PollProtocol.csproj">

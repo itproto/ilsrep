@@ -36,6 +36,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -105,6 +106,10 @@
     <ProjectReference Include="..\Ilsrep.Common\Ilsrep.Common.csproj">
       <Project>{B00F7C13-0DE1-48F4-BC78-F9FB6F367980}</Project>
       <Name>Ilsrep.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ilsrep.PollApplication.PollWebService\Ilsrep.PollApplication.PollWebService.csproj">
+      <Project>{278A2DC3-7FE2-43E6-A360-8CA7473BF133}</Project>
+      <Name>Ilsrep.PollApplication.PollWebService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ilsrep.PollApplication.Protocol\Ilsrep.PollApplication.PollProtocol.csproj">
       <Project>{97BFC9FF-DB20-4465-8FF0-6FB8CD4B0080}</Project>

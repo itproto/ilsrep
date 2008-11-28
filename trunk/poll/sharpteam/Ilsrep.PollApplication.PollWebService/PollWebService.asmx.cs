@@ -23,7 +23,7 @@ namespace Ilsrep.PollApplication.PollWebService
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     // [System.Web.Script.Services.ScriptService]
     public class PollWebService : System.Web.Services.WebService
-    {
+    {      
         /// <summary>
         /// Connection string specifying path to database file among other connection parameters
         /// </summary>
@@ -75,6 +75,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// <summary>
         /// Close database connection
         /// </summary>
+        [WebMethod]
         public static void Close()
         {
             if (isConnected)
@@ -84,6 +85,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// <summary>
         /// Open database connection
         /// </summary>
+        [WebMethod]
         private static void Init()
         {
             dbConnection = new SQLiteConnection(connectionString);

@@ -11,6 +11,7 @@ using Ilsrep.PollApplication.Communication;
 using System.Xml;
 using System.Xml.Serialization;
 using Ilsrep.PollApplication.Helpers;
+using Ilsrep.PollApplication.PollWebService;
 
 namespace Ilsrep.PollApplication.PollClientGUI
 {
@@ -117,6 +118,14 @@ namespace Ilsrep.PollApplication.PollClientGUI
             this.Size = new Size(234, 122);
             submitButton.Top = 59;
             settingsButton.Top = 59;
+
+            //--------------------------Test----------------------------------
+            List<Item> surveys = PollWebService.PollWebService.GetSurveys();
+            foreach (Item item in surveys)
+            {
+                MessageBox.Show(item.id + ". " + item.name);
+            }
+            //--------------------------End Of Test---------------------------
         }
 
         private void settingsButton_Click(object sender, EventArgs e)
