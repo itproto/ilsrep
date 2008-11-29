@@ -21,8 +21,11 @@ public class Versioning {
 
     public static final String COMPONENT_CLIENT_GUI = "ilsrep/poll/client/gui/MainWindow.class";
 
+    public static final String COMPONENT_WEB_STATISTICS = "ilsrep/poll/web/StatisticsServlet.class";
+
     /**
-     * Loads version of given Poll application component.
+     * Loads version of given Poll application component.<br>
+     * This won't work for web components.
      * 
      * @param component
      *            Name of component.
