@@ -182,7 +182,10 @@ public class StatisticsRenderer {
                     else
                         failPolls++;
                 }
+
+                pollsSt.close();
             }
+            surveysSt.close();
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -213,5 +216,65 @@ public class StatisticsRenderer {
 
         // return chart.createBufferedImage((int) dimension.getWidth(),
         // (int) dimension.getHeight());
+    }
+
+    /**
+     * @see #dimension
+     */
+    public Dimension getDimension() {
+        return dimension;
+    }
+
+    /**
+     * Fetches common statistics from DB and puts into int array. <br>
+     * <ul>
+     * <li>0 - poll surveys count</li>
+     * <li>1 - polls count</li>
+     * <li>2 - choices count</li>
+     * <li>3 - users count</li>
+     * </ul>
+     * 
+     * @return Common statistics.
+     * @throws SQLException
+     *             On DB errors.
+     */
+    public int[] getCommonStatistics() throws SQLException {
+        Connection conn = null;
+        int[] stats = null;
+        try {
+            conn = db.getConnection();
+
+            stats = new int[4];
+            String[] tables = { "pollsession", "polls", "choices", "users" };
+
+            for (int i = 0; i < stats.length; i++) {
+                Statement st = null;
+                try {
+                    st = conn.createStatement();
+                    ResultSet rs = st.executeQuery("select count(*) from "
+                            + tables[i]);
+
+                    if (rs.next())
+                        stats[i] = rs.getInt(1);
+                    else
+                        stats[i] = -1;
+                }
+                finally {
+                    st.close();
+                }
+            }
+        }
+        catch (SQLException e) {
+            throw e;
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+
+        return stats;
     }
 }
