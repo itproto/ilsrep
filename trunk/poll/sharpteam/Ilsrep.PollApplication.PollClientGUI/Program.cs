@@ -11,6 +11,7 @@ using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Communication;
 using Ilsrep.PollApplication.Helpers;
 using Ilsrep.Common;
+using Ilsrep.PollApplication.WebService;
 
 namespace Ilsrep.PollApplication.PollClientGUI
 {
@@ -52,8 +53,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// Settings
         /// </summary>
         public static SettingsHelper settings = new SettingsHelper();
+        /// <summary>
+        /// path to config file
+        /// </summary>
         public const string PATH_TO_CONFIG_FILE = "Settings.xml";
+        /// <summary>
+        /// PollWebService
+        /// </summary>
+        public static PollWebService pollService = new PollWebService();
 
+        
         /// <summary>
         /// Connect to server
         /// </summary>
@@ -69,7 +78,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        
 
+        
         /// <summary>
         /// Disconnect from server
         /// </summary>
@@ -77,7 +88,9 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             client.Disconnect();
         }
+        
 
+        
         /// <summary>
         /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
         /// </summary>
@@ -106,6 +119,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             return receivedPacket;
         }
+        
 
         /// <summary>
         /// The main entry point for the application.
@@ -133,7 +147,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     Application.Run(new MainForm());
                     if (isLogOut)
                     {
-                        DisconnectFromServer();
+                        //DisconnectFromServer();   <--- OLD
                         isLogOut = false;
                     }
                     else
