@@ -27,7 +27,7 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// Request type that is used to edit a survey
         /// </summary>
-        [XmlIgnore] public const string EDIT_SURVEY = "editPollsession"; // <-- editSurvey
+        [XmlIgnore] public const string EDIT_SURVEY = "updatePollsession"; // <-- editSurvey
         /// <summary>
         /// Request type that is used to remove a survey by id
         /// </summary>

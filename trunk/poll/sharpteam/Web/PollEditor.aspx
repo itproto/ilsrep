@@ -73,7 +73,13 @@
             }
         
             //var fields = $("#addPollDialog :input");
-            var branches = $("<li id='poll_"+data.id+"'><span class='folder'>" + data.poll_name + "</span> <div><a href='#'><img src='js/treeview/images/page_white_add.png' /></a><a href='#'><img src='js/treeview/images/page_white_edit.png' /></a><a href='#' id='link_delete_poll_"+data.id+"' class='links_delete_poll'><img src='js/treeview/images/page_white_delete.png' /></a></div><ul></ul></li>").appendTo("#survey_tree>li>ul");
+            var branches = $("<li id='poll_"+data.id+"'><span class='folder'>" + data.poll_name + "</span> <div><a href='#' id='link_add_choice_"+data.id+"' class='links_add_choice'><img src='js/treeview/images/page_white_add.png' /></a><a href='#' id='link_edit_poll_"+data.id+"' class='links_edit_poll'><img src='js/treeview/images/page_white_edit.png' /></a><a href='#' id='link_delete_poll_"+data.id+"' class='links_delete_poll'><img src='js/treeview/images/page_white_delete.png' /></a></div><ul></ul></li>").appendTo("#survey_tree>li>ul");
+            $(".link_add_choice_" + data.id).click( function() {
+                var id = this.id.replace("link_add_choice_", "");
+                $("#addChoiceDialog").dialog("open");
+                $("#addChoiceDialog :input[name=poll_id]").val(id);
+                return false;
+            } );
             $("#link_delete_poll_" + data.id).click( function() {
                 var id = this.id.replace("link_delete_poll_", "");
                 $("#poll_"+id).remove();
