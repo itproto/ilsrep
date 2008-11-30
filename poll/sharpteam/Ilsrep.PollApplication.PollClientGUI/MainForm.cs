@@ -65,12 +65,42 @@ namespace Ilsrep.PollApplication.PollClientGUI
         private void GetSurveys()
         {
             // Get list of surveys
+            List<Item> surveyList = PollClientGUI.pollService.GetSurveys();
+
+            // Get surveysList
+            surveysList.Clear();
+            foreach (Item item in surveyList)
+            {
+                Survey survey = PollClientGUI.pollService.GetSurvey(Convert.ToInt32(item.id));
+
+                // Modify correctChoices
+                foreach (Poll curPoll in survey.Polls)
+                {
+                    int choiceIndex = 0;
+                    foreach (Choice curChoice in curPoll.Choices)
+                    {
+                        if (curChoice.Id == curPoll.CorrectChoiceID)
+                            break;
+                        choiceIndex++;
+                    }
+                    curPoll.CorrectChoiceID = choiceIndex;
+                }
+
+                surveysList.Add(survey);
+            }
+            RefreshEditorList();
+        }
+
+        /*
+        private void GetSurveys_OLD()
+        {
+            // Get list of surveys
             PollPacket pollPacket = new PollPacket();
             pollPacket.request = new Request();
             pollPacket.request.type = Request.GET_LIST;
-            pollPacket = PollClientGUI.ReceivePollPacket( pollPacket );
+            pollPacket = PollClientGUI.ReceivePollPacket(pollPacket);
 
-            if ( pollPacket == null )
+            if (pollPacket == null)
                 return;
 
             // Get surveysList
@@ -100,6 +130,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
             RefreshEditorList();
         }
+        */
 
         private void RefreshEditorList()
         {
@@ -128,7 +159,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         }
 
         /// <summary>
-        /// Function opens SurveyForm and then send new Survey to server
+        /// Function creates new Survey
         /// </summary>
         /// <param name="sender">object sender</param>
         /// <param name="e">EventArgs e</param>
@@ -207,8 +238,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
         }
 
-
-
         private void GetPoll()
         {
             pollGroupBox.Controls.Clear();
@@ -253,6 +282,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 RadioButton radioButton = new RadioButton();
                 radioButton.Name = index.ToString();
                 radioButton.Text = index.ToString() + ". " + curChoice.choice;
+                radioButton.Width = 300;
                 radioButton.Location = new System.Drawing.Point(10, lblTopText3.Top + lblTopText3.Height + 20 * (index - 1));
                 radioButton.CheckedChanged += delegate(Object sender2, EventArgs e2)
                 {
@@ -339,16 +369,21 @@ namespace Ilsrep.PollApplication.PollClientGUI
             result.userName = PollClientGUI.userName;
             resultsList.results.Add(result);
         }
-
+        
         private void ProcessResults()
         {
-            PollPacket sendPacket = new PollPacket();
+            //  OLD   <---
+            /*PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.SAVE_RESULT;
             sendPacket.resultsList = resultsList;
             sendPacket.resultsList.userName = PollClientGUI.userName;
             sendPacket.resultsList.surveyId = survey.Id;
-            PollClientGUI.ReceivePollPacket(sendPacket);
+            PollClientGUI.ReceivePollPacket(sendPacket);*/
+
+            resultsList.userName = PollClientGUI.userName;
+            resultsList.surveyId = survey.Id;
+            PollClientGUI.pollService.SaveSurveyResult(resultsList);
 
             pollGroupBox.Controls.Clear();
             Label lblTopText = new Label();
@@ -469,7 +504,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
             }
 
-            // ----- for synchronize with server -----
+            // ----- for synchronize with BD -----
             foreach (Survey curSurvey in surveysList)
             {
                 foreach (Poll curPoll in curSurvey.Polls)
@@ -485,6 +520,15 @@ namespace Ilsrep.PollApplication.PollClientGUI
             {
                 if (curSurvey.Id < 0)
                 {
+                    PollClientGUI.pollService.CreateSurvey(curSurvey);
+                }
+            }
+
+            /*  OLD   <---
+            foreach (Survey curSurvey in surveysList)
+            {
+                if (curSurvey.Id < 0)
+                {
                     PollPacket pollPacket = new PollPacket();
                     pollPacket.request = new Request();
                     pollPacket.request.type = Request.CREATE_SURVEY;
@@ -492,8 +536,27 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     PollClientGUI.ReceivePollPacket(pollPacket);
                 }
             }
+            */
 
             // Save all edited
+            foreach (int idEdited in history.edited)
+            {
+                Survey survey = new Survey();
+
+                // Find needed Survey in list
+                foreach (Survey curSurvey in surveysList)
+                {
+                    if (curSurvey.Id == idEdited)
+                    {
+                        survey = curSurvey;
+                        break;
+                    }
+                }
+
+                PollClientGUI.pollService.EditSurvey(survey);
+            }
+
+            /*   OLD  <---
             foreach (int idEdited in history.edited)
             {
                 PollPacket pollPacket = new PollPacket();
@@ -512,9 +575,16 @@ namespace Ilsrep.PollApplication.PollClientGUI
 
                 pollPacket.request.type = Request.EDIT_SURVEY;
                 PollClientGUI.ReceivePollPacket(pollPacket);
-            }
+            } 
+            */
 
             // Remove all deleted
+            foreach (int idDeleted in history.deleted)
+            {
+                PollClientGUI.pollService.RemoveSurvey(idDeleted);
+            }
+
+            /*   OLD  <---
             foreach (int idDeleted in history.deleted)
             {
                 PollPacket pollPacket = new PollPacket();
@@ -523,6 +593,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollPacket.request.type = Request.REMOVE_SURVEY;
                 PollClientGUI.ReceivePollPacket(pollPacket);
             }
+            */
 
             MessageBox.Show("Changes successfully sent to server", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             GetSurveys();

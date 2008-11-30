@@ -12,7 +12,7 @@ using Ilsrep.PollApplication.Model;
 using Ilsrep.PollApplication.Communication;
 using System.Data.SQLite;
 
-namespace Ilsrep.PollApplication.PollWebService
+namespace Ilsrep.PollApplication.WebService
 {
     /// <summary>
     /// Summary description for Service1
@@ -23,15 +23,15 @@ namespace Ilsrep.PollApplication.PollWebService
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     // [System.Web.Script.Services.ScriptService]
     public class PollWebService : System.Web.Services.WebService
-    {      
+    {
         /// <summary>
         /// Connection string specifying path to database file among other connection parameters
         /// </summary>
-        public static string connectionString = "Data Source=\"AppData/pollserver.db\"";
+        public string connectionString = "Data Source=\"AppData/pollserver.db\"";
         /// <summary>
         /// Database connection
         /// </summary>
-        private static SQLiteConnection dbConnection = null;
+        private SQLiteConnection dbConnection = null;
         /// <summary>
         /// Name of Surveys table in database
         /// </summary>
@@ -64,7 +64,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// <summary>
         /// Property that tells if database connection is active
         /// </summary>
-        public static bool isConnected
+        public bool isConnected
         {
             get
             {
@@ -76,7 +76,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// Close database connection
         /// </summary>
         [WebMethod]
-        public static void Close()
+        public void Close()
         {
             if (isConnected)
                 dbConnection.Close();
@@ -86,7 +86,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// Open database connection
         /// </summary>
         [WebMethod]
-        private static void Init()
+        private void Init()
         {
             dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
@@ -97,7 +97,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// </summary>
         /// <returns>List of Surveys</returns>
         [WebMethod]
-        public static List<Item> GetSurveys()
+        public List<Item> GetSurveys()
         {
             if (!isConnected)
             {
@@ -126,7 +126,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// <param name="surveyID">Survey ID that tells which Survey to get</param>
         /// <returns></returns>
         [WebMethod]
-        public static Survey GetSurvey(int surveyID)
+        public Survey GetSurvey(int surveyID)
         {
             if (!isConnected)
             {
@@ -191,7 +191,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// <param name="newSurvey">object of Survey that is to be created in database</param>
         /// <returns></returns>
         [WebMethod]
-        public static int CreateSurvey(Survey newSurvey)
+        public int CreateSurvey(Survey newSurvey)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
@@ -264,7 +264,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// </summary>
         /// <param name="survey">Survey object that is to be changed in database</param>
         [WebMethod]
-        public static void EditSurvey(Survey survey)
+        public void EditSurvey(Survey survey)
         {
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
 
@@ -360,7 +360,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// </summary>
         /// <param name="resultsList">list of results</param>
         [WebMethod]
-        public static void SaveSurveyResult(ResultsList resultsList)
+        public void SaveSurveyResult(ResultsList resultsList)
         {
             if (!isConnected)
             {
@@ -396,7 +396,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// <param name="surveyId">Id of Survey which results we need</param>
         /// <returns>List of results of needed Survey</returns>
         [WebMethod]
-        public static ResultsList GetSurveyResults(int surveyId)
+        public ResultsList GetSurveyResults(int surveyId)
         {
             if (!isConnected)
             {
@@ -431,7 +431,7 @@ namespace Ilsrep.PollApplication.PollWebService
         /// </summary>
         /// <param name="surveyID">Survey ID that is to be removed</param>
         [WebMethod]
-        public static void RemoveSurvey(int surveyID)
+        public void RemoveSurvey(int surveyID)
         {
             if (!isConnected)
             {
@@ -448,7 +448,7 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         [WebMethod]
-        public static User RegisterUser(User user)
+        public User RegisterUser(User user)
         {
             if (!isConnected)
             {
@@ -473,7 +473,7 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         [WebMethod]
-        public static User ExistUser(User user)
+        public User ExistUser(User user)
         {
             if (!isConnected)
             {
@@ -499,7 +499,7 @@ namespace Ilsrep.PollApplication.PollWebService
         }
 
         [WebMethod]
-        public static User AuthorizeUser(User user)
+        public User AuthorizeUser(User user)
         {
             if (!isConnected)
             {
