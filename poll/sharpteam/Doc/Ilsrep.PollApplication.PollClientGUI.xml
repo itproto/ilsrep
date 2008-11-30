@@ -4,21 +4,71 @@
         <name>Ilsrep.PollApplication.PollClientGUI</name>
     </assembly>
     <members>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.LoginForm.components">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.CONSOLE_YES">
             <summary>
-            Required designer variable.
+            String that states yes
             </summary>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.Dispose(System.Boolean)">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.CONSOLE_NO">
             <summary>
-            Clean up any resources being used.
+            String that states no
             </summary>
-            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.InitializeComponent">
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.userName">
             <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
+            holds current user's username
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.client">
+            <summary>
+            handles connection to server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.survey">
+            <summary>
+            holds survey that is read from server
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.userChoices">
+            <summary>
+            holds user choices that he selects during survey
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isAuthorized">
+            <summary>
+            Show is user authorized
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isLogOut">
+            <summary>
+            Show is user logged out
+            </summary>
+        </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.settings">
+            <summary>
+            Settings
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.ConnectToServer">
+            <summary>
+            Connect to server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.DisconnectFromServer">
+            <summary>
+            Disconnect from server
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
+            <summary>
+            Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
+            </summary>
+            <param name="sendPacket">PollPacket with request to send</param>
+            <returns>PollPacket receivedPacket</returns>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.Main">
+            <summary>
+            The main entry point for the application.
             </summary>
         </member>
         <member name="F:Ilsrep.PollApplication.PollClientGUI.MainForm.components">
@@ -107,6 +157,23 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
+        <member name="F:Ilsrep.PollApplication.PollClientGUI.LoginForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ilsrep.PollApplication.PollClientGUI.LoginForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
         <member name="T:Ilsrep.PollApplication.PollClientGUI.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -138,73 +205,6 @@
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.CONSOLE_YES">
-            <summary>
-            String that states yes
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.CONSOLE_NO">
-            <summary>
-            String that states no
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.userName">
-            <summary>
-            holds current user's username
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.client">
-            <summary>
-            handles connection to server
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.survey">
-            <summary>
-            holds survey that is read from server
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.userChoices">
-            <summary>
-            holds user choices that he selects during survey
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isAuthorized">
-            <summary>
-            Show is user authorized
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.isLogOut">
-            <summary>
-            Show is user logged out
-            </summary>
-        </member>
-        <member name="F:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.settings">
-            <summary>
-            Settings
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.ConnectToServer">
-            <summary>
-            Connect to server
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.DisconnectFromServer">
-            <summary>
-            Disconnect from server
-            </summary>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.ReceivePollPacket(Ilsrep.PollApplication.Communication.PollPacket)">
-            <summary>
-            Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
-            </summary>
-            <param name="sendPacket">PollPacket with request to send</param>
-            <returns>PollPacket receivedPacket</returns>
-        </member>
-        <member name="M:Ilsrep.PollApplication.PollClientGUI.PollClientGUI.Main">
-            <summary>
-            The main entry point for the application.
             </summary>
         </member>
     </members>

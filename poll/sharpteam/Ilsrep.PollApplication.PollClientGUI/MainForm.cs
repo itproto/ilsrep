@@ -533,7 +533,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     pollPacket.request = new Request();
                     pollPacket.request.type = Request.CREATE_SURVEY;
                     pollPacket.survey = curSurvey;
-                    PollClientGUI.ReceivePollPacket(pollPacket);
+                    PollClientGUI.client.Send(PollSerializator.SerializePacket(pollPacket));
                 }
             }
             */
@@ -574,7 +574,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
 
                 pollPacket.request.type = Request.EDIT_SURVEY;
-                PollClientGUI.ReceivePollPacket(pollPacket);
+                PollClientGUI.client.Send(PollSerializator.SerializePacket(pollPacket));
             } 
             */
 
@@ -591,7 +591,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 pollPacket.request = new Request();
                 pollPacket.request.id = idDeleted.ToString();
                 pollPacket.request.type = Request.REMOVE_SURVEY;
-                PollClientGUI.ReceivePollPacket(pollPacket);
+                PollClientGUI.client.Send(PollSerializator.SerializePacket(pollPacket));
             }
             */
 

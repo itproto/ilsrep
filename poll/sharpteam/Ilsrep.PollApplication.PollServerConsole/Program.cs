@@ -300,18 +300,26 @@ namespace Ilsrep.PollApplication.PollServer
                         case Request.EDIT_SURVEY:
                             PollDAL.EditSurvey(receivedPacket.survey);
                             log.Info(String.Format("Survey {0} changed by {1}", receivedPacket.survey.Id, client.ipAddress));
+                            client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
+                            return;
                             break;
                         case Request.CREATE_SURVEY:
                             receivedPacket.survey.Id = PollDAL.CreateSurvey(receivedPacket.survey);
                             log.Info(String.Format("Survey {0} created by {1}", receivedPacket.survey.Id, client.ipAddress));
+                            client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
+                            return;
                             break;
                         case Request.REMOVE_SURVEY:
                             PollDAL.RemoveSurvey(Convert.ToInt32(receivedPacket.request.id));
                             log.Info(String.Format("Survey {0} removed by {1}", receivedPacket.request.id, client.ipAddress));
+                            client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
+                            return;
                             break;
                         case Request.SAVE_RESULT:
                             PollDAL.SaveSurveyResult(receivedPacket.resultsList);
                             log.Info(String.Format("Survey {0} results of user {1} sent by {2}", receivedPacket.resultsList.surveyId, receivedPacket.resultsList.userName, client.ipAddress));
+                            client.workSocket.BeginReceive(client.buffer, 0, StateObject.BUFFERSIZE, SocketFlags.None, new AsyncCallback(ProcessClient), clientID);
+                            return;
                             break;
                         case Request.GET_RESULTS:
                             sendPacket.resultsList = PollDAL.GetSurveyResults(Convert.ToInt32(receivedPacket.request.id));
