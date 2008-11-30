@@ -12,14 +12,27 @@
 	<property name="release.dir" value="${basedir}/release" />
 	<property name="scripts.dir" value="${basedir}/scripts" />
 	<property name="db.dir" value="${basedir}/db" />
+	<property name="web.dir" value="${basedir}/webxml" />
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
+<taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen"> 
+	 <classpath id="base.path">
+      <pathelement path="${classpath}"/>
+      <fileset dir="lib">
+        <include name="**/*.jar"/>
+      </fileset>
+     </classpath>
+     </taskdef> 
 
+	
 	<property name="class.path" value="${lib.dir}/axis2-jaxws-api-1.4.1.jar:${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar:${lib.dir}/jcurses.jar:${lib.dir}/substance.jar:${lib.dir}/servlet-api.jar:${lib.dir}/jfreechart-1.0.11.jar" />
+
+	
 
 	<target name="init">
 		<tstamp />
 		<mkdir dir="${distr.dir}" />
+		<mkdir dir="${web.dir}" />
 	</target>
 
 	<target name="copy-data" depends="init">
@@ -31,6 +44,40 @@
 
 	<target name="compile" depends="init">
 		<javac srcdir="${src.dir}" destdir="${distr.dir}" classpath="${class.path}" debug="on" optimize="on" />
+	</target>
+	<target name="webcompile" depends="compile" >
+	<javac srcdir="${web.dir}/src/" destdir="${web.dir}/build/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
+	</target>
+	<target name="web" depends="webcompile" >
+	<mkdir dir="${web.dir}\generated" />
+	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
+	<sync todir="${web.dir}\build\webservice\">
+  <fileset dir="${web.dir}\generated\webservice\"/>
+  <preserveintarget>
+    <include name="**"/>
+  </preserveintarget>
+  </sync>
+  <mkdir dir="${web.dir}\work" />
+  <mkdir dir="${web.dir}\work\WEB-INF\" />
+  <mkdir dir="${web.dir}\work\WEB-INF\classes" />
+  <copy todir="${web.dir}\work\WEB-INF\classes">
+  <fileset dir="${web.dir}\build\" />
+  </copy>
+  <copy todir="${web.dir}\work\WEB-INF\">
+  <fileset dir="${web.dir}\web\WEB-INF\" />
+  </copy>
+<mkdir dir="${web.dir}\work\WEB-INF\wsdl" />
+  <copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll.wsdl"/>
+ <copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll_schema1.xsd"/>
+  <delete dir="${web.dir}\generated"/>
+  <mkdir dir="${web.dir}\work\WEB-INF\lib" />
+  <copy todir="${web.dir}\work\WEB-INF\lib">
+  <fileset dir="${lib.dir}\" />
+  </copy>
+  <copy todir="${web.dir}\work\WEB-INF\lib" file="${release.dir}\poll.jar"/>
+<copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\"/>
+ <jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\"/>
+  <delete dir="${web.dir}\work"/>
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
