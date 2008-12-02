@@ -1,29 +1,23 @@
 package webservice.endpoint;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
-import ilsrep.poll.common.model.Poll;
-import ilsrep.poll.common.model.Choice;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.server.db.SQLiteDBManager;
 import ilsrep.poll.server.db.DBManager;
-import ilsrep.poll.common.protocol.AnswerItem;
-import ilsrep.poll.common.protocol.Answers;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.StringWriter;
-import javax.servlet.ServletContext;
 import javax.xml.ws.handler.MessageContext;
-import javax.servlet.http.HttpServlet;
-import java.net.URL;
+import javax.servlet.ServletContext;
+import javax.xml.ws.WebServiceContext;
 
 @WebService(name="WebJPoll", serviceName="WebJPoll")
 public class WebJPoll{
+	@javax.annotation.Resource
+	protected WebServiceContext wsContext;
 	private DBManager db;
-	public void connect()throws Exception{
+	private void connect()throws Exception{
 		
-String path=this.getClass().getResource("/pollserver.db").toString();
+        	 ServletContext ctx = (ServletContext) wsContext.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
+String path=ctx.getRealPath("WEB-INF/pollserver.db");
 
 
          
