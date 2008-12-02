@@ -46,6 +46,40 @@
                 $.get("PollEditor.aspx?action=delete&what=choice&survey_id=<%=selectedSurvey.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
                 return false;
             });
+            $(".choice_img:not(.correct_choice)").click( function () {
+                var ids = this.id.replace("correct_choice_", "").split("_");
+                
+                $.get("PollEditor.aspx?action=correct&survey_id=<%=selectedSurvey.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
+                
+                $('#poll_' + ids[0] + ' .correct_choice')
+                    .attr('src', $('#poll_' + ids[0] + ' .correct_choice').attr('src').replace("_on", "_off"))
+                    .removeClass('correct_choice')
+                    .bind('click', function() { var ids = this.id.replace("correct_choice_", "").split("_"); selectCorrectChoice(ids[0], ids[1]); })
+                    .bind("mouseenter mouseleave", function(e){
+                        if ( $(this).attr('src').search("_off") != -1 )
+                        {
+                            $(this).attr('src', $(this).attr('src').replace("_off", "_on"));
+                        }
+                        else
+                        {
+                            $(this).attr('src', $(this).attr('src').replace("_on", "_off"));
+                        }
+                    });
+                
+                $(this).unbind()
+                       .addClass('correct_choice');
+            })
+            .bind('click', function() { var ids = this.id.replace("correct_choice_", "").split("_"); selectCorrectChoice(ids[0], ids[1]); })
+            .bind("mouseenter mouseleave", function(e){
+                if ( $(this).attr('src').search("_off") != -1 )
+                {
+                    $(this).attr('src', $(this).attr('src').replace("_off", "_on"));
+                }
+                else
+                {
+                    $(this).attr('src', $(this).attr('src').replace("_on", "_off"));
+                }
+            });
             
             /* poll functions */
             $("#link_add_poll").click( function() { $("#addPollDialog").dialog("open"); return false; } );
@@ -146,6 +180,20 @@
             
             $("#choice_" + data.id + " span").text( data.choice );
         }
+        
+        function selectCorrectChoice(poll_id, choice_id)
+        {
+            if ( $("#poll_" + poll_id + " .correct_choice")[0].id.replace('correct_choice_', '') != choice_id )
+            {
+                $.get("PollEditor.aspx?action=correct&survey_id=<%=selectedSurvey.Id%>&poll_id="+poll_id+"&choice_id="+choice_id);
+                $("#poll_" + poll_id + " .correct_choice").on
+                
+                .removeClass('correct_choice');
+                
+                
+                $('#correct_choice_' + choice_id).addClass('correct_choice');
+            }
+        }
     <%
     }
                     
@@ -216,7 +264,7 @@
                                                <li id='poll_<%=poll.Id %>'><span class='folder'><%=poll.Name%></span>
                                                    <div>
                                                        <a href='#' id='link_add_choice_<%=poll.Id %>' class='links_add_choice'><img alt="Add" src='js/treeview/images/page_white_add.png' /></a> 
-                                                       <a href='#' id='link_edit_poll_<%=poll.Id %>' class='links_edit_poll'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a> 
+                                                       <a href='#' id='link_edit_poll_<%=poll.Id %>' class='links_edit_poll'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>        
                                                        <a href='#' id='link_delete_poll_<%=poll.Id %>' class='links_delete_poll'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
                                                    </div>
                                                    <ul>
@@ -226,7 +274,12 @@
                                                        %>
                                                        <li id='choice_<%=choice.Id %>'><span class='file'><%=choice.choice %></span>
                                                        <div>
-                                                            <a href='#' id='link_edit_choice_<%=poll.Id %>_<%=choice.Id %>' class='links_edit_choice'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>
+                                                           <% if (poll.CorrectChoiceID == choice.Id) { %>
+                                                           <img src="images/tick_on.png" alt="Correct Choice" id="correct_choice_<%= poll.Id %>_<%= choice.Id %>" class="correct_choice choice_img" />
+                                                           <% } else { %>
+                                                           <img src="images/tick_off.png" alt="Select Correct Choice" id="correct_choice_<%= poll.Id %>_<%= choice.Id %>" class="choice_img" />
+                                                           <% } %>
+                                                           <a href='#' id='link_edit_choice_<%=poll.Id %>_<%=choice.Id %>' class='links_edit_choice'><img alt="Edit" src='js/treeview/images/page_white_edit.png' /></a>
                                                            <a href='#' id='link_delete_choice_<%=poll.Id %>_<%=choice.Id %>' class='links_delete_choice'><img alt="Delete" src='js/treeview/images/page_white_delete.png' /></a>
                                                        </div>
                                                        </li>
@@ -250,6 +303,7 @@
                             Poll Name: <input type="text" name="poll_name" class="text" /><br />
                             Poll Description:<br />
                             <textarea name="poll_desc" rows="3" cols="30" class="text"></textarea>
+                            Enable Custom Choice: <input type="radio" name="poll_custom" value="true" /> Yes <input type="radio" name="poll_custom" value="false" /> No<br />
                         </div>
                         
                         <div id="addChoiceDialog" title="Add Choice">

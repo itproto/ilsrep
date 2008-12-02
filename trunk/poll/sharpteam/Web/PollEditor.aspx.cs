@@ -39,6 +39,9 @@ public partial class PollEditor : System.Web.UI.Page
             case "delete":
                 Delete(Request["what"]);
                 break;
+            case "correct":
+                SetCorrectChoice(Convert.ToInt32(Request["survey_id"]), Convert.ToInt32(Request["poll_id"]), Convert.ToInt32(Request["choice_id"]));
+                break;
         }
     }
 
@@ -87,6 +90,7 @@ public partial class PollEditor : System.Web.UI.Page
             case "poll":
                 string poll_name = Request["poll_name"];
                 string poll_desc = Request["poll_desc"];
+                bool poll_custom = Convert.ToBoolean(Request["poll_custom"]);
                 int id = Convert.ToInt32(Request["survey_id"]);
 
                 if (poll_name == String.Empty || poll_desc == String.Empty)
@@ -98,9 +102,10 @@ public partial class PollEditor : System.Web.UI.Page
                     Poll newPoll = new Poll();
                     newPoll.Name = poll_name;
                     newPoll.Description = poll_desc;
+                    newPoll.CustomChoiceEnabled = poll_custom;
 
                     (Session["survey_" + id] as Survey).Polls.Add(newPoll);
-                    Response.Write("{ response: 1, id: "+newPoll.Id+", poll_name: '"+poll_name+"' }");
+                    Response.Write("{ response: 1, id: "+newPoll.Id+", poll_name: '"+poll_name+"', poll_custom: '"+poll_custom.ToString()+"' }");
                 }
                 break;
             case "choice":
@@ -215,4 +220,24 @@ public partial class PollEditor : System.Web.UI.Page
                 break;
         }
     }
+
+    protected void SetCorrectChoice(int survey_id, int poll_id, int choice_id)
+    {
+        foreach (Poll poll in (Session["survey_" + survey_id] as Survey).Polls)
+        {
+            if (poll.Id == poll_id)
+            {
+                foreach (Choice curChoice in poll.Choices)
+                {
+                    if (curChoice.Id == choice_id)
+                    {
+                        poll.CorrectChoiceID = choice_id;
+                        return;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
 }

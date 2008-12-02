@@ -86,3 +86,11 @@
 20 Nov 2008 20:20:33 INFO  [category:PollServer.PollServer] - Pollsession List sent to 127.0.0.1:63849
 20 Nov 2008 20:20:33 INFO  [category:PollServer.PollServer] - Pollsession 2 sent to 127.0.0.1:63849
 20 Nov 2008 20:20:36 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:63849 disconnected
+02 Dec 2008 22:59:29 INFO  [category:PollServer.PollServer] - Server started on host: 0.0.0.0:3320
+02 Dec 2008 22:59:29 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+02 Dec 2008 22:59:30 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:62514 connected
+02 Dec 2008 22:59:30 INFO  [category:PollServer.PollServer] - Waiting for a connection...
+02 Dec 2008 23:00:18 INFO  [category:PollServer.PollServer] - New user created: vladykx
+02 Dec 2008 23:00:19 INFO  [category:PollServer.PollServer] - Survey List sent to 127.0.0.1:62514
+02 Dec 2008 23:00:19 INFO  [category:PollServer.PollServer] - Survey 2 sent to 127.0.0.1:62514
+03 Dec 2008 00:45:06 INFO  [category:PollServer.PollServer] - Client 127.0.0.1:62514 disconnected
