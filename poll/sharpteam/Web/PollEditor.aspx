@@ -46,30 +46,8 @@
                 $.get("PollEditor.aspx?action=delete&what=choice&survey_id=<%=selectedSurvey.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
                 return false;
             });
-            $(".choice_img:not(.correct_choice)").click( function () {
-                var ids = this.id.replace("correct_choice_", "").split("_");
-                
-                $.get("PollEditor.aspx?action=correct&survey_id=<%=selectedSurvey.Id%>&poll_id="+ids[0]+"&choice_id=" + ids[1]);
-                
-                $('#poll_' + ids[0] + ' .correct_choice')
-                    .attr('src', $('#poll_' + ids[0] + ' .correct_choice').attr('src').replace("_on", "_off"))
-                    .removeClass('correct_choice')
-                    .bind('click', function() { var ids = this.id.replace("correct_choice_", "").split("_"); selectCorrectChoice(ids[0], ids[1]); })
-                    .bind("mouseenter mouseleave", function(e){
-                        if ( $(this).attr('src').search("_off") != -1 )
-                        {
-                            $(this).attr('src', $(this).attr('src').replace("_off", "_on"));
-                        }
-                        else
-                        {
-                            $(this).attr('src', $(this).attr('src').replace("_on", "_off"));
-                        }
-                    });
-                
-                $(this).unbind()
-                       .addClass('correct_choice');
-            })
-            .bind('click', function() { var ids = this.id.replace("correct_choice_", "").split("_"); selectCorrectChoice(ids[0], ids[1]); })
+            $(".choice_img:not(.correct_choice)")
+            .bind('click', function() { var ids = this.id.replace("correct_choice_", "").split("_"); selectCorrectChoice(ids[0], ids[1]); $(this).unbind().addClass('correct_choice'); })
             .bind("mouseenter mouseleave", function(e){
                 if ( $(this).attr('src').search("_off") != -1 )
                 {
@@ -185,13 +163,22 @@
         {
             if ( $("#poll_" + poll_id + " .correct_choice")[0].id.replace('correct_choice_', '') != choice_id )
             {
-                $.get("PollEditor.aspx?action=correct&survey_id=<%=selectedSurvey.Id%>&poll_id="+poll_id+"&choice_id="+choice_id);
-                $("#poll_" + poll_id + " .correct_choice").on
+                $.get("PollEditor.aspx?action=correct&survey_id=<%=selectedSurvey.Id%>&poll_id=" + poll_id + "&choice_id=" + choice_id);
                 
-                .removeClass('correct_choice');
-                
-                
-                $('#correct_choice_' + choice_id).addClass('correct_choice');
+                $('#poll_' + poll_id + ' .correct_choice')
+                    .attr('src', $('#poll_' + poll_id + ' .correct_choice').attr('src').replace("_on", "_off"))
+                    .removeClass('correct_choice')
+                    .bind('click', function() { var ids = this.id.replace("correct_choice_", "").split("_"); selectCorrectChoice(ids[0], ids[1]); $(this).unbind().addClass('correct_choice'); })
+                    .bind("mouseenter mouseleave", function(e){
+                        if ( $(this).attr('src').search("_off") != -1 )
+                        {
+                            $(this).attr('src', $(this).attr('src').replace("_off", "_on"));
+                        }
+                        else
+                        {
+                            $(this).attr('src', $(this).attr('src').replace("_on", "_off"));
+                        }
+                    });
             }
         }
     <%
