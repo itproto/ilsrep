@@ -1,0 +1,25 @@
+<jxb:bindings version="1.0"
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <jxb:bindings schemaLocation = "http://localhost:940/WebJPoll/WebJPoll?xsd=1" node="/xs:schema" >
+
+  
+       <jxb:bindings node="//xs:complexType[@name='poll']">
+            <jxb:class ref="ilsrep.poll.common.model.Poll"></jxb:class>
+        </jxb:bindings>
+ <jxb:bindings node="//xs:complexType[@name='pollsession']">
+            <jxb:class ref="ilsrep.poll.common.model.Pollsession"></jxb:class>
+        </jxb:bindings>
+         <jxb:bindings node="//xs:complexType[@name='choice']">
+            <jxb:class ref="ilsrep.poll.common.model.Choice"></jxb:class>
+        </jxb:bindings>
+               <jxb:bindings node="//xs:complexType[@name='pollsessionlist']">
+            <jxb:class ref="ilsrep.poll.common.protocol.Pollsessionlist"></jxb:class>
+        </jxb:bindings>
+             <jxb:bindings node="//xs:complexType[@name='item']">
+            <jxb:class ref="ilsrep.poll.common.protocol.Item"></jxb:class>
+        </jxb:bindings>
+        
+          </jxb:bindings>
+        </jxb:bindings>

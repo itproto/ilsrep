@@ -27,7 +27,7 @@ String path=ctx.getRealPath("WEB-INF/pollserver.db");
 	 public Pollsession getPollsessionById(String id) throws Exception {
 		 connect();
 		 Pollsession sess=db.getPollsessionById(id);
-	/*	 JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
+	/*	 JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class); 
         Marshaller mr = pollContext.createMarshaller();
         StringWriter wr = new StringWriter();
         mr.marshal(sess, wr);

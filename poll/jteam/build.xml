@@ -50,7 +50,7 @@
 	</target>
 	<target name="web" depends="webcompile" >
 	<mkdir dir="${web.dir}\generated" />
-	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
+	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" verbose="true" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
 	<sync todir="${web.dir}\build\webservice\">
   <fileset dir="${web.dir}\generated\webservice\"/>
   <preserveintarget>
@@ -75,7 +75,7 @@
   <fileset dir="${lib.dir}\" />
   </copy>
   <copy todir="${web.dir}\work\WEB-INF\lib" file="${release.dir}\poll.jar"/>
-<copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\"/>
+<copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\WEB-INF\"/>
  <jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\"/>
   <delete dir="${web.dir}\work"/>
 	</target>

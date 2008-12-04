@@ -10,3 +10,5 @@ ant compile; ant webcompile; ant web;
 in the jteam source directory
 6)deploy WebJPoll.war via tomcat manager (acessable by http://localhost:940/manager/)
 7)goto http://localhost:940/WebJPoll/WebJPoll to see the summary
+
+Binding.jxb file is used for wsdl import and is not needed during compilation
