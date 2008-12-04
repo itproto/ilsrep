@@ -10,19 +10,24 @@
 <%@page import="javax.xml.bind.JAXBException"%>
 <%@page import="javax.xml.bind.Marshaller"%>
 <%@page import="java.io.StringWriter"%>
+<%@page import="webservice.endpoint.WebJPoll"%>
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
 <% String PLEASE_ENTER_POLL="Please choose poll";
 %>
 <%!
+ //@WebServiceRef(wsdlLocation="http://localhost:8080/WebJPoll/WebJPoll?wsdl")
+//  static WebJPoll_Service service;
+
 public String editPoll(String sessi, String user) throws Exception{
+	 WebJPoll_Service service=new WebJPoll_Service();
+	WebJPoll port=service.getWebJPollPort();
 String output="";
 		if (!(sessi.equals("new"))){
 	Pollsession sess;
-DBManager db;
-
 int numberOfPolls=0;
-db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
-sess=db.getPollsessionById(sessi);
-db.close();
+sess=port.getPollsessionById(sessi);
+//db.close();
 JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
         Marshaller mr = pollContext.createMarshaller();
         StringWriter wr = new StringWriter();
