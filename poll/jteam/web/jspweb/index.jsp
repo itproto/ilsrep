@@ -42,10 +42,9 @@ output=(login(session,request.getParameter("name"),request.getParameter("passwor
 				 String res=((session.getAttribute("username")==null)||(request.getParameter("logout")!=null)) ? reg : logout;
 				 out.println(res);
 				 %>
-	<li><font color=white> Poll Client | </font> <a
-		href="./editor/index.jsp">Poll Editor</a> | <a
-		href="./stats/stats.jsp">Statistics</a></li>
-	</ul>
+				<li> <font color=white> Poll Client | </font>
+				<a href="./editor/index.jsp">Poll Editor</a></li>
+			</ul>
 		</div>
 	</div>
 

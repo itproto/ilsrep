@@ -9,6 +9,8 @@
 <%@page import="java.util.List"%>
 <%@page import="javax.servlet.ServletRequest"%>
 <%@page import="java.text.DecimalFormat"%>
+<%@page import="webservice.endpoint.WebJPoll"%>
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
 <%!
 public Poll getPollbyid(Pollsession sess, String id){
 	Poll poll=null;
@@ -30,8 +32,8 @@ public String getRes(Object ansobj) throws Exception{
 String res="<table>";
  List<AnswerItem> answers = ans.getAnswers();;
 Pollsession sess;
-DBManager db;
-db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
+ WebJPoll_Service service=new WebJPoll_Service();
+	WebJPoll db=service.getWebJPollPort();
 sess=db.getPollsessionById(ans.getPollSesionId());
 if(sess.getTestMode().equals("true")){ res+="<tr><th class=\"first\" colspan=2><strong>Your selection</strong></th><th rowspan=2><strong>Result</strong></th></tr>\n";
 } else {

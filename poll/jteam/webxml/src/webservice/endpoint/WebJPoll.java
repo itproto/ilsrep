@@ -8,6 +8,8 @@ import ilsrep.poll.server.db.DBManager;
 import javax.xml.ws.handler.MessageContext;
 import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
+import ilsrep.poll.common.protocol.Answers;
+import ilsrep.poll.common.protocol.Item;
 
 @WebService(name="WebJPoll", serviceName="WebJPoll")
 public class WebJPoll{
@@ -78,4 +80,12 @@ String path=ctx.getRealPath("WEB-INF/pollserver.db");
 			 connect();
 			 db.updatePollsession(id,sess);
 			 }
+			  
+			 @WebMethod
+	public void saveResults(Answers ans) throws Exception {
+		connect();
+		db.saveResults(ans);
+		}
+			 
+			 
 	}
