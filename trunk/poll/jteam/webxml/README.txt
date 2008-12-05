@@ -12,3 +12,7 @@ in the jteam source directory
 7)goto http://localhost:940/WebJPoll/WebJPoll to see the summary
 
 Binding.jxb file is used for wsdl import and is not needed during compilation
+
+
+
+/****To have tomcat running with web service change tomcat port to 940********/

@@ -5,6 +5,8 @@
 <%@page import="ilsrep.poll.server.db.DBManager"%>
 <%@page import="ilsrep.poll.common.protocol.AnswerItem"%>
 <%@page import="ilsrep.poll.common.protocol.Answers"%>
+<%@page import="webservice.endpoint.WebJPoll"%>
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
 <% String PLEASE_ENTER_POLL="Please choose poll";
 %>
 <%!
@@ -14,9 +16,9 @@ String resultingOutput="<script type=\"text/javascript\" src=\"next.js\"></scrip
 resultingOutput+="<form name=\"polls\" id=\"polls\" action=\"index.jsp\" method=\"get\">\n"+
 "<input type='hidden' name='session' value='"+sessi+"' >";
 Pollsession sess;
-DBManager db;
+ WebJPoll_Service service=new WebJPoll_Service();
+	WebJPoll db=service.getWebJPollPort();
 int numberOfPolls=0;
-db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
 sess=db.getPollsessionById(sessi);
 
 resultingOutput+="<h1>"+sess.getName()+"</h1>";

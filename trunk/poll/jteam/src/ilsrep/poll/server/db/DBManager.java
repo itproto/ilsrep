@@ -41,7 +41,7 @@ public abstract class DBManager {
     /**
      * Default minimal number of idle connections in pool.
      */
-    public int DEFAULT_MIN_IDLE = 1;
+    public int DEFAULT_MIN_IDLE = 5;
 
     /**
      * Default initial quantity of connections in pool.
@@ -51,12 +51,12 @@ public abstract class DBManager {
     /**
      * Default maximal number of idle connections in pool.
      */
-    public int DEFAULT_MAX_IDLE = 4;
+    public int DEFAULT_MAX_IDLE = 20;
 
     /**
      * Default minimal number of active connections in pool.
      */
-    public int DEFAULT_MAX_ACTIVE = 16;
+    public int DEFAULT_MAX_ACTIVE = 256;
 
     /**
      * <code>DataSource</code> for DB.<br>
@@ -232,8 +232,11 @@ public abstract class DBManager {
     public void createUser(String name, String pass) {
         try {
             connect();
-
-            Connection conn = dataSource.getConnection();
+ Connection conn = null;
+        if (threadLocalConnection.get() == null)
+            conn = dataSource.getConnection();
+        else
+            conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
             /* ResultSet rs = */stat
                     .executeQuery("insert into users (userName, password) Values (\""
@@ -251,7 +254,11 @@ public abstract class DBManager {
         try {
             connect();
 
-            Connection conn = dataSource.getConnection();
+        Connection conn = null;
+        if (threadLocalConnection.get() == null)
+            conn = dataSource.getConnection();
+        else
+            conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
             ResultSet rs = stat
                     .executeQuery("select * from users where userName=\""
@@ -278,7 +285,11 @@ public abstract class DBManager {
         try {
             connect();
 
-            Connection conn = dataSource.getConnection();
+        Connection conn = null;
+        if (threadLocalConnection.get() == null)
+            conn = dataSource.getConnection();
+        else
+            conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
             ResultSet rs = stat
                     .executeQuery("select * from users where userName=\""
@@ -349,14 +360,16 @@ public abstract class DBManager {
      * @param ans
      *            Results to store.
      */
-    public void saveResults(Answers ans) {
+    public void saveResults(Answers ans) throws Exception{
+	    connect();
         String id = ans.getPollSesionId();
         String name = ans.getUsername();
-        Connection conn = null;
-        try {
+                Connection conn = null;
+        if (threadLocalConnection.get() == null)
             conn = dataSource.getConnection();
-            conn.setAutoCommit(false);
-
+        else
+            conn = threadLocalConnection.get();
+   conn.setAutoCommit(false);
             PreparedStatement stat = conn
                     .prepareStatement("insert into results (pollsession_id, user_name, poll_id, choice_id, custom_choice, date) VALUES (?, ?, ?, ?, ?, datetime('now'))");
             for (int i = 0; i < ans.getAnswers().size(); i++) {
@@ -373,17 +386,11 @@ public abstract class DBManager {
             stat.executeBatch();
 
             conn.commit();
-        }
-        catch (SQLException e) {
-        }
-        finally {
-            try {
+        
+        
                 if (conn != null)
                     conn.close();
-            }
-            catch (SQLException e) {
-            }
-        }
+        
 
     }
 

@@ -8,6 +8,8 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.servlet.ServletRequest"%>
+<%@page import="webservice.endpoint.WebJPoll"%>
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
 <%@ include file="./links.jsp" %>
 <%!
 public String showForm(){
@@ -40,14 +42,15 @@ return("<h2>Welcome "+(String)hsession.getAttribute("username")+"</h2>"+links())
 } else if (name==null){
 return(showForm());
 } else {
-		DBManager db;
+//		DBManager db;
 int numberOfPolls=0;
-db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
-if (db.checkUser(name).equals("false")) {
+ WebJPoll_Service service=new WebJPoll_Service();
+	WebJPoll db=service.getWebJPollPort();
+if (!db.checkUser(name)) {
 	err="<h2>No such user</h2>";
 	return(err+showForm());
 } else {
-	if(db.authUser(name,password).equals("false")) {
+	if(db.authUser(name,password)) {
 				err="<h2>Wrong password</h2>";
 	    return(err+showForm());
 				} else {

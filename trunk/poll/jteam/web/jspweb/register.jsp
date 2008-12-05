@@ -8,6 +8,8 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="javax.servlet.ServletRequest"%>
+<%@page import="webservice.endpoint.WebJPoll"%>
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
 <%@ include file="./login.jsp" %>
 <%!
 public String showRegform(){
@@ -39,15 +41,15 @@ return("<form action='./index.jsp' method='post'><div class=\"ILbox\">"+
 
 }
 public String register(String name, String password, String password2) throws Exception {
-	DBManager db;
+WebJPoll_Service service=new WebJPoll_Service();
+	WebJPoll db=service.getWebJPollPort();
 int numberOfPolls=0;
-db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
 	String err="";
 	boolean restart=false;
 if (name==null) {
 	return (showRegform());
 		}	else {
-			if (db.checkUser(name).equals("true")) {
+			if (db.checkUser(name)) {
 				err="<h3>User Exists</h3>";
 				restart=true;
 				} 

@@ -5,7 +5,7 @@ Keep default settings during installation, admin password keep blank, as target 
 2. Configure tomcat. Goto {TOMCAT_DIR}/conf (that's  where server configuration files placed). 
 !After configuration changes always restart server to apply changes.*
 a. open server.xml for edit
-b. look for node  '<Connector port="8080" protocol="HTTP/1.1" ..' change port attribute to 9999 to avoid further conflicts with other servers installed on default www-port.
+b. look for node  '<Connector port="8080" protocol="HTTP/1.1" ..' change port attribute to 940 to avoid further conflicts with other servers installed on default www-port.
 c. look for node '<Host name="localhost"  appBase="webapps"..' (is child of <Engine name="Catalina" defaultHost="localhost"> ). Add next child node to "<Host" node
 		<Context path="/jspweb" docBase="E:\.dev\ils\ilsrep\poll\jteam\web\jspweb" reloadable="true" swallowOutput="true" />
 	
@@ -29,3 +29,6 @@ if you experience any further problems, use the server-940.xml, it will start to
 
 NOTE: if you ran tomcat prior to repointing the webapps path, you will have too delete cache that is stored in /work/ directory and then restart
 */
+
+
+/****To have tomcat running with web service change tomcat port to 940********/
