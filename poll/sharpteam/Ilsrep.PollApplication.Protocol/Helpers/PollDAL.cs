@@ -196,10 +196,9 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.Clear();
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
 
-                int index = 0;
                 foreach (Choice curChoice in curPoll.Choices)
                 {
-                    index++;
+                    int oldId = curChoice.Id;
                     sqliteCommand.Parameters[":name"].Value = curChoice.choice;
                     sqliteCommand.CommandText = "INSERT INTO " + CHOICES_TABLE + "(name) VALUES(:name)";
                     sqliteCommand.ExecuteNonQuery();
@@ -207,7 +206,7 @@ namespace Ilsrep.PollApplication.DAL
                     sqliteCommand.CommandText = "SELECT last_insert_rowid()";
                     curChoice.Id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
 
-                    if (index == curPoll.CorrectChoiceID)
+                    if (oldId == curPoll.CorrectChoiceID)
                     {
                         curPoll.CorrectChoiceID = curChoice.Id;
                     }
@@ -271,10 +270,9 @@ namespace Ilsrep.PollApplication.DAL
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
                 sqliteCommand.Parameters.Add(new SQLiteParameter(":id"));
 
-                int index = 0;
                 foreach (Choice curChoice in curPoll.Choices)
                 {
-                    index++;
+                    int oldId = curChoice.Id;
                     sqliteCommand.Parameters[":name"].Value = curChoice.choice;
                     sqliteCommand.Parameters[":id"].Value = curChoice.Id;
                     if (curChoice.Id <= 0)
@@ -291,7 +289,7 @@ namespace Ilsrep.PollApplication.DAL
                         sqliteCommand.ExecuteNonQuery();
                     }
 
-                    if (index == curPoll.CorrectChoiceID)
+                    if (oldId == curPoll.CorrectChoiceID)
                     {
                         curPoll.CorrectChoiceID = curChoice.Id;
                     }
