@@ -1,8 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"  CodeFile="Default.aspx.cs" Inherits="_Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Statistics.aspx.cs" Inherits="Statistics" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>PollClientASP</title>
+    <title>Statistics</title>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
     <link href="css/style.css" type="text/css" rel="stylesheet" />
     <script src="js/scripts.js" type="text/javascript"></script>
@@ -21,7 +21,7 @@
                     </li>
                     <li>
                         <a onfocus="this.blur()" href="Statistics.aspx" class="button">Statistics |</a>
-                    </li>
+                    </li>                    
                     <li>
                         <a onfocus="this.blur()" href="login.aspx?action=logout">Logout(<%=User.Identity.Name%>)</a>
                     </li>
@@ -42,3 +42,4 @@
     </div>
 </body>
 </html>
+

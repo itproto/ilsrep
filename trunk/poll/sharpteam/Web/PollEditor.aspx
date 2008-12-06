@@ -222,6 +222,9 @@
                         <a href="PollEditor.aspx">Poll editor</a> |
                     </li>
                     <li>
+                        <a href="Statistics.aspx">Statistics</a> |
+                    </li>                    
+                    <li>
                         <a href="login.aspx?action=logout">Logout</a>
                     </li>
                 </ul>
