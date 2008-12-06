@@ -109,6 +109,58 @@ namespace Ilsrep.PollApplication.DAL
         }
 
         /// <summary>
+        /// Gets users from database
+        /// </summary>
+        /// <returns>List of Surveys</returns>
+        static public List<String> GetUsers()
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.CommandText = "SELECT * FROM " + USERS_TABLE;
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            List<String> users = new List<String>();
+
+            while (sqliteReader.Read())
+            {
+                users.Add(sqliteReader["userName"].ToString());
+            }
+
+            return users;
+        }
+
+        /// <summary>
+        /// Gets names and IDs of test Surveys from database
+        /// </summary>
+        /// <returns>List of Surveys</returns>
+        static public List<Item> GetTestSurveys()
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.AddWithValue(":testmode", "1");
+            sqliteCommand.CommandText = "SELECT * FROM " + SURVEYS_TABLE + " WHERE testmode=:testmode";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            List<Item> items = new List<Item>();
+
+            while (sqliteReader.Read())
+            {
+                Item curItem = new Item();
+                curItem.id = sqliteReader["id"].ToString();
+                curItem.name = sqliteReader["name"].ToString();
+                items.Add(curItem);
+            }
+
+            return items;
+        }
+
+        /// <summary>
         /// Gets Survey from database by Survey ID
         /// </summary>
         /// <param name="surveyID">Survey ID that tells which Survey to get</param>

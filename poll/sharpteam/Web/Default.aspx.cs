@@ -69,27 +69,22 @@ public partial class _Default : System.Web.UI.Page
         int index;
         if ((Request["action"] == "showsurvey") || (Request["action"] == "submitpoll"))
         {
-            LiteralControl literalControl1 = new LiteralControl();
-            literalControl1.Text = "<li><h3>" + survey.Name + ":</h3></li>";
-            leftMenuPanel.Controls.Add(literalControl1);
+            LiteralControl literalControl = new LiteralControl();
+            literalControl.Text = "<li><h3>" + survey.Name + ":</h3></li>";
             index = 1;
             foreach (Ilsrep.PollApplication.Model.Poll curPoll in survey.Polls)
             {
                 if (Convert.ToInt32(Session["pollIndex"]) == index - 1)
                 {
-                    LiteralControl literalControl2 = new LiteralControl();
-                    literalControl2.Text = "<li><b>" + index.ToString() + ". " + curPoll.Name + "</b></li>";
-                    leftMenuPanel.Controls.Add(literalControl2);
+                    literalControl.Text += "<li><b>" + index.ToString() + ". " + curPoll.Name + "</b></li>";
                 }
                 else
                 {
-                    LiteralControl literalControl3 = new LiteralControl();
-                    literalControl3.Text = "<li>" + index.ToString() + ". " + curPoll.Name + "</li>";
-                    leftMenuPanel.Controls.Add(literalControl3);
+                    literalControl.Text += "<li>" + index.ToString() + ". " + curPoll.Name + "</li>";
                 }
-
                 index++;
             }
+            leftMenuPanel.Controls.Add(literalControl);
         }
         else
         {
