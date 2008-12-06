@@ -10,13 +10,15 @@
 <%@page import="javax.xml.bind.JAXBException"%>
 <%@page import="javax.xml.bind.Unmarshaller"%>
 <%@page import="java.io.StringReader"%>
+<%@page import="webservice.endpoint.WebJPoll"%>
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
 <%@ include file="./links.jsp" %>
 <%!
 public String saveToDB(String session, String xml) throws Exception{
 	
 	Pollsession sess;
-DBManager db;
-db = new SQLiteDBManager(null,getServletContext().getRealPath("/")+"/pollserver.db");
+WebJPoll_Service service=new WebJPoll_Service();
+	WebJPoll db=service.getWebJPollPort();
 JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller mr = pollContext.createUnmarshaller();
         StringReader reader = new StringReader(xml);
