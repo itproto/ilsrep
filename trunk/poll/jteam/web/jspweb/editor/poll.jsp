@@ -17,7 +17,7 @@
 %>
 <%!
  //@WebServiceRef(wsdlLocation="http://localhost:8080/WebJPoll/WebJPoll?wsdl")
-//  static WebJPoll_Service service;
+//  static WebJPoll_Service service; 
 
 public String editPoll(String sessi, String user) throws Exception{
 	 WebJPoll_Service service=new WebJPoll_Service();
