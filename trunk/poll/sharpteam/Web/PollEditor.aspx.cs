@@ -126,6 +126,9 @@ public partial class PollEditor : System.Web.UI.Page
                     {
                         if (poll.Id == poll_id)
                         {
+                            if (poll.Choices.Count == 0)
+                                poll.CorrectChoiceID = newChoice.Id;
+                            
                             poll.Choices.Add(newChoice);
                             break;
                         }
@@ -146,8 +149,37 @@ public partial class PollEditor : System.Web.UI.Page
         {
             case "survey":
                 int id = Convert.ToInt32(Request["id"]);
-                PollDAL.EditSurvey(Session["survey_" + id] as Survey);
-                Session["survey_" + id] = null;
+                Survey curSurvey = (Session["survey_" + id] as Survey);
+                (Session["survey_" + id] as Survey).Name = Request["survey_name"];
+
+                try
+                {
+                    if (curSurvey.Polls.Count == 0)
+                        throw new Exception("Survey must have at least 1 poll");
+
+                    foreach (Poll curPoll in curSurvey.Polls)
+                    {
+                        if (curPoll.Choices.Count == 0)
+                            throw new Exception("\" -> Poll \"" + curPoll.Name + "\": poll must have at least 1 choice");
+                    }
+
+                    if (id < 0)
+                    {
+                        PollDAL.CreateSurvey(Session["survey_" + id] as Survey);
+                    }
+                    else
+                    {
+                        PollDAL.EditSurvey(Session["survey_" + id] as Survey);
+                    }
+                    Session["survey_" + id] = null;
+                }
+                catch (Exception exception)
+                {
+                    //MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Message = exception.Message;
+                    Show("editsurvey");
+                }
+
                 break;
             case "choice":
                 int survey_id = Convert.ToInt32(Request["survey_id"]);
@@ -205,13 +237,22 @@ public partial class PollEditor : System.Web.UI.Page
                 {
                     if (poll.Id == poll_id)
                     {
-                        foreach (Choice curChoice in poll.Choices)
+                        if (poll.Choices.Count > 1 && poll.CorrectChoiceID == choice_id)
                         {
-                            if (curChoice.Id == choice_id)
+                            Response.Write("{ response: -1, error: 'Correct choice can`t be deleted!' }");
+                        }
+                        else
+                        {
+                            foreach (Choice curChoice in poll.Choices)
                             {
-                                poll.Choices.Remove(curChoice);
-                                break;
+                                if (curChoice.Id == choice_id)
+                                {
+                                    poll.Choices.Remove(curChoice);
+                                    break;
+                                }
                             }
+
+                            Response.Write("{ response: 1, id: "+choice_id+" }");
                         }
                         break;
                     }
@@ -219,6 +260,8 @@ public partial class PollEditor : System.Web.UI.Page
 
                 break;
         }
+
+        Response.End();
     }
 
     protected void SetCorrectChoice(int survey_id, int poll_id, int choice_id)
