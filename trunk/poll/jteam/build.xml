@@ -13,8 +13,19 @@
 	<property name="scripts.dir" value="${basedir}/scripts" />
 	<property name="db.dir" value="${basedir}/db" />
 	<property name="web.dir" value="${basedir}/webxml" />
-
+	<property name="webservice.context" value="WebJPoll" />
+	
+	
+	
 	<property name="jar.file" value="${basedir}/poll.jar" />
+	<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"> 
+	 <classpath id="base.path">
+      <pathelement path="${classpath}"/>
+      <fileset dir="lib">
+        <include name="**/*.jar"/>
+      </fileset>
+     </classpath>
+     </taskdef> 
 <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen"> 
 	 <classpath id="base.path">
       <pathelement path="${classpath}"/>
@@ -23,7 +34,16 @@
       </fileset>
      </classpath>
      </taskdef> 
+<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+  <classpath>
+    <pathelement location="${lib.dir}/ant-contrib-0.6.jar"/>
+  </classpath>
+</taskdef>
 
+
+<path id="tomcat.classpath">
+<pathelement location="${lib.dir}/catalina-ant.jar" /> <pathelement location="${lib.dir}/servlet-api.jar" /> <pathelement location="${lib.dir}/jasper.jar" /> <pathelement location="${lib.dir}/tomcat-juli.jar" />  </path> <taskdef resource="org/apache/catalina/ant/catalina.tasks"
+classpathref="tomcat.classpath" />
 	
 	<property name="class.path" value="${lib.dir}/axis2-jaxws-api-1.4.1.jar:${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar:${lib.dir}/jcurses.jar:${lib.dir}/substance.jar:${lib.dir}/servlet-api.jar:${lib.dir}/jfreechart-1.0.11.jar" />
 
@@ -50,7 +70,7 @@
 	</target>
 	<target name="web" depends="webcompile" >
 	<mkdir dir="${web.dir}\generated" />
-	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" verbose="true" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
+	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
 	<sync todir="${web.dir}\build\webservice\">
   <fileset dir="${web.dir}\generated\webservice\"/>
   <preserveintarget>
@@ -77,7 +97,65 @@
   <copy todir="${web.dir}\work\WEB-INF\lib" file="${release.dir}\poll.jar"/>
 <copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\WEB-INF\"/>
  <jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\"/>
+
   <delete dir="${web.dir}\work"/>
+       <input
+    message="Please enter !!RUNNING!! tomcat connect line (default http://localhost:940/):"
+    addproperty="connect.root"
+    defaultvalue="http://localhost:940/"
+  />
+    <input
+    message="Please enter !!RUNNING!! tomcat manager connect line (default http://localhost:940/manager/html):"
+    addproperty="connect.line"
+    defaultvalue="http://localhost:940/manager/html"
+  />
+  <input
+    message="Please enter !!RUNNING!! tomcat admin username (default admin):"
+    addproperty="connect.admin"
+    defaultvalue="admin"
+  />
+    <input
+    message="Please enter !!RUNNING!! tomcat admin password (default [empty]):"
+    addproperty="connect.pass"
+    defaultvalue=""
+  />
+  <echo message="${connect.root}/${webservice.context}/WebJPoll" />
+<trycatch>
+ <try>
+<undeploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/${webservice.context}" />
+</try>
+<catch />
+</trycatch>
+  <sleep seconds="6"/>
+<deploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/${webservice.context}" war="file:${web.dir}\WebJPoll.war"/>
+   <mkdir dir="${web.dir}\generated"/>
+   <wsimport
+   destdir="${web.dir}\generated"
+   wsdl="${connect.root}${webservice.context}/WebJPoll?wsdl"
+   binding="${web.dir}/bindings.jxb" xnocompile="true">
+   
+</wsimport>
+ <mkdir dir="${web.dir}\compiled"/>
+ <javac srcdir="${web.dir}/generated/" destdir="${web.dir}/compiled/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
+  <sync todir="${basedir}/web/jspweb/WEB-INF/classes">
+    <fileset dir="${web.dir}\compiled" />
+  </sync>
+  <delete dir="${web.dir}\generated"/>
+   <delete dir="${web.dir}\compiled"/>
+     <delete includeemptydirs="true">
+    <fileset dir="${web.dir}/build" includes="**/*"/>
+  </delete>
+   <jar destfile="${web.dir}\jspweb.war" basedir="${basedir}\web\jspweb"/>
+<trycatch>
+<try>
+<undeploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/jspweb" />
+</try>
+<catch />
+</trycatch>
+  <sleep seconds="6"/>
+<deploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/jspweb" war="file:${web.dir}\jspweb.war"/>
+   
+
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
