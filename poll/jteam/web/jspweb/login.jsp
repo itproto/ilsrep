@@ -50,7 +50,7 @@ if (!db.checkUser(name)) {
 	err="<h2>No such user</h2>";
 	return(err+showForm());
 } else {
-	if(db.authUser(name,password)) {
+	if(!db.authUser(name,password)) {
 				err="<h2>Wrong password</h2>";
 	    return(err+showForm());
 				} else {

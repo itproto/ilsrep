@@ -6,13 +6,15 @@ Install:
 3) copy .jar file from lib directory from installed folder to lib directory of your tomcat installation.
 4) restart tomcat
 5) run 
-ant compile; ant webcompile; ant web;
-in the jteam source directory
-6)deploy WebJPoll.war via tomcat manager (acessable by http://localhost:940/manager/)
-7)goto http://localhost:940/WebJPoll/WebJPoll to see the summary
 
-Binding.jxb file is used for wsdl import and is not needed during compilation
+ant 
+ant webcompile
+ant web
+
+in the jteam source directory, follow instructions when prompted
+6)goto http://localhost:940/jspweb/
 
 
 
-/****To have tomcat running with web service change tomcat port to 940********/
+
+

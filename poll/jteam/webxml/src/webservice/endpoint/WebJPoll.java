@@ -21,7 +21,7 @@ public class WebJPoll{
         	 ServletContext ctx = (ServletContext) wsContext.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
 String path=ctx.getRealPath("WEB-INF/pollserver.db");
 
-
+ 
          
 	db=new SQLiteDBManager(null,path);
 }
