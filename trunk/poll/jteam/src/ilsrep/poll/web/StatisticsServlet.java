@@ -113,8 +113,14 @@ public class StatisticsServlet extends HttpServlet {
                                 .renderStatisticsChart(StatisticsType.POLLS_TOTAL_SUCCESS_FAIL_STATS);
                     }
                     else
-                        ChartUtilities.writeBufferedImageAsPNG(out,
-                                renderErrorImage("No such type!"));
+                        if (type.equals(StatisticsType.POLLS_WITH_CUSTOM_CHOICE
+                                .toString())) {
+                            chart = renderer
+                                    .renderStatisticsChart(StatisticsType.POLLS_WITH_CUSTOM_CHOICE);
+                        }
+                        else
+                            ChartUtilities.writeBufferedImageAsPNG(out,
+                                    renderErrorImage("No such type!"));
 
                 if (chart != null) {
                     response.setContentType("image/png");

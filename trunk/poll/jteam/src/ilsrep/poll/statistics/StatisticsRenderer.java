@@ -1,6 +1,5 @@
 package ilsrep.poll.statistics;
 
-import ilsrep.poll.common.model.Poll;
 import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.server.db.DBManager;
 
@@ -9,10 +8,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultKeyedValuesDataset;
 
 /**
@@ -60,6 +61,9 @@ public class StatisticsRenderer {
             case POLLS_TOTAL_SUCCESS_FAIL_STATS:
                 renderedChart = renderPollsTotalSuccessFailStats();
                 break;
+            case POLLS_WITH_CUSTOM_CHOICE:
+                renderedChart = renderPollsWithCustomChoice();
+                break;
         }
 
         return renderedChart;
@@ -69,79 +73,85 @@ public class StatisticsRenderer {
      * @see StatisticsType#SURVEYS_TOTAL_SUCCESS_FAIL_STATS
      */
     protected JFreeChart renderSurveysTotalSuccessFailStats() {
-        int successSurveys = 0;
-        int failSurveys = 0;
-
-        Connection dbConn = null;
-        try {
-            dbConn = db.getConnection();
-
-            Statement surveysSt = dbConn.createStatement();
-            ResultSet surveysRs = surveysSt
-                    .executeQuery("select id from pollsession");
-
-            while (surveysRs.next()) {
-                int surveyId = surveysRs.getInt("id");
-
-                DBManager.threadLocalConnection.set(dbConn);
-                Pollsession currentSurvey = db.getPollsessionById(Integer
-                        .toString(surveyId));
-                DBManager.threadLocalConnection.set(null);
-
-                Statement surveySeancesSt = dbConn.createStatement();
-                ResultSet surveySeancesRs = surveySeancesSt
-                        .executeQuery("select distinct date from results where pollsession_id = "
-                                + surveyId);
-
-                while (surveySeancesRs.next()) {
-                    Timestamp currentSeanceDate = surveySeancesRs
-                            .getTimestamp(1);
-
-                    System.out.println(currentSeanceDate.toString());
-
-                    int successPolls = 0;
-
-                    for (Poll poll : currentSurvey.getPolls()) {
-                        Statement pollResultSt = dbConn.createStatement();
-                        ResultSet pollResultRs = pollResultSt
-                                .executeQuery("select choice_id from results where poll_id = "
-                                        + poll.getId()
-                                        + " and\"date = "
-                                        + currentSeanceDate.toString() + "\"");
-
-                        if (pollResultRs.next()
-                                && Integer.toString(
-                                        pollResultRs.getInt("choice_id"))
-                                        .equals(poll.getCorrectChoice()))
-                            successPolls++;
-
-                        pollResultSt.close();
-                    }
-
-                    if (((double) successPolls)
-                            / currentSurvey.getPolls().size() > Integer
-                            .parseInt(currentSurvey.getMinScore()))
-                        successSurveys++;
-                    else
-                        failSurveys++;
-                }
-            }
-
-            System.out.println(successSurveys + " " + failSurveys);
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            successSurveys = failSurveys = -1;
-        }
-        finally {
-            try {
-                dbConn.close();
-            }
-            catch (Exception e2) {
-            }
-        }
-
+        // Due to bugs in DBManager and in commented out code below this chart
+        // is disabled.
+        // TODO: Fix these bugs.
         return null;
+
+        // int successSurveys = 0;
+        // int failSurveys = 0;
+        //
+        // Connection dbConn = null;
+        // try {
+        // dbConn = db.getConnection();
+        //
+        // Statement surveysSt = dbConn.createStatement();
+        // ResultSet surveysRs = surveysSt
+        // .executeQuery("select id from pollsession");
+        //
+        // while (surveysRs.next()) {
+        // int surveyId = surveysRs.getInt("id");
+        //
+        // DBManager.threadLocalConnection.set(dbConn);
+        // Pollsession currentSurvey = db.getPollsessionById(Integer
+        // .toString(surveyId));
+        // DBManager.threadLocalConnection.set(null);
+        //
+        // Statement surveySeancesSt = dbConn.createStatement();
+        // ResultSet surveySeancesRs = surveySeancesSt
+        // .executeQuery(
+        // "select distinct date from results where pollsession_id = "
+        // + surveyId);
+        //
+        // while (surveySeancesRs.next()) {
+        // Timestamp currentSeanceDate = surveySeancesRs
+        // .getTimestamp(1);
+        //
+        // System.out.println(currentSeanceDate.toString());
+        //
+        // int successPolls = 0;
+        //
+        // for (Poll poll : currentSurvey.getPolls()) {
+        // Statement pollResultSt = dbConn.createStatement();
+        // ResultSet pollResultRs = pollResultSt
+        // .executeQuery("select choice_id from results where poll_id = "
+        // + poll.getId()
+        // + " and\"date = "
+        // + currentSeanceDate.toString() + "\"");
+        //
+        // if (pollResultRs.next()
+        // && Integer.toString(
+        // pollResultRs.getInt("choice_id"))
+        // .equals(poll.getCorrectChoice()))
+        // successPolls++;
+        //
+        // pollResultSt.close();
+        // }
+        //
+        // if (((double) successPolls)
+        // / currentSurvey.getPolls().size() > Integer
+        // .parseInt(currentSurvey.getMinScore()))
+        // successSurveys++;
+        // else
+        // failSurveys++;
+        // }
+        // }
+        //
+        // System.out.println(successSurveys + " " + failSurveys);
+        // }
+        // catch (SQLException e) {
+        // e.printStackTrace();
+        // successSurveys = failSurveys = -1;
+        // }
+        // finally {
+        // try {
+        // dbConn.close();
+        // }
+        // catch (Exception e2) {
+        // }
+        // }
+        //
+        // return null;
     }
 
     /**
@@ -277,4 +287,73 @@ public class StatisticsRenderer {
 
         return stats;
     }
+
+    /**
+     * @see StatisticsType#POLLS_WITH_CUSTOM_CHOICE
+     */
+    protected JFreeChart renderPollsWithCustomChoice() {
+        int pollsWithCustomChoices = 0;
+        int pollsWithoutCustomChoices = 0;
+
+        Connection conn = null;
+        try {
+            conn = db.getConnection();
+            conn.setAutoCommit(false);
+
+            Statement pollsSt = null;
+            ResultSet pollsRs = null;
+            try {
+                pollsSt = conn.createStatement();
+                pollsRs = pollsSt
+                        .executeQuery("select customenabled from polls");
+
+                while (pollsRs.next()) {
+                    if (pollsRs.getBoolean(1))
+                        pollsWithCustomChoices++;
+                    else
+                        pollsWithoutCustomChoices++;
+                }
+            }
+            finally {
+                pollsRs.close();
+                pollsSt.close();
+            }
+
+            conn.commit();
+        }
+        catch (Exception e) {
+            try {
+                pollsWithCustomChoices = pollsWithoutCustomChoices = -1;
+                conn.rollback();
+            }
+            catch (Exception e2) {
+            }
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (Exception e) {
+            }
+        }
+
+        if (pollsWithCustomChoices != -1) {
+            final String collumnName = "Comparing polls with and without custom choice";
+            DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+            dataSet.addValue((double) pollsWithCustomChoices,
+                    "Polls with custom choice", collumnName);
+            dataSet.addValue((double) pollsWithoutCustomChoices,
+                    "Polls without custom choice", collumnName);
+
+            JFreeChart chart = ChartFactory.createBarChart(collumnName, "",
+                    "Quantity", dataSet, PlotOrientation.HORIZONTAL, true,
+                    false, false);
+
+            return chart;
+        }
+        else {
+            return null;
+        }
+    }
+
 }

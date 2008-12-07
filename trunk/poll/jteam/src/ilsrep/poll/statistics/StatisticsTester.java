@@ -25,7 +25,7 @@ public class StatisticsTester {
                 640, 480));
 
         JFreeChart chart = renderer
-                .renderStatisticsChart(StatisticsType.POLLS_TOTAL_SUCCESS_FAIL_STATS);
+                .renderStatisticsChart(StatisticsType.POLLS_WITH_CUSTOM_CHOICE);
 
         ChartFrame frm = new ChartFrame("test", chart);
         frm.setVisible(true);
