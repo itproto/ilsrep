@@ -52,18 +52,47 @@ public partial class Statistics : System.Web.UI.Page
 
         if (Request["id"] != null)
         {
-            LiteralControl contentLiteralControl = new LiteralControl();
-            contentLiteralControl.Text = "<table border='1'>";
-            contentLiteralControl.Text += "<tr><td colspan='3'>" + curSurveyName + "</td></tr>";
-            contentLiteralControl.Text += "<tr><td>Users</td><td>Score</td><td>Count of attempts</td></tr>";
-            List<String> users = new List<String>();
-            foreach (String user in users)
+            try
+            {
+                int surveyID = Convert.ToInt32(Request["id"]);
+
+            
+                LiteralControl contentLiteralControl = new LiteralControl();
+                contentLiteralControl.Text = "<table cellpadding='0' cellspacing='0' class='statistics_table'>";
+
+                if (PollDAL.HasResults(surveyID))
+                {
+                    contentLiteralControl.Text += "<tr class='statistics_title'><td colspan='4'>" + curSurveyName + "</td></tr>";
+                    contentLiteralControl.Text += "<tr class='statistics_title'><td>#</td><td>Users</td><td>Scores</td><td>Count of attempts</td></tr>";
+                    List<String> users = new List<String>();
+                    users = PollDAL.GetUsers();
+
+                    int userIndex = 0;
+                    foreach (String user in users)
+                    {
+                        userIndex++;
+                        List<String> datesOfAttempts = new List<string>();
+                        datesOfAttempts = PollDAL.GetDatesOfAttempts(user, surveyID);
+                        if (datesOfAttempts.Count != 0)
+                        {
+                            contentLiteralControl.Text += "<tr><td>" + userIndex + "</td><td>" + user + "</td>";
+                            contentLiteralControl.Text += "<td>HERE will be count of scores:)</td>";
+                            contentLiteralControl.Text += "<td>" + datesOfAttempts.Count() + "</td></tr>";
+                        }
+                    }
+                }
+                else
+                {
+                    contentLiteralControl.Text += "<tr><td colspan='4'><h3>Sorry, this survey had no results</h3></td></tr>";
+                }
+
+                contentLiteralControl.Text += "</table>";
+                contentPanel.Controls.Add(contentLiteralControl);
+            }
+            catch (Exception exception)
             {
 
             }
-
-            contentLiteralControl.Text += "</table>";
-            contentPanel.Controls.Add(contentLiteralControl);
         }
     }
 }
