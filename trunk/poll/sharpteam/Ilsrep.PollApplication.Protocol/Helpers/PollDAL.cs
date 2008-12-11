@@ -558,5 +558,30 @@ namespace Ilsrep.PollApplication.DAL
             }
             return user;
         }
+
+        static public List<String> GetDatesOfAttempts(String userName, int surveyID)
+        {
+            List<String> datesOfAttempts = new List<string>();
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", userName));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":surveyID", surveyID));
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE (survey_id=:surveyID) and (user_name=:userName) GROUP BY date";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            while (sqliteReader.Read())
+            {
+                datesOfAttempts.Add(sqliteReader["date"].ToString());
+            }
+            return datesOfAttempts;
+        }
+
+        static public bool HasResults(int surveyID)
+        {
+            List<String> datesOfAttempts = new List<string>();
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":surveyID", surveyID));
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE survey_id=:surveyID GROUP BY date";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            return sqliteReader.HasRows;
+        }
     }
 }
