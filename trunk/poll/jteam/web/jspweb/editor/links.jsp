@@ -14,7 +14,6 @@ String links="";
 links="<ul ><li class='first'><a href='./index.jsp'> All Sessions </a></li>";
 links+="<li class='create'><a href=\"./index.jsp?session=new\">Create New Session</a></li>";
 Pollsessionlist sessions;
- WebJPoll_Service service=new WebJPoll_Service();
 	WebJPoll db=service.getWebJPollPort();
 try {
 sessions=db.getPollsessionlist();
@@ -28,7 +27,6 @@ return links;
 links="<ul >";
 
 Pollsessionlist sessions;
-WebJPoll_Service service=new WebJPoll_Service();
 	WebJPoll db=service.getWebJPollPort();
 	try {
 sessions=db.getPollsessionlist();

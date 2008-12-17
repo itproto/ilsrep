@@ -11,9 +11,12 @@
 <%@page import="java.text.DecimalFormat"%>
 <%@page import="webservice.endpoint.WebJPoll"%>
 <%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
+<%@page import="java.net.URL"%>
 <%!
-public Poll getPollbyid(Pollsession sess, String id){
-	Poll poll=null;
+
+public Poll getPollbyid(Pollsession sess, String id) throws Exception{
+		Poll poll=null;
 	for (Poll cur : sess.getPolls()) {
 		if (cur.getId().equals(id)) poll=cur;
 		}
@@ -32,7 +35,6 @@ public String getRes(Object ansobj) throws Exception{
 String res="<table>";
  List<AnswerItem> answers = ans.getAnswers();;
 Pollsession sess;
- WebJPoll_Service service=new WebJPoll_Service();
 	WebJPoll db=service.getWebJPollPort();
 sess=db.getPollsessionById(ans.getPollSesionId());
 if(sess.getTestMode().equals("true")){ res+="<tr><th class=\"first\" colspan=2><strong>Your selection</strong></th><th rowspan=2><strong>Result</strong></th></tr>\n";

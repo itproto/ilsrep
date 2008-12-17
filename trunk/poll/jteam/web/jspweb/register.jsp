@@ -10,6 +10,9 @@
 <%@page import="javax.servlet.ServletRequest"%>
 <%@page import="webservice.endpoint.WebJPoll"%>
 <%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
+<%@page import="javax.xml.namespace.QName"%>
+<%@page import="java.net.URL"%>
 <%@ include file="./login.jsp" %>
 <%!
 public String showRegform(){
@@ -41,7 +44,7 @@ return("<form action='./index.jsp' method='post'><div class=\"ILbox\">"+
 
 }
 public String register(String name, String password, String password2) throws Exception {
-WebJPoll_Service service=new WebJPoll_Service();
+	
 	WebJPoll db=service.getWebJPollPort();
 int numberOfPolls=0;
 	String err="";

@@ -10,6 +10,9 @@
 <%@page import="javax.servlet.ServletRequest"%>
 <%@page import="webservice.endpoint.WebJPoll"%>
 <%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
+<%@page import="javax.xml.namespace.QName"%>
+<%@page import="java.net.URL"%>
 <%@ include file="./links.jsp" %>
 <%!
 public String showForm(){
@@ -36,6 +39,7 @@ return("<form action='./index.jsp' method='post'><div class=\"ILbox\">"+
 
 }
 public String login(HttpSession hsession, String name, String password) throws Exception{
+
 	String err = null;
 if (hsession.getAttribute("username")!=null) {
 return("<h2>Welcome "+(String)hsession.getAttribute("username")+"</h2>"+links());
@@ -44,7 +48,7 @@ return(showForm());
 } else {
 //		DBManager db;
 int numberOfPolls=0;
- WebJPoll_Service service=new WebJPoll_Service();
+  	
 	WebJPoll db=service.getWebJPollPort();
 if (!db.checkUser(name)) {
 	err="<h2>No such user</h2>";

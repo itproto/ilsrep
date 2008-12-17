@@ -7,16 +7,22 @@
 <%@page import="ilsrep.poll.common.protocol.Answers"%>
 <%@page import="webservice.endpoint.WebJPoll"%>
 <%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
+<%@page import="javax.xml.namespace.QName"%>
+<%@page import="java.net.URL"%>
 <% String PLEASE_ENTER_POLL="Please choose poll";
-%>
-<%!
-public String getPoll(String sessi, String polli, HttpSession hsession, String choici  , String customi  ) throws Exception{
 
+%>
+
+<%!
+
+
+public String getPoll(String sessi, String polli, HttpSession hsession, String choici  , String customi  ) throws Exception{
 String resultingOutput="<script type=\"text/javascript\" src=\"next.js\"></script>";
 resultingOutput+="<form name=\"polls\" id=\"polls\" action=\"index.jsp\" method=\"get\">\n"+
 "<input type='hidden' name='session' value='"+sessi+"' >";
 Pollsession sess;
- WebJPoll_Service service=new WebJPoll_Service();
+  	
 	WebJPoll db=service.getWebJPollPort();
 int numberOfPolls=0;
 sess=db.getPollsessionById(sessi);

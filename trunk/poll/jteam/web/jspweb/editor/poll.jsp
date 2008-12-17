@@ -20,7 +20,6 @@
 //  static WebJPoll_Service service; 
 
 public String editPoll(String sessi, String user) throws Exception{
-	 WebJPoll_Service service=new WebJPoll_Service();
 	WebJPoll port=service.getWebJPollPort();
 String output="";
 		if (!(sessi.equals("new"))){
