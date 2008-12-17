@@ -7,13 +7,15 @@
 <%@page import="ilsrep.poll.common.protocol.Item"%>
 <%@page import="webservice.endpoint.WebJPoll"%>
 <%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
+<%@page import="javax.xml.namespace.QName"%>
+<%@page import="java.net.URL"%>
 <%! 
 public String links() throws Exception{
 String links="";
 links="<ul>";
 Pollsessionlist sessions;
-WebJPoll_Service service=new WebJPoll_Service();
-	WebJPoll db=service.getWebJPollPort();
+		WebJPoll db=service.getWebJPollPort();
 	try {
 
 sessions=db.getPollsessionlist();

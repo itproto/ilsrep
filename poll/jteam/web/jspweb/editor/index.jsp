@@ -1,3 +1,19 @@
+<%@page import="webservice.endpoint.WebJPoll_Service"%>
+<%@page import="javax.xml.ws.WebServiceRef"%>
+<%@page import="javax.xml.namespace.QName"%>
+<%@page import="java.net.URL"%>
+<%!
+WebJPoll_Service service;
+public void setService(String name,String port) { try{
+		QName serviceName = new QName("http://endpoint.webservice/","WebJPoll");
+URL url = new URL("http://"+name+":"+port+"/WebJPoll/WebJPoll?wsdl"); 
+service=new WebJPoll_Service(url,serviceName);
+} catch(Exception e){};
+}
+%>
+<%
+setService(request.getServerName(),Integer.toString(request.getServerPort()));
+%>
 <%@ include file="./poll.jsp" %>
 <%@ include file="./save.jsp" %>
 <%@page import="javax.servlet.ServletRequest"%>

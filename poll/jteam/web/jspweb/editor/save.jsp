@@ -17,7 +17,6 @@
 public String saveToDB(String session, String xml) throws Exception{
 	
 	Pollsession sess;
-WebJPoll_Service service=new WebJPoll_Service();
 	WebJPoll db=service.getWebJPollPort();
 JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
         Unmarshaller mr = pollContext.createUnmarshaller();
