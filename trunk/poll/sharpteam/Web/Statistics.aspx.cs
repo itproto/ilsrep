@@ -68,16 +68,16 @@ public partial class Statistics : System.Web.UI.Page
                     List<String> users = new List<String>();
                     users = PollDAL.GetUsers();
 
-                    int userIndex = 0;
+                    List<StatisticsItem> statisticsItems = new List<StatisticsItem>();
                     foreach (String user in users)
                     {
-                        userIndex++;
+                        StatisticsItem curStatisticsItem = new StatisticsItem();
+                        curStatisticsItem.userName = user;
                         List<DateTime> datesOfAttempts = new List<DateTime>();
                         datesOfAttempts = PollDAL.GetDatesOfAttempts(user, surveyID);
+                        curStatisticsItem.attemptsCount = datesOfAttempts.Count();
                         if (datesOfAttempts.Count != 0)
                         {
-                            contentLiteralControl.Text += "<tr><td>" + userIndex + "</td><td>" + user + "</td>";
-
                             // Calculate count of scores
                             List<Double> scoresOfAttempts = new List<Double>();
                             foreach (DateTime curDate in datesOfAttempts)
@@ -101,11 +101,23 @@ public partial class Statistics : System.Web.UI.Page
                                 scores += curScores;
                             }
                             scores /= Convert.ToDouble(datesOfAttempts.Count) / 100;
-
-                            contentLiteralControl.Text += String.Format("<td>{0:G4} %</td>", scores);
-                            contentLiteralControl.Text += "<td>" + datesOfAttempts.Count() + "</td></tr>";
+                            curStatisticsItem.scores = scores;
+                            statisticsItems.Add(curStatisticsItem);
                         }
                     }
+
+                    // Sort by scores
+                    statisticsItems.Sort();
+
+                    int userIndex = 0;
+                    foreach (StatisticsItem curItem in statisticsItems)
+                    {
+                        userIndex++;
+                        contentLiteralControl.Text += "<tr><td>" + userIndex + "</td><td>" + curItem.userName + "</td>";
+                        contentLiteralControl.Text += String.Format("<td>{0:G4} %</td>", curItem.scores);
+                        contentLiteralControl.Text += "<td>" + curItem.attemptsCount + "</td></tr>";
+                    }
+
                 }
                 else
                 {

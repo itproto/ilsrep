@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Communication\Item.cs" />
     <Compile Include="Communication\PollPacket.cs" />
+    <Compile Include="Communication\StatisticsItem.cs" />
     <Compile Include="Communication\SurveysList.cs" />
     <Compile Include="Communication\Request.cs" />
     <Compile Include="Communication\ResultsList.cs" />
