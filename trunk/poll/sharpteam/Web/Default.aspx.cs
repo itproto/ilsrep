@@ -60,7 +60,9 @@ public partial class _Default : System.Web.UI.Page
             case "showresults":
                 survey = (Survey)Session["survey"];
                 resultsList = (ResultsList)Session["resultsList"];
-                // Save results to DB
+                resultsList.userName = User.Identity.Name;
+                resultsList.surveyId = survey.Id;
+                PollDAL.SaveSurveyResult(resultsList);
                 break;
         }
 

@@ -55,7 +55,8 @@ public partial class Statistics : System.Web.UI.Page
             try
             {
                 int surveyID = Convert.ToInt32(Request["id"]);
-
+                Survey survey = new Survey();
+                survey = PollDAL.GetSurvey(surveyID);
             
                 LiteralControl contentLiteralControl = new LiteralControl();
                 contentLiteralControl.Text = "<table cellpadding='0' cellspacing='0' class='statistics_table'>";
@@ -71,19 +72,44 @@ public partial class Statistics : System.Web.UI.Page
                     foreach (String user in users)
                     {
                         userIndex++;
-                        List<String> datesOfAttempts = new List<string>();
+                        List<DateTime> datesOfAttempts = new List<DateTime>();
                         datesOfAttempts = PollDAL.GetDatesOfAttempts(user, surveyID);
                         if (datesOfAttempts.Count != 0)
                         {
                             contentLiteralControl.Text += "<tr><td>" + userIndex + "</td><td>" + user + "</td>";
-                            contentLiteralControl.Text += "<td>HERE will be count of scores:)</td>";
+
+                            // Calculate count of scores
+                            List<Double> scoresOfAttempts = new List<Double>();
+                            foreach (DateTime curDate in datesOfAttempts)
+                            {
+                                ResultsList resultsList = new ResultsList();
+                                resultsList = PollDAL.GetSurveyResults(surveyID, user, curDate);
+
+                                int countOfCorrectAnswers = 0;
+                                foreach (PollResult curResult in resultsList.results)
+                                {
+                                    if (survey.Polls[curResult.questionId].Choices[curResult.answerId].Id == survey.Polls[curResult.questionId].CorrectChoiceID)
+                                        countOfCorrectAnswers++;
+                                }
+                                Double curScores = Convert.ToDouble(countOfCorrectAnswers) / Convert.ToDouble(resultsList.results.Count);
+                                scoresOfAttempts.Add(curScores);
+                            }
+
+                            Double scores = 0;
+                            foreach (Double curScores in scoresOfAttempts)
+                            {
+                                scores += curScores;
+                            }
+                            scores /= Convert.ToDouble(datesOfAttempts.Count) / 100;
+
+                            contentLiteralControl.Text += String.Format("<td>{0:G4} %</td>", scores);
                             contentLiteralControl.Text += "<td>" + datesOfAttempts.Count() + "</td></tr>";
                         }
                     }
                 }
                 else
                 {
-                    contentLiteralControl.Text += "<tr><td colspan='4'><h3>Sorry, this survey had no results</h3></td></tr>";
+                    contentLiteralControl.Text += "<tr><td colspan='4'><h3>Sorry, this survey haven't results</h3></td></tr>";
                 }
 
                 contentLiteralControl.Text += "</table>";
