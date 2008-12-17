@@ -61,6 +61,10 @@ public partial class Statistics : System.Web.UI.Page
                 LiteralControl contentLiteralControl = new LiteralControl();
                 contentLiteralControl.Text = "<table cellpadding='0' cellspacing='0' class='statistics_table'>";
 
+                // Declare variables that will be used to form request for chart
+                String scoresDistribution = String.Empty;
+                String usersDistribution = String.Empty;
+
                 if (PollDAL.HasResults(surveyID))
                 {
                     contentLiteralControl.Text += "<tr class='statistics_title'><td colspan='4'>" + curSurveyName + "</td></tr>";
@@ -113,6 +117,12 @@ public partial class Statistics : System.Web.UI.Page
                     foreach (StatisticsItem curItem in statisticsItems)
                     {
                         userIndex++;
+
+                        bool addSeparator = (userIndex == statisticsItems.Count()) ? false : true;
+                        // Form chart request
+                        usersDistribution += curItem.userName + ((addSeparator) ? "|" : String.Empty);
+                        scoresDistribution += Math.Round(curItem.scores) + ((addSeparator) ? "," : String.Empty);
+
                         contentLiteralControl.Text += "<tr><td>" + userIndex + "</td><td>" + curItem.userName + "</td>";
                         contentLiteralControl.Text += String.Format("<td>{0:G4} %</td>", curItem.scores);
                         contentLiteralControl.Text += "<td>" + curItem.attemptsCount + "</td></tr>";
@@ -126,6 +136,11 @@ public partial class Statistics : System.Web.UI.Page
 
                 contentLiteralControl.Text += "</table>";
                 contentPanel.Controls.Add(contentLiteralControl);
+                
+
+                LiteralControl chartLiteralControl = new LiteralControl();
+                chartLiteralControl.Text = "<div><img src='http://chart.apis.google.com/chart?chs=500x100&amp;chd=t:" + scoresDistribution + "&amp;cht=p3&amp;chl=" + usersDistribution + "' alt='Sample chart' /></div>";
+                contentPanel.Controls.Add(chartLiteralControl);
             }
             catch (Exception exception)
             {

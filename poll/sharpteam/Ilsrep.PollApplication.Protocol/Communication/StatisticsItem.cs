@@ -13,9 +13,9 @@ namespace Ilsrep.PollApplication.Communication
 
         #region IComparable<StatisticsItem> Members
 
-        Double IComparable<StatisticsItem>.CompareTo(StatisticsItem otherItem)
+        int IComparable<StatisticsItem>.CompareTo(StatisticsItem other)
         {
-            return otherItem.scores.CompareTo(this.scores);
+            return other.scores.CompareTo(this.scores);
         }
 
         #endregion
