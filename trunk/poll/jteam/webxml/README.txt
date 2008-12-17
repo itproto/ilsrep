@@ -1,18 +1,6 @@
 Enhanced version. works without frameworks etc.
 Install:
-1) download jax-ws tools: https://jax-ws.dev.java.net/2.1.5/
-2) install them via java -jar JAXWS2.1.5-20081030.jar
- to any folder
-3) copy .jar file from lib directory from installed folder to lib directory of your tomcat installation.
-4) restart tomcat
-5) run 
-
-ant 
-ant webcompile
-ant web
-
-in the jteam source directory, follow instructions when prompted
-6)goto http://localhost:940/jspweb/
+1) deploy WebJPoll.war to SJSAS (get it here http://www.sun.com/software/products/appsrvr/get_it.jsp)
 
 
 
