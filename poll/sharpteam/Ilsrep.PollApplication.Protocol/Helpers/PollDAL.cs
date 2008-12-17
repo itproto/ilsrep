@@ -409,7 +409,7 @@ namespace Ilsrep.PollApplication.DAL
             sqliteCommand.CommandText = "INSERT INTO " + RESULTS_TABLE + "(user_name, survey_id, question_id, answer_id, custom_choice, date) VALUES(:username, :survey, :question, :answer, :custom, :date)";
             sqliteCommand.Parameters.Add(new SQLiteParameter(":username", resultsList.userName));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":survey", resultsList.surveyId.ToString()));
-            sqliteCommand.Parameters.Add(new SQLiteParameter( ":date", DateTime.Now.ToString() ));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":date", DateTime.Now));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":question"));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":answer"));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":custom"));
@@ -449,8 +449,38 @@ namespace Ilsrep.PollApplication.DAL
                 PollResult curResult = new PollResult();
                 curResult.answerId = Convert.ToInt32(sqliteReader["answer_id"].ToString());
                 curResult.customChoice = sqliteReader["custom_choice"].ToString();
-                // What's wrong? Why "Wrong DateTime" Exception?
-                //curResult.date = sqliteReader["date"].ToString();
+                curResult.date = sqliteReader["date"].ToString();
+                curResult.questionId = Convert.ToInt32(sqliteReader["question_id"].ToString());
+                curResult.userName = sqliteReader["user_name"].ToString();
+                resultsList.results.Add(curResult);
+            }
+
+            return resultsList;
+        }
+
+        static public ResultsList GetSurveyResults(int surveyId, String user, DateTime date)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            ResultsList resultsList = new ResultsList();
+            resultsList.surveyId = surveyId;
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":survey_id", surveyId));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":user_name", user));
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":date", date));
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE ((survey_id=:survey_id) AND (user_name=:user_name) AND (date=:date))";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+
+            // Save each result to resultsList
+            while (sqliteReader.Read())
+            {
+                PollResult curResult = new PollResult();
+                curResult.answerId = Convert.ToInt32(sqliteReader["answer_id"].ToString());
+                curResult.customChoice = sqliteReader["custom_choice"].ToString();
+                curResult.date = sqliteReader["date"].ToString();
                 curResult.questionId = Convert.ToInt32(sqliteReader["question_id"].ToString());
                 curResult.userName = sqliteReader["user_name"].ToString();
                 resultsList.results.Add(curResult);
@@ -559,9 +589,9 @@ namespace Ilsrep.PollApplication.DAL
             return user;
         }
 
-        static public List<String> GetDatesOfAttempts(String userName, int surveyID)
+        static public List<DateTime> GetDatesOfAttempts(String userName, int surveyID)
         {
-            List<String> datesOfAttempts = new List<string>();
+            List<DateTime> datesOfAttempts = new List<DateTime>();
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", userName));
             sqliteCommand.Parameters.Add(new SQLiteParameter(":surveyID", surveyID));
@@ -569,7 +599,7 @@ namespace Ilsrep.PollApplication.DAL
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
             while (sqliteReader.Read())
             {
-                datesOfAttempts.Add(sqliteReader["date"].ToString());
+                datesOfAttempts.Add((DateTime)sqliteReader["date"]);
             }
             return datesOfAttempts;
         }
