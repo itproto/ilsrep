@@ -68,6 +68,7 @@ classpathref="tomcat.classpath" />
 	<target name="webcompile" depends="compile" >
 	<javac srcdir="${web.dir}/src/" destdir="${web.dir}/build/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
 	</target>
+	
 	<target name="web" depends="webcompile" >
 	<mkdir dir="${web.dir}\generated" />
 	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
@@ -83,10 +84,7 @@ classpathref="tomcat.classpath" />
   <copy todir="${web.dir}\work\WEB-INF\classes">
   <fileset dir="${web.dir}\build\" />
   </copy>
-  <copy todir="${web.dir}\work\WEB-INF\">
-  <fileset dir="${web.dir}\web\WEB-INF\" />
-  </copy>
-<mkdir dir="${web.dir}\work\WEB-INF\wsdl" />
+ <mkdir dir="${web.dir}\work\WEB-INF\wsdl" />
   <copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll.wsdl"/>
  <copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll_schema1.xsd"/>
   <delete dir="${web.dir}\generated"/>
@@ -99,61 +97,13 @@ classpathref="tomcat.classpath" />
  <jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\"/>
 
   <delete dir="${web.dir}\work"/>
-       <input
-    message="Please enter !!RUNNING!! tomcat connect line (default http://localhost:940/):"
-    addproperty="connect.root"
-    defaultvalue="http://localhost:940/"
-  />
-    <input
-    message="Please enter !!RUNNING!! tomcat manager connect line (default http://localhost:940/manager/html):"
-    addproperty="connect.line"
-    defaultvalue="http://localhost:940/manager/html"
-  />
-  <input
-    message="Please enter !!RUNNING!! tomcat admin username (default admin):"
-    addproperty="connect.admin"
-    defaultvalue="admin"
-  />
-    <input
-    message="Please enter !!RUNNING!! tomcat admin password (default [empty]):"
-    addproperty="connect.pass"
-    defaultvalue=""
-  />
-  <echo message="${connect.root}/${webservice.context}/WebJPoll" />
-<trycatch>
- <try>
-<undeploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/${webservice.context}" />
-</try>
-<catch />
-</trycatch>
-  <sleep seconds="6"/>
-<deploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/${webservice.context}" war="file:${web.dir}\WebJPoll.war"/>
-   <mkdir dir="${web.dir}\generated"/>
-   <wsimport
-   destdir="${web.dir}\generated"
-   wsdl="${connect.root}${webservice.context}/WebJPoll?wsdl"
-   binding="${web.dir}/bindings.jxb" xnocompile="true">
-   
-</wsimport>
- <mkdir dir="${web.dir}\compiled"/>
- <javac srcdir="${web.dir}/generated/" destdir="${web.dir}/compiled/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
-  <sync todir="${basedir}/web/jspweb/WEB-INF/classes">
-    <fileset dir="${web.dir}\compiled" />
-  </sync>
-  <delete dir="${web.dir}\generated"/>
-   <delete dir="${web.dir}\compiled"/>
-     <delete includeemptydirs="true">
-    <fileset dir="${web.dir}/build" includes="**/*"/>
-  </delete>
+    
+  
+  
+
+
    <jar destfile="${web.dir}\jspweb.war" basedir="${basedir}\web\jspweb"/>
-<trycatch>
-<try>
-<undeploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/jspweb" />
-</try>
-<catch />
-</trycatch>
-  <sleep seconds="6"/>
-<deploy url="${connect.line}" username="${connect.admin}" password="${connect.pass}" path="/jspweb" war="file:${web.dir}\jspweb.war"/>
+
    
 
 	</target>
