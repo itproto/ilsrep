@@ -43,6 +43,11 @@ public class StatisticsServlet extends HttpServlet {
     public static final String PARAMETER_TYPE_NAME = "type";
 
     /**
+     * Name of "count" parameter.
+     */
+    public static final String PARAMETER_TYPE_COUNT = "count";
+
+    /**
      * Statistics chart renderer.
      */
     protected StatisticsRenderer renderer = null;
@@ -119,8 +124,25 @@ public class StatisticsServlet extends HttpServlet {
                                     .renderStatisticsChart(StatisticsType.POLLS_WITH_CUSTOM_CHOICE);
                         }
                         else
-                            ChartUtilities.writeBufferedImageAsPNG(out,
-                                    renderErrorImage("No such type!"));
+                            if (type.equals(StatisticsType.TOP_USERS_POLLS
+                                    .toString())) {
+                                String count = request
+                                        .getParameter(PARAMETER_TYPE_COUNT);
+                                try {
+                                    chart = renderer
+                                            .renderTopUsersPolls(Integer
+                                                    .parseInt(count));
+                                }
+                                catch (NumberFormatException e) {
+                                    final int DEFAULT_COUNT = 5;
+
+                                    chart = renderer
+                                            .renderTopUsersPolls(DEFAULT_COUNT);
+                                }
+                            }
+                            else
+                                ChartUtilities.writeBufferedImageAsPNG(out,
+                                        renderErrorImage("No such type!"));
 
                 if (chart != null) {
                     response.setContentType("image/png");

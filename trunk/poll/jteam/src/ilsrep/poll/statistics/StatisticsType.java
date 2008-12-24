@@ -21,7 +21,13 @@ public enum StatisticsType {
     /**
      * Bar chart that shows percent of polls with custom choices and w/o ones.
      */
-    POLLS_WITH_CUSTOM_CHOICE;
+    POLLS_WITH_CUSTOM_CHOICE,
+
+    /**
+     * Top n users by polls success.<br>
+     * Default <code>5</code>.
+     */
+    TOP_USERS_POLLS;
 
     /**
      * @see java.lang.Enum#toString()
@@ -41,6 +47,10 @@ public enum StatisticsType {
 
             case POLLS_WITH_CUSTOM_CHOICE:
                 typeString = "2";
+                break;
+
+            case TOP_USERS_POLLS:
+                typeString = "3";
                 break;
         }
 

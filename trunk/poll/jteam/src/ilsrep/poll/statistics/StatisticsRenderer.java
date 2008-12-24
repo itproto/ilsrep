@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -354,6 +356,154 @@ public class StatisticsRenderer {
         else {
             return null;
         }
+    }
+
+    /**
+     * @param n
+     *            How much users show in top n.
+     * 
+     * @see StatisticsType#TOP_USERS_POLLS
+     */
+    public JFreeChart renderTopUsersPolls(int n) {
+        Connection dbConn = null;
+        List<UserNameAndSuccessAndFailCount> usersStats = new ArrayList<UserNameAndSuccessAndFailCount>();
+
+        try {
+            dbConn = db.getConnection();
+
+            Statement surveysSt = dbConn.createStatement();
+            ResultSet surveysRs = surveysSt
+                    .executeQuery("select id from pollsession");
+
+            while (surveysRs.next()) {
+                int surveyId = surveysRs.getInt("id");
+
+                DBManager.threadLocalConnection.set(dbConn);
+                Pollsession currentSurvey = db.getPollsessionById(Integer
+                        .toString(surveyId));
+                DBManager.threadLocalConnection.set(null);
+
+                Statement pollsSt = dbConn.createStatement();
+                ResultSet pollsRs = pollsSt
+                        .executeQuery("select poll_id, choice_id, user_name from results where pollsession_id = "
+                                + surveyId);
+
+                while (pollsRs.next()) {
+                    UserNameAndSuccessAndFailCount statsForCurrentUser = findInListOrAdd(
+                            usersStats, pollsRs.getString("user_name"));
+
+                    if (currentSurvey.getPollById(
+                            Integer.toString(pollsRs.getInt("poll_id")))
+                            .getCorrectChoice().equals(
+                                    Integer.toString(pollsRs
+                                            .getInt("choice_id"))))
+                        statsForCurrentUser.successCount++;
+                    else
+                        statsForCurrentUser.failCount++;
+                }
+
+                pollsSt.close();
+            }
+            surveysSt.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            usersStats = null;
+        }
+        finally {
+            try {
+                dbConn.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+
+        JFreeChart chart = null;
+
+        if (usersStats != null) {
+            final String collumnName = "Users";
+            DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+
+            for (UserNameAndSuccessAndFailCount userStats : usersStats) {
+                dataSet.addValue((double) userStats.successCount, userStats
+                        .getUserName(), collumnName);
+            }
+
+            // TODO: This adds users with zero passed polls, but they aren't
+            // shown on chart.
+            try {
+                dbConn = db.getConnection();
+
+                Statement usersSt = dbConn.createStatement();
+                ResultSet usersRs = usersSt
+                        .executeQuery("select userName from users");
+
+                while (usersRs.next()) {
+                    String userName = usersRs.getString(1);
+
+                    findInListOrAdd(usersStats, userName);
+                }
+
+                usersRs.close();
+                usersSt.close();
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                usersStats = null;
+            }
+            finally {
+                try {
+                    dbConn.close();
+                }
+                catch (Exception e2) {
+                }
+            }
+
+            chart = ChartFactory.createBarChart(collumnName, "", "Quantity",
+                    dataSet, PlotOrientation.HORIZONTAL, true, false, false);
+
+            return chart;
+        }
+
+        return chart;
+    }
+
+    /**
+     * Used to store user and success/fail count pairs.
+     */
+    public class UserNameAndSuccessAndFailCount {
+
+        protected String userName = null;
+
+        public int successCount = 0;
+
+        public int failCount = 0;
+
+        public UserNameAndSuccessAndFailCount(String userName) {
+            if (userName == null)
+                throw new IllegalArgumentException(
+                        "User ID should be greater then zero.");
+
+            this.userName = userName;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+    }
+
+    public UserNameAndSuccessAndFailCount findInListOrAdd(
+            List<UserNameAndSuccessAndFailCount> list, String userName) {
+        for (UserNameAndSuccessAndFailCount user : list)
+            if (user.getUserName().equals(userName))
+                return user;
+
+        UserNameAndSuccessAndFailCount newUser = new UserNameAndSuccessAndFailCount(
+                userName);
+        list.add(newUser);
+
+        return newUser;
     }
 
 }
