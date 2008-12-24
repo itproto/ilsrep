@@ -26,11 +26,12 @@
 	action="<%=request.getRequestURI()%>">
 <select name="type">
 	<%
-	    String[] types = { TYPE_COMMON, "0", "1", "2" };
+	    String[] types = { TYPE_COMMON, "0", "1", "2", "3" };
 	    String[] values = { "Common statistics",
 	            "Poll surveys total success/fail statistics",
 	            "Polls total success/fail statistics",
-	            "Comparing polls with and without custom choices" };
+	            "Comparing polls with and without custom choices",
+	            "Top users by succeed polls" };
 	    for (int i = 0; i < types.length; i++) {
 	%>
 	<option value="<%=types[i]%>"
