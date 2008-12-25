@@ -27,7 +27,7 @@ public partial class _Default : System.Web.UI.Page
 
     protected void Page_Load( object sender, EventArgs e )
     {
-        PollDAL.connectionString = "Data Source=\"" + Server.MapPath( ConfigurationSettings.AppSettings["dataSource"].ToString() ) + "\"";
+        PollDAL.connectionString = "Data Source=\"" + Server.MapPath(ConfigurationSettings.AppSettings["dataSource"].ToString()) + "\"";
         surveysList = PollDAL.GetSurveys();
 
         switch (Request["action"])
@@ -66,13 +66,13 @@ public partial class _Default : System.Web.UI.Page
                 break;
         }
 
-        // Left menu generating
-        leftMenuPanel.Controls.Add(new LiteralControl("<ul>"));
+       // Left menu generating
+        /*leftMenuPanel.Controls.Add(new LiteralControl("<ul>"));
         int index;
         if ((Request["action"] == "showsurvey") || (Request["action"] == "submitpoll"))
         {
-            LiteralControl literalControl = new LiteralControl();
-            literalControl.Text = "<li><h3>" + survey.Name + ":</h3></li>";
+            //LiteralControl literalControl = new LiteralControl();
+            //literalControl.Text = "<li><h3>" + survey.Name + ":</h3></li>";
             index = 1;
             foreach (Ilsrep.PollApplication.Model.Poll curPoll in survey.Polls)
             {
@@ -103,9 +103,13 @@ public partial class _Default : System.Web.UI.Page
             }
         }
         leftMenuPanel.Controls.Add(new LiteralControl("</ul>"));
+         * */
+
+        pollMenu.DataSource = surveysList;
+        pollMenu.DataBind();
 
         // Content generating
-
+        /*
         if ((Request["action"] == "showsurvey") || (Request["action"] == "submitpoll"))
         {
             LiteralControl literalControl = new LiteralControl();
@@ -160,7 +164,7 @@ public partial class _Default : System.Web.UI.Page
             }
             literalControl.Text += "</div>";
             contentPanel.Controls.Add(literalControl);
-        }
+        }*/
     }
 
     public void LogOut()
