@@ -80,12 +80,18 @@ namespace Ilsrep.PollApplication.PollClientGUI
                     foreach (Choice curChoice in curPoll.Choices)
                     {
                         if (curChoice.Id == curPoll.CorrectChoiceID)
+                        {
                             break;
+                        }
+                        else if (choiceIndex == curPoll.Choices.Count - 1)
+                        {
+                            choiceIndex = -2;
+                        }
                         choiceIndex++;
                     }
                     curPoll.CorrectChoiceID = choiceIndex;
                 }
-
+                
                 surveysList.Add(survey);
             }
             RefreshEditorList();
@@ -217,6 +223,8 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <param name="e"></param>
         private void clientPage_Enter(object sender, EventArgs e)
         {
+            history.Clear();
+            GetSurveys();
             currentPoll = 0;
             surveysListBox1.Items.Clear();
             pollGroupBox.Controls.Clear();
@@ -504,12 +512,32 @@ namespace Ilsrep.PollApplication.PollClientGUI
                 }
             }
 
-            // ----- for synchronize with BD -----
+            // Transform correct choice Indexes to IDs
+            List<int> IDList = new List<int>();
             foreach (Survey curSurvey in surveysList)
             {
                 foreach (Poll curPoll in curSurvey.Polls)
                 {
-                    curPoll.CorrectChoiceID += 1;
+                    try
+                    {
+                        IDList.Add(curPoll.Choices[curPoll.CorrectChoiceID].Id);
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBox.Show(curSurvey.Name + "." + curPoll.Name + ": CorrectChoice Index is out of range", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+
+            // Save all correct choice changes
+            int index = 0;
+            foreach (Survey curSurvey in surveysList)
+            {
+                foreach (Poll curPoll in curSurvey.Polls)
+                {
+                    curPoll.CorrectChoiceID = IDList[index];
+                    index++;
                 }
             }
 
@@ -644,12 +672,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             graphics.DrawLine(pen, 0, 24, 618, 24);
             pen.Color = Color.White;
             graphics.DrawLine(pen, 0, 25, 618, 25);
-        }
-
-        private void editorPage_Leave(object sender, EventArgs e)
-        {
-            GetSurveys();
-            history.Clear();
         }
     }
 }
