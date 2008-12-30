@@ -134,7 +134,6 @@
             this.editorPage.TabIndex = 1;
             this.editorPage.Text = "Poll Editor";
             this.editorPage.UseVisualStyleBackColor = true;
-            this.editorPage.Leave += new System.EventHandler(this.editorPage_Leave);
             this.editorPage.Enter += new System.EventHandler(this.editorPage_Enter);
             // 
             // cancelButton
