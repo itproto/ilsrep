@@ -23,6 +23,7 @@
       <pathelement path="${classpath}"/>
       <fileset dir="lib">
         <include name="**/*.jar"/>
+        
       </fileset>
      </classpath>
      </taskdef> 
@@ -96,6 +97,24 @@ classpathref="tomcat.classpath" />
 <copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\WEB-INF\"/>
  <jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\"/>
 
+  <mkdir dir="${web.dir}\generated\" />
+   <mkdir dir="${web.dir}\compiled\" />
+  <wsimport
+   destdir="${web.dir}\generated\"
+   wsdl="${web.dir}\work\WEB-INF\wsdl\WebJPoll.wsdl"
+   binding="${web.dir}\bindings.jxb"
+   xnocompile="true"
+   >
+</wsimport>
+	 <javac srcdir="${web.dir}/generated/" destdir="${web.dir}/compiled/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
+  <sync todir="${basedir}/web/jspweb/WEB-INF/classes">
+    <fileset dir="${web.dir}\compiled" />
+  </sync>
+  <delete dir="${web.dir}\generated"/>
+   <delete dir="${web.dir}\compiled"/>
+
+
+  
   <delete dir="${web.dir}\work"/>
     
   
