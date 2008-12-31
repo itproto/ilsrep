@@ -2,7 +2,7 @@
   xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <jxb:bindings schemaLocation = "http://localhost:940/WebJPoll/WebJPoll?xsd=1" node="/xs:schema" >
+    <jxb:bindings schemaLocation = ".\work\WEB-INF\wsdl\WebJPoll_schema1.xsd" node="/xs:schema" >
 
   
        <jxb:bindings node="//xs:complexType[@name='poll']">
