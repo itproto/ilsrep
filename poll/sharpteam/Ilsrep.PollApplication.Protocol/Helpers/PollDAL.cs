@@ -100,7 +100,7 @@ namespace Ilsrep.PollApplication.DAL
             while (sqliteReader.Read())
             {
                 Item curItem = new Item();
-                curItem.id = sqliteReader["id"].ToString();
+                curItem.id = Convert.ToInt32(sqliteReader["id"]);
                 curItem.name = sqliteReader["name"].ToString();
                 items.Add(curItem);
             }
@@ -152,7 +152,7 @@ namespace Ilsrep.PollApplication.DAL
             while (sqliteReader.Read())
             {
                 Item curItem = new Item();
-                curItem.id = sqliteReader["id"].ToString();
+                curItem.id = Convert.ToInt32(sqliteReader["id"]);
                 curItem.name = sqliteReader["name"].ToString();
                 items.Add(curItem);
             }

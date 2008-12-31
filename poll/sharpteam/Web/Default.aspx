@@ -2,20 +2,20 @@
 <%@ MasterType virtualpath="~/MasterPage.master" %>
 
 <asp:Content ID="leftContentDefault" ContentPlaceHolderID="leftContent" Runat="server">
-    <asp:ListView runat="server" ID="pollMenu">
+    <asp:ListView runat="server" ID="surveyMenu">
         <LayoutTemplate>
-            <ul>
+            <ol>
                 <li id="itemPlaceholder" runat="server" />
-            </ul>
+            </ol>
         </LayoutTemplate>
         <ItemTemplate>
             <li>
-                <a href="Default.aspx?action=showsurvey&id=<%# ((Ilsrep.PollApplication.Communication.Item)Container.DataItem).id %>"><%# ((Ilsrep.PollApplication.Communication.Item)Container.DataItem).name%></a>
+                <a href="Survey.aspx?id=<%# Eval("id") %>"><%# Eval("name") %></a>
             </li>
         </ItemTemplate>
     </asp:ListView>
 </asp:Content>
 
 <asp:Content ID="mainContentDefault" ContentPlaceHolderID="mainContent" Runat="server">
-    Main content.
+    Please select survey from left menu.
 </asp:Content>

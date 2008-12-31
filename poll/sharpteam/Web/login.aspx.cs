@@ -31,10 +31,10 @@ public partial class login : System.Web.UI.Page
             returnUrl = Request["ReturnUrl"];
         }
 
-        if (returnUrl.IndexOf("PollEditor.aspx") > -1)
+        /*if (returnUrl.IndexOf("PollEditor.aspx") > -1)
         {
             Response.Redirect("messages.aspx?type=deny_access&redirect=Default.aspx");
-        }
+        }*/
     }
 
     public void Register_Click(Object sender, EventArgs e)

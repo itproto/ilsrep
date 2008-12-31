@@ -16,29 +16,28 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a onfocus="this.blur()" href="Default.aspx?action=startpoll" class="button">Start poll |</a>
+                        <a onfocus="this.blur()" href="Default.aspx?action=startpoll" class="button">Start poll</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="PollEditor.aspx" class="button">Poll editor |</a>
+                        <a onfocus="this.blur()" href="PollEditor.aspx" class="button">Poll editor</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="Statistics.aspx" class="button">Statistics |</a>
+                        <a onfocus="this.blur()" href="Statistics.aspx" class="button">Statistics</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout()</a>
+                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout (<%= Context.User.Identity.Name %>)</a>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="centralBlock">
             <div class="leftBlock">
-            <asp:ContentPlaceHolder id="leftContent" runat="server"></asp:ContentPlaceHolder>
-<!--                <div class="leftMenu">
-                    <asp:Panel ID="leftMenuPanel" runat="server"></asp:Panel>
-                </div>-->
+                <asp:ContentPlaceHolder id="leftContent" runat="server"></asp:ContentPlaceHolder>
             </div>
             <div class="content">
-                <asp:ContentPlaceHolder id="mainContent" runat="server"></asp:ContentPlaceHolder>
+                <div class="inner">
+                    <asp:ContentPlaceHolder id="mainContent" runat="server"></asp:ContentPlaceHolder>
+                </div>
             </div>
             <div class="footer">Copyright &copy; Sharpteam 2008</div>
         </div>
