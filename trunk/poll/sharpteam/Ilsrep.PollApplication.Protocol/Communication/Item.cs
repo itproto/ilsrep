@@ -15,10 +15,36 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// ID of an item
         /// </summary>
-        [XmlAttribute("id")] public string id;
+        private int _id;
         /// <summary>
         /// Name of an item
         /// </summary>
-        [XmlAttribute("name")] public string name;
+        private string _name;
+
+        [XmlAttribute("id")]
+        public int id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
+
+        [XmlAttribute("name")]
+        public string name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
     }
 }

@@ -4,13 +4,22 @@ a img
 	vertical-align: middle;	
 }
 
-h3
+h3, .h3
 {
 	color: #7f7f64;	
+	display: block;
 	font-size: 20px;
 	font-weight: lighter;
 	font-family: Times New Roman, Verdana, Tahoma;
 	text-align: left;
+}
+
+h1, .h1
+{
+	display: block;
+	font-size: 18px;
+	font-weight: bold;
+	margin: 0;
 }
 
 a
@@ -36,6 +45,11 @@ a:hover
 .text:hover
 {
 	border: 1px solid #f00;
+}
+
+.alignRight
+{
+	float: right;
 }
 
 input.button
@@ -99,7 +113,7 @@ input.button:hover
 	list-style: none;	
 	margin: 0px;
 	padding: 0px;
-	vertical-align: bottom;	
+	vertical-align: bottom;
 }
 
 .mainMenu li
@@ -107,6 +121,7 @@ input.button:hover
 	display: inline;
 	margin: 0px;
 	padding: 0px;
+	color: #fff;
 }
 
 .mainMenu a
@@ -136,25 +151,31 @@ input.button:hover
 	background-color: #d4d0b6;
 }
 
-.leftMenu
+/*.leftMenu
 {
 	margin: 10px;
-}
+}*/
 
-.leftMenu ul
+/*.leftBlock ul
 {
 	list-style: none;
 	margin: 0px;
 	padding: 0px;
 }
 
-.leftMenu li
+.leftBlock ul li
 {
 	margin: 10px 0px;
 	padding: 0px;
 }
+*/
 
-.leftMenu a.button
+.leftBlock li.selected
+{
+	font-weight: bold;
+}
+
+.leftBlock a.button
 {
 	color: #FFFFFF;
 	background-color: #a30313;
@@ -171,7 +192,7 @@ input.button:hover
 	width: 200px;
 }
 
-.leftMenu a:hover
+.leftBlock a:hover
 {
 	color: #a30313;	
 	background-color: #d4d0b6;
@@ -228,7 +249,7 @@ input.button:hover
 
 .error
 {
-	color: #fff;
+	color: #b06969;
 	text-align: center;
 }
 
