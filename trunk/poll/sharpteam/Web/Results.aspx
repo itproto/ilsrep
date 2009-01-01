@@ -11,15 +11,19 @@
         </LayoutTemplate>
         <ItemTemplate>
             <li>
-                <%# Eval("pollName") %>: <%# Eval("choice") %>
+                <%# Eval("poll") %>: <%# Eval("choice") %>
             </li>
         </ItemTemplate>
     </asp:ListView>
-    
-    <h3>Here is your Survey results:</h3>
 
-    Your score: <asp:Label ID="lblScore" runat="server" />
-    
-    <h3><asp:Label ID="lblResult" runat="server" /></h3>
+    Your score: <asp:Label ID="lblScore" runat="server" />%
+
+    <h3>
+    <% if ( passedSurvey ) { %>
+    You have PASSED!
+    <% } else { %>
+    You have FAILED!
+    <% } %>
+    </h3>
 </asp:Content>
 
