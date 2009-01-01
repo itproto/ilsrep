@@ -12,6 +12,7 @@ h3, .h3
 	font-weight: lighter;
 	font-family: Times New Roman, Verdana, Tahoma;
 	text-align: left;
+	margin: 5px 0;
 }
 
 h1, .h1
@@ -19,7 +20,7 @@ h1, .h1
 	display: block;
 	font-size: 18px;
 	font-weight: bold;
-	margin: 0;
+	/*margin: 0;*/
 }
 
 a

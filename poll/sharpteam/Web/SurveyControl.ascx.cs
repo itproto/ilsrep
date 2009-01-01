@@ -108,6 +108,8 @@ public partial class SurveyControl : System.Web.UI.UserControl
     {
         if (choiceList.SelectedIndex > -1)
         {
+            errorMessage.Visible = false;
+            
             PollResult pollResult = new PollResult();
             pollResult.questionId = survey.Polls[pollIndex].Id;
             pollResult.answerId = Convert.ToInt32(choiceList.SelectedValue);
@@ -130,6 +132,7 @@ public partial class SurveyControl : System.Web.UI.UserControl
         }
         else
         {
+            errorMessage.Visible = true;
             errorMessage.Text = "Please select a choice";
         }
     }
