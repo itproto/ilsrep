@@ -119,7 +119,7 @@ classpathref="tomcat.classpath" />
     
   
   
-
+ <copy todir="${basedir}\web\jspweb\WEB-INF\lib" file="${release.dir}\poll.jar"/>
 
    <jar destfile="${web.dir}\jspweb.war" basedir="${basedir}\web\jspweb"/>
 
