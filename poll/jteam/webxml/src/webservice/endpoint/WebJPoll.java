@@ -1,21 +1,20 @@
 package webservice.endpoint;
 
-import java.sql.SQLException;
-import java.util.List;
-import javax.jws.WebService;
-import javax.jws.WebMethod;
 import ilsrep.poll.common.model.Pollsession;
+import ilsrep.poll.common.protocol.Answers;
 import ilsrep.poll.common.protocol.Pollsessionlist;
-import ilsrep.poll.server.db.SQLiteDBManager;
 import ilsrep.poll.server.db.DBManager;
-//import ilsrep.poll.statistics.StatisticsData;
-//import ilsrep.poll.statistics.StatisticsType;
+import ilsrep.poll.server.db.SQLiteDBManager;
 import ilsrep.poll.statistics.Results;
-import javax.xml.ws.handler.MessageContext;
+import ilsrep.poll.statistics.StatisticsType;
+
+import java.util.List;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
 import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
-import ilsrep.poll.common.protocol.Answers;
-import ilsrep.poll.common.protocol.Item;
+import javax.xml.ws.handler.MessageContext;
 
 @WebService(name = "WebJPoll", serviceName = "WebJPoll")
 public class WebJPoll {
@@ -102,22 +101,31 @@ public class WebJPoll {
         connect();
         db.saveResults(ans);
     }
-    
+
     @WebMethod
     public int[] getCommonStatistics() throws Exception {
         connect();
         return db.getCommonStatistics();
     }
-        @WebMethod
-      public List<Results> getStatisticsWidget(String id) throws Exception{
+
+    @WebMethod
+    public List<Results> getStatisticsWidget(String id) throws Exception {
         connect();
         return db.getStatisticsWidget(id);
     }
 
-//    @WebMethod
-//    public StatisticsData fetchStatisticsResults(StatisticsType type)
-//            throws Exception {
-//        return null;
-//    }
+    @WebMethod
+    public double[] fetchStatistics(StatisticsType type) throws Exception {
+        connect();
+
+        return db.fetchStatistics(type);
+    }
+
+    @WebMethod
+    public List<Results> fetchTopUsersPolls(int n) throws Exception {
+        connect();
+
+        return db.fetchTopUsersPolls(n);
+    }
 
 }
