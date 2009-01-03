@@ -109,9 +109,9 @@ public class WebJPoll {
         return db.getCommonStatistics();
     }
         @WebMethod
-      public List<Results> getStatistics(String id) throws Exception{
+      public List<Results> getStatisticsWidget(String id) throws Exception{
         connect();
-        return db.getStatistics(id);
+        return db.getStatisticsWidget(id);
     }
 
 //    @WebMethod
