@@ -33,7 +33,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Web\", "{EEA2CCE5-E4
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "2042"
+		VWDPort = "1430"
 	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PollServerServiceSetup", "PollServerServiceSetup\PollServerServiceSetup.vdproj", "{EC82C57F-AB89-425C-AF26-1C970D970DF9}"

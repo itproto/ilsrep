@@ -20,35 +20,19 @@ using Ilsrep.PollApplication.Model;
 
 public partial class Statistics : System.Web.UI.Page
 {
-    public SQLiteConnection sqliteConnection = new SQLiteConnection();
+    //public SQLiteConnection sqliteConnection = new SQLiteConnection();
     public List<Item> testSurveysList = new List<Item>();
-    public String curSurveyName;
+    public String surveyName;
+    public String scoresDistribution = String.Empty;
+    public String usersDistribution = String.Empty;
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        PollDAL.connectionString = "Data Source=\"" + Server.MapPath(ConfigurationSettings.AppSettings["dataSource"].ToString()) + "\"";
-        testSurveysList = PollDAL.GetTestSurveys();
+        //PollDAL.connectionString = "Data Source=\"" + Server.MapPath(ConfigurationSettings.AppSettings["dataSource"].ToString()) + "\"";
 
         // Left menu generating
-        leftMenuPanel.Controls.Add(new LiteralControl("<ul>"));
-        LiteralControl menuLiteralControl = new LiteralControl();
-        menuLiteralControl.Text = "<h3>Select Survey :</h3>";
-        int index = 1;
-        foreach (Item curItem in testSurveysList)
-        {
-            if (Request["id"] == curItem.id.ToString())
-            {
-                menuLiteralControl.Text += "<li>" + index + ". " + curItem.name + "</li>";
-                curSurveyName = curItem.name;
-            }
-            else
-            {
-                menuLiteralControl.Text += "<li><a href='Statistics.aspx?action=showstatistics&id=" + curItem.id + "' onfocus='this.blur()'>" + index + ". " + curItem.name + "</a></li>";
-            }
-            index++;
-        }
-        leftMenuPanel.Controls.Add(menuLiteralControl);
-        leftMenuPanel.Controls.Add(new LiteralControl("</ul>"));
+        surveyMenu.DataSource = PollDAL.GetTestSurveys();
+        surveyMenu.DataBind();
 
         if (Request["id"] != null)
         {
@@ -57,22 +41,26 @@ public partial class Statistics : System.Web.UI.Page
                 int surveyID = Convert.ToInt32(Request["id"]);
                 Survey survey = new Survey();
                 survey = PollDAL.GetSurvey(surveyID);
-            
-                LiteralControl contentLiteralControl = new LiteralControl();
-                contentLiteralControl.Text = "<table cellpadding='0' cellspacing='0' class='statistics_table'>";
+                surveyName = survey.Name;
 
-                // Declare variables that will be used to form request for chart
-                String scoresDistribution = String.Empty;
-                String usersDistribution = String.Empty;
+                // Add survey title to table
+                TableRow titleRow = new TableRow();
+                titleRow.CssClass = "statistics_title";
+                TableCell titleCell = new TableCell();
+                titleCell.ColumnSpan = 4;
+                titleCell.Font.Bold = true;
+                titleCell.Text = surveyName;
+                titleRow.Cells.Add(titleCell);
+                statisticsTable.Rows.Add(titleRow);
 
                 if (PollDAL.HasResults(surveyID))
                 {
-                    contentLiteralControl.Text += "<tr class='statistics_title'><td colspan='4'>" + curSurveyName + "</td></tr>";
-                    contentLiteralControl.Text += "<tr class='statistics_title'><td>#</td><td>Users</td><td>Scores</td><td>Count of attempts</td></tr>";
                     List<String> users = new List<String>();
                     users = PollDAL.GetUsers();
 
                     List<StatisticsItem> statisticsItems = new List<StatisticsItem>();
+
+                    // Form statisticsItems list
                     foreach (String user in users)
                     {
                         StatisticsItem curStatisticsItem = new StatisticsItem();
@@ -113,39 +101,68 @@ public partial class Statistics : System.Web.UI.Page
                     // Sort by scores
                     statisticsItems.Sort();
 
+                    // Add titles of columns to table
+                    TableRow tableRow = new TableRow();
+                    tableRow.CssClass = "statistics_title";
+                    TableCell indexCell = new TableCell();
+                    TableCell userNameCell = new TableCell();
+                    TableCell scoresCell = new TableCell();
+                    TableCell attemptsCell = new TableCell();
+                    indexCell.Text = "#";
+                    userNameCell.Text = "Users";
+                    scoresCell.Text = "Scores";
+                    attemptsCell.Text = "Count of attempts";
+                    tableRow.Cells.Add(indexCell);
+                    tableRow.Cells.Add(userNameCell);
+                    tableRow.Cells.Add(scoresCell);
+                    tableRow.Cells.Add(attemptsCell);
+                    statisticsTable.Rows.Add(tableRow);
+
                     int userIndex = 0;
                     foreach (StatisticsItem curItem in statisticsItems)
                     {
                         userIndex++;
 
                         bool addSeparator = (userIndex == statisticsItems.Count()) ? false : true;
+
                         // Form chart request
                         usersDistribution += curItem.userName + ((addSeparator) ? "|" : String.Empty);
                         scoresDistribution += Math.Round(curItem.scores) + ((addSeparator) ? "," : String.Empty);
 
-                        contentLiteralControl.Text += "<tr><td>" + userIndex + "</td><td>" + curItem.userName + "</td>";
-                        contentLiteralControl.Text += String.Format("<td>{0:G4} %</td>", curItem.scores);
-                        contentLiteralControl.Text += "<td>" + curItem.attemptsCount + "</td></tr>";
+                        tableRow = new TableRow();
+                        indexCell = new TableCell();
+                        userNameCell = new TableCell();
+                        scoresCell = new TableCell();
+                        attemptsCell = new TableCell();
+                        indexCell.Text = userIndex.ToString();
+                        userNameCell.Text = curItem.userName;
+                        scoresCell.Text = String.Format("{0:G4}%", curItem.scores);
+                        attemptsCell.Text = curItem.attemptsCount.ToString();
+                        tableRow.Cells.Add(indexCell);
+                        tableRow.Cells.Add(userNameCell);
+                        tableRow.Cells.Add(scoresCell);
+                        tableRow.Cells.Add(attemptsCell);
+                        statisticsTable.Rows.Add(tableRow);
                     }
-
+                    chart.ImageUrl = "http://chart.apis.google.com/chart?chco=d4d0b6&chxt=y&chs=500x100&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + usersDistribution;
                 }
                 else
                 {
-                    contentLiteralControl.Text += "<tr><td colspan='4'><h3>Sorry, this survey haven't results</h3></td></tr>";
+                    TableRow messageRow = new TableRow();
+                    messageRow.CssClass = "statistics_title";
+                    TableCell messageCell = new TableCell();
+                    messageCell.ColumnSpan = 4;
+                    messageCell.Text = "<b>Sorry, this survey haven't results</b>";
+                    messageRow.Cells.Add(messageCell);
+                    statisticsTable.Rows.Add(messageRow);
                 }
-
-                contentLiteralControl.Text += "</table>";
-                contentPanel.Controls.Add(contentLiteralControl);
-                
-
-                LiteralControl chartLiteralControl = new LiteralControl();
-                chartLiteralControl.Text = "<div><img src='http://chart.apis.google.com/chart?chs=500x100&amp;chd=t:" + scoresDistribution + "&amp;cht=p3&amp;chl=" + usersDistribution + "' alt='Sample chart' /></div>";
-                contentPanel.Controls.Add(chartLiteralControl);
             }
             catch (Exception exception)
             {
 
             }
         }
-    }
+        
+
+    }    
 }
