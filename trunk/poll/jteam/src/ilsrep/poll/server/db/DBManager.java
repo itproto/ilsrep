@@ -435,9 +435,11 @@ public abstract class DBManager {
      *         added.
      */
     public int storePollsession(Pollsession sess) {
+	   
         int i = -1;
         Connection conn = null;
         try {
+	         connect();
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 

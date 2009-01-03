@@ -2,6 +2,7 @@
 <%@page import="javax.xml.ws.WebServiceRef"%>
 <%@page import="javax.xml.namespace.QName"%>
 <%@page import="java.net.URL"%>
+<%@page import="java.net.URL"%>
 <%!
 WebJPoll_Service service;
 public void setService(String name,String port) { try{
@@ -11,11 +12,14 @@ service=new WebJPoll_Service(url,serviceName);
 } catch(Exception e){};
 }
 %>
+
 <%
 setService(request.getServerName(),Integer.toString(request.getServerPort()));
 %>
 <%@ include file="./poll.jsp" %>
 <%@ include file="./save.jsp" %>
+<%@ include file="./widget.jsp" %>
+<%@ include file="./saveWidget.jsp" %>
 <%@page import="javax.servlet.ServletRequest"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -84,12 +88,19 @@ if(request.getParameter("result")==null){
 if(request.getParameter("session")!=null){
 	out.println(editPoll(request.getParameter("session"),(String)session.getAttribute("username")));
 	} else {
+		if(request.getParameter("widget")!=null){
+			out.println(newWidget("new",(String)session.getAttribute("username")));
+			} else {
 	out.println(links(false)); 
-	
+}
 		}
 		} else {
-			out.println(saveToDB(request.getParameter("sessiontype"),request.getParameter("result")));
+		if(request.getParameter("saveWidget")!=null){
+		out.println(saveWidgetToDB(request.getParameter("sessiontype"),request.getParameter("result"),request.getServerName()+":"+Integer.toString(request.getServerPort())));
+			} else {
 			
+			out.println(saveToDB(request.getParameter("sessiontype"),request.getParameter("result")));
+		}
 			}
 %>			
 

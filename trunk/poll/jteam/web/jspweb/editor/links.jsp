@@ -12,6 +12,7 @@ public String links(boolean side) throws Exception{
 	if (side==(true)) {
 String links="";
 links="<ul ><li class='first'><a href='./index.jsp'> All Sessions </a></li>";
+links+="<li class='create'><a href=\"./index.jsp?widget=new\">Create New Widget</a></li>";
 links+="<li class='create'><a href=\"./index.jsp?session=new\">Create New Session</a></li>";
 Pollsessionlist sessions;
 	WebJPoll db=service.getWebJPollPort();

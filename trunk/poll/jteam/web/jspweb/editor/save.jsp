@@ -23,7 +23,7 @@ JAXBContext pollContext = JAXBContext.newInstance(Pollsession.class);
         StringReader reader = new StringReader(xml);
         sess=(Pollsession)mr.unmarshal(reader);
         if (session.equals("new")){
- db.updatePollsession("-1",sess);
+ db.storePollsession(sess);
 	        return("<h3>Session Created</h3>"+links(false));	        
 	        } else {
         db.updatePollsession(sess.getId(),sess);
