@@ -435,3 +435,39 @@ a.addButton:hover img{
 	
 	background-image:url('images/but.png');
 		}	
+		
+		div.empty{
+			padding:0px;
+			height:24px;
+			}
+			div.full{
+				padding:0px;
+				height:24px;
+			background:url('images/bar.png');
+			}
+			
+#widget{
+width:300px;
+border:none;
+background:none;
+}
+#widget td{
+	border:none;
+	}
+#widget_poll {
+	border:none;
+	}
+#frame{
+width:600px;
+border: solid 1px #FFA500;
+	}
+				
+#pollname{
+font-size: 16px;
+font-family: "trebuchet ms", helvetica, sans-serif;
+font-weight:bolder;
+text-transform:uppercase;
+text-align:center;
+border:none;
+color: #FFA500;
+	}
