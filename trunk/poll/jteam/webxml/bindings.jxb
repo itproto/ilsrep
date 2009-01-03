@@ -26,5 +26,8 @@
             <jxb:bindings node="//xs:complexType[@name='answerItem']">
             <jxb:class ref="ilsrep.poll.common.protocol.AnswerItem"></jxb:class>
         </jxb:bindings>
-          </jxb:bindings>
+         <jxb:bindings node="//xs:complexType[@name='results']">
+            <jxb:class ref="ilsrep.poll.statistics.Results"></jxb:class>
+        </jxb:bindings>
+                  </jxb:bindings>
         </jxb:bindings>

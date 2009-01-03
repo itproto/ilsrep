@@ -1,7 +1,7 @@
 package webservice.endpoint;
 
 import java.sql.SQLException;
-
+import java.util.List;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import ilsrep.poll.common.model.Pollsession;
@@ -10,7 +10,7 @@ import ilsrep.poll.server.db.SQLiteDBManager;
 import ilsrep.poll.server.db.DBManager;
 //import ilsrep.poll.statistics.StatisticsData;
 //import ilsrep.poll.statistics.StatisticsType;
-
+import ilsrep.poll.statistics.Results;
 import javax.xml.ws.handler.MessageContext;
 import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
@@ -107,6 +107,11 @@ public class WebJPoll {
     public int[] getCommonStatistics() throws Exception {
         connect();
         return db.getCommonStatistics();
+    }
+        @WebMethod
+      public List<Results> getStatistics(String id) throws Exception{
+        connect();
+        return db.getStatistics(id);
     }
 
 //    @WebMethod
