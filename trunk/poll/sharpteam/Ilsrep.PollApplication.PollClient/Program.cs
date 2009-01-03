@@ -356,7 +356,7 @@ namespace Ilsrep.PollApplication.PollClient
 
                     if (index > 0 && index <= receivedPacket.surveyList.items.Count)
                     {
-                        string surveyID = receivedPacket.surveyList.items[index - 1].id;
+                        string surveyID = receivedPacket.surveyList.items[index - 1].id.ToString();
                         sendPacket.request.type = Request.GET_SURVEY;
                         sendPacket.request.id = surveyID;
                         break;
