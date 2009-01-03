@@ -20,7 +20,7 @@ import ilsrep.poll.common.protocol.Answers;
 import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.server.PollServer;
-
+import ilsrep.poll.statistics.Results;
 // import org.apache.log4j.Logger;
 
 /**
@@ -744,9 +744,11 @@ public abstract class DBManager {
      *             On DB errors.
      */
     public int[] getCommonStatistics() throws SQLException {
+	    
         Connection conn = null;
         int[] stats = null;
         try {
+	        connect();
             conn = getConnection();
 
             stats = new int[4];
@@ -783,6 +785,41 @@ public abstract class DBManager {
         return stats;
     }
 
+    public List<Results> getStatistics(String id) throws Exception{
+	    ArrayList<Results> results=new ArrayList<Results>();
+	
+	    Connection conn=null;
+	    
+	        connect();
+            conn = getConnection();
+      
+         Statement st = null;
+         
+                    st = conn.createStatement();
+                    ResultSet rs = st.executeQuery("select b.name,  count(choice_id) as 'number' from results as a, choices as b where a.pollsession_id="+id+"  and b.id=a.choice_id group by a.choice_id;");
+int counter=0;
+int number=0;
+ while (rs.next()) {
+
+                        Results item=new Results();
+                        item.setName(rs.getString("b.name"));
+                        item.setPercent(rs.getString("number"));
+                        results.add(item);
+                        counter+=Integer.parseInt(rs.getString("number"));
+                        number++;
+                    }
+                    int sum=0;
+                   for(int i=0;i<number-1;i++){
+	                   int percent= Integer.parseInt(results.get(i).getPercent())*100/counter;
+	                   sum+=percent;
+	                   results.get(i).setPercent(Integer.toString(percent));
+	                   }
+                    results.get(number-1).setPercent(Integer.toString(100-sum));
+                    
+                    
+               
+        return results;
+	    }
     /**
      * Creates connection to DB.
      * 
