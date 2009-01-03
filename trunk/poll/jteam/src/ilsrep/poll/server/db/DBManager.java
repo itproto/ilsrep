@@ -785,7 +785,7 @@ public abstract class DBManager {
         return stats;
     }
 
-    public List<Results> getStatistics(String id) throws Exception{
+    public List<Results> getStatisticsWidget(String id) throws Exception{
 	    ArrayList<Results> results=new ArrayList<Results>();
 	
 	    Connection conn=null;
