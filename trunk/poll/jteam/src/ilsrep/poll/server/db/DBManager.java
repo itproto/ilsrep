@@ -21,6 +21,9 @@ import ilsrep.poll.common.protocol.Item;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 import ilsrep.poll.server.PollServer;
 import ilsrep.poll.statistics.Results;
+import ilsrep.poll.statistics.StatisticsFetcher;
+import ilsrep.poll.statistics.StatisticsType;
+
 // import org.apache.log4j.Logger;
 
 /**
@@ -232,11 +235,11 @@ public abstract class DBManager {
     public void createUser(String name, String pass) {
         try {
             connect();
- Connection conn = null;
-        if (threadLocalConnection.get() == null)
-            conn = dataSource.getConnection();
-        else
-            conn = threadLocalConnection.get();
+            Connection conn = null;
+            if (threadLocalConnection.get() == null)
+                conn = dataSource.getConnection();
+            else
+                conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
             /* ResultSet rs = */stat
                     .executeQuery("insert into users (userName, password) Values (\""
@@ -254,11 +257,11 @@ public abstract class DBManager {
         try {
             connect();
 
-        Connection conn = null;
-        if (threadLocalConnection.get() == null)
-            conn = dataSource.getConnection();
-        else
-            conn = threadLocalConnection.get();
+            Connection conn = null;
+            if (threadLocalConnection.get() == null)
+                conn = dataSource.getConnection();
+            else
+                conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
             ResultSet rs = stat
                     .executeQuery("select * from users where userName=\""
@@ -285,11 +288,11 @@ public abstract class DBManager {
         try {
             connect();
 
-        Connection conn = null;
-        if (threadLocalConnection.get() == null)
-            conn = dataSource.getConnection();
-        else
-            conn = threadLocalConnection.get();
+            Connection conn = null;
+            if (threadLocalConnection.get() == null)
+                conn = dataSource.getConnection();
+            else
+                conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
             ResultSet rs = stat
                     .executeQuery("select * from users where userName=\""
@@ -360,37 +363,35 @@ public abstract class DBManager {
      * @param ans
      *            Results to store.
      */
-    public void saveResults(Answers ans) throws Exception{
-	    connect();
+    public void saveResults(Answers ans) throws Exception {
+        connect();
         String id = ans.getPollSesionId();
         String name = ans.getUsername();
-                Connection conn = null;
+        Connection conn = null;
         if (threadLocalConnection.get() == null)
             conn = dataSource.getConnection();
         else
             conn = threadLocalConnection.get();
-   conn.setAutoCommit(false);
-            PreparedStatement stat = conn
-                    .prepareStatement("insert into results (pollsession_id, user_name, poll_id, choice_id, custom_choice, date) VALUES (?, ?, ?, ?, ?, datetime('now'))");
-            for (int i = 0; i < ans.getAnswers().size(); i++) {
-                stat.setInt(1, Integer.parseInt(id));
-                stat.setString(2, name);
-                stat.setInt(3, Integer.parseInt(ans.getAnswers().get(i)
-                        .getQuestionId()));
-                stat.setInt(4, Integer.parseInt(ans.getAnswers().get(i)
-                        .getAnswerId()));
-                stat.setString(5, ans.getAnswers().get(i).getCustomChoice());
-                stat.addBatch();
-            }
+        conn.setAutoCommit(false);
+        PreparedStatement stat = conn
+                .prepareStatement("insert into results (pollsession_id, user_name, poll_id, choice_id, custom_choice, date) VALUES (?, ?, ?, ?, ?, datetime('now'))");
+        for (int i = 0; i < ans.getAnswers().size(); i++) {
+            stat.setInt(1, Integer.parseInt(id));
+            stat.setString(2, name);
+            stat.setInt(3, Integer.parseInt(ans.getAnswers().get(i)
+                    .getQuestionId()));
+            stat.setInt(4, Integer.parseInt(ans.getAnswers().get(i)
+                    .getAnswerId()));
+            stat.setString(5, ans.getAnswers().get(i).getCustomChoice());
+            stat.addBatch();
+        }
 
-            stat.executeBatch();
+        stat.executeBatch();
 
-            conn.commit();
-        
-        
-                if (conn != null)
-                    conn.close();
-        
+        conn.commit();
+
+        if (conn != null)
+            conn.close();
 
     }
 
@@ -435,11 +436,11 @@ public abstract class DBManager {
      *         added.
      */
     public int storePollsession(Pollsession sess) {
-	   
+
         int i = -1;
         Connection conn = null;
         try {
-	         connect();
+            connect();
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
@@ -744,11 +745,11 @@ public abstract class DBManager {
      *             On DB errors.
      */
     public int[] getCommonStatistics() throws SQLException {
-	    
+
         Connection conn = null;
         int[] stats = null;
         try {
-	        connect();
+            connect();
             conn = getConnection();
 
             stats = new int[4];
@@ -785,41 +786,51 @@ public abstract class DBManager {
         return stats;
     }
 
-    public List<Results> getStatisticsWidget(String id) throws Exception{
-	    ArrayList<Results> results=new ArrayList<Results>();
-	
-	    Connection conn=null;
-	    
-	        connect();
-            conn = getConnection();
-      
-         Statement st = null;
-         
-                    st = conn.createStatement();
-                    ResultSet rs = st.executeQuery("select b.name,  count(choice_id) as 'number' from results as a, choices as b where a.pollsession_id="+id+"  and b.id=a.choice_id group by a.choice_id;");
-int counter=0;
-int number=0;
- while (rs.next()) {
+    public List<Results> getStatisticsWidget(String id) throws Exception {
+        ArrayList<Results> results = new ArrayList<Results>();
 
-                        Results item=new Results();
-                        item.setName(rs.getString("b.name"));
-                        item.setPercent(rs.getString("number"));
-                        results.add(item);
-                        counter+=Integer.parseInt(rs.getString("number"));
-                        number++;
-                    }
-                    int sum=0;
-                   for(int i=0;i<number-1;i++){
-	                   int percent= Integer.parseInt(results.get(i).getPercent())*100/counter;
-	                   sum+=percent;
-	                   results.get(i).setPercent(Integer.toString(percent));
-	                   }
-                    results.get(number-1).setPercent(Integer.toString(100-sum));
-                    
-                    
-               
+        Connection conn = null;
+
+        connect();
+        conn = getConnection();
+
+        Statement st = null;
+
+        st = conn.createStatement();
+        ResultSet rs = st
+                .executeQuery("select b.name,  count(choice_id) as 'number' from results as a, choices as b where a.pollsession_id="
+                        + id + "  and b.id=a.choice_id group by a.choice_id;");
+        int counter = 0;
+        int number = 0;
+        while (rs.next()) {
+
+            Results item = new Results();
+            item.setName(rs.getString("b.name"));
+            item.setPercent(rs.getString("number"));
+            results.add(item);
+            counter += Integer.parseInt(rs.getString("number"));
+            number++;
+        }
+        int sum = 0;
+        for (int i = 0; i < number - 1; i++) {
+            int percent = Integer.parseInt(results.get(i).getPercent()) * 100
+                    / counter;
+            sum += percent;
+            results.get(i).setPercent(Integer.toString(percent));
+        }
+        results.get(number - 1).setPercent(Integer.toString(100 - sum));
+
         return results;
-	    }
+    }
+
+    public double[] fetchStatistics(StatisticsType type) {
+        return (new StatisticsFetcher(this)).fetchStatisticsChart(type);
+    }
+
+    public List<Results> fetchTopUsersPolls(int n) {
+        return (new StatisticsFetcher(this)).fetchTopUsersPolls(n);
+    }
+
     /**
      * Creates connection to DB.
      * 
