@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Ilsrep.PollApplication.Communication;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.DAL;
 
 public partial class Results : System.Web.UI.Page
 {
@@ -16,6 +17,7 @@ public partial class Results : System.Web.UI.Page
     {
         //Session["pollIndex"] = 0
         ResultsList results = Session["resultsList"] as ResultsList;
+        PollDAL.SaveSurveyResult(results);
         Survey survey = Session["survey"] as Survey;
 
         if ( survey == null || results == null )
