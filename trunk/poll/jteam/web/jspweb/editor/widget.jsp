@@ -14,6 +14,7 @@
 <%@page import="webservice.endpoint.WebJPoll_Service"%>
 <%@page import="javax.xml.ws.WebServiceRef"%>
 
+
 <%!
  //@WebServiceRef(wsdlLocation="http://localhost:8080/WebJPoll/WebJPoll?wsdl")
 //  static WebJPoll_Service service; 
