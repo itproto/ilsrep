@@ -532,7 +532,7 @@ public class PollServer {
             logger.info("Pollsession added. Name: " + newSession.getName()
                     + " Id: " + newSession.getId());
         }
-        catch (JAXBException e) {
+        catch (Exception e) {
             return;
         }
     }
