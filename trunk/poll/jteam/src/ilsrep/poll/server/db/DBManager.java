@@ -798,8 +798,7 @@ public abstract class DBManager {
 
         st = conn.createStatement();
         ResultSet rs = st
-                .executeQuery("select b.name,  count(choice_id) as 'number' from results as a, choices as b where a.pollsession_id="
-                        + id + "  and b.id=a.choice_id group by a.choice_id;");
+                .executeQuery("select choices.name, case  when number1 is null then 0 else number1 end as \"number\" from choices inner join polls_choices on polls_choices.choice_id=choices.id  join ( select * from  pollsessions_polls where  pollsession_id="+id+") as f on polls_choices.poll_id=f.poll_id left outer Join (select choice_id, count(choice_id) as \"number1\" from results Group by choice_id) as s on s.choice_id=choices.id;");
         int counter = 0;
         int number = 0;
         while (rs.next()) {
