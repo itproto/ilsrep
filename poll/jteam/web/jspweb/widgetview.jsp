@@ -3,6 +3,13 @@
 <%@page import="javax.xml.ws.WebServiceRef"%>
 <%@page import="javax.xml.namespace.QName"%>
 <%@page import="java.net.URL"%>
+<%@page import="ilsrep.poll.common.model.Poll"%>
+<%@page import="ilsrep.poll.common.model.Choice"%>
+<%@page import="ilsrep.poll.common.model.Pollsession"%>
+<%@page import="ilsrep.poll.server.db.SQLiteDBManager"%>
+<%@page import="ilsrep.poll.server.db.DBManager"%>
+<%@page import="ilsrep.poll.common.protocol.AnswerItem"%>
+<%@page import="ilsrep.poll.common.protocol.Answers"%>
 <%@page import="java.net.URL"%>
 <%@page import="java.util.List"%>
 <%@page import="ilsrep.poll.statistics.Results"%>
@@ -21,12 +28,31 @@ setService(request.getServerName(),Integer.toString(request.getServerPort()));
 WebJPoll db=service.getWebJPollPort();
 %>
 <%
-List<Results> results=db.getStatistics(request.getParameter("widget"));
+List<Results> results=db.getStatisticsWidget(request.getParameter("widget"));
 String question=db.getPollsessionById(request.getParameter("widget")).getPolls().get(0).getName();
 
 String res="<link rel=\"stylesheet\" type=\"text/css\" href=\"class.css\" />";
 res+="<div id=frame><table ><tr><td colspan=2 id=pollname>"+question+"</td></tr>";
-res+="<tr><td  id=widget_poll>INSERT POLL HERE</td>";
+res+="<tr><td  id=widget_poll>";
+Pollsession sess=db.getPollsessionById(request.getParameter("widget"));
+Poll currentPoll=sess.getPolls().get(0);
+
+
+res+="\n<form>\n <table>";
+boolean rowtype=true;
+for( Choice currentChoice : currentPoll.getChoices()){
+res+="<tr ";
+
+res+="><td><input type='radio'  name='choice' value='"+currentChoice.getName()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
+rowtype=rowtype ? false :true;
+}
+
+res+="<tr><td align=center><Input type='hidden' name='poll' value='button'><button onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' onClick='document.getElementById(\"polls\").submit();' ><img src='./images/cmdMoveNext.png' name=\"cmdMoveNext\" id=\"cmdMoveNext\" >Next</button></td></tr></table>";
+res+="</div></form>";
+
+
+
+res+="</td>";
 
 res+="<td><table id=widget>";
 
