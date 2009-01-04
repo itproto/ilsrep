@@ -606,10 +606,18 @@ namespace Ilsrep.PollApplication.DAL
 
         static public bool HasResults(int surveyID)
         {
-            List<String> datesOfAttempts = new List<string>();
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.Parameters.Add(new SQLiteParameter(":surveyID", surveyID));
             sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE survey_id=:surveyID GROUP BY date";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            return sqliteReader.HasRows;
+        }
+
+        static public bool HasResults(string userName)
+        {
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":userName", userName));
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE user_name=:userName GROUP BY date";
             SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
             return sqliteReader.HasRows;
         }

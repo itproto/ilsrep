@@ -7,7 +7,7 @@ namespace Ilsrep.PollApplication.Communication
 {
     public class StatisticsItem : IComparable<StatisticsItem>
     {
-        public String userName;
+        public String name;
         public Double scores;
         public int attemptsCount;
 

@@ -24,7 +24,7 @@ public partial class Statistics : System.Web.UI.Page
     public List<Item> testSurveysList = new List<Item>();
     public String surveyName;
     public String scoresDistribution = String.Empty;
-    public String usersDistribution = String.Empty;
+    public String labelsDistribution = String.Empty;
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -34,135 +34,270 @@ public partial class Statistics : System.Web.UI.Page
         surveyMenu.DataSource = PollDAL.GetTestSurveys();
         surveyMenu.DataBind();
 
-        if (Request["id"] != null)
+        #region Show statistics
+        switch (Request["object"])
         {
-            try
-            {
-                int surveyID = Convert.ToInt32(Request["id"]);
-                Survey survey = new Survey();
-                survey = PollDAL.GetSurvey(surveyID);
-                surveyName = survey.Name;
-
-                // Add survey title to table
-                TableRow titleRow = new TableRow();
-                titleRow.CssClass = "statistics_title";
-                TableCell titleCell = new TableCell();
-                titleCell.ColumnSpan = 4;
-                titleCell.Font.Bold = true;
-                titleCell.Text = surveyName;
-                titleRow.Cells.Add(titleCell);
-                statisticsTable.Rows.Add(titleRow);
-
-                if (PollDAL.HasResults(surveyID))
+            case "survey":
+                #region Show survey statistics
+                if (Request["id"] != null)
                 {
-                    List<String> users = new List<String>();
-                    users = PollDAL.GetUsers();
-
-                    List<StatisticsItem> statisticsItems = new List<StatisticsItem>();
-
-                    // Form statisticsItems list
-                    foreach (String user in users)
+                    try
                     {
-                        StatisticsItem curStatisticsItem = new StatisticsItem();
-                        curStatisticsItem.userName = user;
-                        List<DateTime> datesOfAttempts = new List<DateTime>();
-                        datesOfAttempts = PollDAL.GetDatesOfAttempts(user, surveyID);
-                        curStatisticsItem.attemptsCount = datesOfAttempts.Count();
-                        if (datesOfAttempts.Count != 0)
+                        int surveyID = Convert.ToInt32(Request["id"]);
+                        Survey survey = new Survey();
+                        survey = PollDAL.GetSurvey(surveyID);
+                        surveyName = survey.Name;
+
+                        // Add survey title to table
+                        TableRow titleRow = new TableRow();
+                        titleRow.CssClass = "statistics_title";
+                        TableCell titleCell = new TableCell();
+                        titleCell.ColumnSpan = 4;
+                        titleCell.Font.Bold = true;
+                        titleCell.Text = surveyName;
+                        titleRow.Cells.Add(titleCell);
+                        statisticsTable.Rows.Add(titleRow);
+
+                        if (PollDAL.HasResults(surveyID))
                         {
-                            // Calculate count of scores
-                            List<Double> scoresOfAttempts = new List<Double>();
-                            foreach (DateTime curDate in datesOfAttempts)
-                            {
-                                ResultsList resultsList = new ResultsList();
-                                resultsList = PollDAL.GetSurveyResults(surveyID, user, curDate);
+                            List<String> users = new List<String>();
+                            users = PollDAL.GetUsers();
 
-                                int countOfCorrectAnswers = 0;
-                                foreach (PollResult curResult in resultsList.results)
+                            List<StatisticsItem> statisticsItems = new List<StatisticsItem>();
+
+                            // Form statisticsItems list
+                            foreach (String user in users)
+                            {
+                                StatisticsItem curStatisticsItem = new StatisticsItem();
+                                curStatisticsItem.name = user;
+                                List<DateTime> datesOfAttempts = new List<DateTime>();
+                                datesOfAttempts = PollDAL.GetDatesOfAttempts(user, surveyID);
+                                curStatisticsItem.attemptsCount = datesOfAttempts.Count();
+                                if (datesOfAttempts.Count != 0)
                                 {
-                                    if (survey.Polls[curResult.questionId].Choices[curResult.answerId].Id == survey.Polls[curResult.questionId].CorrectChoiceID)
-                                        countOfCorrectAnswers++;
+                                    // Calculate count of scores
+                                    List<Double> scoresOfAttempts = new List<Double>();
+                                    foreach (DateTime curDate in datesOfAttempts)
+                                    {
+                                        ResultsList resultsList = new ResultsList();
+                                        resultsList = PollDAL.GetSurveyResults(surveyID, user, curDate);
+
+                                        int countOfCorrectAnswers = 0;
+                                        foreach (PollResult curResult in resultsList.results)
+                                        {
+                                            if (survey.Polls[curResult.questionId].Choices[curResult.answerId].Id == survey.Polls[curResult.questionId].CorrectChoiceID)
+                                                countOfCorrectAnswers++;
+                                        }
+                                        Double curScores = Convert.ToDouble(countOfCorrectAnswers) / Convert.ToDouble(resultsList.results.Count);
+                                        scoresOfAttempts.Add(curScores);
+                                    }
+
+                                    Double scores = 0;
+                                    foreach (Double curScores in scoresOfAttempts)
+                                    {
+                                        scores += curScores;
+                                    }
+                                    scores /= Convert.ToDouble(datesOfAttempts.Count) / 100;
+                                    curStatisticsItem.scores = scores;
+                                    statisticsItems.Add(curStatisticsItem);
                                 }
-                                Double curScores = Convert.ToDouble(countOfCorrectAnswers) / Convert.ToDouble(resultsList.results.Count);
-                                scoresOfAttempts.Add(curScores);
                             }
 
-                            Double scores = 0;
-                            foreach (Double curScores in scoresOfAttempts)
+                            // Sort by scores
+                            statisticsItems.Sort();
+
+                            // Add titles of columns to table
+                            TableRow tableRow = new TableRow();
+                            tableRow.CssClass = "statistics_title";
+                            TableCell indexCell = new TableCell();
+                            TableCell userNameCell = new TableCell();
+                            TableCell scoresCell = new TableCell();
+                            TableCell attemptsCell = new TableCell();
+                            indexCell.Text = "#";
+                            userNameCell.Text = "Users";
+                            scoresCell.Text = "Scores";
+                            attemptsCell.Text = "Count of attempts";
+                            tableRow.Cells.Add(indexCell);
+                            tableRow.Cells.Add(userNameCell);
+                            tableRow.Cells.Add(scoresCell);
+                            tableRow.Cells.Add(attemptsCell);
+                            statisticsTable.Rows.Add(tableRow);
+
+                            int userIndex = 0;
+                            foreach (StatisticsItem curItem in statisticsItems)
                             {
-                                scores += curScores;
+                                userIndex++;
+
+                                bool addSeparator = (userIndex == statisticsItems.Count()) ? false : true;
+
+                                // Form chart request
+                                labelsDistribution += curItem.name + ((addSeparator) ? "|" : String.Empty);
+                                scoresDistribution += Math.Round(curItem.scores) + ((addSeparator) ? "," : String.Empty);
+
+                                tableRow = new TableRow();
+                                indexCell = new TableCell();
+                                userNameCell = new TableCell();
+                                scoresCell = new TableCell();
+                                attemptsCell = new TableCell();
+                                indexCell.Text = userIndex.ToString();
+                                userNameCell.Text = "<a href='Statistics.aspx?object=user&name=" + curItem.name + "'>" + curItem.name + "</a>";
+                                scoresCell.Text = String.Format("{0:G4}%", curItem.scores);
+                                attemptsCell.Text = curItem.attemptsCount.ToString();
+                                tableRow.Cells.Add(indexCell);
+                                tableRow.Cells.Add(userNameCell);
+                                tableRow.Cells.Add(scoresCell);
+                                tableRow.Cells.Add(attemptsCell);
+                                statisticsTable.Rows.Add(tableRow);
                             }
-                            scores /= Convert.ToDouble(datesOfAttempts.Count) / 100;
-                            curStatisticsItem.scores = scores;
-                            statisticsItems.Add(curStatisticsItem);
+                            chart.ImageUrl = "http://chart.apis.google.com/chart?chco=d4d0b6&chxt=y&chs=500x300&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + labelsDistribution;
+                        }
+                        else
+                        {
+                            TableRow messageRow = new TableRow();
+                            messageRow.CssClass = "statistics_title";
+                            TableCell messageCell = new TableCell();
+                            messageCell.ColumnSpan = 4;
+                            messageCell.Text = "<b>Sorry, this survey haven't results</b>";
+                            messageRow.Cells.Add(messageCell);
+                            statisticsTable.Rows.Add(messageRow);
                         }
                     }
-
-                    // Sort by scores
-                    statisticsItems.Sort();
-
-                    // Add titles of columns to table
-                    TableRow tableRow = new TableRow();
-                    tableRow.CssClass = "statistics_title";
-                    TableCell indexCell = new TableCell();
-                    TableCell userNameCell = new TableCell();
-                    TableCell scoresCell = new TableCell();
-                    TableCell attemptsCell = new TableCell();
-                    indexCell.Text = "#";
-                    userNameCell.Text = "Users";
-                    scoresCell.Text = "Scores";
-                    attemptsCell.Text = "Count of attempts";
-                    tableRow.Cells.Add(indexCell);
-                    tableRow.Cells.Add(userNameCell);
-                    tableRow.Cells.Add(scoresCell);
-                    tableRow.Cells.Add(attemptsCell);
-                    statisticsTable.Rows.Add(tableRow);
-
-                    int userIndex = 0;
-                    foreach (StatisticsItem curItem in statisticsItems)
+                    catch (Exception exception)
                     {
-                        userIndex++;
 
-                        bool addSeparator = (userIndex == statisticsItems.Count()) ? false : true;
+                    }
+                }
+                #endregion
+                break;
+            case "user":
+                #region Show user statistics
+                try
+                {
+                    string userName = Request["name"];
 
-                        // Form chart request
-                        usersDistribution += curItem.userName + ((addSeparator) ? "|" : String.Empty);
-                        scoresDistribution += Math.Round(curItem.scores) + ((addSeparator) ? "," : String.Empty);
+                    // Add user name to table
+                    TableRow titleRow = new TableRow();
+                    titleRow.CssClass = "statistics_title";
+                    TableCell titleCell = new TableCell();
+                    titleCell.ColumnSpan = 4;
+                    titleCell.Font.Bold = true;
+                    titleCell.Text = userName;
+                    titleRow.Cells.Add(titleCell);
+                    statisticsTable.Rows.Add(titleRow);
 
-                        tableRow = new TableRow();
-                        indexCell = new TableCell();
-                        userNameCell = new TableCell();
-                        scoresCell = new TableCell();
-                        attemptsCell = new TableCell();
-                        indexCell.Text = userIndex.ToString();
-                        userNameCell.Text = curItem.userName;
-                        scoresCell.Text = String.Format("{0:G4}%", curItem.scores);
-                        attemptsCell.Text = curItem.attemptsCount.ToString();
+                    if (PollDAL.HasResults(userName))
+                    {
+                        List<Item> surveys = new List<Item>();
+                        surveys = PollDAL.GetTestSurveys();
+
+                        List<StatisticsItem> statisticsItems = new List<StatisticsItem>();
+
+                        // Form statisticsItems list
+                        foreach (Item surveyItem in surveys)
+                        {
+                            Survey survey = PollDAL.GetSurvey(surveyItem.id);
+                            StatisticsItem curStatisticsItem = new StatisticsItem();
+                            curStatisticsItem.name = survey.Name;
+                            List<DateTime> datesOfAttempts = new List<DateTime>();
+                            datesOfAttempts = PollDAL.GetDatesOfAttempts(userName, survey.Id);
+                            curStatisticsItem.attemptsCount = datesOfAttempts.Count();
+                            
+                            if (datesOfAttempts.Count != 0)
+                            {
+                                // Calculate count of scores
+                                List<Double> scoresOfAttempts = new List<Double>();
+                                foreach (DateTime curDate in datesOfAttempts)
+                                {
+                                    ResultsList resultsList = new ResultsList();
+                                    resultsList = PollDAL.GetSurveyResults(survey.Id, userName, curDate);
+
+                                    int countOfCorrectAnswers = 0;
+                                    foreach (PollResult curResult in resultsList.results)
+                                    {
+                                        if (survey.Polls[curResult.questionId].Choices[curResult.answerId].Id == survey.Polls[curResult.questionId].CorrectChoiceID)
+                                            countOfCorrectAnswers++;
+                                    }
+                                    Double curScores = Convert.ToDouble(countOfCorrectAnswers) / Convert.ToDouble(resultsList.results.Count);
+                                    scoresOfAttempts.Add(curScores);
+                                }
+
+                                Double scores = 0;
+                                foreach (Double curScores in scoresOfAttempts)
+                                {
+                                    scores += curScores;
+                                }
+                                scores /= Convert.ToDouble(datesOfAttempts.Count) / 100;
+                                curStatisticsItem.scores = scores;
+                                statisticsItems.Add(curStatisticsItem);
+                            }
+                        }
+
+                        // Sort by scores
+                        statisticsItems.Sort();
+
+                        // Add titles of columns to table
+                        TableRow tableRow = new TableRow();
+                        tableRow.CssClass = "statistics_title";
+                        TableCell indexCell = new TableCell();
+                        TableCell surveyNameCell = new TableCell();
+                        TableCell scoresCell = new TableCell();
+                        TableCell attemptsCell = new TableCell();
+                        indexCell.Text = "#";
+                        surveyNameCell.Text = "Surveys";
+                        scoresCell.Text = "Scores";
+                        attemptsCell.Text = "Count of attempts";
                         tableRow.Cells.Add(indexCell);
-                        tableRow.Cells.Add(userNameCell);
+                        tableRow.Cells.Add(surveyNameCell);
                         tableRow.Cells.Add(scoresCell);
                         tableRow.Cells.Add(attemptsCell);
                         statisticsTable.Rows.Add(tableRow);
+
+                        int surveyIndex = 0;
+                        foreach (StatisticsItem curItem in statisticsItems)
+                        {
+                            surveyIndex++;
+
+                            bool addSeparator = (surveyIndex == statisticsItems.Count()) ? false : true;
+
+                            // Form chart request
+                            labelsDistribution += curItem.name + ((addSeparator) ? "|" : String.Empty);
+                            scoresDistribution += Math.Round(curItem.scores) + ((addSeparator) ? "," : String.Empty);
+
+                            tableRow = new TableRow();
+                            indexCell = new TableCell();
+                            surveyNameCell = new TableCell();
+                            scoresCell = new TableCell();
+                            attemptsCell = new TableCell();
+                            indexCell.Text = surveyIndex.ToString();
+                            surveyNameCell.Text = curItem.name;
+                            scoresCell.Text = String.Format("{0:G4}%", curItem.scores);
+                            attemptsCell.Text = curItem.attemptsCount.ToString();
+                            tableRow.Cells.Add(indexCell);
+                            tableRow.Cells.Add(surveyNameCell);
+                            tableRow.Cells.Add(scoresCell);
+                            tableRow.Cells.Add(attemptsCell);
+                            statisticsTable.Rows.Add(tableRow);
+                        }
+                        chart.ImageUrl = "http://chart.apis.google.com/chart?chco=d4d0b6&chxt=y&chs=500x300&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + labelsDistribution;
                     }
-                    chart.ImageUrl = "http://chart.apis.google.com/chart?chco=d4d0b6&chxt=y&chs=500x100&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + usersDistribution;
+                    else
+                    {
+                        TableRow messageRow = new TableRow();
+                        messageRow.CssClass = "statistics_title";
+                        TableCell messageCell = new TableCell();
+                        messageCell.ColumnSpan = 4;
+                        messageCell.Text = "<b>Sorry, this user haven't results yet</b>";
+                        messageRow.Cells.Add(messageCell);
+                        statisticsTable.Rows.Add(messageRow);
+                    }
                 }
-                else
+                catch (Exception exception)
                 {
-                    TableRow messageRow = new TableRow();
-                    messageRow.CssClass = "statistics_title";
-                    TableCell messageCell = new TableCell();
-                    messageCell.ColumnSpan = 4;
-                    messageCell.Text = "<b>Sorry, this survey haven't results</b>";
-                    messageRow.Cells.Add(messageCell);
-                    statisticsTable.Rows.Add(messageRow);
+
                 }
-            }
-            catch (Exception exception)
-            {
-
-            }
+                #endregion
+                break;
         }
-        
-
+        #endregion
     }    
 }
