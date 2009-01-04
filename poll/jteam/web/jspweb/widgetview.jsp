@@ -38,16 +38,16 @@ Pollsession sess=db.getPollsessionById(request.getParameter("widget"));
 Poll currentPoll=sess.getPolls().get(0);
 
 
-res+="\n<form>\n <table>";
+res+="\n<form id=polls action=widgetresult.jsp>\n <table>";
 boolean rowtype=true;
 for( Choice currentChoice : currentPoll.getChoices()){
 res+="<tr ";
 
-res+="><td><input type='radio'  name='choice' value='"+currentChoice.getName()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
+res+="><td><input type='radio'  name='choice' value='"+currentChoice.getId()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
 rowtype=rowtype ? false :true;
 }
 
-res+="<tr><td align=center><Input type='hidden' name='poll' value='button'><button onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' onClick='document.getElementById(\"polls\").submit();' ><img src='./images/cmdMoveNext.png' name=\"cmdMoveNext\" id=\"cmdMoveNext\" >Next</button></td></tr></table>";
+res+="<tr><td align=center><Input type='hidden' name='widget' value='"+request.getParameter("widget")+"'><button onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' onClick='document.getElementById(\"polls\").submit();' ><img src='./images/cmdMoveNext.png' name=\"cmdMoveNext\" id=\"cmdMoveNext\" >Next</button></td></tr></table>";
 res+="</div></form>";
 
 
