@@ -435,12 +435,11 @@ public abstract class DBManager {
      * @return Id of this pollsession in DB, or <code>-1</code> if it weren't
      *         added.
      */
-    public int storePollsession(Pollsession sess) {
+    public int storePollsession(Pollsession sess) throws Exception{
 
         int i = -1;
         Connection conn = null;
-        try {
-            connect();
+                    connect();
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
@@ -586,12 +585,7 @@ public abstract class DBManager {
                 conn.rollback(); // On errors doing rollback.
             else
                 conn.commit(); // Commiting if all proceed correctly.
-        }
-        catch (SQLException e) {
-            // logger.info(e.getMessage());
-            i = -1;
-        }
-        finally {
+     
             if (conn != null)
                 try {
                     // Closing connection and returning it to pool.
@@ -601,7 +595,7 @@ public abstract class DBManager {
                 catch (SQLException e) {
                     i = -1;
                 }
-        }
+       
 
         return i;
     }
@@ -706,7 +700,7 @@ public abstract class DBManager {
      * @param sess
      *            New pollsession data.
      */
-    public void updatePollsession(String id, Pollsession sess) {
+    public void updatePollsession(String id, Pollsession sess) throws Exception{
         try {
             Pollsessionlist existingSessionsList = getPollsessionlist();
 
@@ -804,7 +798,7 @@ public abstract class DBManager {
         while (rs.next()) {
 
             Results item = new Results();
-            item.setName(rs.getString("b.name"));
+            item.setName(rs.getString("choices.name"));
             item.setPercent(rs.getString("number"));
             results.add(item);
             counter += Integer.parseInt(rs.getString("number"));
