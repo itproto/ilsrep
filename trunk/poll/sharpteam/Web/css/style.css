@@ -519,14 +519,13 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 	background-color: #d4d0b6;
 	border-top: solid 1px #808080;
 	border-left: solid 1px #808080;
-	/*border: solid 1px red;*/
 }
 
 .statistics_table td
 {
 	border-right: solid 1px #808080;
 	border-bottom: solid 1px #808080;
-	padding: 5px;
+	padding: 10px;
 }
 
 .statistics_title td

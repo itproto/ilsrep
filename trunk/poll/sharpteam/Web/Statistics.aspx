@@ -1,11 +1,8 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Statistics.aspx.cs" Inherits="Statistics" %>
 
 <asp:Content ID="mainContentStatistics" ContentPlaceHolderID="mainContent" Runat="Server">
-    <asp:Table ID="statisticsTable" CellPadding="0" CellSpacing="0" runat="server" CssClass="statistics_table">
-
-    </asp:Table>
+    <asp:Table ID="statisticsTable" CellPadding="0" CellSpacing="0" runat="server" CssClass="statistics_table"></asp:Table>
     <asp:Image ID="chart" runat="server" />
-    <asp:
 </asp:Content>
 
 <asp:Content ID="leftContentStatistics" ContentPlaceHolderID="leftContent" Runat="server">
@@ -17,7 +14,7 @@
         </LayoutTemplate>
         <ItemTemplate>
             <li>
-                <a href="Statistics.aspx?id=<%# Eval("id") %>"><%# Eval("name") %></a>
+                <a href="Statistics.aspx?object=survey&id=<%# Eval("id") %>"><%# Eval("name") %></a>
             </li>
         </ItemTemplate>
     </asp:ListView>
