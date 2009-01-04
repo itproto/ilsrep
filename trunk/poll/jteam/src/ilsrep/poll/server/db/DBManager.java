@@ -806,12 +806,12 @@ public abstract class DBManager {
         }
         int sum = 0;
         for (int i = 0; i < number - 1; i++) {
-            int percent = Integer.parseInt(results.get(i).getPercent()) * 100
-                    / counter;
+            int percent = 0;
+            if(counter>0)   percent=Integer.parseInt(results.get(i).getPercent()) * 100/ counter;
             sum += percent;
             results.get(i).setPercent(Integer.toString(percent));
         }
-        results.get(number - 1).setPercent(Integer.toString(100 - sum));
+        results.get(number - 1).setPercent(((counter>0) ? Integer.toString(100 - sum) : "0"));
 
         return results;
     }
