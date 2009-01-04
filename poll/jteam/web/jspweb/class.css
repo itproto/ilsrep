@@ -460,6 +460,7 @@ background:none;
 #frame{
 width:500px;
 border: solid 1px #FFA500;
+background: url('images/back.png');
 	}
 				
 #pollname{
