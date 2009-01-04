@@ -1,6 +1,7 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Statistics.aspx.cs" Inherits="Statistics" %>
 
 <asp:Content ID="mainContentStatistics" ContentPlaceHolderID="mainContent" Runat="Server">
+    <asp:Label ID="message" runat="server" />
     <asp:Table ID="statisticsTable" CellPadding="0" CellSpacing="0" runat="server" CssClass="statistics_table"></asp:Table>
     <asp:Image ID="chart" runat="server" />
 </asp:Content>

@@ -85,7 +85,8 @@ public partial class Statistics : System.Web.UI.Page
                                         int countOfCorrectAnswers = 0;
                                         foreach (PollResult curResult in resultsList.results)
                                         {
-                                            if (survey.Polls[curResult.questionId].Choices[curResult.answerId].Id == survey.Polls[curResult.questionId].CorrectChoiceID)
+                                            Poll currentPoll = survey.Polls.Find(delegate(Poll poll) { return poll.Id == curResult.questionId; });
+                                            if (currentPoll.CorrectChoiceID == curResult.answerId)
                                                 countOfCorrectAnswers++;
                                         }
                                         Double curScores = Convert.ToDouble(countOfCorrectAnswers) / Convert.ToDouble(resultsList.results.Count);
@@ -214,7 +215,8 @@ public partial class Statistics : System.Web.UI.Page
                                     int countOfCorrectAnswers = 0;
                                     foreach (PollResult curResult in resultsList.results)
                                     {
-                                        if (survey.Polls[curResult.questionId].Choices[curResult.answerId].Id == survey.Polls[curResult.questionId].CorrectChoiceID)
+                                        Poll currentPoll = survey.Polls.Find(delegate(Poll poll) { return poll.Id == curResult.questionId; });
+                                        if (currentPoll.CorrectChoiceID == curResult.answerId)
                                             countOfCorrectAnswers++;
                                     }
                                     Double curScores = Convert.ToDouble(countOfCorrectAnswers) / Convert.ToDouble(resultsList.results.Count);
@@ -296,6 +298,9 @@ public partial class Statistics : System.Web.UI.Page
 
                 }
                 #endregion
+                break;
+            default:
+                message.Text = "Please select survey from left menu.";
                 break;
         }
         #endregion
