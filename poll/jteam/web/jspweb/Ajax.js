@@ -51,8 +51,8 @@
 	            $("#widget_poll").hide("slow");
 $(".empty").animate({
 	width: ($(".empty").width()+160)+"px"},1500);
-            }
-	            
+	$(".full").css("background","url('images/bar2.png')");
+          }  
             } else {
                 alert('There was a problem with the request.');
             }
