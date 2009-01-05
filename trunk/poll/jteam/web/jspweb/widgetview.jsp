@@ -31,14 +31,15 @@ WebJPoll db=service.getWebJPollPort();
 List<Results> results=db.getStatisticsWidget(request.getParameter("widget"));
 String question=db.getPollsessionById(request.getParameter("widget")).getPolls().get(0).getName();
 
-String res="<link rel=\"stylesheet\" type=\"text/css\" href=\"class.css\" />";
+String res="     <script type=\"text/javascript\" src=\"./editor/jquery.js\" ></script>    <script type=\"text/javascript\" src=\"./editor/jquery.page.js\" >";
+res+="</script> <script type=\"text/javascript\" src=\"./Ajax.js\"></script> <link rel=\"stylesheet\" type=\"text/css\" href=\"class.css\" />";
 res+="<div id=frame><table ><tr><td colspan=2 id=pollname>"+question+"</td></tr>";
 res+="<tr><td  id=widget_poll>";
 Pollsession sess=db.getPollsessionById(request.getParameter("widget"));
 Poll currentPoll=sess.getPolls().get(0);
 
 
-res+="\n<form id=polls action=widgetresult.jsp>\n <table>";
+res+="\n<form id=polls >\n <table>";
 boolean rowtype=true;
 for( Choice currentChoice : currentPoll.getChoices()){
 res+="<tr ";
@@ -47,8 +48,8 @@ res+="><td><input type='radio'  name='choice' value='"+currentChoice.getId()+"' 
 rowtype=rowtype ? false :true;
 }
 
-res+="<tr><td align=center><Input type='hidden' name='widget' value='"+request.getParameter("widget")+"'><button onMouseover='navOver(\"cmdMoveNext\")' onMouseout='navOut(\"cmdMoveNext\")' onMousedown='navDown(\"cmdMoveNext\")' onMouseup='navUp(\"cmdMoveNext\")' onClick='document.getElementById(\"polls\").submit();' ><img src='./images/cmdMoveNext.png' name=\"cmdMoveNext\" id=\"cmdMoveNext\" >Next</button></td></tr></table>";
-res+="</div></form>";
+res+="<tr><td align=center><Input type='hidden' name='widget' value='"+request.getParameter("widget")+"'><img id=submitbut src='images/submit.png' onClick='sendResult("+request.getParameter("widget")+",\"http://"+request.getServerName()+":"+Integer.toString(request.getServerPort())+"\")' ></td></tr></table>";
+res+="</form>";
 
 
 
@@ -57,7 +58,7 @@ res+="</td>";
 res+="<td><table id=widget>";
 
 for (int i=0;i<results.size();i++){
-	res+="<tr><td>"+results.get(i).getName()+"</td><td><div style='width:200px;' class=empty ><div style='width:"+Integer.toString(Integer.parseInt(results.get(i).getPercent())*2)+"px;' class=full></div></div></td></tr>";
+	res+="<tr ><td>"+results.get(i).getName()+"</td><td id='result"+Integer.toString(i)+"'><div  name='empty' class=empty ><div name='full' style='width:"+Integer.toString(Integer.parseInt(results.get(i).getPercent())*2)+"px;' class=full></div></div><div name='votes' class=votes>"+results.get(i).getVotes()+"</div></td></tr>";
 		}
 		res+="</table></td></tr></table></div>";
 out.println(res);

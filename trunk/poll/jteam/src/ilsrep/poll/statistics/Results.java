@@ -15,6 +15,8 @@ public class Results {
     /**
      * Percent of xml, logically referenced by this list.
      */
+    protected String votes = null; 
+     
     protected String percent = null;
 
     /**
@@ -50,6 +52,20 @@ public class Results {
      */
     public void setName(String name) {
         this.name = name;
+    }
+     /**
+     * @see #name
+     */
+    @XmlAttribute(required = true)
+    public String getVotes() {
+        return votes;
+    }
+
+    /**
+     * @see #name
+     */
+    public void setVotes(String votes) {
+        this.votes = votes;
     }
 
 }

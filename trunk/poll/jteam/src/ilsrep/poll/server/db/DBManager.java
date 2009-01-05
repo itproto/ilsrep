@@ -799,7 +799,7 @@ public abstract class DBManager {
 
             Results item = new Results();
             item.setName(rs.getString("choices.name"));
-            item.setPercent(rs.getString("number"));
+            item.setVotes(rs.getString("number"));
             results.add(item);
             counter += Integer.parseInt(rs.getString("number"));
             number++;
@@ -807,7 +807,7 @@ public abstract class DBManager {
         int sum = 0;
         for (int i = 0; i < number - 1; i++) {
             int percent = 0;
-            if(counter>0)   percent=Integer.parseInt(results.get(i).getPercent()) * 100/ counter;
+            if(counter>0)   percent=Integer.parseInt(results.get(i).getVotes()) * 100/ counter;
             sum += percent;
             results.get(i).setPercent(Integer.toString(percent));
         }

@@ -439,15 +439,18 @@ a.addButton:hover img{
 		div.empty{
 			padding:0px;
 			height:24px;
+			width:200px;
+			float:left;
 			}
 			div.full{
 				padding:0px;
 				height:24px;
 			background:url('images/bar.png');
+			
 			}
 			
 #widget{
-width:300px;
+width:100%;
 border:none;
 background:none;
 }
@@ -457,9 +460,13 @@ background:none;
 #widget_poll {
 	border:none;
 	}
+	#widget_poll td{
+		
+		border:none; !!important
+		}
 #frame{
-width:500px;
-border: solid 1px #FFA500;
+width:600px;
+border: solid 1px #a30313;
 background: url('images/back.png');
 	}
 				
@@ -470,5 +477,15 @@ font-weight:bolder;
 text-transform:uppercase;
 text-align:center;
 border:none;
-color: #FFA500;
+color: #d97900;
 	}
+	div.votes {
+		width: 30px;
+		float: right;
+		height:24px;
+		color: #d97900;
+		}
+		#submitbut{
+			cursor:pointer;
+			
+			}
