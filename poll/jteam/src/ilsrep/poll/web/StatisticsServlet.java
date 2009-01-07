@@ -1,6 +1,5 @@
 package ilsrep.poll.web;
 
-import ilsrep.poll.server.db.SQLiteDBManager;
 import ilsrep.poll.statistics.StatisticsRenderer;
 import ilsrep.poll.statistics.StatisticsType;
 
@@ -10,15 +9,19 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+
+import webservice.endpoint.WebJPoll_Service;
 
 /**
  * @author TKOST
@@ -60,18 +63,26 @@ public class StatisticsServlet extends HttpServlet {
      *            <code>ServletContext</code>, to get db file.
      * @return
      */
-    public static StatisticsRenderer createDefaultRenderer(
-            ServletContext context) {
-        StatisticsRenderer renderer = null;
+    public static StatisticsRenderer createDefaultRenderer(String name,
+            String port) {
         try {
-            renderer = new StatisticsRenderer(new SQLiteDBManager(null, context
-                    .getRealPath("/")
-                    + "/pollserver.db"), DEFAULT_STATS_IMAGE_DIMENSION);
+            StatisticsRenderer renderer = null;
+
+            WebJPoll_Service service = null;
+            QName serviceName = new QName("http://endpoint.webservice/",
+                    "WebJPoll");
+            URL url = new URL("http://" + name + ":" + port
+                    + "/WebJPoll/WebJPoll?wsdl");
+            service = new WebJPoll_Service(url, serviceName);
+
+            renderer = new StatisticsRenderer(service,
+                    DEFAULT_STATS_IMAGE_DIMENSION);
+            return renderer;
         }
-        catch (ClassNotFoundException e) {
+        catch (MalformedURLException e) {
+            return null;
         }
 
-        return renderer;
     }
 
     /**
@@ -89,11 +100,12 @@ public class StatisticsServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        renderer = createDefaultRenderer(getServletContext());
+        if (renderer == null)
+            renderer = createDefaultRenderer(request.getServerName(), Integer
+                    .toString(request.getServerPort()));
 
         OutputStream out = null;
         try {
-
             String type = request.getParameter(PARAMETER_TYPE_NAME);
 
             out = response.getOutputStream();

@@ -51,7 +51,9 @@
         final String[] commonStatsLabels = { "poll surveys", "polls",
                 "choices", "users" };
         int[] commonStats = StatisticsServlet.createDefaultRenderer(
-                getServletContext()).getCommonStatistics();
+                request.getServerName(),
+                Integer.toString(request.getServerPort()))
+                .getCommonStatistics();
         for (int i = 0; i < commonStats.length; i++) {
 %>
 <p>Total <%=commonStatsLabels[i]%>: <font color="red"><%=commonStats[i]%></font></p>
