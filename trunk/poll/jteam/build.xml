@@ -46,7 +46,7 @@
 <pathelement location="${lib.dir}/catalina-ant.jar" /> <pathelement location="${lib.dir}/servlet-api.jar" /> <pathelement location="${lib.dir}/jasper.jar" /> <pathelement location="${lib.dir}/tomcat-juli.jar" />  </path> <taskdef resource="org/apache/catalina/ant/catalina.tasks"
 classpathref="tomcat.classpath" />
 	
-	<property name="class.path" value="${lib.dir}/axis2-jaxws-api-1.4.1.jar:${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar:${lib.dir}/jcurses.jar:${lib.dir}/substance.jar:${lib.dir}/servlet-api.jar:${lib.dir}/jfreechart-1.0.11.jar" />
+	<property name="class.path" value="${lib.dir}/axis2-jaxws-api-1.4.1.jar:${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar:${lib.dir}/jcurses.jar:${lib.dir}/substance.jar:${lib.dir}/servlet-api.jar:${lib.dir}/jfreechart-1.0.11.jar:web/jspweb/WEB-INF/classes" />
 
 	
 
