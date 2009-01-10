@@ -4,8 +4,11 @@ import java.awt.Dimension;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultKeyedValuesDataset;
 
 import webservice.endpoint.Exception_Exception;
@@ -231,68 +234,41 @@ public class StatisticsRenderer {
      * @see StatisticsType#POLLS_WITH_CUSTOM_CHOICE
      */
     protected JFreeChart renderPollsWithCustomChoice() {
-//        int pollsWithCustomChoices = 0;
-//        int pollsWithoutCustomChoices = 0;
-//
-//        Connection conn = null;
-//        try {
-//            conn = db.getConnection();
-//            conn.setAutoCommit(false);
-//
-//            Statement pollsSt = null;
-//            ResultSet pollsRs = null;
-//            try {
-//                pollsSt = conn.createStatement();
-//                pollsRs = pollsSt
-//                        .executeQuery("select customenabled from polls");
-//
-//                while (pollsRs.next()) {
-//                    if (pollsRs.getBoolean(1))
-//                        pollsWithCustomChoices++;
-//                    else
-//                        pollsWithoutCustomChoices++;
-//                }
-//            }
-//            finally {
-//                pollsRs.close();
-//                pollsSt.close();
-//            }
-//
-//            conn.commit();
-//        }
-//        catch (Exception e) {
-//            try {
-//                pollsWithCustomChoices = pollsWithoutCustomChoices = -1;
-//                conn.rollback();
-//            }
-//            catch (Exception e2) {
-//            }
-//        }
-//        finally {
-//            try {
-//                conn.close();
-//            }
-//            catch (Exception e) {
-//            }
-//        }
-//
-//        if (pollsWithCustomChoices != -1) {
-//            final String collumnName = "Comparing polls with and without custom choice";
-//            DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-//            dataSet.addValue((double) pollsWithCustomChoices,
-//                    "Polls with custom choice", collumnName);
-//            dataSet.addValue((double) pollsWithoutCustomChoices,
-//                    "Polls without custom choice", collumnName);
-//
-//            JFreeChart chart = ChartFactory.createBarChart(collumnName, "",
-//                    "Quantity", dataSet, PlotOrientation.HORIZONTAL, true,
-//                    false, false);
-//
-//            return chart;
-//        }
-//        else {
+        int pollsWithCustomChoices = 0;
+        int pollsWithoutCustomChoices = 0;
+
+        List<Double> statisticsData = null;
+
+        try {
+            statisticsData = service
+                    .getWebJPollPort()
+                    .fetchStatistics(
+                            webservice.endpoint.StatisticsType.POLLS_WITH_CUSTOM_CHOICE);
+        }
+        catch (Exception_Exception e) {
+            pollsWithCustomChoices = pollsWithoutCustomChoices = -1;
+        }
+
+        pollsWithCustomChoices = (int) statisticsData.get(0).doubleValue();
+        pollsWithoutCustomChoices = (int) statisticsData.get(1).doubleValue();
+
+        if (pollsWithCustomChoices != -1) {
+            final String collumnName = "Comparing polls with and without custom choice";
+            DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+            dataSet.addValue((double) pollsWithCustomChoices,
+                    "Polls with custom choice", collumnName);
+            dataSet.addValue((double) pollsWithoutCustomChoices,
+                    "Polls without custom choice", collumnName);
+
+            JFreeChart chart = ChartFactory.createBarChart(collumnName, "",
+                    "Quantity", dataSet, PlotOrientation.HORIZONTAL, true,
+                    false, false);
+
+            return chart;
+        }
+        else {
             return null;
-//        }
+        }
     }
 
     /**
@@ -302,108 +278,31 @@ public class StatisticsRenderer {
      * @see StatisticsType#TOP_USERS_POLLS
      */
     public JFreeChart renderTopUsersPolls(int n) {
-//        Connection dbConn = null;
-//        List<UserNameAndSuccessAndFailCount> usersStats = new ArrayList<UserNameAndSuccessAndFailCount>();
-//
-//        try {
-//            dbConn = db.getConnection();
-//
-//            Statement surveysSt = dbConn.createStatement();
-//            ResultSet surveysRs = surveysSt
-//                    .executeQuery("select id from pollsession");
-//
-//            while (surveysRs.next()) {
-//                int surveyId = surveysRs.getInt("id");
-//
-//                DBManager.threadLocalConnection.set(dbConn);
-//                Pollsession currentSurvey = db.getPollsessionById(Integer
-//                        .toString(surveyId));
-//                DBManager.threadLocalConnection.set(null);
-//
-//                Statement pollsSt = dbConn.createStatement();
-//                ResultSet pollsRs = pollsSt
-//                        .executeQuery("select poll_id, choice_id, user_name from results where pollsession_id = "
-//                                + surveyId);
-//
-//                while (pollsRs.next()) {
-//                    UserNameAndSuccessAndFailCount statsForCurrentUser = findInListOrAdd(
-//                            usersStats, pollsRs.getString("user_name"));
-//
-//                    if (currentSurvey.getPollById(
-//                            Integer.toString(pollsRs.getInt("poll_id")))
-//                            .getCorrectChoice().equals(
-//                                    Integer.toString(pollsRs
-//                                            .getInt("choice_id"))))
-//                        statsForCurrentUser.successCount++;
-//                    else
-//                        statsForCurrentUser.failCount++;
-//                }
-//
-//                pollsSt.close();
-//            }
-//            surveysSt.close();
-//        }
-//        catch (SQLException e) {
-//            e.printStackTrace();
-//            usersStats = null;
-//        }
-//        finally {
-//            try {
-//                dbConn.close();
-//            }
-//            catch (Exception e2) {
-//            }
-//        }
-//
-//        JFreeChart chart = null;
-//
-//        if (usersStats != null) {
-//            final String collumnName = "Users";
-//            DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-//
-//            for (UserNameAndSuccessAndFailCount userStats : usersStats) {
-//                dataSet.addValue((double) userStats.successCount, userStats
-//                        .getUserName(), collumnName);
-//            }
-//
-//            // TODO: This adds users with zero passed polls, but they aren't
-//            // shown on chart.
-//            try {
-//                dbConn = db.getConnection();
-//
-//                Statement usersSt = dbConn.createStatement();
-//                ResultSet usersRs = usersSt
-//                        .executeQuery("select userName from users");
-//
-//                while (usersRs.next()) {
-//                    String userName = usersRs.getString(1);
-//
-//                    findInListOrAdd(usersStats, userName);
-//                }
-//
-//                usersRs.close();
-//                usersSt.close();
-//            }
-//            catch (SQLException e) {
-//                e.printStackTrace();
-//                usersStats = null;
-//            }
-//            finally {
-//                try {
-//                    dbConn.close();
-//                }
-//                catch (Exception e2) {
-//                }
-//            }
-//
-//            chart = ChartFactory.createBarChart(collumnName, "", "Quantity",
-//                    dataSet, PlotOrientation.HORIZONTAL, true, false, false);
-//
-//            return chart;
-//        }
-//
-//        return chart;
-        return null;
+        List<Results> usersStats = null;
+        try {
+            usersStats = service.getWebJPollPort().fetchTopUsersPolls(n);
+        }
+        catch (Exception_Exception e) {
+        }
+
+        JFreeChart chart = null;
+
+        if (usersStats != null) {
+            final String collumnName = "Users";
+            DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+
+            for (Results userStats : usersStats) {
+                dataSet.addValue((double) Integer.parseInt(userStats
+                        .getPercent()), userStats.getName(), collumnName);
+            }
+
+            chart = ChartFactory.createBarChart(collumnName, "", "Quantity",
+                    dataSet, PlotOrientation.HORIZONTAL, true, false, false);
+
+            return chart;
+        }
+
+        return chart;
     }
 
     /**
