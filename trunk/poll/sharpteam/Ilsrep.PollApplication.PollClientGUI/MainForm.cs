@@ -33,7 +33,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// Where results are stored
         /// </summary>
-        private ResultsList resultsList = new ResultsList();
+        private SurveyResults resultsList = new SurveyResults();
         /// <summary>
         /// Users choice
         /// </summary>

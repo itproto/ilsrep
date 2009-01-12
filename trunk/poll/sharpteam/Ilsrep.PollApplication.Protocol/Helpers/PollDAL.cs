@@ -394,7 +394,7 @@ namespace Ilsrep.PollApplication.DAL
         /// Receive from Client survey result and save it in database
         /// </summary>
         /// <param name="resultsList">list of results</param>
-        static public void SaveSurveyResult(ResultsList resultsList)
+        static public void SaveSurveyResult(SurveyResults resultsList)
         {
             if (!isConnected)
             {
@@ -429,14 +429,14 @@ namespace Ilsrep.PollApplication.DAL
         /// </summary>
         /// <param name="surveyId">Id of Survey which results we need</param>
         /// <returns>List of results of needed Survey</returns>
-        static public ResultsList GetSurveyResults(int surveyId)
+        static public SurveyResults GetSurveyResults(int surveyId)
         {
             if (!isConnected)
             {
                 Init();
             }
 
-            ResultsList resultsList = new ResultsList();
+            SurveyResults resultsList = new SurveyResults();
             resultsList.surveyId = surveyId;
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.Parameters.Add(new SQLiteParameter(":survey_id", surveyId));
@@ -458,14 +458,14 @@ namespace Ilsrep.PollApplication.DAL
             return resultsList;
         }
 
-        static public ResultsList GetSurveyResults(int surveyId, String user, DateTime date)
+        static public SurveyResults GetSurveyResults(int surveyId, String user, DateTime date)
         {
             if (!isConnected)
             {
                 Init();
             }
 
-            ResultsList resultsList = new ResultsList();
+            SurveyResults resultsList = new SurveyResults();
             resultsList.surveyId = surveyId;
             SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
             sqliteCommand.Parameters.Add(new SQLiteParameter(":survey_id", surveyId));

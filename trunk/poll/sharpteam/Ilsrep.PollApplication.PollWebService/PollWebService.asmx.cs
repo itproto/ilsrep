@@ -71,7 +71,7 @@ namespace Ilsrep.PollApplication.WebService
         /// </summary>
         /// <param name="resultsList">List of results</param>
         [WebMethod]
-        public void SaveSurveyResult(ResultsList resultsList)
+        public void SaveSurveyResult(SurveyResults resultsList)
         {
             DAL.PollDAL.SaveSurveyResult(resultsList);
         }
@@ -82,7 +82,7 @@ namespace Ilsrep.PollApplication.WebService
         /// <param name="surveyId">Survey ID which results we need</param>
         /// <returns>List of results of needed Survey</returns>
         [WebMethod]
-        public ResultsList GetSurveyResults(int surveyId)
+        public SurveyResults GetSurveyResults(int surveyId)
         {
             return DAL.PollDAL.GetSurveyResults(surveyId);
         }

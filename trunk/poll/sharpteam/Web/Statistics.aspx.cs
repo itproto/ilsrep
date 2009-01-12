@@ -181,7 +181,7 @@ public partial class Statistics : System.Web.UI.Page
                                     
                                     foreach (DateTime curDate in datesOfAttempts)
                                     {
-                                        ResultsList resultsList = new ResultsList();
+                                        SurveyResults resultsList = new SurveyResults();
                                         resultsList = PollDAL.GetSurveyResults(surveyID, user, curDate);
 
                                         int countOfCorrectAnswers = 0;
@@ -309,7 +309,7 @@ public partial class Statistics : System.Web.UI.Page
                                 List<Double> scoresOfAttempts = new List<Double>();
                                 foreach (DateTime curDate in datesOfAttempts)
                                 {
-                                    ResultsList resultsList = new ResultsList();
+                                    SurveyResults resultsList = new SurveyResults();
                                     resultsList = PollDAL.GetSurveyResults(survey.Id, userName, curDate);
 
                                     int countOfCorrectAnswers = 0;

@@ -28,7 +28,7 @@ namespace Ilsrep.PollApplication.Communication
         /// <summary>
         /// Results list is sent when user finishes poll in poll client
         /// </summary>
-        [XmlElement("resultslist")] public ResultsList resultsList = null;
+        [XmlElement("resultslist")] public SurveyResults resultsList = null;
         /// <summary>
         /// User information is sent in the beginning of session to identify user
         /// </summary>
