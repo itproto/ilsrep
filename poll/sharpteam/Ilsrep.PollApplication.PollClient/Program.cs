@@ -386,7 +386,7 @@ namespace Ilsrep.PollApplication.PollClient
             PollPacket sendPacket = new PollPacket();
             sendPacket.request = new Request();
             sendPacket.request.type = Request.SAVE_RESULT;
-            sendPacket.resultsList = new ResultsList();
+            sendPacket.resultsList = new SurveyResults();
             sendPacket.resultsList.userName = userName;
             sendPacket.resultsList.surveyId = survey.Id;
 

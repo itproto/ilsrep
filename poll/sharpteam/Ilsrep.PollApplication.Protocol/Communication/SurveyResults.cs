@@ -11,7 +11,7 @@ namespace Ilsrep.PollApplication.Communication
     /// Result list after survey
     /// </summary>
     [XmlRoot("resultslist"), Serializable]
-    public class ResultsList
+    public class SurveyResults
     {
         /// <summary>
         /// List of the poll results

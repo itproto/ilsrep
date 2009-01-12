@@ -39,11 +39,11 @@ public partial class SurveyControl : System.Web.UI.UserControl
         }
     }
 
-    protected ResultsList resultsList
+    protected SurveyResults resultsList
     {
         get
         {
-            return (ResultsList)Session["resultsList"];
+            return (SurveyResults)Session["resultsList"];
         }
         set
         {
@@ -61,7 +61,7 @@ public partial class SurveyControl : System.Web.UI.UserControl
         {
             Session["surveyID"] = value;
             
-            resultsList = new ResultsList();
+            resultsList = new SurveyResults();
             resultsList.userName = Context.User.Identity.Name;
             resultsList.surveyId = value;
             

@@ -65,7 +65,7 @@
     <Compile Include="Communication\StatisticsItem.cs" />
     <Compile Include="Communication\SurveysList.cs" />
     <Compile Include="Communication\Request.cs" />
-    <Compile Include="Communication\ResultsList.cs" />
+    <Compile Include="Communication\SurveyResults.cs" />
     <Compile Include="Helpers\CommandLineParametersHelper.cs" />
     <Compile Include="Helpers\HistoryHelper.cs" />
     <Compile Include="Helpers\InputHelper.cs" />

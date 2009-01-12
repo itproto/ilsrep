@@ -16,7 +16,7 @@ public partial class Results : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         //Session["pollIndex"] = 0
-        ResultsList results = Session["resultsList"] as ResultsList;
+        SurveyResults results = Session["resultsList"] as SurveyResults;
         PollDAL.SaveSurveyResult(results);
         Survey survey = Session["survey"] as Survey;
 
