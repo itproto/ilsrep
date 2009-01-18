@@ -69,8 +69,8 @@ $('#cmdMoveLast').click(function(){$(this).page({direction : 'last'})});
 				 String res=((session.getAttribute("username")==null)||(request.getParameter("logout")!=null)) ? reg : logout;
 				 out.println(res);
 				 %>
-				<li><a href="./../index.jsp">Poll Client</a> <font color=white>| 
-				Poll Editor </font> </li> 
+				<li><a href="./../index.jsp">Poll Client</a> <font color=white> | Poll Editor | </font>
+				<a href="./../stats/stats.jsp">Statistics</a></li>
 			</ul>
 		</div>
 	</div>
