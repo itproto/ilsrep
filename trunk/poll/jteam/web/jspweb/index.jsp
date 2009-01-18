@@ -58,7 +58,8 @@ output=(login(session,request.getParameter("name"),request.getParameter("passwor
 				 out.println(res);
 				 %>
 				<li> <font color=white> Poll Client | </font>
-				<a href="./editor/index.jsp">Poll Editor</a></li>
+				<a href="./editor/index.jsp">Poll Editor</a><font color=white> | </font>
+				<a href="./stats/stats.jsp">Statistics</a></li>
 			</ul>
 		</div>
 	</div>

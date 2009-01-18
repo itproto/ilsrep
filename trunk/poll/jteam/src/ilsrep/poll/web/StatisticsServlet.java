@@ -38,7 +38,7 @@ public class StatisticsServlet extends HttpServlet {
      * Default dimension of statistics image.
      */
     public static final Dimension DEFAULT_STATS_IMAGE_DIMENSION = new Dimension(
-            640, 480);
+            450, 300);
 
     /**
      * Name of "type" parameter.
