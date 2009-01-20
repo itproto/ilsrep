@@ -1,4 +1,5 @@
  function sendResult(widget,url){
+	  $("#widget_poll").hide("slow");
 	 var choice=0;
 	 rad=document.getElementById("polls").choice;
 	 for(i=0;i<rad.length;i++){
@@ -47,11 +48,13 @@
                 var xmldoc = httpRequest.responseXML.getElementsByTagName('result');
                 for(i=0;i<rad.length;i++){
 	         document.getElementById("result"+i).childNodes[0].childNodes[0].style.width=xmldoc.item(i).getAttribute("percent")+"%";
-	        document.getElementById("result"+i).childNodes[1].innerHTML=xmldoc.item(i).getAttribute("votes"); 
-	            $("#widget_poll").hide("slow");
-$(".empty").animate({
-	width: ($(".empty").width()+160)+"px"},1500);
-	$(".full").css("background","url('images/bar2.png')");
+	        document.getElementById("result"+i).childNodes[0].childNodes[1].childNodes[0].innerHTML=xmldoc.item(i).getAttribute("votes"); 
+	        document.getElementById("result"+i).childNodes[0].childNodes[1].childNodes[1].innerHTML=xmldoc.item(i).getAttribute("percent"); 
+	           
+	             $("#widget_td").show("slow");
+//$(".empty").animate({
+//	width: ($(".empty").width()+160)+"px"},1500);
+//	$(".full").css("background","url('images/bar2.png')");
           }  
             } else {
                 alert('There was a problem with the request.');
@@ -60,3 +63,7 @@ $(".empty").animate({
 
     }
 
+function dontVote(){
+	 $("#widget_poll").hide("slow");
+	             $("#widget_td").show("slow");
+		}
