@@ -44,21 +44,21 @@ boolean rowtype=true;
 for( Choice currentChoice : currentPoll.getChoices()){
 res+="<tr ";
 
-res+="><td><input type='radio'  name='choice' value='"+currentChoice.getId()+"' CHECKED>"+currentChoice.getName()+"</td></tr>";
+res+="><td><input type='radio'  name='choice' value='"+currentChoice.getId()+"' onClick='this.checked=true;sendResult("+request.getParameter("widget")+",\"http://"+request.getServerName()+":"+Integer.toString(request.getServerPort())+"\")'>"+currentChoice.getName()+"</td></tr>";
 rowtype=rowtype ? false :true;
 }
 
-res+="<tr><td align=center><Input type='hidden' name='widget' value='"+request.getParameter("widget")+"'><img id=submitbut src='images/submit.png' onClick='sendResult("+request.getParameter("widget")+",\"http://"+request.getServerName()+":"+Integer.toString(request.getServerPort())+"\")' ></td></tr></table>";
+res+="<tr><td align=center><Input type='hidden' name='widget' value='"+request.getParameter("widget")+"'></td></tr><tr><td id='dontvote'><a  onclick='dontVote();'>Show me results</a></td></tr></table>";
 res+="</form>";
 
 
 
 res+="</td>";
 
-res+="<td><table id=widget>";
+res+="<td style='display:none' id='widget_td'><table id=widget >";
 
 for (int i=0;i<results.size();i++){
-	res+="<tr ><td>"+results.get(i).getName()+"</td><td id='result"+Integer.toString(i)+"'><div  name='empty' class=empty ><div name='full' style='width:"+Integer.toString(Integer.parseInt(results.get(i).getPercent())*2)+"px;' class=full></div></div><div name='votes' class=votes>"+results.get(i).getVotes()+"</div></td></tr>";
+	res+="<tr ><td>"+results.get(i).getName()+"</td></tr><tr><td id='result"+Integer.toString(i)+"'><div  name='empty' class=empty ><div name='full' style='width:"+Integer.toString(Integer.parseInt(results.get(i).getPercent())*2)+"px;' class=full></div><div name='votes' class=votes><span id='votes2'>"+results.get(i).getVotes()+"</span> votes (<span>"+results.get(i).getPercent()+"</span>%)</div></div></td></tr>";
 		}
 		res+="</table></td></tr></table></div>";
 out.println(res);

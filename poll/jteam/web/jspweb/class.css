@@ -429,7 +429,7 @@ color: #E8FAFF;
 }
 a.addButton:link img{
 	
-	background-image:url('images/butp.png');
+	background-image: url('images/butp.png');
 			}
 a.addButton:hover img{
 	
@@ -438,36 +438,51 @@ a.addButton:hover img{
 		
 		div.empty{
 			padding:0px;
-			height:24px;
-			width:200px;
+			height:14px;
+			width:240px;
 			float:left;
 			}
 			div.full{
+				float:left;
 				padding:0px;
-				height:24px;
-			background:url('images/bar.png');
+				height:14px;
+			background: #8B0000 /*url('images/bar.png')*/;
 			
 			}
 			
 #widget{
+	border:none;
 width:100%;
 border:none;
 background:none;
+font-size:12px;
 }
+#widget tr{
+	height:15px;
+	}
 #widget td{
 	border:none;
+	vertical-align:top;
+	height:14px;
+	
 	}
+	
 #widget_poll {
 	border:none;
+	
 	}
+#widget_poll tr{
+	height:20px;
+	
+	}	
 	#widget_poll td{
-		
+		font-size:12px;
 		border:none; !!important
 		}
 #frame{
-width:600px;
+width:270px;
 border: solid 1px #a30313;
-background: url('images/back.png');
+background: #fffefe;
 	}
 				
 #pollname{
@@ -480,12 +495,25 @@ border:none;
 color: #d97900;
 	}
 	div.votes {
-		width: 30px;
-		float: right;
-		height:24px;
+		padding-left:5px;
+		float: left;
 		color: #d97900;
+		font-size: 10px;
 		}
 		#submitbut{
 			cursor:pointer;
 			
 			}
+#dontvote a{
+cursor: pointer;	
+font-size:11px;
+	}
+#dontvote a:hover {
+background-color: #ffffff;
+color: #E8FAFF;	
+color: #D97900;
+text-decoration: underline;
+}
+#dontvote{
+	text-align:right;
+	}
