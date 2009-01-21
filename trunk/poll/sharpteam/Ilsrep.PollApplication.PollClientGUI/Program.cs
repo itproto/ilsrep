@@ -60,7 +60,7 @@ namespace Ilsrep.PollApplication.PollClientGUI
         /// <summary>
         /// PollWebService
         /// </summary>
-        public static PollWebService pollService = new PollWebService();
+        public static PollWebService pollService;
 
         
         /// <summary>
@@ -79,8 +79,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
             }
         }
         
-
-        
         /// <summary>
         /// Disconnect from server
         /// </summary>
@@ -88,8 +86,6 @@ namespace Ilsrep.PollApplication.PollClientGUI
         {
             client.Disconnect();
         }
-        
-
         
         /// <summary>
         /// Function sends request, receive PollPacket and check if receivedPacket == null. If true, user can retry to receive Packet, else function returns receivedPacket
@@ -120,16 +116,20 @@ namespace Ilsrep.PollApplication.PollClientGUI
             return receivedPacket;
         }
         
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // Load settings
+            // Authentication for web service
+            pollService = new PollWebService();
+            pollService.Authentication.userName = "AuthUsername";
+            pollService.Authentication.password = "AuthPassword";
+
             try
             {
+                // Load settings
                 settings.LoadSettings(PATH_TO_CONFIG_FILE);
             }
             catch (Exception exception)
