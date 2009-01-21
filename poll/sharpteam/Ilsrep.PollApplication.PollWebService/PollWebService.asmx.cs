@@ -24,14 +24,26 @@ namespace Ilsrep.PollApplication.WebService
     // [System.Web.Script.Services.ScriptService]
     public class PollWebService : System.Web.Services.WebService
     {
+        public AuthHeader Authentication = new AuthHeader();
+        private const string USER_NAME = "AuthUserName";
+        private const string PASSWORD = "AuthPassword";
+
         /// <summary>
         /// Get list of names and IDs of Surveys from database
         /// </summary>
         /// <returns>List of Surveys</returns>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public List<Item> GetSurveys()
         {
-            return DAL.PollDAL.GetSurveys();
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.GetSurveys();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -40,9 +52,17 @@ namespace Ilsrep.PollApplication.WebService
         /// <param name="surveyID">Survey ID that indicates which Survey to get</param>
         /// <returns>Survey object</returns>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public Survey GetSurvey(int surveyID)
         {
-            return DAL.PollDAL.GetSurvey(surveyID);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.GetSurvey(surveyID);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -51,9 +71,17 @@ namespace Ilsrep.PollApplication.WebService
         /// <param name="newSurvey">Survey object that is to be created in database</param>
         /// <returns>ID of just created survey</returns>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public int CreateSurvey(Survey newSurvey)
         {
-            return DAL.PollDAL.CreateSurvey(newSurvey);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.CreateSurvey(newSurvey);
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         /// <summary>
@@ -61,9 +89,13 @@ namespace Ilsrep.PollApplication.WebService
         /// </summary>
         /// <param name="survey">Survey object that is to be changed in database</param>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public void EditSurvey(Survey survey)
         {
-            DAL.PollDAL.EditSurvey(survey);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                DAL.PollDAL.EditSurvey(survey);
+            }
         }
 
         /// <summary>
@@ -71,9 +103,13 @@ namespace Ilsrep.PollApplication.WebService
         /// </summary>
         /// <param name="resultsList">List of results</param>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public void SaveSurveyResult(SurveyResults resultsList)
         {
-            DAL.PollDAL.SaveSurveyResult(resultsList);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                DAL.PollDAL.SaveSurveyResult(resultsList);
+            }
         }
 
         /// <summary>
@@ -82,9 +118,17 @@ namespace Ilsrep.PollApplication.WebService
         /// <param name="surveyId">Survey ID which results we need</param>
         /// <returns>List of results of needed Survey</returns>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public SurveyResults GetSurveyResults(int surveyId)
         {
-            return DAL.PollDAL.GetSurveyResults(surveyId);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.GetSurveyResults(surveyId);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -92,9 +136,13 @@ namespace Ilsrep.PollApplication.WebService
         /// </summary>
         /// <param name="surveyID">Survey ID that is to be removed</param>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public void RemoveSurvey(int surveyID)
         {
-            DAL.PollDAL.RemoveSurvey(surveyID);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                DAL.PollDAL.RemoveSurvey(surveyID);
+            }
         }
 
         /// <summary>
@@ -106,9 +154,17 @@ namespace Ilsrep.PollApplication.WebService
         /// <param name="user">User object that will be inserted in DB</param>
         /// <returns>User object</returns>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public User RegisterUser(User user)
         {
-            return DAL.PollDAL.RegisterUser(user);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.RegisterUser(user);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -117,15 +173,37 @@ namespace Ilsrep.PollApplication.WebService
         /// <param name="user"></param>
         /// <returns></returns>
         [WebMethod]
+        [SoapHeader("Authentication")]
         public User ExistUser(User user)
         {
-            return DAL.PollDAL.ExistUser(user);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.ExistUser(user);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         [WebMethod]
+        [SoapHeader("Authentication")]
         public User AuthorizeUser(User user)
         {
-            return DAL.PollDAL.AuthorizeUser(user);
+            if (Authentication.userName == USER_NAME && Authentication.password == PASSWORD)
+            {
+                return DAL.PollDAL.AuthorizeUser(user);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public class AuthHeader : SoapHeader
+        {
+            public string userName;
+            public string password;
         }
     }
 }
