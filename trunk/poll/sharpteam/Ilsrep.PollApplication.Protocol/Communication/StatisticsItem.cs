@@ -7,9 +7,52 @@ namespace Ilsrep.PollApplication.Communication
 {
     public class StatisticsItem : IComparable<StatisticsItem>
     {
-        public String name;
-        public Double scores;
-        public int attemptsCount;
+        private string _name;
+        private Double _scores;
+        private int _attemptsCount;        
+
+        public String name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
+        public Double scores
+        {
+            get
+            {
+                return _scores;
+            }
+            set
+            {
+                _scores = value;
+            }
+        }
+
+        public int attemptsCount
+        {
+            get
+            {
+                return _attemptsCount;
+            }
+            set
+            {
+                _attemptsCount = value;
+            }
+        }
+
+        public string GetScores
+        {
+            get
+            {
+                return String.Format("{0:G4}%", _scores);
+            }
+        }
 
         #region IComparable<StatisticsItem> Members
 
