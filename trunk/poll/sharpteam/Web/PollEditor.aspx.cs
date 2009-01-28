@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,8 +12,9 @@ using Ilsrep.PollApplication.Helpers;
 using Ilsrep.PollApplication.DAL;
 using Ilsrep.Common;
 using System.Data.SQLite;
+using System.Web.Services;
 
-public partial class PollEditor : System.Web.UI.Page
+public partial class _PollEditor : System.Web.UI.Page
 {
     public SQLiteConnection sqliteConnection = new SQLiteConnection();
     public List<Item> surveysList = new List<Item>();
@@ -24,63 +26,50 @@ public partial class PollEditor : System.Web.UI.Page
     {
         PollDAL.connectionString = "Data Source=\"" + Server.MapPath(ConfigurationSettings.AppSettings["dataSource"].ToString()) + "\"";
         surveysList = PollDAL.GetSurveys();
+        surveyListMenu.DataSource = surveysList;
+        surveyListMenu.DataBind();
 
         switch(Request["action"])
         {
-            case "show":
-                Show(Request["what"]);
-                break;
-            case "add":
-                Add(Request["what"]);
-                break;
             case "edit":
-                Edit(Request["what"]);
-                break;
-            case "delete":
-                Delete(Request["what"]);
-                break;
-            case "correct":
-                SetCorrectChoice(Convert.ToInt32(Request["survey_id"]), Convert.ToInt32(Request["poll_id"]), Convert.ToInt32(Request["choice_id"]));
-                break;
-        }
-    }
-
-    protected void Show(string what)
-    {
-        switch (what)
-        {
-            case "editsurvey":
                 int id = Convert.ToInt32(Request["id"]);
 
                 if (id == 0)
-                {// from session
-                    int lastID = Convert.ToInt32(Session["lastID"]);
-                    
-                    selectedSurvey = new Survey();
-                    selectedSurvey.Id = --lastID;
-                    
-                    Session["lastID"] = lastID;
-                }
-                else if ((Session["survey_" + id] as Survey) != null && Convert.ToInt32(Request["reset"]) != 1 )
                 {
-                    selectedSurvey = Session["survey_" + id] as Survey;
+                    if (Convert.ToInt32(Request["reset"]) == 1 || Session["survey_" + id] == null)
+                    {
+                        selectedSurvey = new Survey();
+                        selectedSurvey.Id = id;
+                    }
+                    else
+                    {
+                        selectedSurvey = Session["survey_" + id] as Survey;
+                    }
                 }
                 else if (id > 0)
                 {
-                    selectedSurvey = PollDAL.GetSurvey(id);
-                }
-                else
-                {
-                    selectedSurvey = new Survey();
-                    selectedSurvey.Id = id;
+                    if (Convert.ToInt32(Request["reset"]) == 1 || Session["survey_" + id] == null)
+                    {
+                        selectedSurvey = PollDAL.GetSurvey(id);
+                    }
+                    else
+                    {
+                        selectedSurvey = Session["survey_" + id] as Survey; 
+                    }
                 }
 
                 if (Session["survey_" + selectedSurvey.Id] == null)
                     Session["survey_" + selectedSurvey.Id] = selectedSurvey;
 
-                ShowPage = "editsurvey";
+                //listPolls.DataSource = selectedSurvey.Polls;
                 break;
         }
+    }
+
+    [WebMethod]
+    public static IEnumerable<Poll> GetPolls(int surveyID)
+    {
+        return (HttpContext.Current.Session["survey_" + surveyID] as Survey).Polls;
     }
 
     protected void Add(string what)
@@ -160,7 +149,7 @@ public partial class PollEditor : System.Web.UI.Page
                     foreach (Poll curPoll in curSurvey.Polls)
                     {
                         if (curPoll.Choices.Count == 0)
-                            throw new Exception("\" -> Poll \"" + curPoll.Name + "\": poll must have at least 1 choice");
+                            throw new Exception("Poll `" + curPoll.Name + "` must have at least 1 choice");
                     }
 
                     if (id < 0)
@@ -177,7 +166,7 @@ public partial class PollEditor : System.Web.UI.Page
                 {
                     //MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Message = exception.Message;
-                    Show("editsurvey");
+//                    Show("editsurvey");
                 }
 
                 break;
@@ -266,6 +255,15 @@ public partial class PollEditor : System.Web.UI.Page
 
     protected void SetCorrectChoice(int survey_id, int poll_id, int choice_id)
     {
+        //Poll currentPoll = (Session["survey_" + survey_id] as Survey).Polls.Find(delegate(Poll poll) { return poll.Id == poll_id; });
+        //Choice currentChoice = poll.Choices.Find(delegate(Choice choice) { return choice.Id == choice_id; });
+        //currentPoll.Choices.F
+
+
+
+
+
+
         foreach (Poll poll in (Session["survey_" + survey_id] as Survey).Polls)
         {
             if (poll.Id == poll_id)

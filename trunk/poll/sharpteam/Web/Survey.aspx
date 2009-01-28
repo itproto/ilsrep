@@ -8,6 +8,7 @@
 <asp:Content ID="leftContentSurvey" ContentPlaceHolderID="leftContent" Runat="Server">
     <asp:ListView runat="server" ID="pollMenu">
         <LayoutTemplate>
+            <h3>Polls:</h3>
             <ol>
                 <li id="itemPlaceholder" runat="server" />
             </ol>

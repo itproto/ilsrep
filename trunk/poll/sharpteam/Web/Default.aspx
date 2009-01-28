@@ -4,6 +4,7 @@
 <asp:Content ID="leftContentDefault" ContentPlaceHolderID="leftContent" Runat="server">
     <asp:ListView runat="server" ID="surveyMenu">
         <LayoutTemplate>
+            <h3>Select Survey:</h3>
             <ol>
                 <li id="itemPlaceholder" runat="server" />
             </ol>

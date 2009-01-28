@@ -1,8 +1,8 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="SurveyControl.ascx.cs" Inherits="SurveyControl" %>
 
-<asp:Label ID="surveyName" runat="server" CssClass="h1" />
+<h1><asp:Label ID="surveyName" runat="server" /></h1>
 
-<asp:Label ID="pollName" runat="server" CssClass="h3" />
+<h3><asp:Label ID="pollName" runat="server" /></h3>
 
 <asp:Label ID="pollDesc" runat="server" />
 
