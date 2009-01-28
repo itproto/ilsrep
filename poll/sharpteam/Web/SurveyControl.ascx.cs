@@ -39,15 +39,15 @@ public partial class SurveyControl : System.Web.UI.UserControl
         }
     }
 
-    protected SurveyResults resultsList
+    protected SurveyResults surveyResults
     {
         get
         {
-            return (SurveyResults)Session["resultsList"];
+            return (SurveyResults)Session["SurveyResults"];
         }
         set
         {
-            Session["resultsList"] = value;
+            Session["SurveyResults"] = value;
         }
     }
 
@@ -60,10 +60,10 @@ public partial class SurveyControl : System.Web.UI.UserControl
         set
         {
             Session["surveyID"] = value;
-            
-            resultsList = new SurveyResults();
-            resultsList.userName = Context.User.Identity.Name;
-            resultsList.surveyId = value;
+
+            surveyResults = new SurveyResults();
+            surveyResults.userName = Context.User.Identity.Name;
+            surveyResults.surveyId = value;
             
             pollIndex = 0;
         }
@@ -114,12 +114,13 @@ public partial class SurveyControl : System.Web.UI.UserControl
             pollResult.questionId = survey.Polls[pollIndex].Id;
             pollResult.answerId = Convert.ToInt32(choiceList.SelectedValue);
 
-            resultsList.results.Add(pollResult);
+            surveyResults.results.Add(pollResult);
 
             ++pollIndex;
 
             if (pollIndex == survey.Polls.Count)
             {
+                PollDAL.SaveSurveyResult(surveyResults);
                 Response.Redirect("Results.aspx");
             }
 

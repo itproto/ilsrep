@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -15,9 +14,7 @@ public partial class Results : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        //Session["pollIndex"] = 0
-        SurveyResults results = Session["resultsList"] as SurveyResults;
-        PollDAL.SaveSurveyResult(results);
+        SurveyResults results = Session["SurveyResults"] as SurveyResults;
         Survey survey = Session["survey"] as Survey;
 
         if ( survey == null || results == null )
