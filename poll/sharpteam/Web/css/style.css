@@ -150,7 +150,7 @@ input.button:hover
 	min-height: 500px;
 	float: left;
 	background-color: #d4d0b6;
-	padding-left: 10px;
+	/*padding-left: 10px;*/
 }
 
 .leftBlock ul
