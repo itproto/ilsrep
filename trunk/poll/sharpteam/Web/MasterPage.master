@@ -25,7 +25,7 @@
                         <a onfocus="this.blur()" href="Statistics.aspx" class="button">Statistics</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="login.aspx?action=logout">Logout (<%= Context.User.Identity.Name %>)</a>
+                        <a onfocus="this.blur()" href="Login.aspx?action=logout">Logout (<%= Context.User.Identity.Name %>)</a>
                     </li>
                 </ul>
             </div>

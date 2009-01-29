@@ -1,50 +1,100 @@
 ﻿$(document).ready(function() {
-    $(document).ready(addHover);
+    /*** hover for input fields ***/
+    $(":text").focus(function() {
+        $(this).addClass("hover");
+    }).blur(function() {
+        $(this).removeClass("hover");
+    });
 
-    $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
-    $("#editPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Edit": editPoll, "Cancel": function() { $(this).dialog("close"); } } });
-    $("#addChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Add": addChoice, "Cancel": function() { $(this).dialog("close"); } } });
-    $("#editChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, buttons: { "Edit": editChoice, "Cancel": function() { $(this).dialog("close"); } } });
+    /*** Init Dialogs ***/
+    $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
+    $("#editPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Edit": editPoll, "Cancel": function() { $(this).dialog("close"); } } });
+    $("#addChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Add": addChoice, "Cancel": function() { $(this).dialog("close"); } } });
+    $("#editChoiceDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Edit": editChoice, "Cancel": function() { $(this).dialog("close"); } } });
     
+    /*** constant links ***/		
     $("#survey_reset").click(function() { document.location = 'PollEditor.aspx?action=edit&id='+currentSurveyID+'&reset=1' });
     $("#add_poll").click(function() { $("#addPollDialog").dialog("open"); return false; });
 
+    /*** get the polls ***/
     $.ajax({
-    type: "POST",
-    contentType: "application/json; charset=utf-8",
-    url: "PollEditor.aspx/GetPolls",
-    data: "{ 'surveyID': " + currentSurveyID + " }",
-    dataType: "json",
-    success: function(data)
-    {
-        $("#survey_polls").setTemplateURL('js/jtemplates/polls.tpl', null, { filter_data: false});
-        $('#survey_polls').processTemplate(data.d);
-        $("#survey_tree").treeview();
-        $("#survey_loading").hide();
-        $("#survey_tree").removeClass("hidden");
-        
-        // poll functions
-        $(".edit_poll").click( function() {
-            var pollObj = $(this).parents(".poll");
-            var id = pollObj.attr("data");
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "PollEditor.aspx/GetPolls",
+        data: "{ 'surveyID': " + currentSurveyID + " }",
+        dataType: "json",
+        success: function(data)
+        {
+            $("#survey_polls").setTemplateURL('js/jtemplates/polls.tpl', null, { filter_data: false});
+            $('#survey_polls').processTemplate(data.d);
+            $("#survey_tree").treeview();
+            $("#survey_loading").hide();
+            $("#survey_tree").removeClass("hidden");
             
-            $("#editPollDialog").dialog("open");
-            $("#editPollDialog :input[name=poll_id]").val(id);
-            $("#editPollDialog :input[name=poll_name]").val(pollObj.children("span.folder").text());
-            return false;
-        });
-        $(".delete_poll").click(function() {
-            var pollObj = $(this).parents(".poll");
-            var id = pollObj.attr("data");
-            
-            $("#poll_" + id).remove();
-            //$.get("PollEditor.aspx?action=delete&what=poll&survey_id="+currentSurveyID+"&poll_id=" + id);
-            return false;
-        });
-    }
+            refreshLinks();
+        }
     });
 
 });
+
+function refreshLinks()
+{
+    // poll functions
+    $(".edit_poll").click( function() {
+        var pollObj = $(this).parents(".poll");
+        var pollData = eval("(" + pollObj.attr("data") + ")");
+        
+        $("#editPollDialog").dialog("open");
+        $("#editPollDialog :input[name=poll_id]").val(pollData.id);
+        $("#editPollDialog :input[name=poll_name]").val(pollData.name);
+        $("#editPollDialog :input[name=poll_desc]").val(pollData.description);
+        $($("#editPollDialog :input[name=poll_custom]")[0].options).each(function(option){
+            if ($(this).attr("value") == pollData.custom)
+            {
+                $(this).parent()[0].selectedIndex = option;
+                return false;
+            }
+        });
+        
+        return false;
+    });
+    $(".delete_poll").click(function() {
+        var pollObj = $(this).parents(".poll");
+        var pollData = eval("(" + pollObj.attr("data") + ")");
+        
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "PollEditor.aspx/RemovePoll",
+            data: "{ 'surveyID': " + currentSurveyID + ", pollID: " + pollData.id + " }",
+            dataType: "json",
+            success: function(data)
+            {
+                $("#poll_" + pollData.id).remove();
+            }
+        });
+        
+        //$.get("PollEditor.aspx?action=delete&what=poll&survey_id="+currentSurveyID+"&poll_id=" + pollData.id);
+        return false;
+    });
+
+
+}
+
+function editPoll()
+{    
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "PollEditor.aspx/EditPoll",
+        data: "{ 'surveyID': " + currentSurveyID + ", pollID: " + pollData.id + " }",
+        dataType: "json",
+        success: function(data)
+        {
+            $("#poll_" + pollData.id).remove();
+        }
+    });
+}
     
 
 /*    
@@ -64,12 +114,8 @@
             });
 */
 
-
 /*
- *	
- */
 function refreshChoiceLinks() {
-    /* choice functions */
     $(".links_add_choice").click(function() {
         var id = this.id.replace("link_add_choice_", "");
         $("#addChoiceDialog").dialog("open");
@@ -226,3 +272,4 @@ function selectCorrectChoice(poll_id, choice_id) {
                     });
     }
 }
+*/
