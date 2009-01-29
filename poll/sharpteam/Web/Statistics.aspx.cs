@@ -20,11 +20,17 @@ public partial class Statistics : System.Web.UI.Page
     public List<StatisticsItem> statisticsItems;
     public string tableTitle;
     public string objectName;
+    private int index;
 
     public void StatisticsPreRender(object sender, EventArgs e)
     {
+        index = statisticsDataPager.StartRowIndex;
         statisticsTableList.DataSource = statisticsItems;
         statisticsTableList.DataBind();
+        if (statisticsItems != null)
+        {
+            FormChart();
+        }
     }
 
     public void FormChart()
@@ -32,16 +38,24 @@ public partial class Statistics : System.Web.UI.Page
         // Form chart request
         string labelsDistribution = String.Empty;
         string scoresDistribution = String.Empty;
-        int i = 0;
-        foreach (StatisticsItem curItem in statisticsItems)
-        {
-            i++;
-            bool addSeparator = (i != statisticsItems.Count);
-            labelsDistribution += curItem.name + ((addSeparator) ? "|" : String.Empty);
-            scoresDistribution += Math.Round(curItem.scores) + ((addSeparator) ? "," : String.Empty);
-        }
 
+        int startIndex = statisticsDataPager.StartRowIndex;
+        bool isLastPage = ((statisticsDataPager.TotalRowCount - statisticsDataPager.StartRowIndex) < statisticsDataPager.MaximumRows);
+        int endIndex = (isLastPage) ? statisticsDataPager.TotalRowCount : startIndex + statisticsDataPager.MaximumRows;
+
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            bool addSeparator = (i != endIndex - 1);
+            labelsDistribution += statisticsItems[i].name + ((addSeparator) ? "|" : String.Empty);
+            scoresDistribution += Math.Round(statisticsItems[i].scores) + ((addSeparator) ? "," : String.Empty);
+        }
+        
         chart.ImageUrl = "http://chart.apis.google.com/chart?chco=d4d0b6&chbh=40&chxt=y&chs=500x300&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + labelsDistribution;
+    }
+
+    public int GetIndex()
+    {
+        return ++index;
     }
 
     public List<StatisticsItem> FormSurveyStatisticsList()
@@ -155,7 +169,7 @@ public partial class Statistics : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         surveyMenu.DataSource = PollDAL.GetTestSurveys();
-        surveyMenu.DataBind();
+        surveyMenu.DataBind();        
 
         switch (Request["object"])
         {
@@ -179,7 +193,6 @@ public partial class Statistics : System.Web.UI.Page
                     {
                         tableTitle = survey.Name;
                         objectName = "Users";
-                        FormChart();
                     }
                     break;
                 case "user":
@@ -188,7 +201,6 @@ public partial class Statistics : System.Web.UI.Page
                     {
                         tableTitle = userName;
                         objectName = "Surveys";
-                        FormChart();
                     }
                     break;
                 default:
