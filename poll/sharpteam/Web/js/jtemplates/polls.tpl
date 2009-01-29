@@ -1,6 +1,6 @@
 ﻿{#template MAIN}
 {#foreach $T as poll}
-<li data="{$T.poll.Id}" class="poll">
+<li data="{#ldelim} id: '{$T.poll.Id}', name: '{$T.poll.Name}', description: '{$T.poll.Description}', custom: '{$T.poll.CustomChoiceEnabled}' {#rdelim}" class="poll">
     <span class="folder">{$T.poll.Name}</span>
     <div class="commands">
        <a href='#' class='add_poll'><img alt="Add" src='images/treeview/page_white_add.png' /></a> 

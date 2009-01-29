@@ -2,6 +2,7 @@
 
 <asp:Content ID="headPollEditor" ContentPlaceHolderID="head" Runat="Server">
     <link rel="stylesheet" href="css/jquery.treeview.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/ui.all.css" type="text/css" media="screen" />
     <script src="js/jquery-1.3.1.min.js" type="text/javascript"></script>
     <script src="js/jquery-ui-personalized-1.6rc5.min.js" type="text/javascript"></script>
     <script src="js/jquery.treeview.min.js" type="text/javascript"></script>
@@ -23,12 +24,12 @@
             </ol>
             <h3>Add Survey:</h3>
             <ul>
-                <li><a href="?action=show&what=editsurvey&id=0">Add New</a></li>
+                <li><a href="?action=show&amp;what=editsurvey&amp;id=0">Add New</a></li>
             </ul>
         </LayoutTemplate>
         <ItemTemplate>
             <li>
-                <a href="?action=edit&id=<%# Eval("id") %>"><%# Eval("name") %></a>
+                <a href="?action=edit&amp;id=<%# Eval("id") %>"><%# Eval("name") %></a>
             </li>
         </ItemTemplate>
     </asp:ListView>
@@ -38,7 +39,7 @@
 <% if (selectedSurvey != null) { %>
     <h3>Edit Survey</h3>
     <div class="error"><%= Message %></div>
-    <form action="PollEditor.aspx?action=edit&amp;what=survey&id=<%= selectedSurvey.Id %>" method="post">
+    <form action="PollEditor.aspx?action=edit&amp;what=survey&amp;id=<%= selectedSurvey.Id %>" method="post">
         Survey Name: <input type="text" name="survey_name" value="<%= selectedSurvey.Name %>" class="text" /><br />
 
         <div id="survey_loading">
@@ -55,28 +56,32 @@
                 </div>
                 
                 <ul id="survey_polls">
-                    
+                    <li>Here goes polls...</li>
                 </ul>
             </li>
         </ul>
         
-        <input type="submit" name="save" value="<%= (selectedSurvey.Id < 0 ? "Add" : "Edit") %> Survey" class="button" />
-        <input type="submit" id="survey_reset" value="Reset" class="button" />
+        <button type="submit" name="save" class="ui-state-default ui-corner-all">Save Survey</button>
+        <button id="survey_reset" class="ui-state-default ui-corner-all">Reset</button>
     </form>
     
     <div id="addPollDialog" title="Add Poll">
-        Poll Name: <input type="text" name="poll_name" class="text" /><br />
+        Poll Name:<br />
+        <input type="text" name="poll_name" class="text" /><br />
         Poll Description:<br />
         <textarea name="poll_desc" rows="3" cols="30" class="text"></textarea><br />
-        Enable Custom Choice: <select name="poll_custom"><option value="false">No</option><option value="true">Yes</option></select><br />
+        <select name="poll_custom"><option value="false">No</option><option value="true">Yes</option></select>
+        Enable Custom Choice: 
     </div>
     
     <div id="editPollDialog" title="Edit Poll">
         <input type="hidden" name="poll_id" value="" />
-        Poll Name: <input type="text" name="poll_name" class="text" /><br />
+        Poll Name:<br />
+        <input type="text" name="poll_name" class="text" /><br />
         Poll Description:<br />
         <textarea name="poll_desc" rows="3" cols="30" class="text"></textarea><br />
-        Enable Custom Choice: <select name="poll_custom"><option value="false">No</option><option value="true">Yes</option></select><br />
+        <select name="poll_custom"><option value="false">No</option><option value="true">Yes</option></select>
+        Enable Custom Choice:
     </div>
     
     <div id="addChoiceDialog" title="Add Choice">
