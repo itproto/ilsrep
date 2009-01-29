@@ -47,8 +47,8 @@
         </LayoutTemplate>
         <ItemTemplate>
             <tr>
-                <td>Index</td>
-                <td><a href="Statistics.aspx?object=user&name=<%#Eval("name")%>"><%#Eval("name")%></a></td>                               
+                <td><%=GetIndex()%></td>
+                <td><a href="Statistics.aspx?object=user&name=<%#Eval("name")%>"><%#Eval("name")%></a>
                 <td><%#Eval("GetScores")%></td>
                 <td><%#Eval("attemptsCount")%></td>
             </tr>
