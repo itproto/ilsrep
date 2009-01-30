@@ -224,6 +224,29 @@ namespace Ilsrep.PollApplication.DAL
             return survey;
         }
 
+        static public int GetSurveyIDByName(string surveyName)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.CommandText = "SELECT * FROM " + SURVEYS_TABLE + " WHERE name=:name";
+            sqliteCommand.Parameters.AddWithValue(":name", surveyName);
+            SQLiteDataReader sqliteSurvey = sqliteCommand.ExecuteReader();
+
+
+            if (!sqliteSurvey.HasRows)
+            {
+                return -1;
+            }
+            else
+            {
+                return Convert.ToInt32(sqliteSurvey["id"]);
+            }
+        }
+
         /// <summary>
         /// Creates new Survey in database
         /// </summary>

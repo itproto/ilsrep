@@ -7,9 +7,22 @@ namespace Ilsrep.PollApplication.Communication
 {
     public class StatisticsItem : IComparable<StatisticsItem>
     {
+        private string _id;
         private string _name;
         private Double _scores;
-        private int _attemptsCount;        
+        private int _attemptsCount;
+
+        public string ID
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
 
         public String name
         {

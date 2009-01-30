@@ -48,7 +48,7 @@
         <ItemTemplate>
             <tr>
                 <td><%=GetIndex()%></td>
-                <td><a href="Statistics.aspx?object=user&name=<%#Eval("name")%>"><%#Eval("name")%></a>
+                <td><a href="Statistics.aspx?object=<%=objectInLink%>&<%=idInLink%>=<%#Eval("ID")%>"><%#Eval("name")%></a>
                 <td><%#Eval("GetScores")%></td>
                 <td><%#Eval("attemptsCount")%></td>
             </tr>
