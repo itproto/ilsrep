@@ -20,6 +20,9 @@ public partial class Statistics : System.Web.UI.Page
     public List<StatisticsItem> statisticsItems;
     public string tableTitle;
     public string objectName;
+    public string objectInLink;
+    public string idInLink;
+    public string idValueInLink;
     private int index;
 
     public void StatisticsPreRender(object sender, EventArgs e)
@@ -30,6 +33,17 @@ public partial class Statistics : System.Web.UI.Page
         if (statisticsItems != null)
         {
             FormChart();
+        }
+
+        if (Request["object"] == "survey")
+        {
+            objectInLink = "user";
+            idInLink = "name";
+        }
+        else if (Request["object"] == "user")
+        {
+            objectInLink = "survey";
+            idInLink = "id";
         }
     }
 
@@ -73,6 +87,7 @@ public partial class Statistics : System.Web.UI.Page
             {
                 StatisticsItem curStatisticsItem = new StatisticsItem();
                 curStatisticsItem.name = user;
+                curStatisticsItem.ID = user;
                 curStatisticsItem.attemptsCount = datesOfAttempts.Count();
 
                 // Calculate count of scores
@@ -125,6 +140,7 @@ public partial class Statistics : System.Web.UI.Page
             Survey survey = PollDAL.GetSurvey(surveyItem.id);
             StatisticsItem curStatisticsItem = new StatisticsItem();
             curStatisticsItem.name = survey.Name;
+            curStatisticsItem.ID = survey.Id.ToString();
             List<DateTime> datesOfAttempts = new List<DateTime>();
             datesOfAttempts = PollDAL.GetDatesOfAttempts(userName, survey.Id);
             curStatisticsItem.attemptsCount = datesOfAttempts.Count();
@@ -171,24 +187,14 @@ public partial class Statistics : System.Web.UI.Page
         surveyMenu.DataSource = PollDAL.GetTestSurveys();
         surveyMenu.DataBind();        
 
-        switch (Request["object"])
-        {
-            case "survey":
-                statisticsItems = FormSurveyStatisticsList();
-                break;
-            case "user":
-                statisticsItems = FormUserStatisticsList();
-                break;
-        }
-
         try
         {
             switch (Request["object"])
             {
                 case "survey":
+                    statisticsItems = FormSurveyStatisticsList();
                     int surveyID = Convert.ToInt32(Request["id"]);
-                    Survey survey = PollDAL.GetSurvey(surveyID);
-
+                    Survey survey = PollDAL.GetSurvey(surveyID);                   
                     if (PollDAL.HasResults(surveyID))
                     {
                         tableTitle = survey.Name;
@@ -196,6 +202,7 @@ public partial class Statistics : System.Web.UI.Page
                     }
                     break;
                 case "user":
+                    statisticsItems = FormUserStatisticsList();
                     string userName = Request["name"];
                     if (PollDAL.HasResults(userName))
                     {
