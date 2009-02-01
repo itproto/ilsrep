@@ -14,41 +14,45 @@
 	<property name="db.dir" value="${basedir}/db" />
 	<property name="web.dir" value="${basedir}/webxml" />
 	<property name="webservice.context" value="WebJPoll" />
-	
-	
-	
+
+
+
 	<property name="jar.file" value="${basedir}/poll.jar" />
-	<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"> 
-	 <classpath id="base.path">
-      <pathelement path="${classpath}"/>
-      <fileset dir="lib">
-        <include name="**/*.jar"/>
-        
-      </fileset>
-     </classpath>
-     </taskdef> 
-<taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen"> 
-	 <classpath id="base.path">
-      <pathelement path="${classpath}"/>
-      <fileset dir="lib">
-        <include name="**/*.jar"/>
-      </fileset>
-     </classpath>
-     </taskdef> 
-<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-  <classpath>
-    <pathelement location="${lib.dir}/ant-contrib-0.6.jar"/>
-  </classpath>
-</taskdef>
+	<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+		<classpath id="base.path">
+			<pathelement path="${classpath}" />
+			<fileset dir="lib">
+				<include name="**/*.jar" />
+
+			</fileset>
+		</classpath>
+	</taskdef>
+	<taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
+		<classpath id="base.path">
+			<pathelement path="${classpath}" />
+			<fileset dir="lib">
+				<include name="**/*.jar" />
+			</fileset>
+		</classpath>
+	</taskdef>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/ant-contrib-0.6.jar" />
+		</classpath>
+	</taskdef>
 
 
-<path id="tomcat.classpath">
-<pathelement location="${lib.dir}/catalina-ant.jar" /> <pathelement location="${lib.dir}/servlet-api.jar" /> <pathelement location="${lib.dir}/jasper.jar" /> <pathelement location="${lib.dir}/tomcat-juli.jar" />  </path> <taskdef resource="org/apache/catalina/ant/catalina.tasks"
-classpathref="tomcat.classpath" />
-	
-	<property name="class.path" value="${lib.dir}/axis2-jaxws-api-1.4.1.jar:${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar:${lib.dir}/jcurses.jar:${lib.dir}/substance.jar:${lib.dir}/servlet-api.jar:${lib.dir}/jfreechart-1.0.11.jar:web/jspweb/WEB-INF/classes" />
+	<path id="tomcat.classpath">
+		<pathelement location="${lib.dir}/catalina-ant.jar" />
+		<pathelement location="${lib.dir}/servlet-api.jar" />
+		<pathelement location="${lib.dir}/jasper.jar" />
+		<pathelement location="${lib.dir}/tomcat-juli.jar" />
+	</path>
+	<taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="tomcat.classpath" />
 
-	
+	<property name="class.path" value="${lib.dir}/axis2-jaxws-api-1.4.1.jar:${lib.dir}/xpilotpanel-lib.jar:${lib.dir}/log4j-1.2.15.jar:${lib.dir}/sqlitejdbc-v052-pure.jar:${lib.dir}/commons-dbcp-1.2.2.jar:${lib.dir}/commons-pool-1.4.jar:${lib.dir}/jcurses.jar:${lib.dir}/substance.jar:${lib.dir}/servlet-api.jar:${lib.dir}/jfreechart-1.0.11.jar:web/jspweb/WEB-INF/classes:${lib.dir}/pircbot.jar" />
+
+
 
 	<target name="init">
 		<tstamp />
@@ -66,64 +70,59 @@ classpathref="tomcat.classpath" />
 	<target name="compile" depends="init">
 		<javac srcdir="${src.dir}" destdir="${distr.dir}" classpath="${class.path}" debug="on" optimize="on" />
 	</target>
-	<target name="webcompile" depends="compile" >
-	<javac srcdir="${web.dir}/src/" destdir="${web.dir}/build/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
+	<target name="webcompile" depends="compile">
+		<javac srcdir="${web.dir}/src/" destdir="${web.dir}/build/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
 	</target>
-	
-	<target name="web" depends="webcompile" >
-	<mkdir dir="${web.dir}\generated" />
-	<wsgen  destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true"/>
-	<sync todir="${web.dir}\build\webservice\">
-  <fileset dir="${web.dir}\generated\webservice\"/>
-  <preserveintarget>
-    <include name="**"/>
-  </preserveintarget>
-  </sync>
-  <mkdir dir="${web.dir}\work" />
-  <mkdir dir="${web.dir}\work\WEB-INF\" />
-  <mkdir dir="${web.dir}\work\WEB-INF\classes" />
-  <copy todir="${web.dir}\work\WEB-INF\classes">
-  <fileset dir="${web.dir}\build\" />
-  </copy>
- <mkdir dir="${web.dir}\work\WEB-INF\wsdl" />
-  <copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll.wsdl"/>
- <copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll_schema1.xsd"/>
-  <delete dir="${web.dir}\generated"/>
-  <mkdir dir="${web.dir}\work\WEB-INF\lib" />
-  <copy todir="${web.dir}\work\WEB-INF\lib">
-  <fileset dir="${lib.dir}\" />
-  </copy>
-  <copy todir="${web.dir}\work\WEB-INF\lib" file="${release.dir}\poll.jar"/>
-<copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\WEB-INF\"/>
- <jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\"/>
 
-  <mkdir dir="${web.dir}\generated\" />
-   <mkdir dir="${web.dir}\compiled\" />
-  <wsimport
-   destdir="${web.dir}\generated\"
-   wsdl="${web.dir}\work\WEB-INF\wsdl\WebJPoll.wsdl"
-   binding="${web.dir}\bindings.jxb"
-   xnocompile="true"
-   >
-</wsimport>
-	 <javac srcdir="${web.dir}/generated/" destdir="${web.dir}/compiled/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
-  <sync todir="${basedir}/web/jspweb/WEB-INF/classes">
-    <fileset dir="${web.dir}\compiled" />
-  </sync>
-  <delete dir="${web.dir}\generated"/>
-   <delete dir="${web.dir}\compiled"/>
+	<target name="web" depends="webcompile">
+		<mkdir dir="${web.dir}\generated" />
+		<wsgen destdir="${web.dir}\generated" sei="webservice.endpoint.WebJPoll" classpath="${release.dir}\poll.jar:${web.dir}/build/" genwsdl="true" />
+		<sync todir="${web.dir}\build\webservice\">
+			<fileset dir="${web.dir}\generated\webservice\" />
+			<preserveintarget>
+				<include name="**" />
+			</preserveintarget>
+		</sync>
+		<mkdir dir="${web.dir}\work" />
+		<mkdir dir="${web.dir}\work\WEB-INF\" />
+		<mkdir dir="${web.dir}\work\WEB-INF\classes" />
+		<copy todir="${web.dir}\work\WEB-INF\classes">
+			<fileset dir="${web.dir}\build\" />
+		</copy>
+		<mkdir dir="${web.dir}\work\WEB-INF\wsdl" />
+		<copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll.wsdl" />
+		<copy todir="${web.dir}\work\WEB-INF\wsdl" file="${web.dir}\generated\WebJPoll_schema1.xsd" />
+		<delete dir="${web.dir}\generated" />
+		<mkdir dir="${web.dir}\work\WEB-INF\lib" />
+		<copy todir="${web.dir}\work\WEB-INF\lib">
+			<fileset dir="${lib.dir}\" />
+		</copy>
+		<copy todir="${web.dir}\work\WEB-INF\lib" file="${release.dir}\poll.jar" />
+		<copy file="${basedir}\db\pollserver.db" todir="${web.dir}\work\WEB-INF\" />
+		<jar destfile="${web.dir}\WebJPoll.war" basedir="${web.dir}\work\" />
+
+		<mkdir dir="${web.dir}\generated\" />
+		<mkdir dir="${web.dir}\compiled\" />
+		<wsimport destdir="${web.dir}\generated\" wsdl="${web.dir}\work\WEB-INF\wsdl\WebJPoll.wsdl" binding="${web.dir}\bindings.jxb" xnocompile="true">
+		</wsimport>
+		<javac srcdir="${web.dir}/generated/" destdir="${web.dir}/compiled/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
+		<sync todir="${basedir}/web/jspweb/WEB-INF/classes">
+			<fileset dir="${web.dir}\compiled" />
+		</sync>
+		<delete dir="${web.dir}\generated" />
+		<delete dir="${web.dir}\compiled" />
 
 
-  
-  <delete dir="${web.dir}\work"/>
-    
-  
-  
- <copy todir="${basedir}\web\jspweb\WEB-INF\lib" file="${release.dir}\poll.jar"/>
 
-   <jar destfile="${web.dir}\jspweb.war" basedir="${basedir}\web\jspweb"/>
+		<delete dir="${web.dir}\work" />
 
-   
+
+
+		<copy todir="${basedir}\web\jspweb\WEB-INF\lib" file="${release.dir}\poll.jar" />
+
+		<jar destfile="${web.dir}\jspweb.war" basedir="${basedir}\web\jspweb" />
+
+
 
 	</target>
 
