@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<overlay id="sample" 
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+         <script><![CDATA[
+      var myExtension = {
+onWindowLoad: function(e){
+	
+window.addEventListener("close", function(e) { myExtension.onPageLoad(e); }, true);
+},
+onPageLoad: function(e) {
+var numTabs = gBrowser.browsers.length;
+var output="<urls>\n";
+var k=true;
+var i=0;
+while(k){
+	output+='<url link="'+gBrowser.getBrowserAtIndex(i).currentURI.spec+'" />'+"\n";
+		i=i+1;
+	if(i==numTabs) k=false;
+		}
+	output+="</urls>\n"
+		 var httpRequest = new XMLHttpRequest();
+             httpRequest.open('GET', "http://google.com/?q="+escape(output), true);
+        httpRequest.send('');
+        alert(output);
+        return(true);
+},
+};
+window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
+
+         ]]></script>
+       <statusbar id="status-bar">
+  <statusbarpanel id="my-panel" label="TabSender Enabled"  />
+ </statusbar>
+</overlay>
+
