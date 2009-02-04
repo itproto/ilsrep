@@ -1,5 +1,6 @@
 package ilsrep.poll.irc;
 
+import ilsrep.poll.common.model.Pollsession;
 import ilsrep.poll.common.protocol.Pollsessionlist;
 
 import java.io.IOException;
@@ -145,6 +146,38 @@ public class PollSurveyBot extends PircBot {
                 for (int i = 0; i < list.getItems().size(); i++) {
                     sendMessage(channel, (i + 1) + ") "
                             + list.getItems().get(i).getName());
+                }
+                sendMessage(channel, "To start survey type "
+                        + commandPrefix.charAt(0) + "start <survey number>");
+            }
+            else if (messageParts[0].equals("start") && messageParts.length > 1) {
+                try {
+                    int requestNumber = Integer.parseInt(messageParts[1]) - 1;
+
+                    Pollsessionlist list = getService().getWebJPollPort()
+                            .getPollsessionlist();
+
+                    if (requestNumber < 0
+                            || requestNumber > list.getItems().size()) {
+                        sendMessage(channel, "Wrong survey number");
+                    }
+                    else {
+                        Pollsession session = getService().getWebJPollPort()
+                                .getPollsessionById(
+                                        list.getItems().get(requestNumber)
+                                                .getId());
+                        sendMessage(channel, "Survey ID: " + session.getId());
+                        sendMessage(channel, "Survey name: "
+                                + session.getName());
+                        sendMessage(channel, "Survey is in test mode: "
+                                + session.getTestMode());
+                        if (session.getTestMode().equals("true"))
+                            sendMessage(channel, "Survey minimal score: "
+                                    + session.getMinScore());
+                    }
+                }
+                catch (NumberFormatException e) {
+                    sendMessage(channel, "Incorrect survey number");
                 }
             }
             else if (messageParts[0].equals("set") && messageParts.length > 2) {

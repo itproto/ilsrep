@@ -127,11 +127,12 @@
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
-		<copy todir="${distr.dir}/webservice/endpoint">
+<!--		<copy todir="${distr.dir}/webservice/endpoint">
 			<fileset dir="web/jspweb/WEB-INF/classes">
 				<include name="**/*.class" />
 			</fileset>
 		</copy>
+-->
 		<jar destfile="${jar.file}" manifest="./MANIFEST.MF">
 			<fileset dir="${distr.dir}">
 			</fileset>

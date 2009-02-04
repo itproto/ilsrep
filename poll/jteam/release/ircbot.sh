@@ -1,4 +1,3 @@
 #!/bin/sh
 
-java -cp poll.jar:lib/pircbot.jar ilsrep.poll.irc.PollSurveyBot
-
+java -cp poll.jar:./../web/jspweb/WEB-INF/classes/:lib/FastInfoset.jar:lib/activation.jar:lib/ant-contrib-0.6.jar:lib/axis2-jaxws-api-1.4.1.jar:lib/catalina-ant.jar:lib/commons-dbcp-1.2.2.jar:lib/commons-pool-1.4.jar:lib/http.jar:lib/jasper.jar:lib/jaxb-api.jar:lib/jaxb-impl.jar:lib/jaxb-xjc.jar:lib/jaxws-api.jar:lib/jaxws-rt.jar:lib/jaxws-tools.jar:lib/jcommon-1.0.14.jar:lib/jfreechart-1.0.11.jar:lib/jsr173_api.jar:lib/jsr181-api.jar:lib/jsr250-api.jar:lib/log4j-1.2.15.jar:lib/mimepull.jar:lib/pircbot.jar:lib/resolver.jar:lib/saaj-api.jar:lib/saaj-impl.jar:lib/servlet-api.jar:lib/sqlitejdbc-v052-pure.jar:lib/stax-ex.jar:lib/streambuffer.jar:lib/substance.jar:lib/tomcat-juli.jar:lib/woodstox.jar:lib/xpilotpanel-lib.jar ilsrep.poll.irc.PollSurveyBot
