@@ -438,12 +438,18 @@ input.button:hover
 
 .widget_table input
 {
-	width: 97%;
+	width: 300px;
 }
 
 .widget_table td
 {
 	padding: 2px;
+}
+
+.widget_button
+{
+	max-width: 14px;
+	height: 14px;
 }
 
 /*------------------------End Of Widget Styles-----------------------------*/

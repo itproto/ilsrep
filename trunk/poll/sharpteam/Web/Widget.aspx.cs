@@ -18,7 +18,7 @@ public partial class Widget : System.Web.UI.Page
     private int answerID = 0;
     private static int choiceID = 0;
     public static List<Choice> choices;
-    public bool enableButton;
+    public bool enableButtons;
 
     public int GenerateAnswerID()
     {
@@ -42,8 +42,17 @@ public partial class Widget : System.Web.UI.Page
             choices.Add(choice1);
             choices.Add(choice2);
             BindData();
-            enableButton = false;
+            enableButtons = false;
         }        
+    }
+
+    private void SaveChanges()
+    {
+        int index = 0;
+        foreach (ListViewDataItem curItem in poll.Items)
+        {
+            choices[index++].choice = ((TextBox)curItem.FindControl("answerTextBox")).Text;
+        }
     }
 
     private void BindData()
@@ -59,16 +68,18 @@ public partial class Widget : System.Web.UI.Page
             switch (e.CommandName)
             {
                 case "AddItem":
+                    SaveChanges();
                     Choice choice = new Choice(((TextBox)poll.FindControl("newAnswerTextBox")).Text);
                     choice.Id = GenerateChoiceID();
                     ((TextBox)poll.FindControl("newAnswerTextBox")).Text = String.Empty;
                     choices.Add(choice);
-                    enableButton = (choices.Count > 2) ? true : false;
-                    BindData();                    
+                    enableButtons = (choices.Count > 2) ? true : false;
+                    BindData();                   
                     break;
                 case "RemoveItem":
+                    SaveChanges();
                     choices.Remove(choices.Find(delegate(Choice curChoice) { return curChoice.Id == Convert.ToInt32(e.CommandArgument); }));
-                    enableButton = (choices.Count > 2) ? true : false;
+                    enableButtons = (choices.Count > 2) ? true : false;
                     BindData();                    
                     break;
                 default:
