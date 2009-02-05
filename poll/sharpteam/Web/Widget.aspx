@@ -21,7 +21,7 @@
                             <asp:TextBox ID="newAnswerTextBox" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            <asp:Button ID="addButton" CommandName="AddItem" runat="server" Text="Add" />
+                            <asp:ImageButton ID="addButton" ImageUrl="images/add.gif" CssClass="widget_button" CommandName="AddItem" runat="server" Text="Add" />
                         </td>
                     </tr>
                 </table>
@@ -34,7 +34,7 @@
                     <asp:TextBox ID="answerTextBox" runat="server" Text='<%#Eval("choice")%>'></asp:TextBox>
                 </td>
                 <td>
-                    <asp:Button ID="deleteButton" CommandName="RemoveItem" Enabled="<%#enableButton%>" CommandArgument='<%#Eval("Id")%>' runat="server" Text="Delete" />
+                    <asp:ImageButton ID="deleteButton" ImageUrl="images/delete.gif" CssClass="widget_button" CommandName="RemoveItem" Visible="<%#enableButtons%>" CommandArgument='<%#Eval("Id")%>' runat="server" />
                 </td>
             </tr>
         </ItemTemplate>
