@@ -22,8 +22,11 @@
                         <a onfocus="this.blur()" href="PollEditor.aspx">Poll editor</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="Statistics.aspx">Statistics</a> |
+                        <a onfocus="this.blur()" href="Widget.aspx">Widget</a> |
                     </li>
+                    <li>
+                        <a onfocus="this.blur()" href="Statistics.aspx">Statistics</a> |
+                    </li>                    
                     <li>
                         <a onfocus="this.blur()" href="Login.aspx?action=logout">Logout (<%= Context.User.Identity.Name %>)</a>
                     </li>

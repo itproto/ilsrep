@@ -63,8 +63,8 @@ public partial class Statistics : System.Web.UI.Page
             labelsDistribution += statisticsItems[i].name + ((addSeparator) ? "|" : String.Empty);
             scoresDistribution += Math.Round(statisticsItems[i].scores) + ((addSeparator) ? "," : String.Empty);
         }
-        
-        chart.ImageUrl = "http://chart.apis.google.com/chart?chco=d4d0b6&chbh=40&chxt=y&chs=500x300&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + labelsDistribution;
+
+        chart.ImageUrl = "http://chart.apis.google.com/chart?chco=A30313&chbh=40&chxt=y&chs=500x300&chd=t:" + scoresDistribution + "&cht=bvs&chl=" + labelsDistribution;
     }
 
     public int GetIndex()
