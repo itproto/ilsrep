@@ -421,3 +421,29 @@ input.button:hover
 }
 
 /*------------------------End Of Statistics Styles-------------------------*/
+
+/*------------------------Widget Styles------------------------------------*/
+
+.widget_table
+{
+	margin: 20px auto;
+	padding: 0;
+	width: 400px;
+}
+
+.widget_header
+{
+	text-align: right;
+}
+
+.widget_table input
+{
+	width: 97%;
+}
+
+.widget_table td
+{
+	padding: 2px;
+}
+
+/*------------------------End Of Widget Styles-----------------------------*/
