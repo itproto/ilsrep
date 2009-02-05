@@ -79,7 +79,7 @@ namespace Ilsrep.PollApplication.Model
             {
                 if (value == String.Empty)
                 {
-                    throw new Exception("Choice can't be empty");
+                    throw new Exception("Choice field can't be empty");
                 }
                 else
                 {

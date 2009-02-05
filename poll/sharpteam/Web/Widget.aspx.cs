@@ -65,10 +65,10 @@ public partial class Widget : System.Web.UI.Page
     {
         try
         {
+            SaveChanges();
             switch (e.CommandName)
             {
                 case "AddItem":
-                    SaveChanges();
                     Choice choice = new Choice(((TextBox)poll.FindControl("newAnswerTextBox")).Text);
                     choice.Id = GenerateChoiceID();
                     ((TextBox)poll.FindControl("newAnswerTextBox")).Text = String.Empty;
@@ -76,13 +76,20 @@ public partial class Widget : System.Web.UI.Page
                     enableButtons = (choices.Count > 2) ? true : false;
                     BindData();                   
                     break;
-                case "RemoveItem":
-                    SaveChanges();
+                case "RemoveItem":                    
                     choices.Remove(choices.Find(delegate(Choice curChoice) { return curChoice.Id == Convert.ToInt32(e.CommandArgument); }));
                     enableButtons = (choices.Count > 2) ? true : false;
                     BindData();                    
                     break;
-                default:
+                case "SubmitWidget":
+                    string question = ((TextBox)poll.FindControl("questionTextBox")).Text;
+                    if (question == String.Empty)
+                    {
+                        throw new Exception("Question field can't be empty");
+                    }
+
+                    throw new Exception("Widget accepted!");
+
                     break;
             }
         }

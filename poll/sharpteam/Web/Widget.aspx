@@ -2,34 +2,44 @@
 <%@ MasterType VirtualPath="~/MasterPage.master" %>
 
 <asp:Content ID="widgetMainContent" ContentPlaceHolderID="mainContent" Runat="Server">
-    <asp:Label ID="errorLabel" runat="server"></asp:Label>
+    <div class="widget_error">
+        <asp:Label ID="errorLabel" runat="server"></asp:Label>
+    </div>
     
     <asp:ListView ID="poll" runat="server" OnItemCommand="OnItemCommandOccur">
         <LayoutTemplate>
             <form id="pollForm" runat="server">
                 <table cellpadding="0" cellspacing="0" class="widget_table">
                     <tr>
-                        <td class="widget_header">Question</td>
-                        <td colspan="2">
+                        <td>Question</td>
+                        <td>
                             <asp:TextBox ID="questionTextBox" runat="server"></asp:TextBox>
                         </td>
+                        <td></td>
                     </tr>
                     <tr id="itemPlaceholder" runat="server"></tr>
                     <tr>
-                        <td class="widget_header">New answer</td>
+                        <td>New answer</td>
                         <td>
                             <asp:TextBox ID="newAnswerTextBox" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            <asp:ImageButton ID="addButton" ImageUrl="images/add.gif" CssClass="widget_button" CommandName="AddItem" runat="server" Text="Add" />
+                            <asp:ImageButton ID="addButton" ImageUrl="images/add.gif" CssClass="widget_button" CommandName="AddItem" runat="server" />
                         </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="widget_header">
+                            <asp:ImageButton CssClass="widget_submit_button" ID="submitButton" runat="server" CommandName="SubmitWidget" ImageUrl="images/submit.gif" />
+                        </td>
+                        <td></td>
                     </tr>
                 </table>
             </form>
         </LayoutTemplate>
         <ItemTemplate>
             <tr>
-                <td class="widget_header">Answer<%=GenerateAnswerID()%></td>
+                <td>Answer<%=GenerateAnswerID()%></td>
                 <td>
                     <asp:TextBox ID="answerTextBox" runat="server" Text='<%#Eval("choice")%>'></asp:TextBox>
                 </td>
@@ -38,6 +48,6 @@
                 </td>
             </tr>
         </ItemTemplate>
-    </asp:ListView>
+    </asp:ListView>    
 </asp:Content>
 

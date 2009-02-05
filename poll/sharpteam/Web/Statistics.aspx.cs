@@ -214,7 +214,6 @@ public partial class Statistics : System.Web.UI.Page
                     message.Text = "Please select survey from left menu.";
                     break;
             }
-            
         }
         catch (Exception exception)
         {
