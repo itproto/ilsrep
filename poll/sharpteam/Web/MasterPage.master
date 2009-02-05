@@ -16,13 +16,13 @@
             <div class="mainMenu">
                 <ul>
                     <li>
-                        <a onfocus="this.blur()" href="Default.aspx?action=startpoll" class="button">Start poll</a> |
+                        <a onfocus="this.blur()" href="Default.aspx?action=startpoll">Start poll</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="PollEditor.aspx" class="button">Poll editor</a> |
+                        <a onfocus="this.blur()" href="PollEditor.aspx">Poll editor</a> |
                     </li>
                     <li>
-                        <a onfocus="this.blur()" href="Statistics.aspx" class="button">Statistics</a> |
+                        <a onfocus="this.blur()" href="Statistics.aspx">Statistics</a> |
                     </li>
                     <li>
                         <a onfocus="this.blur()" href="Login.aspx?action=logout">Logout (<%= Context.User.Identity.Name %>)</a>

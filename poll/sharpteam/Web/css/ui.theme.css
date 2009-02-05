@@ -5,7 +5,7 @@
 * To view and modify this theme, visit http://themeroller.com/?tr=&ffDefault=Arial,sans-serif&fwDefault=bold&fsDefault=1.3em&cornerRadius=.4em&bgColorHeader=A30313&bgTextureHeader=07bdiagonals_medium.png&bgImgOpacityHeader=15&borderColorHeader=900010&fcHeader=ffffff&iconColorHeader=ffffff&bgColorContent=dad7c8&bgTextureContent=01_flat.png&bgImgOpacityContent=75&borderColorContent=cecbba&fcContent=333333&iconColorContent=cc0000&bgColorDefault=dad7c8&bgTextureDefault=04_highlight_hard.png&bgImgOpacityDefault=100&borderColorDefault=cecbba&fcDefault=cc0000&iconColorDefault=cc0000&bgColorHover=c6c3b0&bgTextureHover=04_highlight_hard.png&bgImgOpacityHover=100&borderColorHover=cecbba&fcHover=780d0d&iconColorHover=cc0000&bgColorActive=dad7c8&bgTextureActive=01_flat.png&bgImgOpacityActive=85&borderColorActive=cecbba&fcActive=111111&iconColorActive=cc0000&bgColorHighlight=fbf8ee&bgTextureHighlight=02_glass.png&bgImgOpacityHighlight=55&borderColorHighlight=fcd3a1&fcHighlight=555555&iconColorHighlight=004276&bgColorError=eee7e7&bgTextureError=08_diagonals_thick.png&bgImgOpacityError=55&borderColorError=cc0000&fcError=cc0000&iconColorError=cc0000&bgColorOverlay=000000&bgTextureOverlay=07_diagonals_small.png&bgImgOpacityOverlay=20&opacityOverlay=75&bgColorShadow=333333&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=10&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
 */
 
-button { margin: .5em .4em .5em 0; cursor: pointer; padding: .2em .6em .3em .6em; line-height: 1.4em; width:auto; overflow:visible; }
+button { cursor: pointer; }
 
 /* Component containers
 ----------------------------------*/
@@ -18,9 +18,9 @@ button { margin: .5em .4em .5em 0; cursor: pointer; padding: .2em .6em .3em .6em
 
 /* Interaction states
 ----------------------------------*/
-.ui-state-default, .ui-widget-content .ui-state-default { border: 1px solid #cecbba; background: #dad7c8 url(../images/jquery-ui/ui-bg_highlight-hard_100_dad7c8_1x100.png) 50% 50% repeat-x; font-weight: bold; color: #cc0000; outline: none; }
+.ui-state-default, .ui-widget-content .ui-state-default { border: 1px solid #cecbba; background: #dad7c8 url(../images/jquery-ui/ui-bg_highlight-hard_100_dad7c8_1x100.png) 50% 50% repeat-x; /*font-weight: bold;*/ color: #cc0000; outline: none; }
 .ui-state-default a { color: #cc0000; text-decoration: none; outline: none; }
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { border: 1px solid #cecbba; background: #c6c3b0 url(../images/jquery-ui/ui-bg_highlight-hard_100_c6c3b0_1x100.png) 50% 50% repeat-x; font-weight: bold; color: #780d0d; outline: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { border: 1px solid #cecbba; background: #c6c3b0 url(../images/jquery-ui/ui-bg_highlight-hard_100_c6c3b0_1x100.png) 50% 50% repeat-x; /*font-weight: bold;*/ color: #780d0d; outline: none; }
 .ui-state-hover a { color: #780d0d; text-decoration: none; outline: none; }
 .ui-state-active, .ui-widget-content .ui-state-active { border: 1px solid #cecbba; background: #dad7c8 url(../images/jquery-ui/ui-bg_flat_85_dad7c8_40x100.png) 50% 50% repeat-x; font-weight: bold; color: #111111; outline: none; }
 .ui-state-active a { color: #111111; outline: none; text-decoration: none; }
