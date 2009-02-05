@@ -7,6 +7,7 @@
     <script src="js/jquery-ui-personalized-1.6rc5.min.js" type="text/javascript"></script>
     <script src="js/jquery.treeview.min.js" type="text/javascript"></script>
     <script src="js/jquery-jtemplates.js" type="text/javascript"></script>
+    <script src="js/json2-min.js" type="text/javascript"></script>
     <% if (selectedSurvey != null) { %>
     <script type='text/javascript'>
         var currentSurveyID = "<%= selectedSurvey.Id %>";
@@ -24,7 +25,7 @@
             </ol>
             <h3>Add Survey:</h3>
             <ul>
-                <li><a href="?action=show&amp;what=editsurvey&amp;id=0">Add New</a></li>
+                <li><a href="?action=edit&amp;id=0">Add New</a></li>
             </ul>
         </LayoutTemplate>
         <ItemTemplate>
@@ -39,7 +40,7 @@
 <% if (selectedSurvey != null) { %>
     <h3>Edit Survey</h3>
     <div class="error"><%= Message %></div>
-    <form action="PollEditor.aspx?action=edit&amp;what=survey&amp;id=<%= selectedSurvey.Id %>" method="post">
+    <form action="PollEditor.aspx?action=save&amp;id=<%= selectedSurvey.Id %>" method="post">
         Survey Name: <input type="text" name="survey_name" value="<%= selectedSurvey.Name %>" class="text" /><br />
 
         <div id="survey_loading">
@@ -61,8 +62,8 @@
             </li>
         </ul>
         
-        <button type="submit" name="save" class="ui-state-default ui-corner-all">Save Survey</button>
-        <button id="survey_reset" class="ui-state-default ui-corner-all">Reset</button>
+        <button type="submit" name="save">Save Survey</button>
+        <button id="survey_reset">Reset</button>
     </form>
     
     <div id="addPollDialog" title="Add Poll">
@@ -93,6 +94,12 @@
         <input type="hidden" name="poll_id" value="" />
         <input type="hidden" name="choice_id" value="" />
         Choice: <input type="text" name="choice" class="text" /><br /> 
+    </div>
+    
+    <div id="messageDialog" title="Poll Editor">
+    </div>
+    
+    <div id="confirmDialog" title="Poll Editor">
     </div>
 <% } else { %>
 Please select survey to edit from the left menu, or add new survey.
