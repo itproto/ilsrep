@@ -431,11 +431,6 @@ input.button:hover
 	width: 400px;
 }
 
-.widget_header
-{
-	text-align: right;
-}
-
 .widget_table input
 {
 	width: 300px;
@@ -444,12 +439,25 @@ input.button:hover
 .widget_table td
 {
 	padding: 2px;
+	text-align: right;
 }
 
 .widget_button
 {
 	max-width: 14px;
 	height: 14px;
+}
+
+.widget_submit_button
+{
+	max-width: 90px;
+	height: 23px;
+}
+
+.widget_error
+{
+	text-align: center;
+	color: Red;
 }
 
 /*------------------------End Of Widget Styles-----------------------------*/
