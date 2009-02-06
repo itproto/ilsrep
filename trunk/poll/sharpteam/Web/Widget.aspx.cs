@@ -31,9 +31,9 @@ public partial class Widget : System.Web.UI.Page
     }
 
     protected void Page_Load(object sender, EventArgs e)
-    {       
+    {
         if (!IsPostBack)
-        {            
+        {
             choices = new List<Choice>();
             Choice choice1 = new Choice("answer1");
             Choice choice2 = new Choice("answer2");
@@ -43,7 +43,7 @@ public partial class Widget : System.Web.UI.Page
             choices.Add(choice2);
             BindData();
             enableButtons = false;
-        }        
+        }
     }
 
     private void SaveChanges()
