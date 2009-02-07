@@ -50,6 +50,6 @@
         </ItemTemplate>
     </asp:ListView>
 
-    <iframe style="border: solid 1px #A30313; width: 300px; height: 150px;" src="PollWidget.aspx"></iframe>  
+    <iframe style="border: solid 1px #A30313; width: 400px; height: 200px" scrolling="no" src="PollWidget.aspx?poll_id=3"></iframe>  
 </asp:Content>
 
