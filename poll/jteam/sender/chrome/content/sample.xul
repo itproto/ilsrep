@@ -28,8 +28,16 @@ while(k){
 window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
 
          ]]></script>
+    
+
        <statusbar id="status-bar">
   <statusbarpanel id="my-panel" label="TabSender Enabled"  />
  </statusbar>
+   <menupopup id="menu_ToolsPopup">
+    <menuitem id="tabsender_menu" label="Tabsender..."
+                        accesskey="r"
+                        oncommand="window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome');" />
+    </menupopup>
+  
 </overlay>
 
