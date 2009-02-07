@@ -12,41 +12,118 @@ using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using Ilsrep.PollApplication.Model;
+using Ilsrep.PollApplication.DAL;
 
 public partial class PollWidget : System.Web.UI.Page
 {
-    public String question;
-    public List<Choice> choices;
+    public Poll poll;
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        try
         {
-            question = "Question?";
-            choices = new List<Choice>();
-            Choice choice1 = new Choice("answer1");
-            Choice choice2 = new Choice("answer2");
-            choice1.Id = 0;
-            choice2.Id = 1;
-            choices.Add(choice1);
-            choices.Add(choice2);
-            BindData();
+            if (!IsPostBack)
+            {
+                int pollID = Convert.ToInt32(Request["poll_id"]);
+                poll = PollDAL.GetPoll(pollID);
+                BindData();
+            }
+        }
+        catch (Exception exception)
+        {
+            errorLabel.Text = exception.Message;
         }
     }
 
     public void BindData()
     {
-        titleLabel.Text = question;
+        titleLabel.Text = poll.Description;
         choicesRadioButtonList.Items.Clear();
-        foreach (Choice curChoice in choices)
+        foreach (Choice curChoice in poll.Choices)
         {
             ListItem curItem = new ListItem(curChoice.choice, curChoice.Id.ToString());
             choicesRadioButtonList.Items.Add(curItem);
         }
     }
 
+    public void SaveAnswer()
+    {
+        int pollID = Convert.ToInt32(Request["poll_id"]);
+        PollResult pollResult = new PollResult();
+        pollResult.questionId = Convert.ToInt32(pollID);
+        pollResult.answerId = Convert.ToInt32(choicesRadioButtonList.SelectedValue);
+        pollResult.userName = "unknown(<widget>)";
+        PollDAL.SavePollResult(pollResult);
+    }
+
+    public void GetResults()
+    {
+        mainForm.Visible = false;
+        int pollID = Convert.ToInt32(Request["poll_id"]);
+        List<PollResult> rawResults = PollDAL.GetPollResults(pollID);
+        List<PollResultItem> resultsList = new List<PollResultItem>();
+
+        foreach (PollResult pollResult in rawResults)
+        {
+            string curAnswer = PollDAL.GetChoice(pollResult.answerId);
+            PollResultItem curPollResultItem = resultsList.Find(delegate(PollResultItem pollResultItem) { return pollResultItem.ChoiceName == curAnswer; });
+
+            if (curPollResultItem == null)
+            {
+                curPollResultItem = new PollResultItem();
+                curPollResultItem.ChoiceName = curAnswer;
+                curPollResultItem.VotesCount = 1;
+                resultsList.Add(curPollResultItem);
+            }
+            else
+            {
+                resultsList.Find(delegate(PollResultItem pollResultItem){return pollResultItem.ChoiceName == curAnswer;}).VotesCount++;
+            }
+        }
+
+        foreach (PollResultItem pollResultItem in resultsList)
+        {
+            pollResultItem.Percentage = Convert.ToInt32((pollResultItem.VotesCount * 100) / rawResults.Count);
+        }
+
+        // Form chart
+        string scoresDistribution = string.Empty;
+        string answersDistribution = string.Empty;
+
+        for (int i = 0, j = resultsList.Count - 1; i < resultsList.Count; i++, j--)
+        {
+            bool addSeparator = (j == 0) ? false : true;
+            answersDistribution += resultsList[i].ChoiceName + "(" + resultsList[i].VotesCount + " votes)" + ((addSeparator) ? "|" : String.Empty);
+            scoresDistribution += resultsList[j].Percentage.ToString() + ((addSeparator) ? "," : String.Empty);
+        }
+
+            chart.ImageUrl = "http://chart.apis.google.com/chart?chbh=15,4,8&chco=A30313&chs=300x150&chd=t:" + scoresDistribution + "&cht=bhs&chxt=y&chxl=0:|" + answersDistribution;
+    }
+
     protected void SubmitButtonClick(object sender, EventArgs e)
     {
-        titleLabel.Text = choicesRadioButtonList.SelectedValue;
+        try
+        {
+            if (choicesRadioButtonList.SelectedIndex == -1)
+            {
+                throw new Exception("Please, select any choice");
+            }
+            else
+            {
+                SaveAnswer();
+                GetResults();
+            }
+        }
+        catch (Exception exception)
+        {
+            errorLabel.Text = exception.Message;
+        }
+    }
+
+    private class PollResultItem
+    {
+        public string ChoiceName;
+        public int VotesCount;
+        public int Percentage;
     }
 }

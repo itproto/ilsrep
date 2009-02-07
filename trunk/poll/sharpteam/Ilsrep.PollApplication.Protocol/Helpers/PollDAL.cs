@@ -225,6 +225,69 @@ namespace Ilsrep.PollApplication.DAL
         }
 
         /// <summary>
+        /// Gets Poll from database by poll ID
+        /// </summary>
+        /// <param name="surveyID">Poll ID that tells which poll to get</param>
+        /// <returns></returns>
+        static public Poll GetPoll(int pollID)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqlitePollCommand = dbConnection.CreateCommand();
+            sqlitePollCommand.Parameters.AddWithValue(":id", pollID.ToString());
+            sqlitePollCommand.CommandText = "SELECT * FROM " + POLLS_TABLE + " WHERE id=:id";
+            
+            SQLiteDataReader sqlitePoll = sqlitePollCommand.ExecuteReader();
+            Poll poll = new Poll();
+
+            if (!sqlitePoll.HasRows)
+            {
+                return poll;
+            }
+
+            poll.Id = pollID;
+            poll.Description = sqlitePoll["description"].ToString();
+
+            SQLiteCommand sqliteChoicesCommand = dbConnection.CreateCommand();
+            sqliteChoicesCommand.CommandText = "SELECT c.* FROM " + POLL_CHOICES_TABLE + " pxc LEFT JOIN " + CHOICES_TABLE + " c ON (pxc.choice_id=c.id) WHERE pxc.poll_id=:id";
+            sqliteChoicesCommand.Parameters.AddWithValue(":id", poll.Id);
+            SQLiteDataReader sqliteChoices = sqliteChoicesCommand.ExecuteReader();
+
+            while (sqliteChoices.Read())
+            {
+                Choice newChoice = new Choice(sqliteChoices["name"].ToString());
+                newChoice.Id = Convert.ToInt32(sqliteChoices["id"]);
+
+                poll.Choices.Add(newChoice);
+            }
+            sqliteChoices.Close();
+
+            return poll;
+        }
+
+        /// <summary>
+        /// Gets the choice name
+        /// </summary>
+        /// <param name="choiceID">Choice ID</param>
+        /// <returns>Choice name</returns>
+        static public string GetChoice(int choiceID)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.AddWithValue(":id", choiceID);
+            sqliteCommand.CommandText = "SELECT * FROM " + CHOICES_TABLE + " WHERE id=:id";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+            return sqliteReader["name"].ToString();
+        }
+
+        /// <summary>
         /// Creates new Survey in database
         /// </summary>
         /// <param name="newSurvey">object of Survey that is to be created in database</param>
@@ -425,6 +488,28 @@ namespace Ilsrep.PollApplication.DAL
         }
 
         /// <summary>
+        /// Receive from Client poll result and save it in database
+        /// </summary>
+        /// <param name="resultsList">PollResult</param>
+        static public void SavePollResult(PollResult pollResult)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+
+            sqliteCommand.CommandText = "INSERT INTO " + RESULTS_TABLE + "(user_name, survey_id, question_id, answer_id, custom_choice) VALUES(:username, :survey, :question, :answer, :custom)";
+            sqliteCommand.Parameters.AddWithValue(":username", pollResult.userName);
+            sqliteCommand.Parameters.AddWithValue(":survey", -1);
+            sqliteCommand.Parameters.AddWithValue(":question", pollResult.questionId);
+            sqliteCommand.Parameters.AddWithValue(":answer", pollResult.answerId);
+            sqliteCommand.Parameters.AddWithValue(":custom", pollResult.customChoice);
+            sqliteCommand.ExecuteNonQuery();
+        }
+
+        /// <summary>
         /// Select from DB all results of needed Survey
         /// </summary>
         /// <param name="surveyId">Id of Survey which results we need</param>
@@ -456,6 +541,39 @@ namespace Ilsrep.PollApplication.DAL
             }
 
             return resultsList;
+        }
+
+        /// <summary>
+        /// Select from DB all results of needed Poll
+        /// </summary>
+        /// <param name="surveyId">Id of Poll which results we need</param>
+        /// <returns>List of results of needed Poll</returns>
+        static public List<PollResult> GetPollResults(int pollId)
+        {
+            if (!isConnected)
+            {
+                Init();
+            }
+
+            List<PollResult> pollResults = new List<PollResult>();
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.AddWithValue(":question_id", pollId);
+            sqliteCommand.Parameters.AddWithValue(":survey_id", -1);
+            sqliteCommand.CommandText = "SELECT * FROM " + RESULTS_TABLE + " WHERE question_id=:question_id AND survey_id=:survey_id";
+            SQLiteDataReader sqliteReader = sqliteCommand.ExecuteReader();
+
+            // Save each result to resultsList
+            while (sqliteReader.Read())
+            {
+                PollResult curResult = new PollResult();
+                curResult.answerId = Convert.ToInt32(sqliteReader["answer_id"].ToString());
+                curResult.customChoice = sqliteReader["custom_choice"].ToString();
+                curResult.questionId = Convert.ToInt32(sqliteReader["question_id"].ToString());
+                curResult.userName = sqliteReader["user_name"].ToString();
+                pollResults.Add(curResult);
+            }
+
+            return pollResults;
         }
 
         static public SurveyResults GetSurveyResults(int surveyId, String user, DateTime date)
