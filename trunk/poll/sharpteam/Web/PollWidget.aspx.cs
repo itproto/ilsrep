@@ -58,24 +58,29 @@ public partial class PollWidget : System.Web.UI.Page
 
     public void GetResults()
     {
-        mainForm.Visible = false;
+        errorLabel.Visible = false;
+        choicesRadioButtonList.Visible = false;
+        submitButton.Visible = false;
+
         int pollID = Convert.ToInt32(Request["poll_id"]);
         List<PollResult> rawResults = PollDAL.GetPollResults(pollID);
+        Poll curPoll = PollDAL.GetPoll(pollID);
         List<PollResultItem> resultsList = new List<PollResultItem>();
+
+        foreach (Choice curChoice in curPoll.Choices)
+        {
+            PollResultItem newPollPollResultItem = new PollResultItem();
+            newPollPollResultItem.ChoiceName = curChoice.choice;
+            newPollPollResultItem.VotesCount = 0;
+            resultsList.Add(newPollPollResultItem);
+        }
 
         foreach (PollResult pollResult in rawResults)
         {
             string curAnswer = PollDAL.GetChoice(pollResult.answerId);
             PollResultItem curPollResultItem = resultsList.Find(delegate(PollResultItem pollResultItem) { return pollResultItem.ChoiceName == curAnswer; });
 
-            if (curPollResultItem == null)
-            {
-                curPollResultItem = new PollResultItem();
-                curPollResultItem.ChoiceName = curAnswer;
-                curPollResultItem.VotesCount = 1;
-                resultsList.Add(curPollResultItem);
-            }
-            else
+            if (curPollResultItem != null)
             {
                 resultsList.Find(delegate(PollResultItem pollResultItem){return pollResultItem.ChoiceName == curAnswer;}).VotesCount++;
             }
@@ -97,7 +102,9 @@ public partial class PollWidget : System.Web.UI.Page
             scoresDistribution += resultsList[j].Percentage.ToString() + ((addSeparator) ? "," : String.Empty);
         }
 
-            chart.ImageUrl = "http://chart.apis.google.com/chart?chbh=15,4,8&chco=A30313&chs=300x150&chd=t:" + scoresDistribution + "&cht=bhs&chxt=y&chxl=0:|" + answersDistribution;
+        int chartHeight = 40 + 20 * resultsList.Count;
+
+        chart.ImageUrl = "http://chart.apis.google.com/chart?chbh=15,4,8&chco=A30313&chs=300x" + chartHeight.ToString() + "&chd=t:" + scoresDistribution + "&cht=bhs&chxt=y,x&chxl=0:|" + answersDistribution + "|1:|0%|20%|40%|60%|80%|100%";
     }
 
     protected void SubmitButtonClick(object sender, EventArgs e)

@@ -9,17 +9,19 @@
     <link href="css/style.css" type="text/css" rel="stylesheet" />    
 </head>
 <body>
+    <div class="widget_title">
+        <asp:Label ID="titleLabel" runat="server"></asp:Label>
+    </div>
     <asp:Image ID="chart" runat="server" />
     <form id="mainForm" runat="server">
-    <div>
-        <div>
-            <asp:Label ID="titleLabel" runat="server"></asp:Label>
-        </div>
+    <div class="widget_poll">
         <div class="widget_error">
             <asp:Label ID="errorLabel" runat="server"></asp:Label>
         </div>
-        <asp:RadioButtonList ID="choicesRadioButtonList" runat="server"></asp:RadioButtonList>
-        <asp:Button ID="submitButton" runat="server" Text="OK" OnClick="SubmitButtonClick" />
+        <asp:RadioButtonList CellSpacing="0" CellPadding="0" ID="choicesRadioButtonList" runat="server"></asp:RadioButtonList>
+        <div class="widget_button_container">
+            <asp:ImageButton CssClass="widget_submit_button" ID="submitButton" runat="server" OnClick="SubmitButtonClick" ImageUrl="images/submit.gif" />
+        </div>
     </div>
     </form>    
 </body>
