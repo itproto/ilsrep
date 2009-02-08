@@ -12,6 +12,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
 using Ilsrep.PollApplication.Model;
 using System.Collections.Generic;
+using Ilsrep.PollApplication.DAL;
 
 public partial class Widget : System.Web.UI.Page
 {
@@ -19,6 +20,7 @@ public partial class Widget : System.Web.UI.Page
     private static int choiceID = 0;
     public static List<Choice> choices;
     public bool enableButtons;
+    public int pollID = 0;
 
     public int GenerateAnswerID()
     {
@@ -88,7 +90,15 @@ public partial class Widget : System.Web.UI.Page
                         throw new Exception("Question field can't be empty");
                     }
 
-                    throw new Exception("Widget accepted!");
+                    Poll newPoll = new Poll();
+                    newPoll.Description = question;
+                    newPoll.Choices = choices;
+                    newPoll.Name = "WidgetPoll";
+
+                    pollID = PollDAL.CreatePoll(newPoll);
+
+                    resultWidget.Visible = true;
+                    widgetSrc.InnerText = "<iframe style=\"border: solid 1px #A30313; width: 320px; height: 165px\" scrolling=\"auto\" src=\"PollWidget.aspx?poll_id=" + pollID.ToString() + "\"></iframe>";
 
                     break;
             }

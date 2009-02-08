@@ -26,7 +26,7 @@
                         <td>
                             <asp:ImageButton ID="addButton" ImageUrl="images/add.gif" CssClass="widget_button" CommandName="AddItem" runat="server" />
                         </td>
-                    </tr>
+                    </tr>                 
                     <tr>
                         <td></td>
                         <td class="widget_header">
@@ -50,6 +50,16 @@
         </ItemTemplate>
     </asp:ListView>
 
-    <iframe style="border: solid 1px #A30313; width: 400px; height: 200px" scrolling="no" src="PollWidget.aspx?poll_id=3"></iframe>  
+    <table id="resultWidget" runat="server" visible="false" cellpadding="10" cellspacing="0" class="widget_container">
+        <tr>
+            <td>There are your Poll Widget:</td>
+        </tr>
+        <tr>
+            <td id="widgetSrc" runat="server" class="widget_source"></td>
+        </tr>
+        <tr>
+            <td><iframe style="border: solid 1px #A30313; width: 320px; height: 165px" scrolling="auto" src="PollWidget.aspx?poll_id=<%=pollID%>"></iframe></td>
+        </tr>
+    </table>
 </asp:Content>
 

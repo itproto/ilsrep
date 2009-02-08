@@ -42,7 +42,7 @@
                     <asp:ContentPlaceHolder id="mainContent" runat="server"></asp:ContentPlaceHolder>
                 </div>
             </div>
-            <div class="footer">Copyright &copy; Sharpteam 2008</div>
+            <div class="footer">Copyright &copy; Sharpteam 2008-2009</div>
         </div>
     </div>
 </body>

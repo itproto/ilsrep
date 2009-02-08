@@ -460,4 +460,36 @@ input.button:hover
 	color: Red;
 }
 
+.widget_poll td
+{
+	padding: 0;
+	margin: 0;
+}
+
+.widget_title
+{
+	font-weight: bold;
+	text-align: center;
+}
+
+.widget_button_container
+{
+	text-align: right;
+}
+
+#mainForm
+{
+	padding: 0;
+	margin: 0;
+}
+
+.widget_container
+{
+	margin: 0 auto;
+}
+
+.widget_source
+{
+	color: #A30313;
+}
 /*------------------------End Of Widget Styles-----------------------------*/

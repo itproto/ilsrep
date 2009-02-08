@@ -360,6 +360,48 @@ namespace Ilsrep.PollApplication.DAL
         }
 
         /// <summary>
+        /// Creates new Poll in database
+        /// </summary>
+        /// <param name="poll">object of Poll that is to be created in database</param>
+        /// <returns>id of created item</returns>
+        static public int CreatePoll(Poll poll)
+        {
+            SQLiteCommand sqliteCommand = dbConnection.CreateCommand();
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":name"));
+            foreach (Choice curChoice in poll.Choices)
+            {
+                int oldId = curChoice.Id;
+                sqliteCommand.Parameters[":name"].Value = curChoice.choice;
+                sqliteCommand.CommandText = "INSERT INTO " + CHOICES_TABLE + "(name) VALUES(:name)";
+                sqliteCommand.ExecuteNonQuery();
+                sqliteCommand.CommandText = "SELECT last_insert_rowid()";
+                curChoice.Id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
+            }
+
+            sqliteCommand.Parameters.Clear();
+            sqliteCommand.Parameters.AddWithValue(":name", poll.Name);
+            sqliteCommand.Parameters.AddWithValue(":description", poll.Description);
+            sqliteCommand.Parameters.AddWithValue(":correctchoice", -1);
+            sqliteCommand.Parameters.AddWithValue(":customenabled", false);
+            sqliteCommand.CommandText = "INSERT INTO " + POLLS_TABLE + "(name, description, correctchoice, customenabled) VALUES(:name, :description, :correctchoice, :customenabled)";
+            sqliteCommand.ExecuteNonQuery();
+            sqliteCommand.CommandText = "SELECT last_insert_rowid()";
+            poll.Id = Convert.ToInt32(sqliteCommand.ExecuteScalar());
+
+            sqliteCommand.Parameters.Clear();
+            sqliteCommand.CommandText = "INSERT INTO " + POLL_CHOICES_TABLE + "(poll_id, choice_id) VALUES(:poll_id, :choice_id)";
+            sqliteCommand.Parameters.AddWithValue(":poll_id", poll.Id);
+            sqliteCommand.Parameters.Add(new SQLiteParameter(":choice_id"));
+            foreach (Choice curChoice in poll.Choices)
+            {
+                sqliteCommand.Parameters[":choice_id"].Value = curChoice.Id;
+                sqliteCommand.ExecuteNonQuery();
+            }
+
+            return Convert.ToInt32(poll.Id);
+        }
+
+        /// <summary>
         /// Save changed survey to database
         /// </summary>
         /// <param name="survey">Survey object that is to be changed in database</param>
