@@ -9,20 +9,20 @@ function register(){
 	}
 function registerUser(httpRequest){
 	        if (httpRequest.readyState == 4) {
-            if (httpRequest.status == 200) {
-	var result=httpRequest.responseText;
-	alert(result);
-	if(result=="true"){
-		alert('registered and logged in');
-	window.close();
+			            if (httpRequest.status == 200) {
+								var result=httpRequest.responseText;
+								alert(result);
+								if(result=="true"){
+										alert('registered and logged in');
+										window.close();
 		
-		} else {
-			alert('Username exists, try again');
-			}
+								} else {
+										alert('Username exists, try again');
+										}
 			
-	 } else {
-                alert('There was a problem with the request.');
-        }
+	 					} else {
+                				alert('There was a problem with the request.');
+        						}
         
         }
             
