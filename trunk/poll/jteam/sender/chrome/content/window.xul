@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window  id="tabsender-window"
+    title="TabSender"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <script type="application/x-javascript" src="chrome://sample/content/actions.js"/>
+    <box orient="horizontal">
+    <box orient="vertical">
+    <label value="Login"/>
+    <textbox id="tabsender-login" maxlength="25"/>
+     <label value="Password"/>
+    <textbox id="tabsender-password" type="password" maxlength="8" />
+    </box>
+    <box orient="vertical">
+    <button id="tabsender-login-button" label="Login"/>
+    <button id="tabsender-register-button" label="Register" oncommand="register();"/>
+
+</box>
+</box>
+
+</window>
