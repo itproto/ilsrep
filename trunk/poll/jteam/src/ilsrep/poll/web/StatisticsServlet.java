@@ -104,6 +104,22 @@ public class StatisticsServlet extends HttpServlet {
             renderer = createDefaultRenderer(request.getServerName(), Integer
                     .toString(request.getServerPort()));
 
+        int height = -1;
+        int width = -1;
+
+        try {
+            height = Integer.parseInt(request.getParameter("height"));
+            width = Integer.parseInt(request.getParameter("width"));
+        }
+        catch (Exception e) {
+            height = width = -1;
+        }
+
+        if (height < 0 || width < 0 || height > 1024 || width > 1024) {
+            height = (int) DEFAULT_STATS_IMAGE_DIMENSION.getHeight();
+            width = (int) DEFAULT_STATS_IMAGE_DIMENSION.getWidth();
+        }
+
         OutputStream out = null;
         try {
             String type = request.getParameter(PARAMETER_TYPE_NAME);
@@ -122,45 +138,36 @@ public class StatisticsServlet extends HttpServlet {
                     chart = renderer
                             .renderStatisticsChart(StatisticsType.SURVEYS_TOTAL_SUCCESS_FAIL_STATS);
                 }
-                else
-                    if (type
-                            .equals(StatisticsType.POLLS_TOTAL_SUCCESS_FAIL_STATS
-                                    .toString())) {
-                        chart = renderer
-                                .renderStatisticsChart(StatisticsType.POLLS_TOTAL_SUCCESS_FAIL_STATS);
-                    }
-                    else
-                        if (type.equals(StatisticsType.POLLS_WITH_CUSTOM_CHOICE
+                else if (type
+                        .equals(StatisticsType.POLLS_TOTAL_SUCCESS_FAIL_STATS
                                 .toString())) {
-                            chart = renderer
-                                    .renderStatisticsChart(StatisticsType.POLLS_WITH_CUSTOM_CHOICE);
-                        }
-                        else
-                            if (type.equals(StatisticsType.TOP_USERS_POLLS
-                                    .toString())) {
-                                String count = request
-                                        .getParameter(PARAMETER_TYPE_COUNT);
-                                try {
-                                    chart = renderer
-                                            .renderTopUsersPolls(Integer
-                                                    .parseInt(count));
-                                }
-                                catch (NumberFormatException e) {
-                                    final int DEFAULT_COUNT = 5;
+                    chart = renderer
+                            .renderStatisticsChart(StatisticsType.POLLS_TOTAL_SUCCESS_FAIL_STATS);
+                }
+                else if (type.equals(StatisticsType.POLLS_WITH_CUSTOM_CHOICE
+                        .toString())) {
+                    chart = renderer
+                            .renderStatisticsChart(StatisticsType.POLLS_WITH_CUSTOM_CHOICE);
+                }
+                else if (type.equals(StatisticsType.TOP_USERS_POLLS.toString())) {
+                    String count = request.getParameter(PARAMETER_TYPE_COUNT);
+                    try {
+                        chart = renderer.renderTopUsersPolls(Integer
+                                .parseInt(count));
+                    }
+                    catch (NumberFormatException e) {
+                        final int DEFAULT_COUNT = 5;
 
-                                    chart = renderer
-                                            .renderTopUsersPolls(DEFAULT_COUNT);
-                                }
-                            }
-                            else
-                                ChartUtilities.writeBufferedImageAsPNG(out,
-                                        renderErrorImage("No such type!"));
+                        chart = renderer.renderTopUsersPolls(DEFAULT_COUNT);
+                    }
+                }
+                else
+                    ChartUtilities.writeBufferedImageAsPNG(out,
+                            renderErrorImage("No such type!"));
 
                 if (chart != null) {
                     response.setContentType("image/png");
-                    ChartUtilities.writeChartAsPNG(out, chart, (int) renderer
-                            .getDimension().getWidth(), (int) renderer
-                            .getDimension().getHeight());
+                    ChartUtilities.writeChartAsPNG(out, chart, width, height);
                 }
                 else {
                     ChartUtilities.writeBufferedImageAsPNG(out,
