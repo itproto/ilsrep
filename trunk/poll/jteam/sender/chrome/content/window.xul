@@ -12,7 +12,7 @@
     <textbox id="tabsender-password" type="password" maxlength="8" />
     </box>
     <box orient="vertical">
-    <button id="tabsender-login-button" label="Login"/>
+    <button id="tabsender-login-button" label="Login" oncommand="login();" />
     <button id="tabsender-register-button" label="Register" oncommand="register();"/>
 
 </box>
