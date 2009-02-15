@@ -27,3 +27,36 @@ function registerUser(httpRequest){
         }
             
 	}
+	function login(){
+		var login=document.getElementById('tabsender-login').value;
+	var password=document.getElementById('tabsender-login').value;
+	var httpRequest = new XMLHttpRequest();
+	 httpRequest.overrideMimeType('text/xml');
+	 httpRequest.onreadystatechange = function() { loginUser(httpRequest) };
+        httpRequest.open('GET','http://emoforum.org/tablog.php?user='+login+'&pass='+password, true);
+        httpRequest.send('');
+			
+		
+		
+		}
+		
+		function loginUser(httpRequest){
+	        if (httpRequest.readyState == 4) {
+			            if (httpRequest.status == 200) {
+								var result=httpRequest.responseText;
+								alert(result);
+								if(result=="true"){
+										alert('logged in');
+										window.close();
+		
+								} else {
+										alert('Wrong login, try again');
+										}
+			
+	 					} else {
+                				alert('There was a problem with the request.');
+        						}
+        
+        }
+            
+	}
