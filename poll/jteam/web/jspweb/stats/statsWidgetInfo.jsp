@@ -53,7 +53,7 @@
 			<div id="main_inner">
 
 				<!-- Main start -->
-				For statistics widget use next code:<br>
+				For statistics widget use next code:<br><br>
 <code>&lt;iframe src="http://<%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/stats/statsWidget.jsp"/&gt;</code>
 				<!-- Main End -->
 				<div class="foot"></div>				
