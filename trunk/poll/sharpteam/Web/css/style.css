@@ -159,26 +159,6 @@ input.button:hover
 	padding-left: 35px;
 }
 
-/*
-.leftMenu
-{
-	margin: 10px;
-}
-
-.leftBlock ul
-{
-	list-style: none;
-	margin: 0px;
-	padding: 0px;
-}
-
-.leftBlock ul li
-{
-	margin: 10px 0px;
-	padding: 0px;
-}
-*/
-
 .leftBlock li.selected
 {
 	font-weight: bold;
@@ -273,91 +253,94 @@ input.button:hover
 	display: none;
 }
 
+#survey_minscore_slider
+{
+	width: 50%;
+}
+
 /* UI Dialog */
 .ui-dialog .text,
 .ui-dialog textarea
 {
-	width: 95%;
-	float: right;
+	width: 100%;
 }
 
 .ui-dialog select
 {
 	float: right;
+	margin-right: -2px;
 }
 
-
-
 /*------------------------Login Styles-------------------------*/
-		.login_body
-        {
-	        background-color: #CCCC99;
-	        font-family: Verdana;
-	        font-size: 10px;
-	        text-align: center;
-	        margin: 0;
-	        padding: 0;
-        }
-            
-        .login_main
-        {
-        	background-color: #FFFFE6;
-        	color: #804000;
-        	width: 225px;
-        	border: 2px #BD2121 solid;
-        	text-align: right;
-        	margin: 100px auto;
-        	padding: 5px;
-        }
-        
-        .registration_main
-        {
-        	background-color: #FFFFE6;
-        	color: #804000;
-        	width: 265px;
-        	border: 2px #BD2121 solid;
-        	text-align: right;
-        	margin: 100px auto;
-        	padding: 5px;
-        }
-        
-        .login_title
-        {
-        	text-align: center;
-        	font-weight: bold;
-        	font-size: 11px;
-        	margin: 0px;
-        	padding: 0px;
-        }           
-        
-        .login_field
-        {
-        	margin-top: 3px;
-        }
-        
-        .login_message
-        {
-        	color: Red;
-        	margin-top: 3px;
-        	text-align: center;
-        }
-        
-        .login_button
-        {
-        	margin-top: 3px;
-        }
-        
-        .login_register a
-        {
-        	text-decoration: none;
-        	color: #804000;
-        }
-        
-        .login_registration a:hover
-        {
-        	color: Red;
-        	border-bottom: none;
-        }        
+.login_body
+{
+    background-color: #CCCC99;
+    font-family: Verdana;
+    font-size: 10px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+    
+.login_main
+{
+	background-color: #FFFFE6;
+	color: #804000;
+	width: 225px;
+	border: 2px #BD2121 solid;
+	text-align: right;
+	margin: 100px auto;
+	padding: 5px;
+}
+
+.registration_main
+{
+	background-color: #FFFFE6;
+	color: #804000;
+	width: 265px;
+	border: 2px #BD2121 solid;
+	text-align: right;
+	margin: 100px auto;
+	padding: 5px;
+}
+
+.login_title
+{
+	text-align: center;
+	font-weight: bold;
+	font-size: 11px;
+	margin: 0px;
+	padding: 0px;
+}           
+
+.login_field
+{
+	margin-top: 3px;
+}
+
+.login_message
+{
+	color: Red;
+	margin-top: 3px;
+	text-align: center;
+}
+
+.login_button
+{
+	margin-top: 3px;
+}
+
+.login_register a
+{
+	text-decoration: none;
+	color: #804000;
+}
+
+.login_registration a:hover
+{
+	color: Red;
+	border-bottom: none;
+}        
 /*------------------------End Of Login Styles-------------------------*/
 
 .messages_main

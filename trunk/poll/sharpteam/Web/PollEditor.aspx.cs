@@ -32,11 +32,13 @@ public partial class _PollEditor : System.Web.UI.Page
             case "save":
                 int id = Convert.ToInt32(Request["id"]);
                 
-                Survey curSurvey = (Session["survey_" + id] as Survey);
-                curSurvey.Name = Request["survey_name"];
-
                 try
                 {
+                    Survey curSurvey = (Session["survey_" + id] as Survey);
+                    curSurvey.Name = Request["survey_name"];
+                    curSurvey.TestMode = Convert.ToBoolean(Request["survey_test"]);
+                    curSurvey.MinScore =  Math.Round( Convert.ToDouble(Request["survey_minscore"])/100, 2 );
+
                     if (curSurvey.Polls.Count == 0)
                         throw new Exception("Survey must have at least 1 poll");
 
@@ -44,6 +46,9 @@ public partial class _PollEditor : System.Web.UI.Page
                     {
                         if (curPoll.Choices.Count == 0)
                             throw new Exception("Poll `" + curPoll.Name + "` must have at least 1 choice");
+
+                        if (curPoll.CorrectChoiceID == 0)
+                            throw new Exception("Poll `" + curPoll.Name + "` must have correct choice set");
                     }
 
                     if (id <= 0)
@@ -200,6 +205,10 @@ public partial class _PollEditor : System.Web.UI.Page
         int pollID = Convert.ToInt32(arguments["poll_id"]);
 
         (HttpContext.Current.Session["survey_" + surveyID] as Survey).Polls.Find(delegate(Poll curPoll) { return curPoll.Id == pollID; }).Choices.Add(choice);
+        Poll poll = (HttpContext.Current.Session["survey_" + surveyID] as Survey).Polls.Find(delegate(Poll curPoll) { return curPoll.Id == pollID; });
+
+        if (poll.Choices.Count == 1 || poll.CorrectChoiceID == 0)
+            (HttpContext.Current.Session["survey_" + surveyID] as Survey).Polls.Find(delegate(Poll curPoll) { return curPoll.Id == pollID; }).CorrectChoiceID = choice.Id;
 
         return true;
     }
@@ -247,6 +256,30 @@ public partial class _PollEditor : System.Web.UI.Page
                     Choice choice = curPoll.Choices.Find(delegate(Choice curChoice) { return curChoice.Id == choiceID; });
 
                     curPoll.Choices.Remove(choice);
+                }
+            });
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    [WebMethod]
+    public static bool SetCorrectChoice(int surveyID, int pollID, int choiceID)
+    {
+        try
+        {
+            (HttpContext.Current.Session["survey_" + surveyID] as Survey).Polls.ForEach(delegate(Poll curPoll)
+            {
+                if (curPoll.Id == pollID)
+                {
+                   Choice choice = curPoll.Choices.Find(delegate(Choice curChoice) { return curChoice.Id == choiceID; });
+
+                   if (choice != null)
+                       curPoll.CorrectChoiceID = choice.Id;
                 }
             });
 
