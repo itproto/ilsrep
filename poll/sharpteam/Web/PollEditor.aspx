@@ -4,13 +4,15 @@
     <link rel="stylesheet" href="css/jquery.treeview.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="css/ui.all.css" type="text/css" media="screen" />
     <script src="js/jquery-1.3.1.min.js" type="text/javascript"></script>
-    <script src="js/jquery-ui-personalized-1.6rc5.min.js" type="text/javascript"></script>
+    <script src="js/jquery-ui-personalized-1.6rc6.min.js" type="text/javascript"></script>
     <script src="js/jquery.treeview.min.js" type="text/javascript"></script>
     <script src="js/jquery-jtemplates.js" type="text/javascript"></script>
     <script src="js/json2-min.js" type="text/javascript"></script>
     <% if (selectedSurvey != null) { %>
     <script type='text/javascript'>
         var currentSurveyID = "<%= selectedSurvey.Id %>";
+        var message = "<%= Message %>";
+        var sliderValue = "<%= Math.Round(selectedSurvey.MinScore * 100) %>";
     </script>
     <script src='js/PollEditor.js' type='text/javascript'></script>
     <% } %>
@@ -39,9 +41,13 @@
 <asp:Content ID="mainContentPollEditor" ContentPlaceHolderID="mainContent" Runat="Server">
 <% if (selectedSurvey != null) { %>
     <h3>Edit Survey</h3>
-    <div class="error"><%= Message %></div>
     <form action="PollEditor.aspx?action=save&amp;id=<%= selectedSurvey.Id %>" method="post">
         Survey Name: <input type="text" name="survey_name" value="<%= selectedSurvey.Name %>" class="text" /><br />
+        Test Mode: <label for="survey_testmode_yes"><input type="radio" id="survey_testmode_yes" name="survey_test" value="true" <%= selectedSurvey.TestMode == true ? "checked='checked'" : "" %> />Yes</label> <label for="survey_testmode_no"><input type="radio" id="survey_testmode_no" name="survey_test" value="false" <%= selectedSurvey.TestMode == false ? "checked='checked'" : "" %> />No</label><br />
+        Minimum Score: <input type="text" name="survey_minscore" id="survey_minscore" value="<%= Math.Round(selectedSurvey.MinScore * 100) %>" class="text" /><br />
+        <div id="survey_minscore_slider"></div><br />
+        
+        <!--<input type="text" name="survey_minscore" value="<%= selectedSurvey.MinScore %>" class="text" /><br />-->
 
         <div id="survey_loading">
             <img src="images/ajax-loader.gif" alt="Loading" /> Loading survey...

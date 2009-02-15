@@ -17,7 +17,9 @@
             $(this).removeClass("ui-state-hover");
         }
     );
-
+    
+    $("#survey_minscore_slider").slider({ animate: true, max: 100, min: 0, value: sliderValue, change: function(event, ui) { $("#survey_minscore").val(ui.value); } });
+    
     /*** Init Dialogs ***/
     $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
     $("#editPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Edit": editPoll, "Cancel": function() { $(this).dialog("close"); } } });
@@ -32,6 +34,12 @@
 
     /*** get the polls ***/
     getPolls();
+    
+    if ( message.length > 0 ) 
+    {
+        $("#messageDialog").html(message);
+        $("#messageDialog").dialog("open");
+    }
 });
 
 function getPolls()
@@ -83,7 +91,7 @@ function getPolls()
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     url: "PollEditor.aspx/RemovePoll",
-                    data: "{ 'surveyID': " + currentSurveyID + ", pollID: " + pollData.id + " }",
+                    data: "{ surveyID: " + currentSurveyID + ", pollID: " + pollData.id + " }",
                     dataType: "json",
                     success: function(data)
                     {
@@ -136,7 +144,7 @@ function getPolls()
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     url: "PollEditor.aspx/RemoveChoice",
-                    data: "{ 'surveyID': " + currentSurveyID + ", pollID: " + pollData.id + ", choiceID: " + choiceID + " }",
+                    data: "{ surveyID: " + currentSurveyID + ", pollID: " + pollData.id + ", choiceID: " + choiceID + " }",
                     dataType: "json",
                     success: function(data)
                     {
@@ -152,6 +160,38 @@ function getPolls()
                     }
                 });
                 
+                return false;
+            });
+            $(".correct_choice").click(function() {
+                var pollObj = $(this).parents(".poll");
+                var pollData = eval("(" + pollObj.attr("data") + ")");
+                
+                var choiceObj = $(this).parents(".choice");
+                var choiceID = choiceObj.attr("data");
+                
+                var oldSelectedChoice = pollObj.find(".selected_choice");
+                oldSelectedChoiceID = oldSelectedChoice.attr("data");
+                
+                if ( choiceID == oldSelectedChoiceID )
+                    return false;
+                
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: "PollEditor.aspx/SetCorrectChoice",
+                    data: "{ surveyID: " + currentSurveyID + ", pollID: " + pollData.id + ", choiceID: " + choiceID + " }",
+                    dataType: "json",
+                    success: function(data)
+                    {
+                        oldSelectedChoice.removeClass("selected_choice");
+                        oldSelectedChoice.find(".correct_choice img").attr("src", "images/tick_off.png");
+                    
+                        choiceObj.addClass("selected_choice");
+                        choiceObj.find(".correct_choice img").attr("src", "images/tick_on.png");
+                    }
+                });
+                
+            
                 return false;
             });
         }
