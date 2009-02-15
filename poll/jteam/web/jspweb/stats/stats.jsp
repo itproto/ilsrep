@@ -10,7 +10,9 @@
 
 
 <%@page import="ilsrep.poll.statistics.StatisticsRenderer"%>
-<%@page import="ilsrep.poll.web.StatisticsServlet"%><html>
+<%@page import="ilsrep.poll.web.StatisticsServlet"%>
+
+<html>
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
@@ -106,6 +108,7 @@
 		<div id="side">
 			<!-- Side start -->
 <ul>
+<li class="first"><a href="./statsWidgetInfo.jsp">Statistics Widget</a></li>
 <li><a href="./stats.jsp"><%=values[0]%></a></li>
 <%
 for (int i = 1; i < types.length; i++) {
