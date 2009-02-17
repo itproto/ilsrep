@@ -25,7 +25,7 @@ var output="<urls>\n";
 window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
 
          ]]></script>
-  <command id="open_tabsender" oncommand="window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome');"/>
+
 
 <statusbar id="status-bar">
 <statusbarpanel id="my-panel" label="TabSender Enabled"  />
@@ -33,7 +33,7 @@ window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, fa
 <menupopup id="menu_ToolsPopup">
 <menuitem id="tabsender_menu" label="Tabsender..."
                       accesskey="r"
-                      command="open_tabsender" />
+                      oncommand="window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');"/>
 </menupopup>
   
 </overlay>
