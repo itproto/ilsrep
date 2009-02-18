@@ -418,7 +418,8 @@ public class StatisticsFetcher {
 
             for (int i = 0; i < (usersStats.size() - 1); i++)
                 for (int j = i + 1; j < usersStats.size(); j++)
-                    if (usersStats.get(j).successCount > usersStats.get(i).successCount) {
+                    if (usersStats.get(j).getPercent() > usersStats.get(i)
+                            .getPercent()) {
                         UserNameAndSuccessAndFailCount swp = usersStats.get(j);
                         usersStats.set(j, usersStats.get(i));
                         usersStats.set(i, swp);
@@ -429,7 +430,7 @@ public class StatisticsFetcher {
             for (UserNameAndSuccessAndFailCount usr : usersStats) {
                 Results res = new Results();
                 res.setName(usr.getUserName());
-                res.setPercent(Integer.toString(usr.successCount));
+                res.setPercent(Double.toString((double) usr.getPercent()));
 
                 results.add(res);
             }
@@ -464,6 +465,17 @@ public class StatisticsFetcher {
             return userName;
         }
 
+        public double getPercent() {
+            if (successCount != 0) {
+                if (failCount != 0)
+                    return ((double) successCount) / (successCount + failCount);
+                else
+                    return 1;
+            }
+            else
+                return 0;
+
+        }
     }
 
     public UserNameAndSuccessAndFailCount findInListOrAdd(

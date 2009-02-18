@@ -292,55 +292,17 @@ public class StatisticsRenderer {
             DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
             for (Results userStats : usersStats) {
-                dataSet.addValue((double) Integer.parseInt(userStats
-                        .getPercent()), userStats.getName(), collumnName);
+                dataSet.addValue((double) Double.parseDouble(userStats
+                        .getPercent()) * 100, userStats.getName(), collumnName);
             }
 
-            chart = ChartFactory.createBarChart(collumnName, "", "Quantity",
+            chart = ChartFactory.createBarChart(collumnName, "", "Percent",
                     dataSet, PlotOrientation.HORIZONTAL, true, false, false);
 
             return chart;
         }
 
         return chart;
-    }
-
-    /**
-     * Used to store user and success/fail count pairs.
-     */
-    public class UserNameAndSuccessAndFailCount {
-
-        protected String userName = null;
-
-        public int successCount = 0;
-
-        public int failCount = 0;
-
-        public UserNameAndSuccessAndFailCount(String userName) {
-            if (userName == null)
-                throw new IllegalArgumentException(
-                        "User ID should be greater then zero.");
-
-            this.userName = userName;
-        }
-
-        public String getUserName() {
-            return userName;
-        }
-
-    }
-
-    public UserNameAndSuccessAndFailCount findInListOrAdd(
-            List<UserNameAndSuccessAndFailCount> list, String userName) {
-        for (UserNameAndSuccessAndFailCount user : list)
-            if (user.getUserName().equals(userName))
-                return user;
-
-        UserNameAndSuccessAndFailCount newUser = new UserNameAndSuccessAndFailCount(
-                userName);
-        list.add(newUser);
-
-        return newUser;
     }
 
 }
