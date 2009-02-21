@@ -10,7 +10,10 @@
         </LayoutTemplate>
         <ItemTemplate>
             <li>
-                <a href="Statistics.aspx?object=survey&id=<%#Eval("id")%>"><%#Eval("name")%></a>
+                <asp:Label ID="itemMenuSelected" runat="server" Visible='<%#IsSelected(Eval("id").ToString())%>'><b><%#Eval("name")%></b></asp:Label>
+                <div id="itemMenu" runat="server" visible='<%#!IsSelected(Eval("id").ToString())%>'>
+                    <a href="Statistics.aspx?object=survey&id=<%#Eval("id")%>"><%#Eval("name")%></a>
+                </div>
             </li>
         </ItemTemplate>
     </asp:ListView>
