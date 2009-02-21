@@ -47,6 +47,18 @@ public partial class Statistics : System.Web.UI.Page
         }
     }
 
+    public bool IsSelected(string ID)
+    {
+        if (Request["object"] == "survey" && Request["id"] == ID)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void FormChart()
     {
         // Form chart request
