@@ -164,8 +164,11 @@
 
 	<target name="clean">
 		<delete quiet="true" dir="${distr.dir}" />
-<!-- 		<delete quiet="true" file="${senderServer}/build" /> -->
 		<delete quiet="true" file="${jar.file}" />
+		<delete quiet="true" dir="${senderServer}/build" />
+		<delete quiet="true" dir="${senderServer}/buildWar" />
+		<delete quiet="true" file="${senderServer}/senderServer.jar" />
+		<delete quiet="true" file="${senderServer}/senderServer.war" />
 	</target>
 
 	<target name="commitclean" depends="release-dir, javadoc">
@@ -174,7 +177,10 @@
 	</target>
 
 	<target name="compile-tab" depends="init">
+		<mkdir dir="${senderServer}/build" />
+
 		<javac srcdir="${senderServer}/src" destdir="${senderServer}/build" classpath="${class.path}" debug="on" optimize="on" />
+
 		<jar destfile="${senderServer}/senderServer.jar">
 			<fileset dir="${senderServer}/build">
 			</fileset>
@@ -182,9 +188,9 @@
 	</target>
 
 	<target name="build-tab" depends="compile-tab">
-		<mkdir dir="${senderServer}/buildWar"/>
-		<mkdir dir="${senderServer}/buildWar/WEB-INF"/>
-		<mkdir dir="${senderServer}/buildWar/WEB-lib"/>
+		<mkdir dir="${senderServer}/buildWar" />
+		<mkdir dir="${senderServer}/buildWar/WEB-INF" />
+		<mkdir dir="${senderServer}/buildWar/WEB-INF/lib" />
 
 		<copy todir="${senderServer}/buildWar/WEB-INF/lib" file="${senderServer}/senderServer.jar" />
 
