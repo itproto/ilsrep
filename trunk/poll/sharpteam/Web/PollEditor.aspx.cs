@@ -99,6 +99,7 @@ public partial class _PollEditor : System.Web.UI.Page
                 if (Session["survey_" + selectedSurvey.Id] == null)
                     Session["survey_" + selectedSurvey.Id] = selectedSurvey;
 
+								surveyListMenu.SelectedIndex = surveysList.FindIndex(delegate(Item curItem) { return curItem.id == selectedSurvey.Id; });
                 //listPolls.DataSource = selectedSurvey.Polls;
                 break;
         }
