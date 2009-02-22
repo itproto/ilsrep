@@ -30,6 +30,11 @@
                 <li><a href="?action=edit&amp;id=0">Add New</a></li>
             </ul>
         </LayoutTemplate>
+        <SelectedItemTemplate>
+						<li class="selected">
+							<%# Eval("name") %>
+						</li>
+        </SelectedItemTemplate>
         <ItemTemplate>
             <li>
                 <a href="?action=edit&amp;id=<%# Eval("id") %>"><%# Eval("name") %></a>
@@ -44,16 +49,18 @@
     <form action="PollEditor.aspx?action=save&amp;id=<%= selectedSurvey.Id %>" method="post">
         Survey Name: <input type="text" name="survey_name" value="<%= selectedSurvey.Name %>" class="text" /><br />
         Test Mode: <label for="survey_testmode_yes"><input type="radio" id="survey_testmode_yes" name="survey_test" value="true" <%= selectedSurvey.TestMode == true ? "checked='checked'" : "" %> />Yes</label> <label for="survey_testmode_no"><input type="radio" id="survey_testmode_no" name="survey_test" value="false" <%= selectedSurvey.TestMode == false ? "checked='checked'" : "" %> />No</label><br />
-        Minimum Score: <input type="text" name="survey_minscore" id="survey_minscore" value="<%= Math.Round(selectedSurvey.MinScore * 100) %>" class="text" /><br />
-        <div id="survey_minscore_slider"></div><br />
         
-        <!--<input type="text" name="survey_minscore" value="<%= selectedSurvey.MinScore %>" class="text" /><br />-->
+        <div style="margin-top: 5px;">
+					<div class="float_left">Minimum Score: <input type="hidden" name="survey_minscore" id="survey_minscore" value="<%= Math.Round(selectedSurvey.MinScore * 100) %>" /></div>
+					<div id="survey_show_minscore" class="float_left"><%= (int)Math.Round(selectedSurvey.MinScore * 100) %>%</div>
+					<div id="survey_minscore_slider" class="float_left"></div>
+        </div>
 
-        <div id="survey_loading">
+        <div id="survey_loading" class="clear">
             <img src="images/ajax-loader.gif" alt="Loading" /> Loading survey...
         </div>
         
-        <ul id="survey_tree" class="filetree treeview-famfamfam treeview hidden">
+        <ul id="survey_tree" class="filetree treeview-famfamfam treeview hidden clear" style="display: none;">
             <li>
                 <span class="folder">Polls</span> 
                 <div class="commands">

@@ -18,7 +18,7 @@
         }
     );
     
-    $("#survey_minscore_slider").slider({ animate: true, max: 100, min: 0, value: sliderValue, change: function(event, ui) { $("#survey_minscore").val(ui.value); } });
+    $("#survey_minscore_slider").slider({ animate: true, max: 100, min: 0, value: sliderValue, change: function(event, ui) { $("#survey_minscore").val(ui.value); }, slide: function(event, ui) { $("#survey_show_minscore").text(ui.value + "%"); } });
     
     /*** Init Dialogs ***/
     $("#addPollDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Add": addPoll, "Cancel": function() { $(this).dialog("close"); } } });
@@ -28,7 +28,7 @@
     $("#messageDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "OK": function() { $(this).dialog("close"); } } });
     $("#confirmDialog").dialog({ autoOpen: false, resizable: false, modal: true, overlay: { backgroundColor: '#000', opacity: 0.5 }, buttons: { "Yes": function() {  }, "No": function() {  } } });
     
-    /*** constant links ***/		
+    /*** constant links ***/
     $("#survey_reset").click(function() { document.location = 'PollEditor.aspx?action=edit&id='+currentSurveyID+'&reset=1' });
     $("#add_poll").click(function() { $("#addPollDialog").dialog("open"); $("#addPollDialog :input").val(""); return false; });
 
