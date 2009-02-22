@@ -55,6 +55,8 @@
 				<!-- Main start -->
 				For statistics widget use next code:<br><br>
 <code>&lt;iframe src="http://<%=request.getServerName()%>:<%=request.getServerPort()%><%=request.getContextPath()%>/stats/statsWidget.jsp"/&gt;</code>
+<!-- 				<br><br>
+<iframe src="http://127.0.0.1:8080/jspweb/stats/statsWidget.jsp" />  -->
 				<!-- Main End -->
 				<div class="foot"></div>				
 			</div>
