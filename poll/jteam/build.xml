@@ -14,7 +14,7 @@
 	<property name="db.dir" value="${basedir}/db" />
 	<property name="web.dir" value="${basedir}/webxml" />
 	<property name="webservice.context" value="WebJPoll" />
-<property name="senderServer" value="${basedir}/senderServer" />
+	<property name="senderServer" value="${basedir}/senderServer" />
 
 
 	<property name="jar.file" value="${basedir}/poll.jar" />
@@ -70,9 +70,7 @@
 	<target name="compile" depends="init">
 		<javac srcdir="${src.dir}" destdir="${distr.dir}" classpath="${class.path}" debug="on" optimize="on" />
 	</target>
-	<target name="compile-tab" depends="init">
-		<javac srcdir="${senderServer}\src" destdir="${senderServer}\build" classpath="${class.path}" debug="on" optimize="on" />
-	</target>
+
 	<target name="webcompile" depends="compile">
 		<javac srcdir="${web.dir}/src/" destdir="${web.dir}/build/" classpath="${class.path}:${release.dir}/poll.jar" debug="on" optimize="on" />
 	</target>
@@ -130,7 +128,7 @@
 	</target>
 
 	<target name="jar" depends="compile, copy-data, init">
-<!--		<copy todir="${distr.dir}/webservice/endpoint">
+		<!--		<copy todir="${distr.dir}/webservice/endpoint">
 			<fileset dir="web/jspweb/WEB-INF/classes">
 				<include name="**/*.class" />
 			</fileset>
@@ -166,6 +164,7 @@
 
 	<target name="clean">
 		<delete quiet="true" dir="${distr.dir}" />
+<!-- 		<delete quiet="true" file="${senderServer}/build" /> -->
 		<delete quiet="true" file="${jar.file}" />
 	</target>
 
@@ -174,4 +173,24 @@
 		<delete quiet="true" file="${jar.file}" />
 	</target>
 
+	<target name="compile-tab" depends="init">
+		<javac srcdir="${senderServer}/src" destdir="${senderServer}/build" classpath="${class.path}" debug="on" optimize="on" />
+		<jar destfile="${senderServer}/senderServer.jar">
+			<fileset dir="${senderServer}/build">
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="build-tab" depends="compile-tab">
+		<mkdir dir="${senderServer}/buildWar"/>
+		<mkdir dir="${senderServer}/buildWar/WEB-INF"/>
+		<mkdir dir="${senderServer}/buildWar/WEB-lib"/>
+
+		<copy todir="${senderServer}/buildWar/WEB-INF/lib" file="${senderServer}/senderServer.jar" />
+
+		<war destfile="${senderServer}/senderServer.war" webxml="${senderServer}/web.xml">
+			<fileset dir="${senderServer}/buildWar">
+			</fileset>
+		</war>
+	</target>
 </project>
