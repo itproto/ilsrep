@@ -22,7 +22,7 @@ public class SQLiteDBManager extends DBManager {
     /**
      * Default file with database.
      */
-    public static final String DEFAULT_DB_FILE = "db/tabsender.db";
+    public static final String DEFAULT_DB_FILE = "/tabsender.db";
 
     /**
      * Creates <code>SQLiteDBWorker</code> w/o connecting to DB, but stores

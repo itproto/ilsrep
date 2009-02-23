@@ -205,17 +205,18 @@ public abstract class DBManager {
      * @throws SQLException
      *             On some DB errors.
      */
-    public void close() throws SQLException {
+   public void close() throws SQLException {
         dataSource.close();
     }
 
     /**
      * @see java.lang.Object#finalize()
      */
-    @Override
+    /*@Override
     protected void finalize() throws Throwable {
         super.finalize();
         close();
     }
+    */
 
 }

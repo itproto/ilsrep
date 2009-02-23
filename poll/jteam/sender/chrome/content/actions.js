@@ -4,15 +4,21 @@ document.getElementById('tabsender-password').value=document.getElementById('tab
 if(document.getElementById('tabsender-server').hasAttribute('savedValue')){
 document.getElementById('tabsender-server').value=document.getElementById('tabsender-server').getAttribute('savedValue');
 }
+
+
 	}
 function saveData(){
+
 document.getElementById('tabsender-login').setAttribute('savedValue',document.getElementById('tabsender-login').value);
 document.persist('tabsender-login','savedValue');
 document.getElementById('tabsender-password').setAttribute('savedValue',document.getElementById('tabsender-password').value);
 document.persist('tabsender-password','savedValue');
 document.getElementById('tabsender-server').setAttribute('savedValue',document.getElementById('tabsender-server').value);
 document.persist('tabsender-server','savedValue');
-	
+		var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+prefManager.setCharPref("extensions.tabSender.user", document.getElementById('tabsender-login').value);
+prefManager.setCharPref("extensions.tabSender.password", document.getElementById('tabsender-password').value);
+prefManager.setCharPref("extensions.tabSender.server", document.getElementById('tabsender-server').value);
 	}
 
 function register(){
@@ -77,3 +83,5 @@ function registerUser(httpRequest){
         }
             
 	}
+	
+	

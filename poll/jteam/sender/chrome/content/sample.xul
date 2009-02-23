@@ -1,11 +1,30 @@
 <?xml version="1.0"?>
 <overlay id="sample" 
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-         <script><![CDATA[
+           
+                 <script><![CDATA[
+    function checkUser(httpRequest){
+	        if (httpRequest.readyState == 4) {
+			            if (httpRequest.status == 200) {
+								var result=httpRequest.responseText;
+								alert(result);
+								if(result!="true") {
+										alert('Wrong login, try again');
+										window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');
+										}
+			
+	 					} else {
+                				alert('There was a problem with the request.');
+        						}
+        
+        }
+            
+	}
       var myExtension = {
 onWindowLoad: function(param){
 	
 window.addEventListener("close", function(e) { myExtension.onPageLoad(e); }, true);
+
 },
 onPageLoad: function(param) {
 var numTabs = gBrowser.browsers.length;
@@ -23,7 +42,9 @@ var output="<urls>\n";
 },
 };
 window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
+alert("checking");
 
+        
          ]]></script>
 
 
