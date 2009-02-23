@@ -193,7 +193,10 @@
 		<mkdir dir="${senderServer}/buildWar/WEB-INF/lib" />
 
 		<copy todir="${senderServer}/buildWar/WEB-INF/lib" file="${senderServer}/senderServer.jar" />
-
+	<copy todir="${senderServer}/buildWar/" file="${db.dir}/tabsender.db" />
+	<copy todir="${senderServer}/buildWar/WEB-INF/lib/" file="${lib.dir}/commons-dbcp-1.2.2.jar" />
+	<copy todir="${senderServer}/buildWar/WEB-INF/lib/" file="${lib.dir}/commons-pool-1.4.jar" />
+	
 		<war destfile="${senderServer}/senderServer.war" webxml="${senderServer}/web.xml">
 			<fileset dir="${senderServer}/buildWar">
 			</fileset>

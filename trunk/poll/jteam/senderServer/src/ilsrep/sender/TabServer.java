@@ -11,13 +11,13 @@ import ilsrep.sender.protocol.Response;
 import ilsrep.sender.db.SQLiteDBManager;
 
 public class TabServer  extends HttpServlet {
-SQLiteDBManager   db = new SQLiteDBManager("./tabsender.db");
+SQLiteDBManager   db = new SQLiteDBManager("/tabsender.db");
 	public void register(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		 Response res=new Response();
          
 	   
-	        String user = (String)request.getAttribute("username");
-	       String pass = (String)request.getAttribute("password");
+	        String user = (String)request.getParameter("username");
+	       String pass = (String)request.getParameter("password");
 	       res.setOk(db.checkUser(user).equals("true") ? false : true);
 	        if(db.checkUser(user).equals("false")) {
 		                                      db.createUser(user,pass);
@@ -29,7 +29,7 @@ SQLiteDBManager   db = new SQLiteDBManager("./tabsender.db");
               StringWriter wr = new StringWriter();
              mr.marshal(request, wr);
              output=wr.toString();
-         }catch(Exception e){};
+         }catch(Exception e){output=e.getMessage();};
               PrintWriter out = response.getWriter();
             out.write(output);        
 	                                     
@@ -40,8 +40,8 @@ SQLiteDBManager   db = new SQLiteDBManager("./tabsender.db");
 		 Response res=new Response();
          
 	     
-	        String user = (String)request.getAttribute("username");
-	       String pass = (String)request.getAttribute("password");
+	        String user = (String)request.getParameter("username");
+	       String pass = (String)request.getParameter("password");
 	       res.setOk(db.authUser(user,pass).equals("true") ? true : false);
 	              String output="error";
                try {
@@ -50,17 +50,17 @@ SQLiteDBManager   db = new SQLiteDBManager("./tabsender.db");
               StringWriter wr = new StringWriter();
              mr.marshal(request, wr);
              output=wr.toString();
-         }catch(Exception e){};
+         }catch(Exception e){output=e.getMessage();};
               PrintWriter out = response.getWriter();
             out.write(output);        
 	                                     
                
 		}
 	  public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException  {
-             if(request.getAttribute("action").equals("register")){
+             if(request.getParameter("action").equals("register")){
              register(request,response);
 	             }
-              if(request.getAttribute("action").equals("register")){
+              if(request.getParameter("action").equals("register")){
              login(request,response);
 	             }  
                 
