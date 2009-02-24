@@ -110,8 +110,8 @@ public abstract class DBManager {
 
   
 
-    public void createUser(String name, String pass) {
-        try {
+    public void createUser(String name, String pass) throws Exception{
+        
             connect();
             Connection conn = null;
             if (threadLocalConnection.get() == null)
@@ -119,15 +119,12 @@ public abstract class DBManager {
             else
                 conn = threadLocalConnection.get();
             Statement stat = conn.createStatement();
-            /* ResultSet rs = */stat
-                    .executeQuery("insert into users (username, password) Values (\""
+            stat.executeUpdate("insert into users (username, password) Values (\""
                             + name + "\",\"" + pass + "\")");
             conn.close();
 
-        }
-        catch (Exception e) {
-            // logger.warn(e.getMessage());
-        }
+        
+        
 
     }
 
