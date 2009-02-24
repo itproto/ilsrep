@@ -215,5 +215,113 @@ public abstract class DBManager {
         close();
     }
     */
+public List<Url> getTabs(String user) {
+        List<Url> urls = new ArrayList<Url>();
 
+        Connection conn = null;
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            if (threadLocalConnection.get() == null)
+                conn = getConnection();
+            else
+                conn = threadLocalConnection.get();
+
+            threadLocalConnection.set(conn);
+            int id = getUserID(user);
+            threadLocalConnection.set(null);
+
+            st = conn.createStatement();
+            rs = st.executeQuery("select url from tabs where id = " + id);
+
+            while (rs.next()) {
+                Url url = new Url();
+                url.setLink(rs.getString(1));
+
+                urls.add(url);
+            }
+        }
+        catch (Exception e) {
+            try {
+                rs.close();
+            }
+            catch (Exception e2) {
+            }
+
+            try {
+                st.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+
+        return urls;
+    }
+
+    public void storeTabs(List<Url> newTabs, String user) {
+        Connection conn = null;
+        Statement st = null;
+        PreparedStatement st1 = null;
+        try {
+            if (threadLocalConnection.get() == null)
+                conn = getConnection();
+            else
+                conn = threadLocalConnection.get();
+
+            threadLocalConnection.set(conn);
+            int id = getUserID(user);
+            threadLocalConnection.set(null);
+
+            st = conn.createStatement();
+            st.executeUpdate("delete * from tabs where id = " + id);
+            st.close();
+
+            st1 = conn
+                    .prepareStatement("insert into tabs (id, url) values (?, ?)");
+            for (Url url : newTabs) {
+                st1.setInt(1, id);
+                st1.setString(1, url.getLink());
+                st1.addBatch();
+            }
+
+            st1.executeBatch();
+
+            st1.close();
+
+            conn.commit();
+        }
+        catch (Exception e) {
+            try {
+                conn.rollback();
+            }
+            catch (Exception e2) {
+            }
+
+            try {
+                st.close();
+            }
+            catch (Exception e2) {
+            }
+
+            try {
+                st1.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+        finally {
+            try {
+                conn.close();
+            }
+            catch (Exception e2) {
+            }
+        }
+    }
 }
