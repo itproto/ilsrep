@@ -24,17 +24,18 @@ prefManager.setCharPref("extensions.tabSender.server", document.getElementById('
 function register(){
 	var login=document.getElementById('tabsender-login').value;
 	var password=document.getElementById('tabsender-password').value;
+	var server=document.getElementById('tabsender-server').value;
 	var httpRequest = new XMLHttpRequest();
 	 httpRequest.overrideMimeType('text/xml');
 	 httpRequest.onreadystatechange = function() { registerUser(httpRequest) };
-        httpRequest.open('GET','http://emoforum.org/tabreg.php?user='+login+'&pass='+password, true);
+        httpRequest.open('GET',server+'/senderServer/tabServer?action=register&username='+login+'&password='+password, true);
         httpRequest.send('');
 	}
 function registerUser(httpRequest){
 	        if (httpRequest.readyState == 4) {
 			            if (httpRequest.status == 200) {
-								var result=httpRequest.responseText;
-								alert(result);
+								var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+								var result=xmldoc.item(0).getAttribute('isOk');
 								if(result=="true"){
 										alert('registered and logged in');
 										window.close();
@@ -53,10 +54,11 @@ function registerUser(httpRequest){
 	function login(){
 		var login=document.getElementById('tabsender-login').value;
 	var password=document.getElementById('tabsender-password').value;
+	var server=document.getElementById('tabsender-server').value;
 	var httpRequest = new XMLHttpRequest();
 	 httpRequest.overrideMimeType('text/xml');
 	 httpRequest.onreadystatechange = function() { loginUser(httpRequest) };
-        httpRequest.open('GET','http://emoforum.org/tablog.php?user='+login+'&pass='+password, true);
+          httpRequest.open('GET',server+'/senderServer/tabServer?action=login&username='+login+'&password='+password, true);
         httpRequest.send('');
 			
 		
@@ -66,8 +68,9 @@ function registerUser(httpRequest){
 		function loginUser(httpRequest){
 	        if (httpRequest.readyState == 4) {
 			            if (httpRequest.status == 200) {
-								var result=httpRequest.responseText;
-								alert(result);
+								
+								var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+								var result=xmldoc.item(0).getAttribute('isOk');
 								if(result=="true"){
 										alert('logged in');
 										window.close();

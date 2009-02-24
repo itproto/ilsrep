@@ -17,7 +17,7 @@ onunload="saveData();"
      <label value="Password"/>
     <textbox id="tabsender-password"  type="password" maxlength="8" />
      <label value="Server"/>
-    <textbox id="tabsender-server"   value="http://emoforum.org/" maxlength="40" />
+    <textbox id="tabsender-server"   value="http://localhost:8080/" maxlength="40" />
     </box>
     <box orient="vertical" pack="center">
     <button id="tabsender-login-button" label="Login" oncommand="login();" />
