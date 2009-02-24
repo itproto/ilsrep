@@ -6,10 +6,10 @@
     function checkUser(httpRequest){
 	        if (httpRequest.readyState == 4) {
 			            if (httpRequest.status == 200) {
-								var result=httpRequest.responseText;
-								alert(result);
+								var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+								var result=xmldoc.item(0).getAttribute('isOk');
 								if(result!="true") {
-										alert('Wrong login, try again');
+									alert('Wrong TabSender login');
 										window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');
 										}
 			
@@ -42,8 +42,19 @@ var output="<urls>\n";
 },
 };
 window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
-alert("checking");
-
+var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+	var login=prefManager.getCharPref("extensions.tabSender.user");
+	var password=prefManager.getCharPref("extensions.tabSender.password");
+	var server=prefManager.getCharPref("extensions.tabSender.server");
+	var httpRequest = new XMLHttpRequest();
+	 httpRequest.overrideMimeType('text/xml');
+	 httpRequest.onreadystatechange = function() { checkUser(httpRequest) };
+	 if (!(server === undefined)) {
+          httpRequest.open('GET',server+'/senderServer/tabServer?action=login&username='+login+'&password='+password, true);
+        httpRequest.send('');
+} else {
+window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
+	}
         
          ]]></script>
 
