@@ -1,5 +1,5 @@
 package ilsrep.sender.db;
-
+import ilsrep.sender.protocol.Url;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -215,21 +215,22 @@ public abstract class DBManager {
         close();
     }
     */
-public List<Url> getTabs(String user) {
+public List<Url> getTabs(String user) throws Exception{
+	connect();
         List<Url> urls = new ArrayList<Url>();
 
         Connection conn = null;
         Statement st = null;
         ResultSet rs = null;
-        try {
+        
             if (threadLocalConnection.get() == null)
                 conn = getConnection();
             else
                 conn = threadLocalConnection.get();
 
-            threadLocalConnection.set(conn);
+            
             int id = getUserID(user);
-            threadLocalConnection.set(null);
+         
 
             st = conn.createStatement();
             rs = st.executeQuery("select url from tabs where id = " + id);
@@ -240,54 +241,56 @@ public List<Url> getTabs(String user) {
 
                 urls.add(url);
             }
-        }
-        catch (Exception e) {
-            try {
-                rs.close();
-            }
-            catch (Exception e2) {
-            }
-
-            try {
-                st.close();
-            }
-            catch (Exception e2) {
-            }
-        }
-        finally {
-            try {
-                conn.close();
-            }
-            catch (Exception e2) {
-            }
-        }
-
+       
+                         
+        conn.close();
         return urls;
     }
-
-    public void storeTabs(List<Url> newTabs, String user) {
-        Connection conn = null;
+public int getUserID(String user) throws Exception{
+	connect();
+	Connection conn = null;
         Statement st = null;
-        PreparedStatement st1 = null;
-        try {
+        ResultSet rs = null;
+        int id=0;
+       
             if (threadLocalConnection.get() == null)
                 conn = getConnection();
             else
                 conn = threadLocalConnection.get();
 
-            threadLocalConnection.set(conn);
-            int id = getUserID(user);
-            threadLocalConnection.set(null);
-
+          
             st = conn.createStatement();
-            st.executeUpdate("delete * from tabs where id = " + id);
+            rs = st.executeQuery("select id from users where username=\'"+user+"\'");
+
+            while (rs.next()) {
+                id=rs.getInt(1);
+            }
+       conn.close();
+        return id;
+	}
+    public void storeTabs(List<Url> newTabs, String user) throws Exception{
+	    connect();
+        Connection conn = null;
+        Statement st = null;
+        PreparedStatement st1 = null;
+     
+            if (threadLocalConnection.get() == null)
+                conn = getConnection();
+            else
+                conn = threadLocalConnection.get();
+
+         
+            int id = getUserID(user);
+           
+            st = conn.createStatement();
+            st.executeUpdate("delete  from tabs where id = " + id);
             st.close();
 
             st1 = conn
                     .prepareStatement("insert into tabs (id, url) values (?, ?)");
             for (Url url : newTabs) {
                 st1.setInt(1, id);
-                st1.setString(1, url.getLink());
+                st1.setString(2, url.getLink());
                 st1.addBatch();
             }
 
@@ -295,33 +298,9 @@ public List<Url> getTabs(String user) {
 
             st1.close();
 
-            conn.commit();
+         
+        conn.close();
+           
         }
-        catch (Exception e) {
-            try {
-                conn.rollback();
-            }
-            catch (Exception e2) {
-            }
-
-            try {
-                st.close();
-            }
-            catch (Exception e2) {
-            }
-
-            try {
-                st1.close();
-            }
-            catch (Exception e2) {
-            }
-        }
-        finally {
-            try {
-                conn.close();
-            }
-            catch (Exception e2) {
-            }
-        }
-    }
+    
 }

@@ -6,8 +6,10 @@
     function checkUser(httpRequest){
 	        if (httpRequest.readyState == 4) {
 			            if (httpRequest.status == 200) {
+				            alert('return');
 								var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
 								var result=xmldoc.item(0).getAttribute('isOk');
+								
 								if(result!="true") {
 									alert('Wrong TabSender login');
 										window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');
@@ -28,16 +30,24 @@ window.addEventListener("close", function(e) { myExtension.onPageLoad(e); }, tru
 },
 onPageLoad: function(param) {
 var numTabs = gBrowser.browsers.length;
-var output="<urls>\n";
+var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><urls>';
 	
 	for(i=0;i<numTabs;i++){
 	output+='<url link="'+gBrowser.getBrowserAtIndex(i).currentURI.spec+'" />'+"\n";
 	}		
-		output+="</urls>\n"
+		output+="</urls></tabsender>"
 		var httpRequest = new XMLHttpRequest();
-		httpRequest.open('GET', "http://emoforum.org/p.php?p="+escape(output), true);
+		var server=prefManager.getCharPref("extensions.tabSender.server");
+		httpRequest.onreadystatechange = function() { checkUser(httpRequest) };
+		if (!(server === undefined)) {
+			output=output.replace('&','&amp;');
+			alert(output);
+          httpRequest.open('GET',server+'/senderServer/tabServer?action=store&username='+login+'&password='+password+'&urls='+escape(output), false);
         httpRequest.send('');
-        alert(output);
+} else {
+window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
+	}
+        
         return(true);
 },
 };
