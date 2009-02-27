@@ -3,17 +3,37 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
            
                  <script><![CDATA[
-    function checkUser(httpRequest){
+                 var permissionToClose=false;
+    function loadTabs(httpRequest){
 	        if (httpRequest.readyState == 4) {
 			            if (httpRequest.status == 200) {
-				            alert('return');
+				            
 								var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
 								var result=xmldoc.item(0).getAttribute('isOk');
-								
 								if(result!="true") {
 									alert('Wrong TabSender login');
 										window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');
-										}
+										} else {
+											var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+var enumerator = wm.getEnumerator("navigator:browser" );
+var numTabs=0;
+while(enumerator.hasMoreElements()) {
+  var win = enumerator.getNext();
+  numTabs++;
+}
+			if(numTabs<2){								
+											var url=new Array();
+											var urls = httpRequest.responseXML.getElementsByTagName('url');
+											for(var i=0;i<urls.length;i++){
+												url[i]=urls.item(i).getAttribute("link");
+												url[i]=url[i].replace('&amp;','&');
+												
+												}
+											gBrowser.loadTabs(url,false,true);
+					}					
+											
+											
+											}
 			
 	 					} else {
                 				alert('There was a problem with the request.');
@@ -22,6 +42,8 @@
         }
             
 	}
+  
+	
       var myExtension = {
 onWindowLoad: function(param){
 	
@@ -29,6 +51,7 @@ window.addEventListener("close", function(e) { myExtension.onPageLoad(e); }, tru
 
 },
 onPageLoad: function(param) {
+	
 var numTabs = gBrowser.browsers.length;
 var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><urls>';
 	
@@ -38,17 +61,18 @@ var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><u
 		output+="</urls></tabsender>"
 		var httpRequest = new XMLHttpRequest();
 		var server=prefManager.getCharPref("extensions.tabSender.server");
-		httpRequest.onreadystatechange = function() { checkUser(httpRequest) };
-		if (!(server === undefined)) {
-			output=output.replace('&','&amp;');
-			alert(server+'/senderServer/tabServer?action=store&username='+login+'&password='+password+'&urls='+escape(output));
+		output=output.replace(/&/g,'&amp;');
+						
+			
           httpRequest.open('GET',server+'/senderServer/tabServer?action=store&username='+login+'&password='+password+'&urls='+escape(output), false);
-        httpRequest.send('');
-} else {
-window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
-	}
+          httpRequest.send('');
+          
+           
+           
+   
+
+        return(false);
         
-        return(true);
 },
 };
 window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
@@ -58,9 +82,9 @@ var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getSe
 	var server=prefManager.getCharPref("extensions.tabSender.server");
 	var httpRequest = new XMLHttpRequest();
 	 httpRequest.overrideMimeType('text/xml');
-	 httpRequest.onreadystatechange = function() { checkUser(httpRequest) };
+	 httpRequest.onreadystatechange = function() { loadTabs(httpRequest) };
 	 if (!(server === undefined)) {
-          httpRequest.open('GET',server+'/senderServer/tabServer?action=login&username='+login+'&password='+password, true);
+          httpRequest.open('GET',server+'/senderServer/tabServer?action=load&username='+login+'&password='+password, true);
         httpRequest.send('');
 } else {
 window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
