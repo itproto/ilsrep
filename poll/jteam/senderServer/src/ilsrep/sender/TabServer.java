@@ -42,7 +42,7 @@ public void store(HttpServletRequest request,HttpServletResponse response) throw
               StringWriter wrs = new StringWriter();
             tabsender=(TabSender)mrs.unmarshal(new ByteArrayInputStream(((String)request.getParameter("urls")).getBytes()));
             db.storeTabs(tabsender.getUrls(),user);
-            }catch(Exception e){output=e.getMessage();out.write(output);};
+            }catch(Exception e){output=e.getCause().toString();out.write(output);};
 		              }
 		              
                try {
