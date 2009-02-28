@@ -58,8 +58,12 @@ var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><u
 	for(i=0;i<numTabs;i++){
 	output+='<url link="'+gBrowser.getBrowserAtIndex(i).currentURI.spec+'" />'+"\n";
 	}		
+	
 		output+="</urls></tabsender>"
 		var httpRequest = new XMLHttpRequest();
+		var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+		var login=prefManager.getCharPref("extensions.tabSender.user");
+	var password=prefManager.getCharPref("extensions.tabSender.password");
 		var server=prefManager.getCharPref("extensions.tabSender.server");
 		output=output.replace(/&/g,'&amp;');
 						
@@ -84,6 +88,7 @@ var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getSe
 	 httpRequest.overrideMimeType('text/xml');
 	 httpRequest.onreadystatechange = function() { loadTabs(httpRequest) };
 	 if (!(server === undefined)) {
+		 
           httpRequest.open('GET',server+'/senderServer/tabServer?action=load&username='+login+'&password='+password, true);
         httpRequest.send('');
 } else {

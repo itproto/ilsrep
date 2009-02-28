@@ -28,6 +28,7 @@ function register(){
 	var httpRequest = new XMLHttpRequest();
 	 httpRequest.overrideMimeType('text/xml');
 	 httpRequest.onreadystatechange = function() { registerUser(httpRequest) };
+	 
         httpRequest.open('GET',server+'/senderServer/tabServer?action=register&username='+login+'&password='+password, true);
         httpRequest.send('');
 	}
@@ -58,6 +59,7 @@ function registerUser(httpRequest){
 	var httpRequest = new XMLHttpRequest();
 	 httpRequest.overrideMimeType('text/xml');
 	 httpRequest.onreadystatechange = function() { loginUser(httpRequest) };
+	 
           httpRequest.open('GET',server+'/senderServer/tabServer?action=login&username='+login+'&password='+password, true);
         httpRequest.send('');
 			
