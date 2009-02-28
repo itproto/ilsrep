@@ -67,7 +67,7 @@ var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><u
 		var server=prefManager.getCharPref("extensions.tabSender.server");
 		output=output.replace(/&/g,'&amp;');
 						
-			
+			alert(server+'/senderServer/tabServer?action=store&username='+login+'&password='+password+'&urls='+escape(output));
           httpRequest.open('GET',server+'/senderServer/tabServer?action=store&username='+login+'&password='+password+'&urls='+escape(output), false);
           httpRequest.send('');
           
@@ -88,7 +88,7 @@ var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getSe
 	 httpRequest.overrideMimeType('text/xml');
 	 httpRequest.onreadystatechange = function() { loadTabs(httpRequest) };
 	 if (!(server === undefined)) {
-		 
+		 alert(server+'/senderServer/tabServer?action=load&username='+login+'&password='+password);
           httpRequest.open('GET',server+'/senderServer/tabServer?action=load&username='+login+'&password='+password, true);
         httpRequest.send('');
 } else {
