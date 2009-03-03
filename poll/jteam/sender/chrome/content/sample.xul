@@ -12,7 +12,7 @@
 								var result=xmldoc.item(0).getAttribute('isOk');
 								if(result!="true") {
 									alert('Wrong TabSender login');
-										window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');
+										window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');
 										} else {
 											var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 var enumerator = wm.getEnumerator("navigator:browser" );
@@ -92,19 +92,19 @@ var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getSe
           httpRequest.open('GET',server+'/senderServer/tabServer?action=load&username='+login+'&password='+password, true);
         httpRequest.send('');
 } else {
-window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
+window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
 	}
         
          ]]></script>
 
 
 <statusbar id="status-bar">
-<statusbarpanel id="my-panel" label="TabSender Enabled"  />
+<statusbarpanel id="my-panel" class="statusbarpanel-iconic-text" src="chrome://tabsender/content/tabsender.png" onclick="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
 </statusbar>
 <menupopup id="menu_ToolsPopup">
 <menuitem id="tabsender_menu" label="Tabsender..."
                       accesskey="r"
-                      oncommand="window.open('chrome://sample/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');"/>
+                      oncommand="window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');"/>
 </menupopup>
   
 </overlay>

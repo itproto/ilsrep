@@ -246,6 +246,37 @@ public List<Url> getTabs(String user) throws Exception{
         conn.close();
         return urls;
     }
+public List<Url> importTabs(String code) throws Exception{
+	connect();
+        List<Url> urls = new ArrayList<Url>();
+
+        Connection conn = null;
+        Statement st = null;
+        ResultSet rs = null;
+        
+            if (threadLocalConnection.get() == null)
+                conn = getConnection();
+            else
+                conn = threadLocalConnection.get();
+
+            
+            
+         
+
+            st = conn.createStatement();
+            rs = st.executeQuery("select url from export where id = " + code);
+
+            while (rs.next()) {
+                Url url = new Url();
+                url.setLink(rs.getString(1));
+
+                urls.add(url);
+            }
+       
+                         
+        conn.close();
+        return urls;
+    }
 public int getUserID(String user) throws Exception{
 	connect();
 	Connection conn = null;
@@ -302,5 +333,43 @@ public int getUserID(String user) throws Exception{
         conn.close();
            
         }
-    
+    public String exportTabs(List<Url> newTabs) throws Exception{
+	    connect();
+        Connection conn = null;
+        Statement st = null;
+        PreparedStatement st1 = null;
+Statement st2 = null;    
+ResultSet rs = null;
+int code=0;
+            if (threadLocalConnection.get() == null)
+                conn = getConnection();
+            else
+                conn = threadLocalConnection.get();
+
+         
+            st2 = conn.createStatement();
+            rs=st2.executeQuery("select max(id) as id from export");
+            
+           while (rs.next()) {
+	           code=15;
+                code=rs.getInt(1)+1;
+            }
+            st2.close();
+
+            st1 = conn
+                    .prepareStatement("insert into export (id, url) values (?, ?)");
+            for (Url url : newTabs) {
+                st1.setInt(1, code);
+                st1.setString(2, url.getLink());
+                st1.addBatch();
+            }
+
+            st1.executeBatch();
+
+            st1.close();
+
+         
+        conn.close();
+          return(Integer.toString(code)); 
+        }
 }
