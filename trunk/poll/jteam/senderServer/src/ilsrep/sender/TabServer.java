@@ -135,6 +135,55 @@ public void store(HttpServletRequest request,HttpServletResponse response) throw
 	                                     
                
 		}
+		public void importTab(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+      PrintWriter out = response.getWriter();
+	 	        TabSender tabsender= new TabSender();
+		            String code = (String)request.getParameter("code");  
+	              String output="error";
+	              
+		                try {
+	               
+		             tabsender.setUrls(db.importTabs(code));
+	             
+              JAXBContext urlContext = JAXBContext.newInstance(TabSender.class);
+              Marshaller mrs = urlContext.createMarshaller();
+              StringWriter wrs = new StringWriter();
+            mrs.marshal(tabsender,wrs);
+            output=wrs.toString();
+            }catch(Exception e){output=e.getMessage();};
+		             
+		               
+            out.write(output);    
+	
+	}
+	public void exportTab(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+      PrintWriter out = response.getWriter();
+	 Response res=new Response();
+	   
+	              String output="error";
+	              
+		              TabSender tabsender= new TabSender();
+		                try {
+	               
+              JAXBContext urlContext = JAXBContext.newInstance(TabSender.class);
+              Unmarshaller mrs = urlContext.createUnmarshaller();
+              StringWriter wrs = new StringWriter();
+            tabsender=(TabSender)mrs.unmarshal(new ByteArrayInputStream(((String)request.getParameter("urls")).getBytes()));
+            res.setMessage(db.exportTabs(tabsender.getUrls()));
+            }catch(Exception e){output=e.getCause().toString();out.write(output);};
+		              
+		              
+               try {
+              JAXBContext responseContext = JAXBContext.newInstance(Response.class);
+              Marshaller mr = responseContext.createMarshaller();
+              StringWriter wr = new StringWriter();
+             mr.marshal(res, wr);
+             output=wr.toString();
+         }catch(Exception e){output=e.getMessage();};
+             
+            out.write(output);    
+	
+	}
 	  public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException  {
 		  		connectDB();
              if(request.getParameter("action").equals("register")){
@@ -148,6 +197,12 @@ public void store(HttpServletRequest request,HttpServletResponse response) throw
 	                }
 	                if(request.getParameter("action").equals("load")){
 	                 load(request,response);
+	                }
+	                if(request.getParameter("action").equals("export")){
+	                 exportTab(request,response);
+	                }
+	                if(request.getParameter("action").equals("import")){
+	                 importTab(request,response);
 	                }
 }
 	

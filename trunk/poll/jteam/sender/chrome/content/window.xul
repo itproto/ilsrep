@@ -5,7 +5,7 @@ onload="loadData();"
 onunload="saveData();"
     title="TabSender"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <script type="application/x-javascript" src="chrome://sample/content/actions.js"/>
+    <script type="application/x-javascript" src="chrome://tabsender/content/actions.js"/>
     <box orient="vertical">
     <box orient="horizontal" pack="center">
     <label value="TABSender Configuration" class="header" />
