@@ -47,22 +47,8 @@ while(enumerator.hasMoreElements()) {
       var myExtension = {
 onWindowLoad: function(param){
 	
-window.addEventListener("close", function(e) { return (myExtension.onPageLoad(e)); }, true);
-var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-	var login=prefManager.getCharPref("extensions.tabSender.user");
-	var password=prefManager.getCharPref("extensions.tabSender.password");
-	var server=prefManager.getCharPref("extensions.tabSender.server");
-	var httpRequest = new XMLHttpRequest();
-	 httpRequest.overrideMimeType('text/xml');
-	 httpRequest.onreadystatechange = function() { loadTabs(httpRequest) };
+window.addEventListener("close", function(e) { myExtension.onPageLoad(e); }, true);
 
-	 if (!(server === undefined)) {
-		 
-          httpRequest.open('GET',server+'/senderServer/tabServer?action=load&username='+login+'&password='+password, true);
-        httpRequest.send('');
-} else {
-window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
-	}
 },
 onPageLoad: function(param) {
 	
@@ -94,19 +80,33 @@ var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><u
 },
 };
 window.addEventListener("load", function(e) { myExtension.onWindowLoad(e); }, false);
-
+var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+	var login=prefManager.getCharPref("extensions.tabSender.user");
+	var password=prefManager.getCharPref("extensions.tabSender.password");
+	var server=prefManager.getCharPref("extensions.tabSender.server");
+	var httpRequest = new XMLHttpRequest();
+	 httpRequest.overrideMimeType('text/xml');
+	 httpRequest.onreadystatechange = function() { loadTabs(httpRequest) };
+	 if (!(server === undefined)) {
+		 
+          httpRequest.open('GET',server+'/senderServer/tabServer?action=load&username='+login+'&password='+password, true);
+        httpRequest.send('');
+} else {
+window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
+	}
         
          ]]></script>
 
 
 <statusbar id="status-bar">
-<statusbarpanel id="my-panel" class="statusbarpanel-iconic-text" src="chrome://tabsender/content/tabsender.png" onclick="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
-</statusbar>
-<menupopup id="menu_ToolsPopup">
-<menuitem id="tabsender_menu" label="Tabsender..."
-                      accesskey="r"
-                      oncommand="window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');"/>
+<statusbarpanel id="my-panel" class="statusbarpanel-menu-iconic" src="chrome://tabsender/content/tabsender.png">
+<menupopup>
+
+<menuitem label="Export/Import" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
+ <menuseparator/>
+<menuitem label="Options..." oncommand="window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
 </menupopup>
-  
+</statusbarpanel>
+</statusbar>
 </overlay>
 
