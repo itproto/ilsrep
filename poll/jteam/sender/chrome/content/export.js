@@ -1,3 +1,93 @@
+function logAccount(){
+	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                   .getService(Components.interfaces.nsIWindowMediator);
+var mainWindow = wm.getMostRecentWindow("navigator:browser");
+var gBrowser=mainWindow.getBrowser();
+	gBrowser.addTab("http://tabsender.appspot.com/?action=regtemp");
+	}
+function importTabs(id){
+	    
+	  
+	    var httpRequest = new XMLHttpRequest();
+	 httpRequest.overrideMimeType('text/xml');
+	 httpRequest.onreadystatechange = function() { loadCode(httpRequest) };
+	 
+		 
+          httpRequest.open('GET','http://tabsender.appspot.com/?action=load&id='+id, true);
+        httpRequest.send('');
+	    	    
+	    
+	    
+    }
+function deleteTabs(id){
+	    
+	  
+	    var httpRequest = new XMLHttpRequest();
+	 httpRequest.overrideMimeType('text/xml');
+	 httpRequest.onreadystatechange = function() { showCode(httpRequest) };
+	 
+		 
+          httpRequest.open('GET','http://tabsender.appspot.com/?action=remove&id='+id, true);
+        httpRequest.send('');
+	    	    
+	    
+	    
+    }
+function refreshList(){
+	var httpRequest = new XMLHttpRequest();
+	httpRequest.overrideMimeType('text/xml');
+	httpRequest.onreadystatechange = function() { genList(httpRequest); };
+	httpRequest.open('GET','http://tabsender.appspot.com/?action=list', true);
+    httpRequest.send('');
+	
+	}
+function genList(httpRequest){
+	  if (httpRequest.readyState == 4) {
+            if (httpRequest.status == 200) {
+	          
+               var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+               if (xmldoc.length==0){
+	              var menuList=document.getElementById('tabList');
+	             while (menuList.childNodes[0]) {
+    menuList.removeChild(menuList.childNodes[0]);
+}
+	              var remList=document.getElementById('remList');
+	             while (remList.childNodes[0]) {
+    remList.removeChild(remList.childNodes[0]);
+}
+
+	            
+				var cats = httpRequest.responseXML.getElementsByTagName('cat');
+				
+				for(var i=0;i<cats.length;i++){
+					
+					var session=document.createElement("menuitem");
+					var rem_session=document.createElement("menuitem");
+					session.setAttribute('label',cats.item(i).getAttribute('name'));	
+					rem_session.setAttribute('label',cats.item(i).getAttribute('name'));
+					session.setAttribute('tab_id',cats.item(i).getAttribute('id'));	
+					rem_session.setAttribute('tab_id',cats.item(i).getAttribute('id'));
+					
+					session.onclick=function() {importTabs(this.getAttribute('tab_id'))}	;	
+												menuList.appendChild(session);					
+					rem_session.onclick=function() {deleteTabs(this.getAttribute('tab_id'))}	;
+					remList.appendChild(rem_session);
+												}
+											
+	               
+	               
+	               
+	               } else {
+		               alert("Please log in");
+		                logAccount();
+		               }
+               
+            } else {
+                alert('There was a problem with the request.');
+            }
+        }
+	
+	}
 function exportTabs(){
 	
 	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -5,32 +95,27 @@ function exportTabs(){
 var mainWindow = wm.getMostRecentWindow("navigator:browser");
 
 var gBrowser=mainWindow.getBrowser();
-
+var code=document.getElementById('tabsender-code').value;
 	var numTabs = gBrowser.browsers.length;
-var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><tabsender><urls>';
+var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><urls name="'+code+'">';
 	
 	for(i=0;i<numTabs;i++){
-	output+='<url link="'+gBrowser.getBrowserAtIndex(i).currentURI.spec+'" />'+"\n";
+	output+='<url link="'+gBrowser.getBrowserAtIndex(i).currentURI.spec+'" />';
 	}		
 	
-		output+="</urls></tabsender>"
+		output+="</urls>"
 		var httpRequest = new XMLHttpRequest();
 		 httpRequest.overrideMimeType('text/xml');
 		var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-		var login=prefManager.getCharPref("extensions.tabSender.user");
-		
-	var password=prefManager.getCharPref("extensions.tabSender.password");
-		var server=prefManager.getCharPref("extensions.tabSender.server");
 		output=output.replace(/&/g,'&amp;');
 		
 					
 		httpRequest.onreadystatechange = function() { showCode(httpRequest); };
-			 if (!(server === undefined)) {
-          httpRequest.open('GET',server+'/senderServer/tabServer?action=export&urls='+escape(output), true);
+			 
+				 alert(output);
+          httpRequest.open('GET','http://tabsender.appspot.com/?action=save&urls='+escape(output), true);
           httpRequest.send('');
-          	 }else {
-window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
-	}
+        
 		          
         }
         
@@ -38,12 +123,17 @@ window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, cente
 
         if (httpRequest.readyState == 4) {
             if (httpRequest.status == 200) {
-	          
-                var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
-                
-								var result=xmldoc.item(0).getAttribute('message');
-								
-								document.getElementById('tabsender-code').value=result;
+	         
+               var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+              
+               if (xmldoc.item(0).getAttribute("isOk") == "true" ) {
+	               alert("Operation Succesful");
+	                refreshList();
+	               } else {
+		               alert("Please log in");
+		               logAccount();
+		               }
+              
             } else {
                 alert('There was a problem with the request.');
             }
@@ -53,33 +143,15 @@ window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, cente
     
  
     
-    function importTabs(){
-	    
-	    var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-	var login=prefManager.getCharPref("extensions.tabSender.user");
-	var password=prefManager.getCharPref("extensions.tabSender.password");
-	var server=prefManager.getCharPref("extensions.tabSender.server");
-	    var code=document.getElementById('tabsender-code').value;
-	    var httpRequest = new XMLHttpRequest();
-	 httpRequest.overrideMimeType('text/xml');
-	 httpRequest.onreadystatechange = function() { loadCode(httpRequest) };
-	 if (!(server === undefined)) {
-		 
-          httpRequest.open('GET',server+'/senderServer/tabServer?action=import&code='+code, true);
-        httpRequest.send('');
-	    
-	    
-	    }else {
-window.open('chrome://tabsender/content/window.xul', 'Tabsender', 'chrome, centerscreen=yes');	
-	}
-	    
-    }
+    
     
     function loadCode(httpRequest){
 	    
 	        if (httpRequest.readyState == 4) {
 			            if (httpRequest.status == 200) {
-				        
+				   var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+              
+             if (xmldoc.length==0){   
 	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                    .getService(Components.interfaces.nsIWindowMediator);
 var mainWindow = wm.getMostRecentWindow("navigator:browser");
@@ -96,7 +168,10 @@ var gBrowser=mainWindow.getBrowser();
 												
 												}
 											gBrowser.loadTabs(url,false,true);
-									
+								} else {
+									alert("Please log in");
+									logAccount();
+									}
 											
 											
 											
