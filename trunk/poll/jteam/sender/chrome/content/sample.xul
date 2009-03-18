@@ -5,11 +5,20 @@
 <statusbar id="status-bar">
 <statusbarpanel id="my-panel" class="statusbarpanel-menu-iconic" src="chrome://tabsender/content/tabsender.png">
 <menupopup>
-<menu id="tabMenu" label="Load Session"><menupopup id="tabList"/></menu>
-<menuitem label="Save tabs" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
-<menu id="remMenu" label="Remove Session"><menupopup id="remList"/></menu>
- <menuseparator/>
+<menu id="tabMenu" label="Load Session"><menupopup id="tabList">
+
 <menuitem label="Refresh List" oncommand="refreshList();" />
+
+</menupopup>
+</menu>
+<menuitem label="Save tabs" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
+<menu id="remMenu" label="Remove Session"><menupopup id="remList">
+
+<menuitem label="Refresh List" oncommand="refreshList();" />
+
+</menupopup>
+</menu>
+
 </menupopup>
 </statusbarpanel>
 </statusbar>
