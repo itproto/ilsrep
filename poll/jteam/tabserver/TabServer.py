@@ -81,12 +81,15 @@ class MainPage(webapp.RequestHandler):
          user = users.get_current_user()
          if user:
             categories_all = db.GqlQuery("SELECT * FROM Categories where user='"+user.nickname()+"'")
+            unique_results = []
             for cat in categories_all:
-               linkChild=doc.createElement("cat")
-               linkChild.setAttribute('name',cat.name)
-               linkChild.setAttribute('id',str(cat.id))
-               urlsChild.appendChild(linkChild)
-               output=doc.toxml()
+               if cat.id not in unique_results:
+                  linkChild=doc.createElement("cat")
+                  linkChild.setAttribute('name',cat.name)
+                  linkChild.setAttribute('id',str(cat.id))
+                  urlsChild.appendChild(linkChild)
+                  unique_results.append(cat.id)
+            output=doc.toxml()
     
          else:
             output='<?xml version="1.0" encoding="UTF-8"?><response isOk=\'false\' />' 

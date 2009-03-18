@@ -72,9 +72,21 @@ function genList(httpRequest){
 												menuList.appendChild(session);					
 					rem_session.onclick=function() {deleteTabs(this.getAttribute('tab_id'))}	;
 					remList.appendChild(rem_session);
-												}
-											
-	               
+					
+						
+							}
+				    var sepItem=document.createElement("menuseparator");
+					var refreshItem=document.createElement("menuitem");
+					refreshItem.setAttribute('label',"Refresh List");
+					refreshItem.onclick=function() {refreshList();}						
+					  var sepItem2=document.createElement("menuseparator");
+					var refreshItem2=document.createElement("menuitem");
+					refreshItem2.setAttribute('label',"Refresh List");
+					refreshItem2.onclick=function() {refreshList();}	
+	               menuList.appendChild(sepItem);
+	               remList.appendChild(sepItem2);
+	               menuList.appendChild(refreshItem);
+	               remList.appendChild(refreshItem2);
 	               
 	               
 	               } else {
