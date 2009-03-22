@@ -2,7 +2,11 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.api import users
 
-import Categories
+from Categories import Categories
+from Categories import deleteSession
+from Categories import deleteURL
+
+from urllib import quote_plus
 
 class TabInfoPage(webapp.RequestHandler):
   def get(self):
@@ -35,7 +39,8 @@ class TabInfoPage(webapp.RequestHandler):
 
             for cat in categories_all:
                 if cat.id not in ids:
-                    output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a></li>'
+                    output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
+                    output += '[' + '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '">Delete</a>' + ']</li>\n'
                     ids.append(cat.id)
 
             output += '</ul>'
@@ -45,9 +50,9 @@ class TabInfoPage(webapp.RequestHandler):
                 output += 'Id not specified!'
             else:
                 links = []
-                
+
                 linksForThisSession = db.GqlQuery("select * FROM Categories where id=" + id)
-                
+
                 name = ""
 
                 for link in linksForThisSession:
@@ -58,10 +63,25 @@ class TabInfoPage(webapp.RequestHandler):
                 if len(links) > 0:
                     output += '<h1>URLs for session "' + name + '":</h1><ul>'
                     for link in links:
-                        output += '<li><a href="' + link + '">' + link + '</a></li>'
+                        output += '<li><a href="' + link + '">' + link + '</a>\n'
+                        output += '[' + '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '">Delete</a>' + ']</li>\n'
                     output += '</ul>'
                 else:
                     output += 'No links for this session!'
+
+                output += '<a href="/tabinfo.html">Back</a>'
+        elif type == "removesession":
+            id = self.request.get('id')
+            if id:
+                deleteSession(id)
+            output += '<h1>Session removed!<h1>'
+        elif type == "removeurl":
+            id = self.request.get('id')
+            url = self.request.get('url')
+            
+            if id and url:
+                deleteURL(id, url)
+                output += '<h1>URL removed!<h1>'
 
         output += '</body></html>'
 
