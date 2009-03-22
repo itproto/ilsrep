@@ -5,6 +5,7 @@ from google.appengine.api import users
 import xml.dom.minidom
 
 from Categories import Categories
+from Categories import deleteSession
 
 class MainPage(webapp.RequestHandler):
   def get(self):
@@ -24,9 +25,7 @@ class MainPage(webapp.RequestHandler):
          user = users.get_current_user()
          if user:
             id=self.request.get('id')
-            toDelete=db.GqlQuery("select * FROM Categories where id="+id)
-            for cat in toDelete:
-                  cat.delete();
+            deleteSession(id)
             output=self.createResponseXML('true')
          else:
             output=self.createResponseXML('false')   
