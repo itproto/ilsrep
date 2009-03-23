@@ -12,7 +12,6 @@ def deleteSession(id):
         cat.delete();
 
 def deleteURL(id, url):
-    # TODO: This method should be fixed.
-    toDelete=db.GqlQuery("select * FROM Categories where id=" + id + " and url=\"" + url + "\"")
+    toDelete=db.GqlQuery("select * FROM Categories where id=" + id + " and url='" + url + "'")
     for cat in toDelete:
         cat.delete();

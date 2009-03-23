@@ -75,13 +75,16 @@ class TabInfoPage(webapp.RequestHandler):
             if id:
                 deleteSession(id)
             output += '<h1>Session removed!<h1>'
+            output += '<a href="/tabinfo.html">Back</a>'
         elif type == "removeurl":
             id = self.request.get('id')
             url = self.request.get('url')
-            
+
             if id and url:
                 deleteURL(id, url)
-                output += '<h1>URL removed!<h1>'
+                output += '<h1>URL removed!</h1>'
+
+            output += '<a href="/tabinfo.html?type=session&id=' + id + '">Back</a>'
 
         output += '</body></html>'
 
