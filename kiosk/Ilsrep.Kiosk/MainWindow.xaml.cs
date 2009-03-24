@@ -19,6 +19,10 @@ namespace Ilsrep.Kiosk
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ColumnDefinition colDef;
+        private RowDefinition rowDef;
+        private GridSplitter gridSplitter;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -74,6 +78,18 @@ namespace Ilsrep.Kiosk
             {
                 MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void addColBtn_Click(object sender, RoutedEventArgs e)
+        {
+            colDef = new ColumnDefinition();
+            kioskWindowGrid.ColumnDefinitions.Add(colDef);
+        }
+
+        private void addRowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            rowDef = new RowDefinition();
+            kioskWindowGrid.RowDefinitions.Add(rowDef);
         }
     }
 }
