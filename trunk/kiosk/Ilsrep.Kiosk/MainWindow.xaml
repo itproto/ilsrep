@@ -8,9 +8,17 @@
         <TextBox Margin="60,22,0,0" Name="widthTextBox" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="53" IsEnabled="True" TextChanged="widthTextBox_TextChanged">
         </TextBox>
         <TextBox Margin="60,51,0,0" Name="heightTextBox" HorizontalAlignment="Left" Width="53" Height="23" VerticalAlignment="Top" IsEnabled="True" TextChanged="heightTextBox_TextChanged" />
-        <Grid Margin="235,100,0,0" Name="kioskWindowGrid" Background="CadetBlue" SizeChanged="kioskWindowGrid_SizeChanged" HorizontalAlignment="Left" Width="225" Height="150" VerticalAlignment="Top">
+        <Grid Margin="235,100,0,0" Name="kioskWindowGrid" Background="CadetBlue" SizeChanged="kioskWindowGrid_SizeChanged" HorizontalAlignment="Left" Width="225" Height="150" VerticalAlignment="Top" ShowGridLines="True">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
         </Grid>
         <Slider Height="23" Margin="119,22,0,0" Name="widthSlider" VerticalAlignment="Top" Value="0" Maximum="1024" ValueChanged="widthSlider_ValueChanged" HorizontalAlignment="Left" Width="98" Interval="1" SmallChange="1" />
         <Slider Height="23" Margin="119,51,0,0" Name="heightSlider" VerticalAlignment="Top" Value="0" Maximum="768" ValueChanged="heightSlider_ValueChanged" HorizontalAlignment="Left" Width="98" SmallChange="1" />
+        <Button HorizontalAlignment="Left" Margin="36,100,0,0" Name="addColBtn" Width="75" Height="23.393" VerticalAlignment="Top" Click="addColBtn_Click">Add column</Button>
+        <Button HorizontalAlignment="Left" Margin="36,136.393,0,0" Name="addRowBtn" Width="75" Height="23" VerticalAlignment="Top" Click="addRowBtn_Click">Add row</Button>
     </Grid>
 </Window>
