@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window  id="tabsender-import-window"
+    title="TabSender"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <script type="application/x-javascript" src="chrome://tabsender/content/export.js"/>
+    <box orient="vertical">
+    <box orient="horizontal" pack="center">
+    <label value="TABSender Exporting" class="header" />
+    </box>
+    <box orient="horizontal">
+    <box orient="vertical" pack="center">
+    <label value="Enter Code"/>
+     <textbox id="tabsender-import-code"  maxlength="25"/>
+        </box>
+    <box orient="vertical" pack="center">
+    <button id="tabsender-login-button" label="Load" oncommand="importCode();" />
+    
+
+</box>
+</box>
+</box>
+</window>

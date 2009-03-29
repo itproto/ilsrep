@@ -11,7 +11,14 @@
 
 </menupopup>
 </menu>
+<menu id="shareMenu" label="Share Session"><menupopup id="shareList">
+
+<menuitem label="Refresh List" oncommand="refreshList();" />
+
+</menupopup>
+</menu>
 <menuitem label="Save tabs" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
+<menuitem label="Load tabs" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
 <menu id="remMenu" label="Remove Session"><menupopup id="remList">
 
 <menuitem label="Refresh List" oncommand="refreshList();" />
