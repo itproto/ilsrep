@@ -20,18 +20,42 @@ class TabInfoPage(webapp.RequestHandler):
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>TabServer Sessions Information</title>
+<title>TabSender server</title>
 <meta name="keywords" content="tabsender, ils, jteam" />
 <meta name="description" content="jteam tabsender" />
+<link rel="stylesheet" type="text/css" href="html/class.css" />
 </head>
 
 <body>
+
+<div id="outer">
+
+    <div id="header">
+        <h1><span>Tab</span><strong>Sender</strong> server</h1>
+
+        <div id="menu">
+            <ul>
+                <li><a href="/info.html">Project info</a></li>
+                <li><a href="/tabinfo.html">My account</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="inner">
+
+        <div id="main">
+            <div id="xbgA"></div>
+    
+            <div id="main_inner">
+
+                <!-- Main start -->
 """
+
 
         type = self.request.get('type')
 
         if (not type) or (type == 'user'):
-            output += '<h1>Your(' + user.nickname() + ') stored sessions on server:</h1><ul>'
+            output += '<h1><span class="colouredText">' + user.nickname() + '</span>\'s stored sessions on server:</h1><ul>'
 
             categories_all = db.GqlQuery("SELECT * FROM Categories where user='" + user.nickname() + "'")
 
@@ -61,33 +85,69 @@ class TabInfoPage(webapp.RequestHandler):
                     links.append(link.url)
 
                 if len(links) > 0:
-                    output += '<h1>URLs for session "' + name + '":</h1><ul>'
+                    output += '<h1>URLs for session <span class="colouredText">' + name + ':</span></h1><ul>'
                     for link in links:
                         output += '<li><a href="' + link + '">' + link + '</a>\n'
                         output += '[' + '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '">Delete</a>' + ']</li>\n'
                     output += '</ul>'
                 else:
-                    output += 'No links for this session!'
+                    output += '<h1>This session is empty!</h1> '
 
                 output += '<a href="/tabinfo.html">Back</a>'
         elif type == "removesession":
             id = self.request.get('id')
             if id:
                 deleteSession(id)
-            output += '<h1>Session removed!<h1>'
-            output += '<a href="/tabinfo.html">Back</a>'
+#            output += '<h1>Session removed!<h1>'
+#            output += '<a href="/tabinfo.html">Back</a>'
+            self.redirect("/tabinfo.html")
         elif type == "removeurl":
             id = self.request.get('id')
             url = self.request.get('url')
 
             if id and url:
                 deleteURL(id, url)
-                output += '<h1>URL removed!</h1>'
+#                output += '<h1>URL removed!</h1>'
 
-            output += '<a href="/tabinfo.html?type=session&id=' + id + '">Back</a>'
+#            output += '<a href="/tabinfo.html?type=session&id=' + id + '">Back</a>'
+            self.redirect("/tabinfo.html?type=session&id=" + id)
 
-        output += '</body></html>'
+        output += """
+                <!-- Main End -->
+                <div class="foot"></div>                
+            </div>
 
+        </div>
+
+        <div id="side">
+            <!-- Side start -->
+            <ul>
+        """
+
+        categories_all = db.GqlQuery("SELECT * FROM Categories where user='" + user.nickname() + "'")
+
+        ids = []
+
+        for cat in categories_all:
+            if cat.id not in ids:
+                output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
+                ids.append(cat.id)
+
+        output += """</ul>
+            <!-- Side end -->
+        </div>
+
+        <div  class="foot"></div>
+    </div>
+
+</div>
+<div id="outer2"></div>
+
+<div id="footer">
+    &copy; 2009 InterLogic. TabSender server.
+</div>
+</body></html>
+"""
         self.response.out.write(output)
     else:
         self.redirect(users.create_login_url('/tabinfo.html'))
