@@ -20,7 +20,7 @@ class MainPage(webapp.RequestHandler):
          else:
             output=self.createResponseXML('false') 
     if action == "regtemp":
-         self.redirect(users.create_login_url("http://tabsender.appspot.com/html/logedin.html"))
+         self.redirect(users.create_login_url("/html/logedin.html"))
     if action =="remove":
          user = users.get_current_user()
          if user:

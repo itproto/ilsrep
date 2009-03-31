@@ -522,3 +522,6 @@ text-decoration: underline;
 /*	color: #a30313*/
 	color: #D97900
 }
+.imageURL {
+	border: 0;
+}

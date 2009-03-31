@@ -20,7 +20,7 @@ class TabInfoPage(webapp.RequestHandler):
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>TabSender server</title>
+<title>TabSender</title>
 <meta name="keywords" content="tabsender, ils, jteam" />
 <meta name="description" content="jteam tabsender" />
 <link rel="stylesheet" type="text/css" href="html/class.css" />
@@ -35,7 +35,7 @@ class TabInfoPage(webapp.RequestHandler):
 
         <div id="menu">
             <ul>
-                <li><a href="/info.html">Project info</a></li>
+                <li><a href="/html/info.html">Project home</a></li>
                 <li><a href="/tabinfo.html">My account</a></li>
             </ul>
         </div>
@@ -51,7 +51,6 @@ class TabInfoPage(webapp.RequestHandler):
                 <!-- Main start -->
 """
 
-
         type = self.request.get('type')
 
         if (not type) or (type == 'user'):
@@ -64,7 +63,8 @@ class TabInfoPage(webapp.RequestHandler):
             for cat in categories_all:
                 if cat.id not in ids:
                     output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
-                    output += '[' + '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '">Delete</a>' + ']</li>\n'
+                    output += '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '"><img class="imageURL" src="/html/images/cancel.png" /></a>' + '</li>\n'
+#                    output += '[' + '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '">Delete</a>' + ']</li>\n'
                     ids.append(cat.id)
 
             output += '</ul>'
@@ -88,12 +88,19 @@ class TabInfoPage(webapp.RequestHandler):
                     output += '<h1>URLs for session <span class="colouredText">' + name + ':</span></h1><ul>'
                     for link in links:
                         output += '<li><a href="' + link + '">' + link + '</a>\n'
-                        output += '[' + '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '">Delete</a>' + ']</li>\n'
+                        output += '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '"><img class="imageURL" src="/html/images/cancel.png" /></a>' + '</li>\n'
+#                        output += '[' + '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '">Delete</a>' + ']</li>\n'
                     output += '</ul>'
                 else:
-                    output += '<h1>This session is empty!</h1> '
+                    output += '<h1>Session was deleted!</h1> '
 
-                output += '<a href="/tabinfo.html">Back</a>'
+                output += '<form method="get" action="/tabinfo.html">' + '\n'
+                output += '<input type="hidden" name="type" value="posturl" />' + '\n'
+                output += '<input type="hidden" name="id" value="' + id +'" />' + '\n'
+                output += '<input type="text" size="30" name="url" />' + '\n'
+                output += '<input type="submit" value="Add URL" /> </form>' + '\n'
+
+                output += '<a href="/tabinfo.html"><img class="imageURL" src="/html/images/arrow_left.png" /> Back</a>'
         elif type == "removesession":
             id = self.request.get('id')
             if id:
@@ -111,6 +118,22 @@ class TabInfoPage(webapp.RequestHandler):
 
 #            output += '<a href="/tabinfo.html?type=session&id=' + id + '">Back</a>'
             self.redirect("/tabinfo.html?type=session&id=" + id)
+        elif type == "posturl":
+            id = self.request.get('id')
+            url = self.request.get('url')
+
+            if id and url:
+                cat = Categories()
+                cat.user = user.nickname()
+                cat.url = url
+
+                name_select = db.GqlQuery("SELECT * FROM Categories WHERE id=" + id +" LIMIT 1")
+                cat.name = name_select[0].name
+                cat.id = name_select[0].id
+
+                cat.put()
+
+                self.redirect("/tabinfo.html?type=session&id=" + id)
 
         output += """
                 <!-- Main End -->
