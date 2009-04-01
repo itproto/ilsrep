@@ -204,28 +204,36 @@ function deleteTabs(id){
 	    
     }
 function refreshList(){
+
+
 	var httpRequest = new XMLHttpRequest();
 	httpRequest.overrideMimeType('text/xml');
 	httpRequest.onreadystatechange = function() { genList(httpRequest); };
-	httpRequest.open('GET','http://tabsender.appspot.com/?action=list', true);
+	httpRequest.open('GET','http://tabsender.appspot.com/?action=list', false);
     httpRequest.send('');
-	
-	}
-function genList(httpRequest){
+	 
+
+
+	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                   .getService(Components.interfaces.nsIWindowMediator);
+var mainWindow = wm.getMostRecentWindow("navigator:browser").document; 
+
+
 	  if (httpRequest.readyState == 4) {
             if (httpRequest.status == 200) {
 	          
                var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
                if (xmldoc.length==0){
-	              var menuList=document.getElementById('tabList');
+	              var menuList=mainWindow.getElementById('tabList');
 	             while (menuList.childNodes[0]) {
     menuList.removeChild(menuList.childNodes[0]);
 }
-	              var remList=document.getElementById('remList');
+
+	              var remList=mainWindow.getElementById('remList');
 	             while (remList.childNodes[0]) {
     remList.removeChild(remList.childNodes[0]);
 }
- var shareList=document.getElementById('shareList');
+ var shareList=mainWindow.getElementById('shareList');
 	             while (shareList.childNodes[0]) {
     shareList.removeChild(shareList.childNodes[0]);
 }
@@ -234,9 +242,9 @@ function genList(httpRequest){
 				
 				for(var i=0;i<cats.length;i++){
 					
-					var session=document.createElement("menuitem");
-					var rem_session=document.createElement("menuitem");
-					var share_session=document.createElement("menuitem");
+					var session=mainWindow.createElement("menuitem");
+					var rem_session=mainWindow.createElement("menuitem");
+					var share_session=mainWindow.createElement("menuitem");
 					session.setAttribute('label',cats.item(i).getAttribute('name'));	
 					rem_session.setAttribute('label',cats.item(i).getAttribute('name'));
 					share_session.setAttribute('label',cats.item(i).getAttribute('name'));
@@ -252,16 +260,16 @@ function genList(httpRequest){
 					shareList.appendChild(share_session);
 						
 							}
-				    var sepItem=document.createElement("menuseparator");
-					var refreshItem=document.createElement("menuitem");
+				/*    var sepItem=mainWindow.createElement("menuseparator");
+					var refreshItem=mainWindow.createElement("menuitem");
 					refreshItem.setAttribute('label',"Refresh List");
 					refreshItem.onclick=function() {refreshList();}
-					 var sep2Item=document.createElement("menuseparator");
-					var refresh2Item=document.createElement("menuitem");
+					 var sep2Item=mainWindow.createElement("menuseparator");
+					var refresh2Item=mainWindow.createElement("menuitem");
 					refresh2Item.setAttribute('label',"Refresh List");
 					refresh2Item.onclick=function() {refreshList();}						
-					  var sepItem2=document.createElement("menuseparator");
-					var refreshItem2=document.createElement("menuitem");
+					  var sepItem2=mainWindow.createElement("menuseparator");
+					var refreshItem2=mainWindow.createElement("menuitem");
 					refreshItem2.setAttribute('label',"Refresh List");
 					refreshItem2.onclick=function() {refreshList();}	
 	               menuList.appendChild(sepItem);
@@ -270,7 +278,87 @@ function genList(httpRequest){
 	               menuList.appendChild(refreshItem);
 	               remList.appendChild(refreshItem2);
 	               shareList.appendChild(refresh2Item);
+	               */
 	               
+	               } else {
+		               alert("Please log in");
+		                logAccount();
+		               }
+               
+            } else {
+                alert('There was a problem with the request.');
+            }
+        }
+	
+	}
+function genList(httpRequest){ 
+alert('here');
+
+	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                   .getService(Components.interfaces.nsIWindowMediator);
+var mainWindow = wm.getMostRecentWindow("navigator:browser").document; 
+
+
+	  if (httpRequest.readyState == 4) {
+            if (httpRequest.status == 200) {
+	          
+               var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+               if (xmldoc.length==0){
+	              var menuList=mainWindow.getElementById('tabList');
+	             while (menuList.childNodes[0]) {
+    menuList.removeChild(menuList.childNodes[0]);
+}
+
+	              var remList=mainWindow.getElementById('remList');
+	             while (remList.childNodes[0]) {
+    remList.removeChild(remList.childNodes[0]);
+}
+ var shareList=mainWindow.getElementById('shareList');
+	             while (shareList.childNodes[0]) {
+    shareList.removeChild(shareList.childNodes[0]);
+}
+	            
+				var cats = httpRequest.responseXML.getElementsByTagName('cat');
+				
+				for(var i=0;i<cats.length;i++){
+					
+					var session=mainWindow.createElement("menuitem");
+					var rem_session=mainWindow.createElement("menuitem");
+					var share_session=mainWindow.createElement("menuitem");
+					session.setAttribute('label',cats.item(i).getAttribute('name'));	
+					rem_session.setAttribute('label',cats.item(i).getAttribute('name'));
+					share_session.setAttribute('label',cats.item(i).getAttribute('name'));
+					session.setAttribute('tab_id',cats.item(i).getAttribute('id'));	
+					rem_session.setAttribute('tab_id',cats.item(i).getAttribute('id'));
+					share_session.setAttribute('tab_id',cats.item(i).getAttribute('id'));
+					
+					session.onclick=function() {importTabs(this.getAttribute('tab_id'))}	;	
+												menuList.appendChild(session);					
+					rem_session.onclick=function() {deleteTabs(this.getAttribute('tab_id'))}	;
+					remList.appendChild(rem_session);
+					share_session.onclick=function() {shareTabs(this.getAttribute('tab_id'))}	;
+					shareList.appendChild(share_session);
+						
+							}
+				/*    var sepItem=mainWindow.createElement("menuseparator");
+					var refreshItem=mainWindow.createElement("menuitem");
+					refreshItem.setAttribute('label',"Refresh List");
+					refreshItem.onclick=function() {refreshList();}
+					 var sep2Item=mainWindow.createElement("menuseparator");
+					var refresh2Item=mainWindow.createElement("menuitem");
+					refresh2Item.setAttribute('label',"Refresh List");
+					refresh2Item.onclick=function() {refreshList();}						
+					  var sepItem2=mainWindow.createElement("menuseparator");
+					var refreshItem2=mainWindow.createElement("menuitem");
+					refreshItem2.setAttribute('label',"Refresh List");
+					refreshItem2.onclick=function() {refreshList();}	
+	               menuList.appendChild(sepItem);
+	               remList.appendChild(sepItem2);
+	               shareList.appendChild(sep2Item);
+	               menuList.appendChild(refreshItem);
+	               remList.appendChild(refreshItem2);
+	               shareList.appendChild(refresh2Item);
+	               */
 	               
 	               } else {
 		               alert("Please log in");
@@ -305,13 +393,30 @@ var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><urls name="'
 		output=output.replace(/&/g,'&amp;');
 		
 					
-		httpRequest.onreadystatechange = function() { showCode(httpRequest); };
+		//httpRequest.onreadystatechange = function() { showCode(httpRequest); };
 			 
-				 alert(output);
-          httpRequest.open('GET','http://tabsender.appspot.com/?action=save&urls='+escape(output), true);
+
+          httpRequest.open('GET','http://tabsender.appspot.com/?action=save&urls='+escape(output), false);
           httpRequest.send('');
         
-		          
+	 if (httpRequest.readyState == 4) {
+            if (httpRequest.status == 200) {
+	         
+               var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
+              
+               if (xmldoc.item(0).getAttribute("isOk") == "true" ) {
+	               alert("Session saved");
+	                refreshList();
+	               } else {
+		               alert("Please log in");
+		               logAccount();
+		               }
+              
+            } else {
+                alert('There was a problem with the request.');
+            }
+        }
+	          
         }
         
 	    function showCode(httpRequest) {
@@ -322,7 +427,7 @@ var output='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><urls name="'
                var xmldoc = httpRequest.responseXML.getElementsByTagName('response');
               
                if (xmldoc.item(0).getAttribute("isOk") == "true" ) {
-	               alert("Operation Succesful");
+	               alert("Session removed");
 	                refreshList();
 	               } else {
 		               alert("Please log in");
@@ -363,6 +468,7 @@ var gBrowser=mainWindow.getBrowser();
 												
 												}
 											gBrowser.loadTabs(url,false,true);
+refreshList();
 								} else {
 									alert("Please log in");
 									logAccount();
