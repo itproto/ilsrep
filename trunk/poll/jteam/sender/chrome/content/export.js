@@ -215,7 +215,7 @@ var gBrowser=mainWindow.getBrowser();
 												
 												}
 											gBrowser.loadTabs(url,false,true);
-refreshList();
+refreshMenu();
 								} else {
 									alert("Please log in");
 									logAccount();
@@ -433,7 +433,7 @@ var gBrowser=mainWindow.getBrowser();
 												
 												}
 											gBrowser.loadTabs(url,false,true);
-refreshList();
+refreshMenu();
 								} else {
 									alert("Please log in");
 									logAccount();
