@@ -59,15 +59,21 @@ class TabInfoPage(webapp.RequestHandler):
             categories_all = db.GqlQuery("SELECT * FROM Categories where user='" + user.nickname() + "'")
 
             ids = []
+            output1 = ""
 
             for cat in categories_all:
                 if cat.id not in ids:
-                    output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
-                    output += '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '"><img class="imageURL" src="/html/images/cancel.png" /></a>' + '</li>\n'
+                    output1 += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
+                    output1 += '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
 #                    output += '[' + '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '">Delete</a>' + ']</li>\n'
                     ids.append(cat.id)
 
-            output += '</ul>'
+            if len(ids) > 0:
+                output += "<ul>\n" + output1 + "</ul>\n"
+            else:
+                output += "<h2>Session list is empty!</h2>\n"
+
+            output += '<br />\n<a href="/tabinfo.html?type=newsession"><img class="imageURL" src="/html/images/add.png" />New session</a>\n'
         elif type == 'session':
             id = self.request.get('id')
             if not id:
@@ -88,17 +94,17 @@ class TabInfoPage(webapp.RequestHandler):
                     output += '<h1>URLs for session <span class="colouredText">' + name + ':</span></h1><ul>'
                     for link in links:
                         output += '<li><a href="' + link + '">' + link + '</a>\n'
-                        output += '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '"><img class="imageURL" src="/html/images/cancel.png" /></a>' + '</li>\n'
+                        output += '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
 #                        output += '[' + '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '">Delete</a>' + ']</li>\n'
                     output += '</ul>'
-                else:
-                    output += '<h1>Session was deleted!</h1> '
 
-                output += '<form method="get" action="/tabinfo.html">' + '\n'
-                output += '<input type="hidden" name="type" value="posturl" />' + '\n'
-                output += '<input type="hidden" name="id" value="' + id +'" />' + '\n'
-                output += '<input type="text" size="30" name="url" />' + '\n'
-                output += '<input type="submit" value="Add URL" /> </form>' + '\n'
+                    output += '<form method="get" action="/tabinfo.html">' + '\n'
+                    output += '<input type="hidden" name="type" value="posturl" />' + '\n'
+                    output += '<input type="hidden" name="id" value="' + id +'" />' + '\n'
+                    output += '<input type="text" size="30" name="url" />' + '\n'
+                    output += '<input type="submit" value="Add URL" /> </form>' + '\n'
+                else:
+                    output += '<h2>Session was deleted!</h2> '
 
                 output += '<a href="/tabinfo.html"><img class="imageURL" src="/html/images/arrow_left.png" /> Back</a>'
         elif type == "removesession":
@@ -134,6 +140,32 @@ class TabInfoPage(webapp.RequestHandler):
                 cat.put()
 
                 self.redirect("/tabinfo.html?type=session&id=" + id)
+        elif type == "newsession":
+            output += '<form method="get" action="/tabinfo.html">' + '\n'
+            output += '<input type="hidden" name="type" value="newsessioncreate" />' + '\n'
+            output += '<p>Session name:</p>'
+            output += '<input type="text" size="30" name="sessionName" />' + '\n'
+            output += '<p>First URL:</p>'
+            output += '<input type="text" size="30" name="url" />' + '\n'
+            output += '<input type="submit" value="Add session" /> </form>' + '\n'
+        elif type == "newsessioncreate":
+            sessionName = self.request.get('sessionName')
+            url = self.request.get('url')
+            
+            if sessionName and url:
+                categories_all = db.GqlQuery("SELECT * FROM Categories ORDER BY id DESC LIMIT 1")
+                curid=0
+                for cat in categories_all:
+                   curid=cat.id+1;
+    
+                newSession = Categories()
+                newSession.id = curid
+                newSession.user = user.nickname()
+                newSession.name = sessionName
+                newSession.url = url
+                newSession.put()
+
+            self.redirect("/tabinfo.html")
 
         output += """
                 <!-- Main End -->
@@ -151,10 +183,22 @@ class TabInfoPage(webapp.RequestHandler):
 
         ids = []
 
+        i = 0
+        lastI = 0
+        moreWritten = False
+
         for cat in categories_all:
             if cat.id not in ids:
-                output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
+                if i < 13:
+                    output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
+                elif not moreWritten:
+                    moreWritten = True
+                    lastI = i
                 ids.append(cat.id)
+                i += 1
+
+        if moreWritten:
+            output += '<li>And ' + str(len(ids) - lastI) + ' more...</li>'
 
         output += """</ul>
             <!-- Side end -->
