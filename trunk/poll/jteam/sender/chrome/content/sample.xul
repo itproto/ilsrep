@@ -4,16 +4,18 @@
        <script src="chrome://tabsender/content/export.js" />
 <statusbar id="status-bar">
 <statusbarpanel id="my-panel" class="statusbarpanel-menu-iconic" src="chrome://tabsender/content/tabsender.png">
+
 <menupopup>
+<command id="cmd_refresh" onclick="refreshList();"/>
 <menu id="tabMenu" label="Load Session"><menupopup id="tabList">
 
-<menuitem label="Refresh List" oncommand="refreshList();" />
+<menuitem label="Refresh List" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
 <menu id="shareMenu" label="Share Session"><menupopup id="shareList">
 
-<menuitem label="Refresh List" oncommand="refreshList();" />
+<menuitem label="Refresh List" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
@@ -21,7 +23,7 @@
 <menuitem label="Load tabs" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
 <menu id="remMenu" label="Remove Session"><menupopup id="remList">
 
-<menuitem label="Refresh List" oncommand="refreshList();" />
+<menuitem label="Refresh List" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
