@@ -12,6 +12,7 @@ class MainPage(webapp.RequestHandler):
     self.response.headers['Content-Type'] = 'text/plain'
     action=self.request.get('action')
     output='error'
+    
     if action == "login":
          user = users.get_current_user()
          
@@ -88,7 +89,8 @@ class MainPage(webapp.RequestHandler):
     
          else:
             output=self.createResponseXML('false') 
-
+    if output == "error":
+       self.redirect('http://tabsender.appspot.com/tabinfo.html')
     self.response.out.write(output)
   def createResponseXML(self, responseText):
       return '<?xml version="1.0" encoding="UTF-8"?><response isOk=\''+responseText+'\' />'
