@@ -19,77 +19,107 @@ namespace Ilsrep.Kiosk
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ColumnDefinition colDef;
-        private RowDefinition rowDef;
-        private GridSplitter gridSplitter;
+        private int colsCount;
+        private int rowsCount;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void RefreshCells()
         {
-            widthTextBox.Text = kioskWindowGrid.Width.ToString();
-            heightTextBox.Text = kioskWindowGrid.Height.ToString();
-            widthSlider.Value = kioskWindowGrid.Width;
-            heightSlider.Value = kioskWindowGrid.Height;
+            kioskWindowGrid.Children.Clear();
+            kioskWindowGrid.RowDefinitions.Clear();
+            kioskWindowGrid.ColumnDefinitions.Clear();
+
+            // Add first row and column to kioskWindowGrid
+            ColumnDefinition colDefin = new ColumnDefinition();
+            RowDefinition rowDefin = new RowDefinition();
+            kioskWindowGrid.ColumnDefinitions.Add(colDefin);
+            kioskWindowGrid.RowDefinitions.Add(rowDefin);
+
+            Grid firstRowGrid = new Grid();
+            ColumnDefinition firstColDefinition = new ColumnDefinition();
+            firstRowGrid.ColumnDefinitions.Add(firstColDefinition);
+            while (firstRowGrid.ColumnDefinitions.Count < colsCount)
+            {
+                ColumnDefinition colDef = new ColumnDefinition();
+                firstRowGrid.ColumnDefinitions.Add(colDef);
+                GridSplitter gridSplitter = new GridSplitter();
+                gridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 214, 229, 248));
+                gridSplitter.Width = 5;
+                gridSplitter.VerticalAlignment = VerticalAlignment.Stretch;
+                gridSplitter.HorizontalAlignment = HorizontalAlignment.Left;
+                Grid.SetColumn(gridSplitter, firstRowGrid.ColumnDefinitions.Count - 1);
+                Grid.SetRow(gridSplitter, 0);
+                firstRowGrid.Children.Add(gridSplitter);
+            }
+            kioskWindowGrid.Children.Add(firstRowGrid);
+            Grid.SetColumn(firstRowGrid, 0);
+            Grid.SetRow(firstRowGrid, kioskWindowGrid.RowDefinitions.Count - 1);
+
+            while (kioskWindowGrid.RowDefinitions.Count < rowsCount)
+            {
+                RowDefinition rowDef = new RowDefinition();
+                kioskWindowGrid.RowDefinitions.Add(rowDef);
+
+                Grid rowGrid = new Grid();
+                ColumnDefinition colDefinition = new ColumnDefinition();
+                rowGrid.ColumnDefinitions.Add(colDefinition);
+
+                while (rowGrid.ColumnDefinitions.Count < colsCount)
+                {
+                    ColumnDefinition colDef = new ColumnDefinition();
+                    rowGrid.ColumnDefinitions.Add(colDef);
+                    GridSplitter gridSplitter = new GridSplitter();
+                    gridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 214, 229, 248));
+                    gridSplitter.Width = 5;
+                    gridSplitter.VerticalAlignment = VerticalAlignment.Stretch;
+                    gridSplitter.HorizontalAlignment = HorizontalAlignment.Left;
+                    Grid.SetColumn(gridSplitter, rowGrid.ColumnDefinitions.Count - 1);
+                    Grid.SetRow(gridSplitter, 0);
+                    rowGrid.Children.Add(gridSplitter);
+                }
+                kioskWindowGrid.Children.Add(rowGrid);
+                Grid.SetColumn(rowGrid, 0);
+                Grid.SetRow(rowGrid, kioskWindowGrid.RowDefinitions.Count - 1);
+
+                GridSplitter horGridSplitter = new GridSplitter();
+                horGridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 214, 229, 248));
+                horGridSplitter.Height = 5;
+                horGridSplitter.VerticalAlignment = VerticalAlignment.Top;
+                horGridSplitter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                kioskWindowGrid.Children.Add(horGridSplitter);
+                Grid.SetColumn(horGridSplitter, 0);
+                Grid.SetRow(horGridSplitter, kioskWindowGrid.RowDefinitions.Count - 1);
+            }
         }
 
-        private void widthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            kioskWindowGrid.Width = Math.Round(widthSlider.Value);
-            widthTextBox.Text = kioskWindowGrid.Width.ToString();
-        }
-
-        private void heightSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            kioskWindowGrid.Height = Math.Round(heightSlider.Value);
-            heightTextBox.Text = kioskWindowGrid.Height.ToString();
-        }
-
-        private void kioskWindowGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            mainWindow.Height = kioskWindowGrid.Height + 150;
-            mainWindow.Width = kioskWindowGrid.Width + 260;
-        }
-
-        private void widthTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ColsTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             try
             {
-                widthSlider.Value = Convert.ToDouble(widthTextBox.Text);
-                kioskWindowGrid.Width = Math.Round(widthSlider.Value);                
+                colsCount = Convert.ToInt32(colsTextBox.Text);
+                RefreshCells();
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
         }
 
-        private void heightTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void RowsTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             try
             {
-                heightSlider.Value = Convert.ToDouble(heightTextBox.Text);
-                kioskWindowGrid.Height = Math.Round(heightSlider.Value);
+                rowsCount = Convert.ToInt32(rowsTextBox.Text);
+                RefreshCells();
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
-        }
-
-        private void addColBtn_Click(object sender, RoutedEventArgs e)
-        {
-            colDef = new ColumnDefinition();
-            kioskWindowGrid.ColumnDefinitions.Add(colDef);
-        }
-
-        private void addRowBtn_Click(object sender, RoutedEventArgs e)
-        {
-            rowDef = new RowDefinition();
-            kioskWindowGrid.RowDefinitions.Add(rowDef);
         }
     }
 }
