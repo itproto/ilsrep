@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Kiosk", "Ilsrep.Kiosk\Ilsrep.Kiosk.csproj", "{88308CB6-E855-4A62-9C7B-4CB20FCF7C2B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Wizard", "Ilsrep.Wizard\Ilsrep.Wizard.csproj", "{B2E93CA0-AFAE-48E0-B965-363959463FA6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{88308CB6-E855-4A62-9C7B-4CB20FCF7C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88308CB6-E855-4A62-9C7B-4CB20FCF7C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88308CB6-E855-4A62-9C7B-4CB20FCF7C2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E93CA0-AFAE-48E0-B965-363959463FA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E93CA0-AFAE-48E0-B965-363959463FA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E93CA0-AFAE-48E0-B965-363959463FA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E93CA0-AFAE-48E0-B965-363959463FA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

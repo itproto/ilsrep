@@ -1,0 +1,12 @@
+﻿<Window x:Class="Ilsrep.Wizard.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Window1" Height="540" Width="400" Background="#FFD6E5F8">
+		<Canvas Height="500" Margin="0,0,0,0" Name="canvas1" VerticalAlignment="Top">
+		<Label Canvas.Left="10" Canvas.Top="10" Height="28" Name="label1" Width="42" FontWeight="Bold" Foreground="#FF486896">Rows:</Label>
+		<TextBox Canvas.Left="58" Canvas.Top="12" Height="22" Name="txtRows" Width="54" TextChanged="rows_TextChanged" />
+		<Label Canvas.Left="153" Canvas.Top="10" FontWeight="Bold" Foreground="#FF486896" Height="28" Name="label2" Width="67">Columns:</Label>
+		<TextBox Canvas.Left="226" Canvas.Top="12" Height="22" Name="txtColumns" Width="54" TextChanged="columns_TextChanged" />
+		<Grid Canvas.Left="14" Canvas.Top="75" Height="350" Name="grid" Width="350" Background="White" ShowGridLines="False" />
+	</Canvas>
+</Window>
