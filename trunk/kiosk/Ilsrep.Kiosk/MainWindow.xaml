@@ -3,10 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Kiosk" Height="448" Width="460" ResizeMode="CanResize" VerticalAlignment="Stretch" WindowStartupLocation="CenterScreen" WindowState="Normal" Name="mainWindow">
     <Grid>
-        <Grid Margin="67,83,0,0" x:Name="kioskWindowGrid" Background="CadetBlue" HorizontalAlignment="Left" Width="325" Height="315" VerticalAlignment="Top"></Grid>
-        <Label Height="28" HorizontalAlignment="Right" Margin="0,33,151,0" Name="label1" VerticalAlignment="Top" Width="42">Rows</Label>
-        <Label Height="28" Margin="76,33,0,0" Name="label2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="59">Columns</Label>
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="141,33,0,0" Name="colsTextBox" VerticalAlignment="Top" Width="55" TextChanged="ColsTextBox_TextChanged" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="293,33,0,0" Name="rowsTextBox" VerticalAlignment="Top" Width="55" TextChanged="RowsTextBox_TextChanged" />
+        <Grid Margin="67,83,0,0" x:Name="kioskWindowGrid" Background="DarkGray" HorizontalAlignment="Left" Width="325" Height="315" VerticalAlignment="Top"></Grid>
+        <Label Height="28" Margin="193.25,32.862,203,0" Name="label1" VerticalAlignment="Top">Rows</Label>
+        <Label Height="28" Margin="67,32.862,0,0" Name="label2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="59">Columns</Label>
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="132,32.862,0,0" Name="colsTextBox" VerticalAlignment="Top" Width="55" TextChanged="ColsTextBox_TextChanged" />
+        <TextBox Height="23" Margin="241.25,32.862,0,0" Name="rowsTextBox" VerticalAlignment="Top" TextChanged="RowsTextBox_TextChanged" HorizontalAlignment="Left" Width="55" />
+        <Button Height="23" Margin="317,33.001,0,0" Name="mergeButton" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75" Click="mergeButton_Click">Merge</Button>
     </Grid>
 </Window>

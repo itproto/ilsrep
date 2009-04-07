@@ -19,61 +19,91 @@ namespace Ilsrep.Kiosk
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Count of columns
+        /// </summary>
         private int colsCount;
+        /// <summary>
+        /// Count of rows
+        /// </summary>
         private int rowsCount;
+        /// <summary>
+        /// Color of cells
+        /// </summary>
+        private SolidColorBrush CELL_COLOR = new SolidColorBrush(Color.FromRgb(169, 169, 169));
+        /// <summary>
+        /// Color of selected cells
+        /// </summary>
+        private SolidColorBrush CELL_COLOR_SELECTED = new SolidColorBrush(Color.FromRgb(55, 85, 160));
 
         public MainWindow()
         {
             InitializeComponent();
+            colsCount = 1;
+            rowsCount = 1;
         }
 
+        /// <summary>
+        /// Changes cell color to selected or deselected
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">MouseButtonEventArgs</param>
+        private void Select(object sender, MouseButtonEventArgs e)
+        {
+            if (((StackPanel)sender).Background == CELL_COLOR)
+            {
+                ((StackPanel)sender).Background = CELL_COLOR_SELECTED;
+            }
+            else
+            {
+                ((StackPanel)sender).Background = CELL_COLOR;
+            }
+        }
+
+        /// <summary>
+        /// Refresh entire grid, generate cells anew
+        /// </summary>
         private void RefreshCells()
         {
+            // Clear all cells definitions
             kioskWindowGrid.Children.Clear();
             kioskWindowGrid.RowDefinitions.Clear();
             kioskWindowGrid.ColumnDefinitions.Clear();
-
-            // Add first row and column to kioskWindowGrid
-            ColumnDefinition colDefin = new ColumnDefinition();
-            RowDefinition rowDefin = new RowDefinition();
-            kioskWindowGrid.ColumnDefinitions.Add(colDefin);
-            kioskWindowGrid.RowDefinitions.Add(rowDefin);
-
-            Grid firstRowGrid = new Grid();
-            ColumnDefinition firstColDefinition = new ColumnDefinition();
-            firstRowGrid.ColumnDefinitions.Add(firstColDefinition);
-            while (firstRowGrid.ColumnDefinitions.Count < colsCount)
-            {
-                ColumnDefinition colDef = new ColumnDefinition();
-                firstRowGrid.ColumnDefinitions.Add(colDef);
-                GridSplitter gridSplitter = new GridSplitter();
-                gridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 214, 229, 248));
-                gridSplitter.Width = 5;
-                gridSplitter.VerticalAlignment = VerticalAlignment.Stretch;
-                gridSplitter.HorizontalAlignment = HorizontalAlignment.Left;
-                Grid.SetColumn(gridSplitter, firstRowGrid.ColumnDefinitions.Count - 1);
-                Grid.SetRow(gridSplitter, 0);
-                firstRowGrid.Children.Add(gridSplitter);
-            }
-            kioskWindowGrid.Children.Add(firstRowGrid);
-            Grid.SetColumn(firstRowGrid, 0);
-            Grid.SetRow(firstRowGrid, kioskWindowGrid.RowDefinitions.Count - 1);
-
+            
+            // Add first column to kioskWindowGrid
+            ColumnDefinition columnDefinition = new ColumnDefinition();
+            kioskWindowGrid.ColumnDefinitions.Add(columnDefinition);
+            
+            // Form grid cells
             while (kioskWindowGrid.RowDefinitions.Count < rowsCount)
             {
                 RowDefinition rowDef = new RowDefinition();
                 kioskWindowGrid.RowDefinitions.Add(rowDef);
 
+                // Form new grid that will contain only columns
                 Grid rowGrid = new Grid();
-                ColumnDefinition colDefinition = new ColumnDefinition();
-                rowGrid.ColumnDefinitions.Add(colDefinition);
-
                 while (rowGrid.ColumnDefinitions.Count < colsCount)
                 {
                     ColumnDefinition colDef = new ColumnDefinition();
                     rowGrid.ColumnDefinitions.Add(colDef);
+
+                    // Add StackPanel to grid for further possibility to select cells
+                    StackPanel stackPanel = new StackPanel();
+                    stackPanel.Background = CELL_COLOR;
+                    stackPanel.MouseDown += new MouseButtonEventHandler(Select);
+                    Grid.SetColumn(stackPanel, rowGrid.ColumnDefinitions.Count - 1);
+                    Grid.SetRow(stackPanel, 0);
+                    rowGrid.Children.Add(stackPanel);
+
+                    // If first column, there's no need of vertical splitter
+                    if (rowGrid.ColumnDefinitions.Count == 1)
+                    {
+                        continue;
+                    }
+
+                    // Add GridSplitter to grid for possibility to change cells dimentions
                     GridSplitter gridSplitter = new GridSplitter();
-                    gridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 214, 229, 248));
+                    gridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
                     gridSplitter.Width = 5;
                     gridSplitter.VerticalAlignment = VerticalAlignment.Stretch;
                     gridSplitter.HorizontalAlignment = HorizontalAlignment.Left;
@@ -81,12 +111,19 @@ namespace Ilsrep.Kiosk
                     Grid.SetRow(gridSplitter, 0);
                     rowGrid.Children.Add(gridSplitter);
                 }
+
                 kioskWindowGrid.Children.Add(rowGrid);
                 Grid.SetColumn(rowGrid, 0);
                 Grid.SetRow(rowGrid, kioskWindowGrid.RowDefinitions.Count - 1);
 
+                // If first row, there's no need of horizontal splitter
+                if (kioskWindowGrid.RowDefinitions.Count == 1)
+                {
+                    continue;
+                }
+
                 GridSplitter horGridSplitter = new GridSplitter();
-                horGridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 214, 229, 248));
+                horGridSplitter.Background = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
                 horGridSplitter.Height = 5;
                 horGridSplitter.VerticalAlignment = VerticalAlignment.Top;
                 horGridSplitter.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -120,6 +157,11 @@ namespace Ilsrep.Kiosk
             {
 
             }
+        }
+
+        private void mergeButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
