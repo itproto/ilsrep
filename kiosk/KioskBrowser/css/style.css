@@ -1,0 +1,56 @@
+﻿body
+{
+	margin: 0;
+	padding: 0;
+	font-family: Tahoma, Verdana, Arial, Times New Roman;
+	font-size: 13px;
+}
+
+.info_message
+{
+	padding: 10px;
+	color: #2D5E0C;
+	background-color: #CFE1C5;
+	border: solid 1px #2D5E0C;
+}
+
+.error_message
+{
+	margin: 0;
+	padding: 10px;
+	color: #B5151A;
+	background-color: #DFC8CB;
+	border: solid 1px #5F0C0E;
+}
+
+.login_table
+{
+	margin: 100px auto;
+	padding: 10px;
+	text-align: center;
+	border: solid 2px black;
+}
+
+.login_table td
+{
+	padding: 0;
+	margin: 0;
+}
+
+.pass_text_box
+{
+	width: 180px;
+}
+
+.button
+{
+	width: 40px;
+	height: 40px;
+	margin: 10px 10px 0 10px;
+	padding: 0;
+}
+
+.message_td
+{
+	height: 65px;	
+}
