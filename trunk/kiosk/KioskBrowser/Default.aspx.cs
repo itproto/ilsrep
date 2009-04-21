@@ -84,7 +84,7 @@ namespace KioskBrowser
 
         public void okButton_Click(object sender, EventArgs e)
         {
-            
+            Response.Redirect("ClientPage.aspx");
         }
     }
 }

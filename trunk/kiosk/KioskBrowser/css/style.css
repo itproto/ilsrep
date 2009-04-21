@@ -54,3 +54,26 @@
 {
 	height: 65px;	
 }
+
+.address_string_container
+{
+	margin: 20px 0;
+	text-align: center;
+}
+
+.address_string
+{
+	width: 90%;	
+}
+
+.main_frame_container
+{
+	text-align: center;
+}
+
+.main_frame
+{
+	width: 90%;
+	height: 600px;
+	border: solid 1px #7F9DB9;
+}
