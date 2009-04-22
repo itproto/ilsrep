@@ -19,8 +19,8 @@
 
 </menupopup>
 </menu>
-<menuitem label="Save tabs" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
-<menuitem label="Load tabs" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes');" />
+<menuitem label="Save tabs" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes, modal');" />
+<menuitem label="Load tabs" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes, modal');" />
 <menu id="remMenu" label="Remove Session"><menupopup id="remList">
 
 <menuitem label="Refresh List" oncommand="refreshMenu();" />
