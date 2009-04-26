@@ -6,6 +6,23 @@
 <head runat="server">
     <title>Kiosk Browser</title>
     <link href="css/style.css" type="text/css" rel="Stylesheet" />
+    
+    <script type="text/javascript">
+        function addDigit(obj)
+        {
+            document.getElementById('passTextBox').value += obj.value;
+            
+            return false;
+        }
+        
+        function removeDigit()
+        {
+            if (document.getElementById('passTextBox').value.length > 0)
+                document.getElementById('passTextBox').value.slice(0, -1);
+            
+            return false;
+        }
+    </script>
 </head>
 <body>
     <form id="mainForm" runat="server">
@@ -22,24 +39,24 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><asp:Button CssClass="button" ID="button1" runat="server" Text="1" OnClick="Button1_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button2" runat="server" Text="2" OnClick="Button2_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button3" runat="server" Text="3" OnClick="Button3_Click" /></td>
+                    <td><asp:Button CssClass="button" ID="button1" runat="server" Text="1" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:Button CssClass="button" ID="button2" runat="server" Text="2" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:Button CssClass="button" ID="button3" runat="server" Text="3" OnClientClick="return addDigit(this)" /></td>
                 </tr>
                 <tr>
-                    <td><asp:Button CssClass="button" ID="button4" runat="server" Text="4" OnClick="Button4_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button5" runat="server" Text="5" OnClick="Button5_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button6" runat="server" Text="6" OnClick="Button6_Click" /></td>
+                    <td><asp:Button CssClass="button" ID="button4" runat="server" Text="4" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:Button CssClass="button" ID="button5" runat="server" Text="5" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:Button CssClass="button" ID="button6" runat="server" Text="6" OnClientClick="return addDigit(this)" /></td>
                 </tr>
                 <tr>
-                    <td><asp:Button CssClass="button" ID="button7" runat="server" Text="7" OnClick="Button7_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button8" runat="server" Text="8" OnClick="Button8_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button9" runat="server" Text="9" OnClick="Button9_Click" /></td>
+                    <td><asp:Button CssClass="button" ID="button7" runat="server" Text="7" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:Button CssClass="button" ID="button8" runat="server" Text="8" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:Button CssClass="button" ID="button9" runat="server" Text="9" OnClientClick="return addDigit(this)" /></td>
                 </tr>
                 <tr>
-                    <td><asp:ImageButton CssClass="button" ID="backButton" runat="server" ImageUrl="images/arrow_left.png" OnClick="backButton_Click" /></td>
-                    <td><asp:Button CssClass="button" ID="button0" runat="server" Text="0" OnClick="Button0_Click" /></td>
-                    <td><asp:ImageButton CssClass="button" ID="okButton" runat="server" ImageUrl="images/tick.png" OnClick="okButton_Click" /></td>
+                    <td><asp:ImageButton CssClass="button" ID="backButton" runat="server" ImageUrl="images/arrow_left.png" OnClientClick="return removeDigit()" BorderWidth="1px" /></td>
+                    <td><asp:Button CssClass="button" ID="button0" runat="server" Text="0" OnClientClick="return addDigit(this)" /></td>
+                    <td><asp:ImageButton CssClass="button" ID="okButton" runat="server" ImageUrl="images/tick.png" OnClick="okButton_Click" BorderWidth="1px" /></td>
                 </tr>                                                
             </table>
         </div>

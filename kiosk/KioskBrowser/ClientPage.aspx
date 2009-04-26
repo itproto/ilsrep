@@ -10,7 +10,7 @@
 <body>
     <form id="mainForm" runat="server">
         <div class="address_string_container">
-            <asp:TextBox CssClass="address_string" ID="addressString" runat="server" Text="http://www.google.com"></asp:TextBox>
+            <asp:TextBox CssClass="address_string" ID="addressString" runat="server" Text="http://www.google.com/ncr"></asp:TextBox>
         </div>
         <div class="main_frame_container">
             <iframe class="main_frame" id="mainFrame" runat="server"></iframe>
