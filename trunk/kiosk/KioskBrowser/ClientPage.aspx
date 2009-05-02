@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ClientPage.aspx.cs" Inherits="KioskBrowser.ClientPage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ClientPage.aspx.cs" Inherits="KioskBrowser.ClientPage" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -18,7 +18,7 @@
                         <asp:DropDownList CssClass="programs_list" ID="programsList" runat="server"></asp:DropDownList>
                     </td>
                     <td>
-                        <asp:Button CssClass="run_button" ID="runButton" runat="server" Text="Run" OnClick="RunButtonClick" />
+                        <asp:Button CssClass="menu_button" PostBackUrl="ClientPage.aspx" ID="runButton" runat="server" Text="Run" OnClick="RunButtonClick" />
                     </td>
                     <td>
                         <asp:Button CssClass="logout_button" ID="logoutButton" runat="server" Text="LogOut" OnClick="LogoutButtonClick" />

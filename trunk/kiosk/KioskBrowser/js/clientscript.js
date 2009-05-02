@@ -3,7 +3,11 @@
         // How to get a current url of iframe content???
     });
     
-    $("input").focus(function() {
+    $(".menu_button").focus(function() {
         this.blur();
-    });   
+    });
+    
+    $("#logoutButton").focus(function() {
+        this.blur();
+    });
 });
