@@ -84,3 +84,55 @@
 	height: 600px;
 	border: solid 1px #7F9DB9;
 }
+
+.menu_container
+{
+	margin: 20px auto;
+	width: 90%;
+	text-align: right;
+}
+
+.menu_table
+{
+	padding: 0;
+	margin: 0 0 0 auto;
+}
+
+.menu_table td
+{
+	padding: 0 0 0 10px;
+}
+
+.run_button
+{
+	margin: 0;
+	padding: 0 15px;
+	border: 1px solid #AAAAAA;
+	background-color: #AAFFAA;
+}
+
+.run_button:hover
+{
+	cursor: pointer;
+}
+
+.logout_button
+{
+	margin: 0;
+	padding: 0 15px;
+	border: 1px solid #AAAAAA;
+	background-color: #FFAAAA;
+}
+
+.logout_button:hover
+{
+	cursor: pointer;
+}
+
+.programs_list
+{
+	margin: 0;
+	padding: 0;
+	border: 1px solid #AAAAAA;
+	background-color: #AAFFAA;
+}
