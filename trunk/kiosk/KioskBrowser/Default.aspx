@@ -6,23 +6,8 @@
 <head runat="server">
     <title>Kiosk Browser</title>
     <link href="css/style.css" type="text/css" rel="Stylesheet" />
-    
-    <script type="text/javascript">
-        function addDigit(obj)
-        {
-            document.getElementById('passTextBox').value += obj.value;
-            
-            return false;
-        }
-        
-        function removeDigit()
-        {
-            if (document.getElementById('passTextBox').value.length > 0)
-                document.getElementById('passTextBox').value.slice(0, -1);
-            
-            return false;
-        }
-    </script>
+    <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    <script src="js/script.js" type="text/javascript"></script>
 </head>
 <body>
     <form id="mainForm" runat="server">
