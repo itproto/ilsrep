@@ -1,12 +1,16 @@
+class HtmlUtils():
+    def generateStart(self, title):
+        output = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html>
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>TabSender</title>
+<title>""" + title + """</title>
 <meta name="keywords" content="tabsender, ils, jteam" />
-<meta name="description" content="jteam tabsender" />
-<link rel="stylesheet" type="text/css" href="class.css" />
+<meta name="description" content="tabsender, jteam, firefox, firefox3, plugin, interlogic, ils" />
+<link rel="stylesheet" type="text/css" href="html/class.css" />
 </head>
 
 <body>
@@ -17,10 +21,11 @@
         <h1><span>Tab</span><strong>Sender</strong> server</h1>
 
         <div id="menu">
-            <ul>
-                <li><a href="/html/info.html">Project home</a></li>
-                <li><a href="/tabinfo.html">My account</a></li>
-            </ul>
+        """
+        return output
+
+    def generateMenuEnd(self):
+        output = """
         </div>
     </div>
 
@@ -32,16 +37,11 @@
             <div id="main_inner">
 
                 <!-- Main start -->
-                	<h1>TabSender project</h1>
-                	TabSender is an plugin to firefox that allows to
-					store your tab sessions in your browser and share / restore
-					on other PC.
-					<br />
-					<br />
-					At the moment project is in active development.
-					<br />
-					<br />
-					You can download recent version of plugin <a href="/html/sender.xpi">here</a>.
+        """
+        return output
+
+    def generateMainPartEnd(self):
+        output = """
                 <!-- Main End -->
                 <div class="foot"></div>                
             </div>
@@ -50,6 +50,11 @@
 
         <div id="side">
             <!-- Side start -->
+        """
+        return output
+
+    def generateEnd(self):
+        output = """
             <!-- Side end -->
         </div>
 
@@ -62,4 +67,16 @@
 <div id="footer">
     &copy; 2009 InterLogic. TabSender server.
 </div>
-</body></html>
+</body>
+</html>
+        """
+        return output
+    
+    def generateDefaultMenu(self):
+        output = """
+                <ul>
+                <li><a href="/home.html">Project home</a></li>
+                <li><a href="/tabinfo.html">My account</a></li>
+                </ul>
+        """
+        return output
