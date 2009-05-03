@@ -6,6 +6,8 @@ from Categories import Categories
 from Categories import deleteSession
 from Categories import deleteURL
 
+from HtmlUtils import HtmlUtils
+
 from urllib import quote_plus
 
 class TabInfoPage(webapp.RequestHandler):
@@ -15,41 +17,11 @@ class TabInfoPage(webapp.RequestHandler):
     user = users.get_current_user()
 
     if user:
-        output = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+        htmlUtils = HtmlUtils()
 
-<head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>TabSender</title>
-<meta name="keywords" content="tabsender, ils, jteam" />
-<meta name="description" content="jteam tabsender" />
-<link rel="stylesheet" type="text/css" href="html/class.css" />
-</head>
-
-<body>
-
-<div id="outer">
-
-    <div id="header">
-        <h1><span>Tab</span><strong>Sender</strong> server</h1>
-
-        <div id="menu">
-            <ul>
-                <li><a href="/html/info.html">Project home</a></li>
-                <li><a href="/tabinfo.html">My account</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="inner">
-
-        <div id="main">
-            <div id="xbgA"></div>
-    
-            <div id="main_inner">
-
-                <!-- Main start -->
-"""
+        output = htmlUtils.generateStart("TabSender: My account")
+        output += htmlUtils.generateDefaultMenu()
+        output += htmlUtils.generateMenuEnd()
 
         type = self.request.get('type')
 
@@ -63,8 +35,8 @@ class TabInfoPage(webapp.RequestHandler):
 
             for cat in categories_all:
                 if cat.id not in ids:
-                    output1 += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
-                    output1 += '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
+                    output1 += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) + '">' + cat.name + '</a>\n'
+                    output1 += '<a href="/tabinfo.html?type=removesession&id=' + str(cat.id) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
 #                    output += '[' + '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '">Delete</a>' + ']</li>\n'
                     ids.append(cat.id)
 
@@ -94,13 +66,13 @@ class TabInfoPage(webapp.RequestHandler):
                     output += '<h1>URLs for session <span class="colouredText">' + name + ':</span></h1><ul>'
                     for link in links:
                         output += '<li><a href="' + link + '">' + link + '</a>\n'
-                        output += '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
+                        output += '<a href="/tabinfo.html?type=removeurl&id=' + str(id) + '&url=' + quote_plus(link) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
 #                        output += '[' + '<a href="/tabinfo.html?type=removeurl&id='+ str(id) + '&url=' + quote_plus(link) + '">Delete</a>' + ']</li>\n'
                     output += '</ul>'
 
                     output += '<form method="get" action="/tabinfo.html">' + '\n'
                     output += '<input type="hidden" name="type" value="posturl" />' + '\n'
-                    output += '<input type="hidden" name="id" value="' + id +'" />' + '\n'
+                    output += '<input type="hidden" name="id" value="' + id + '" />' + '\n'
                     output += '<input type="text" size="30" name="url" />' + '\n'
                     output += '<input type="submit" value="Add URL" /> </form>' + '\n'
                 else:
@@ -133,7 +105,7 @@ class TabInfoPage(webapp.RequestHandler):
                 cat.user = user.nickname()
                 cat.url = url
 
-                name_select = db.GqlQuery("SELECT * FROM Categories WHERE id=" + id +" LIMIT 1")
+                name_select = db.GqlQuery("SELECT * FROM Categories WHERE id=" + id + " LIMIT 1")
                 cat.name = name_select[0].name
                 cat.id = name_select[0].id
 
@@ -154,9 +126,9 @@ class TabInfoPage(webapp.RequestHandler):
             
             if sessionName and url:
                 categories_all = db.GqlQuery("SELECT * FROM Categories ORDER BY id DESC LIMIT 1")
-                curid=0
+                curid = 0
                 for cat in categories_all:
-                   curid=cat.id+1;
+                   curid = cat.id + 1;
     
                 newSession = Categories()
                 newSession.id = curid
@@ -167,17 +139,9 @@ class TabInfoPage(webapp.RequestHandler):
 
             self.redirect("/tabinfo.html")
 
-        output += """
-                <!-- Main End -->
-                <div class="foot"></div>                
-            </div>
+        output += htmlUtils.generateMainPartEnd()
 
-        </div>
-
-        <div id="side">
-            <!-- Side start -->
-            <ul>
-        """
+        output += "<ul>"
 
         categories_all = db.GqlQuery("SELECT * FROM Categories where user='" + user.nickname() + "'")
 
@@ -190,7 +154,7 @@ class TabInfoPage(webapp.RequestHandler):
         for cat in categories_all:
             if cat.id not in ids:
                 if i < 13:
-                    output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) +'">' + cat.name + '</a>\n'
+                    output += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) + '">' + cat.name + '</a>\n'
                 elif not moreWritten:
                     moreWritten = True
                     lastI = i
@@ -200,21 +164,9 @@ class TabInfoPage(webapp.RequestHandler):
         if moreWritten:
             output += '<li>And ' + str(len(ids) - lastI) + ' more...</li>'
 
-        output += """</ul>
-            <!-- Side end -->
-        </div>
+        output += "</ul>"
+        output += htmlUtils.generateEnd()
 
-        <div  class="foot"></div>
-    </div>
-
-</div>
-<div id="outer2"></div>
-
-<div id="footer">
-    &copy; 2009 InterLogic. TabSender server.
-</div>
-</body></html>
-"""
         self.response.out.write(output)
     else:
         self.redirect(users.create_login_url('/tabinfo.html'))

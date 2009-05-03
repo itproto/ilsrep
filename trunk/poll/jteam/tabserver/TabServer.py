@@ -4,9 +4,11 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from Categories import Categories
 from MainPage import MainPage
 from TabInfoPage import TabInfoPage
+from LoggedInPage import LoggedInPage
+from ProjectHomePage import ProjectHomePage
 
 application = webapp.WSGIApplication(
-                                     [('/', MainPage), ('/tabinfo.html', TabInfoPage)],
+                                     [('/', MainPage), ('/tabinfo.html', TabInfoPage), ('/loggedin.html', LoggedInPage), ('/home.html', ProjectHomePage)],
                                      debug=True)
 
 def main():
