@@ -3,8 +3,11 @@ from google.appengine.ext import db
 from google.appengine.api import users
 
 from Categories import Categories
+from Categories import Share
 from Categories import deleteSession
 from Categories import deleteURL
+from Categories import checkShareExists
+from Categories import getNameForID
 
 from HtmlUtils import HtmlUtils
 
@@ -36,7 +39,8 @@ class TabInfoPage(webapp.RequestHandler):
             for cat in categories_all:
                 if cat.id not in ids:
                     output1 += '<li><a href="/tabinfo.html?type=session&id=' + str(cat.id) + '">' + cat.name + '</a>\n'
-                    output1 += '<a href="/tabinfo.html?type=removesession&id=' + str(cat.id) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '</li>\n'
+                    output1 += '<a href="/tabinfo.html?type=removesession&id=' + str(cat.id) + '"><img class="imageURL" src="/html/images/cross.png" /></a>' + '\n'
+                    output1 += '<a href="/tabinfo.html?type=share&id=' + str(cat.id) + '"><img class="imageURL" src="/html/images/world_go.png" /></a>' + '</li>\n'
 #                    output += '[' + '<a href="/tabinfo.html?type=removesession&id='+ str(cat.id) + '">Delete</a>' + ']</li>\n'
                     ids.append(cat.id)
 
@@ -138,6 +142,69 @@ class TabInfoPage(webapp.RequestHandler):
                 newSession.put()
 
             self.redirect("/tabinfo.html")
+        elif type == "share":
+            id = self.request.get('id')
+
+            if not id:
+                output += '<h1>Id not specified!</h1>'
+            else:
+                linksForThisSession = db.GqlQuery("select * FROM Categories where id=" + id)
+
+                links = []
+
+                name = ""
+
+                for link in linksForThisSession:
+                    if name == "":
+                        name = link.name
+                    links.append(link.url)
+
+                if len(links) > 0:
+                    output += '<h1>Sharing session <span class="colouredText">' + name + ':</span></h1><ul>'
+                    for link in links:
+                        output += '<li><a href="' + link + '">' + link + '</a>\n'
+                    output += '</ul>'
+
+                output += '<form method="get" action="/tabinfo.html">' + '\n'
+                output += '<input type="hidden" name="type" value="sharecreate" />' + '\n'
+                output += '<input type="hidden" name="id" value="' + id +'" />' + '\n'
+                output += '<p>Share with:</p>'
+                output += '<input type="text" size="30" name="target" />' + '\n'
+                output += '<p>Message:</p>'
+#                output += '<input type="textarea" size="30" name="message" />' + '\n'
+                output += '<textarea rows="4" cols="30" name="message"></textarea>' + '\n'
+                output += '<input type="submit" value="Share" /> </form>' + '\n'
+                output += '<a href="/tabinfo.html"><img class="imageURL" src="/html/images/arrow_left.png" /> Back</a>'
+        elif type == "sharecreate":
+            id = self.request.get('id')
+            target = self.request.get('target')
+            message = self.request.get('message')
+
+            if id and target:
+#                output += "DEBUG:" + str(checkShareExists(target, user.nickname(), id)) + ' ' + str(target) + ' ' + str(user.nickname()) + ' ' + str(id) + "<br />"
+                if checkShareExists(target, user.nickname(), int(id)):
+                    output += '<h1>You already shared session <span class="colouredText">' + getNameForID(id) + '</span> with <span class="colouredText">' + target + '</span>, but he didn\'t accept yet!</h1>'
+                    output += '<a href="/tabinfo.html"><img class="imageURL" src="/html/images/arrow_left.png" /> Back</a>'
+                else:
+                    shares = db.GqlQuery("SELECT * FROM Share ORDER BY id DESC LIMIT 1")
+                    curid=0
+                    for cat in shares:
+                       curid=cat.id+1;
+
+                    newshare = Share()
+                    newshare.id = curid
+                    newshare.user = target
+                    newshare.sessionid = int(id)
+                    if message:
+                        newshare.message = message
+                    else:
+                        newshare.message = ""
+                    newshare.creator = user.nickname()
+                    newshare.put()
+
+                    output += '<h1>Session <span class="colouredText">' + getNameForID(id) + '</span> shared with <span class="colouredText">' + target + '</span>!</h1>'
+                    output += 'Message: <span class="colouredText">' + message + '</span>'
+                    output += '<br /><a href="/tabinfo.html"><img class="imageURL" src="/html/images/arrow_left.png" /> Back</a>'
 
         output += htmlUtils.generateMainPartEnd()
 

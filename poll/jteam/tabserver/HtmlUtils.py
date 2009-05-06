@@ -1,3 +1,7 @@
+from google.appengine.api import users
+
+from Categories import getNewShares
+
 class HtmlUtils():
     def generateStart(self, title):
         output = """
@@ -71,12 +75,26 @@ class HtmlUtils():
 </html>
         """
         return output
-    
+
     def generateDefaultMenu(self):
         output = """
                 <ul>
                 <li><a href="/home.html">Project home</a></li>
                 <li><a href="/tabinfo.html">My account</a></li>
+        """
+
+        user = users.get_current_user()
+        newShares = 0
+
+        if user:
+            newShares = getNewShares(users.get_current_user().nickname())
+
+        if newShares == 0:
+            output += '<li><a href="/share.html">Shares</a></li>'
+        else:
+            output += '<li><a href="/share.html"><b>Shares (' + str(newShares) +')</b></a></li>'
+
+        output += """
                 </ul>
         """
         return output

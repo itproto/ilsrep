@@ -518,4 +518,5 @@ text-decoration: underline;
 }
 .imageURL {
 	border: 0;
+	vertical-align: middle
 }
