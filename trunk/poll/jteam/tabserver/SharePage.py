@@ -52,6 +52,34 @@ class SharePage(webapp.RequestHandler):
             for share in shareToCancel:
                 share.delete()
             self.redirect('/share.html')
+        elif type == 'accept':
+            id = self.request.get('id')
+
+            sessionid = -1
+            shareToAccept = db.GqlQuery("SELECT * FROM Share WHERE id=:1", int(id))
+            for share in shareToAccept:
+                sessionid = share.sessionid
+                break
+
+            sessionToCopy = db.GqlQuery("SELECT * FROM Categories WHERE id=:1", sessionid)
+
+            categories_all = db.GqlQuery("SELECT * FROM Categories ORDER BY id DESC LIMIT 1")
+            curid=0
+            for cat in categories_all:
+               curid=cat.id + 1
+
+            copiedSession = []
+            for sess in sessionToCopy:
+                copiedPart = Categories()
+                copiedPart.id = curid
+                copiedPart.name = sess.name
+                copiedPart.url = sess.url
+                copiedPart.user = user.nickname()
+                copiedPart.put()
+
+            for share in shareToAccept:
+                share.delete()
+            self.redirect('/tabinfo.html')
 
         output += htmlUtils.generateMainPartEnd()
 
