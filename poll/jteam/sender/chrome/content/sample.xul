@@ -7,27 +7,28 @@
 
 <menupopup>
 <command id="cmd_refresh" onclick="refreshList();"/>
-<menu id="tabMenu" label="Load Session"><menupopup id="tabList">
+<menu id="tabMenu" class="menu-iconic" image="chrome://tabsender/content/book.png" label="Load Session"><menupopup id="tabList">
 
-<menuitem label="Refresh List" oncommand="refreshMenu();" />
-
-</menupopup>
-</menu>
-<menu id="shareMenu" label="Share Session"><menupopup id="shareList">
-
-<menuitem label="Refresh List" oncommand="refreshMenu();" />
+<menuitem label="Refresh List"  class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
-<menuitem label="Save tabs" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes, modal');" />
-<menuitem label="Load tabs" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes, modal');" />
-<menu id="remMenu" label="Remove Session"><menupopup id="remList">
+<menu class="menu-iconic" image="chrome://tabsender/content/book_link.png" id="shareMenu" label="Share Session"><menupopup id="shareList">
 
-<menuitem label="Refresh List" oncommand="refreshMenu();" />
+<menuitem label="Refresh List"  class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
+<menuitem label="Save tabs" class="menuitem-iconic" image="chrome://tabsender/content/book_add.png" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes, dialog, modal');" />
+<menuitem label="Load tabs" class="menuitem-iconic" image="chrome://tabsender/content/book_open.png" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes, dialog, modal');" />
+<menu id="remMenu" class="menu-iconic" image="chrome://tabsender/content/book_delete.png" label="Remove Session"><menupopup id="remList">
 
+<menuitem label="Refresh List" class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
+
+</menupopup>
+</menu>
+<menuseparator/>
+<menuitem label="My Account" class="menuitem-iconic" oncommand="goToAccount();" image="chrome://tabsender/content/house.png" />
 </menupopup>
 </statusbarpanel>
 </statusbar>
