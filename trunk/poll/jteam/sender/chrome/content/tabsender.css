@@ -1,7 +1,11 @@
 window {
-	background-color: #3ECEF4;
+	background-image: url('chrome://tabsender/content/bkgrnd.png');
+	background-position: top left;
 	}
 label.header{
 	font-size: 15px;
 	color: #D4ECF6;
 	}
+#go:hover{
+	background-image: url('chrome://tabsender/content/go-hover.png');
+		}

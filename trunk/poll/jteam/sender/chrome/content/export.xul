@@ -14,7 +14,7 @@
     </box>
     <box orient="horizontal" pack="left">
      <textbox id="tabsender-code"  maxlength="25"/>
-    <button id="tabsender-login-button" label="Export" oncommand="exportTabs(); window.close();" /> 
+    <image id="go"  src="chrome://tabsender/content/go.png" onclick="exportTabs();  window.close();" onmouseover="document.getElementById('go').src='chrome://tabsender/content/go-hover.png';" onmouseout="document.getElementById('go').src='chrome://tabsender/content/go.png';" />
         </box>
     
 </box>

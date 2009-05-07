@@ -334,7 +334,15 @@ var mainWindow = wm.getMostRecentWindow("navigator:browser").document;
         }
 	
 	}
+function goToAccount() {
+		var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                   .getService(Components.interfaces.nsIWindowMediator);
+var mainWindow = wm.getMostRecentWindow("navigator:browser");
 
+var gBrowser=mainWindow.getBrowser();
+gBrowser.addTab("http://tabsender.appspot.com/tabinfo.html");
+	
+	}
 function exportTabs(){
 	
 	var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
