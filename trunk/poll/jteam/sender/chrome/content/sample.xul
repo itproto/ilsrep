@@ -6,27 +6,24 @@
 <statusbarpanel id="my-panel" class="statusbarpanel-menu-iconic" src="chrome://tabsender/content/tabsender.png">
 
 <menupopup>
-<command id="cmd_refresh" onclick="refreshList();"/>
+<command id="cmd_wait" onclick="showWait();" />
+<command id="cmd_refresh" onclick="refreshList();" />
 <menu id="tabMenu" class="menu-iconic" image="chrome://tabsender/content/book.png" label="Load Session"><menupopup id="tabList">
 
 <menuitem label="Refresh List"  class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
-<menu class="menu-iconic" image="chrome://tabsender/content/book_link.png" id="shareMenu" label="Share Session"><menupopup id="shareList">
 
-<menuitem label="Refresh List"  class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
-
-</menupopup>
-</menu>
 <menuitem label="Save tabs" class="menuitem-iconic" image="chrome://tabsender/content/book_add.png" oncommand="window.open('chrome://tabsender/content/export.xul', 'Tabsender', 'chrome, centerscreen=yes, dialog, modal');" />
-<menuitem label="Load tabs" class="menuitem-iconic" image="chrome://tabsender/content/book_open.png" oncommand="window.open('chrome://tabsender/content/import.xul', 'Tabsender', 'chrome, centerscreen=yes, dialog, modal');" />
+<menuitem label="Share Tabs" class="menuitem-iconic" oncommand="goToAccount();" image="chrome://tabsender/content/book_link.png" />
 <menu id="remMenu" class="menu-iconic" image="chrome://tabsender/content/book_delete.png" label="Remove Session"><menupopup id="remList">
 
 <menuitem label="Refresh List" class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
 
 </menupopup>
 </menu>
+<menuitem label="Refresh List"  class="menuitem-iconic" image="chrome://tabsender/content/arrow_rotate_anticlockwise.png" oncommand="refreshMenu();" />
 <menuseparator/>
 <menuitem label="My Account" class="menuitem-iconic" oncommand="goToAccount();" image="chrome://tabsender/content/house.png" />
 </menupopup>
