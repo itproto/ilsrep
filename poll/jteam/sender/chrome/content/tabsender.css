@@ -2,10 +2,46 @@ window {
 	background-image: url('chrome://tabsender/content/bkgrnd.png');
 	background-position: top left;
 	}
+box{
+	height: 30px;
+	-moz-box-align: baseline; 
+	}
+	#inputbox{
+		height: 20px;
+		-moz-box-align: center;
+		}
+		#separator{
+			height:auto;
+			width:15px;
+			}
 label.header{
-	font-size: 15px;
-	color: #D4ECF6;
+	font-size: 13px;
+	color: #E3F7FF;
+	
 	}
 #go:hover{
 	background-image: url('chrome://tabsender/content/go-hover.png');
 		}
+textbox {
+	font-size: 12px;
+	
+	
+	}
+#tabsender-code{
+	
+	-moz-box-align: center; 
+	}
+label.session{
+	
+font-size: 15px;
+	-moz-box-align: center; 
+	}
+#info{
+	font-weight:bold;
+	font-size: 13px;
+	color: #E3F7FF;
+	width:300px;
+	height:40px;
+	-moz-box-align: center;
+	
+	}

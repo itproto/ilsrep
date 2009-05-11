@@ -6,16 +6,26 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script type="application/x-javascript" src="chrome://tabsender/content/export.js"/>
     <box orient="vertical">
-    <box orient="horizontal" pack="center">
-    <label value="TABSender Exporting" class="header" />
-    </box>
+        <box orient="horizontal" pack="center">
+        <label value="Save open tabs and windows for easy retrieval" class="header" />
+        </box>
     <box orient="horizontal">
-    <label value="Enter Name"/>
+    <box id="separator"/>
+    <box orient="vertical">
+    <box orient="horizontal" id="inputbox">
+    <label value="Session Name" class="session"/>
+     <textbox id="tabsender-code"  maxlength="25"/>
     </box>
     <box orient="horizontal" pack="left">
-     <textbox id="tabsender-code"  maxlength="25"/>
-    <image id="go"  src="chrome://tabsender/content/go.png" onclick="exportTabs();  window.close();" onmouseover="document.getElementById('go').src='chrome://tabsender/content/go-hover.png';" onmouseout="document.getElementById('go').src='chrome://tabsender/content/go.png';" />
+        <checkbox id="singlewin"  label=" " checked="true"/>
+    <label value="Only save active window"/>
+    </box>
+    <box orient="horizontal" pack="right">
+   <button id="go"  label="Ok" onclick="showWait();  window.close();" />
+   <button id="exit"  label="Cancel" onclick="window.close();" />
+   <button id="help"  label="Help" onclick="goToAccount(); window.close();" />
         </box>
-    
+    </box>
+    </box>
 </box>
 </window>
