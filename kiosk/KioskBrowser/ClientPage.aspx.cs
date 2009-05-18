@@ -95,6 +95,7 @@ namespace KioskBrowser
             Response.Redirect("Default.aspx");
         }
 
+        /*
         public string getAddress(string address)
         {
             // Create a request for the URL. 		
@@ -121,5 +122,6 @@ namespace KioskBrowser
 
             return responseFromServer;
         }
+        */
     }
 }

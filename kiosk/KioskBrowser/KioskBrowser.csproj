@@ -53,17 +53,26 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AdminPage.aspx" />
     <Content Include="ClientPage.aspx" />
     <Content Include="css\style.css" />
     <Content Include="Default.aspx" />
     <Content Include="images\arrow_left.png" />
     <Content Include="images\tick.png" />
+    <Content Include="js\adminscript.js" />
     <Content Include="js\clientscript.js" />
     <Content Include="js\jquery-1.3.2.min.js" />
     <Content Include="js\loginscript.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminPage.aspx.cs">
+      <DependentUpon>AdminPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminPage.aspx.designer.cs">
+      <DependentUpon>AdminPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ClientPage.aspx.cs">
       <DependentUpon>ClientPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -98,7 +107,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1593</DevelopmentServerPort>
+          <DevelopmentServerPort>1594</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
