@@ -136,3 +136,63 @@
 	border: 1px solid #AAAAAA;
 	background-color: #AAFFAA;
 }
+
+/*---------------ADMIN STYLES---------------------*/
+
+.admin_main_table
+{
+	margin: 30px auto;
+	padding: 0;
+	width: 800px;
+	height: 600px;
+	border: 1px solid black;
+}
+
+.admin_main_title
+{
+	text-align: center;
+	height: 60px;
+	border-bottom: 1px solid black;
+	font-family: Comic Sans MS;
+	font-size: large;
+}
+
+.admin_button
+{
+	background-color: #AAFFAA;
+	border: 1px dashed #AAAAAA;
+	color: #000000;
+	cursor: pointer;
+	width: 100px;
+}
+
+.admin_button_logout
+{
+	background-color: #FFAAAA;
+	border: 1px dashed #AAAAAA;
+	color: #000000;
+	cursor: pointer;
+	width: 100px;
+}
+
+.admin_left_menu
+{
+	border-right: 1px solid black;
+	width: 200px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.admin_left_menu ul
+{
+	margin: 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.admin_left_menu ul li
+{
+	margin: 10px 0;
+	padding: 0;	
+}
+/*---------------END OF ADMIN STYLES--------------*/

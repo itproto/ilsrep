@@ -12,7 +12,21 @@
 <body>
     <form id="mainForm" runat="server">
     <div>
-        ADMIN PAGE
+        <table class="admin_main_table" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2" class="admin_main_title">Kiosk Admin</td>
+            </tr>
+            <tr>
+                <td class="admin_left_menu">
+                    <ul>
+                        <li><asp:Button ID="credentialsButton" runat="server" CssClass="admin_button" Text="Credentials" /></li>
+                        <li><asp:Button ID="programsButton" runat="server" CssClass="admin_button" Text="Programs" /></li>
+                        <li><asp:Button ID="logoutButton" runat="server" CssClass="admin_button_logout" Text="LogOut" OnClick="LogOutButtonClick" /></li>
+                    </ul>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
     </div>
     </form>
 </body>
