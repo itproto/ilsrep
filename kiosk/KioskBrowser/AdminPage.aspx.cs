@@ -19,5 +19,10 @@ namespace KioskBrowser
         {
 
         }
+
+        protected void LogOutButtonClick(object sender, EventArgs e)
+        {
+            Response.Redirect("Default.aspx");
+        }
     }
 }
