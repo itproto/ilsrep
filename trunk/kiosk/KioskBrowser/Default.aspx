@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="KioskBrowser._Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="KioskBrowser._Default" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -20,7 +20,7 @@
                 </tr>
                 <tr>
                     <td colspan="3">
-                        <asp:TextBox CssClass="pass_text_box" ID="passTextBox" runat="server" ReadOnly="true"></asp:TextBox>
+                        <asp:TextBox CssClass="pass_text_box" ID="passTextBox" runat="server"></asp:TextBox>
                     </td>
                 </tr>
                 <tr>
