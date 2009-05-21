@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Wizard", "Ilsrep.Wiz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KioskBrowser", "KioskBrowser\KioskBrowser.csproj", "{26AFD387-BD32-4D06-993C-BC372ADC24E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilsrep.Kiosk.Protocol", "Ilsrep.Kiosk.Protocol\Ilsrep.Kiosk.Protocol.csproj", "{31DD1BDC-0F3D-472F-A294-063D6B36791A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{26AFD387-BD32-4D06-993C-BC372ADC24E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26AFD387-BD32-4D06-993C-BC372ADC24E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26AFD387-BD32-4D06-993C-BC372ADC24E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31DD1BDC-0F3D-472F-A294-063D6B36791A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31DD1BDC-0F3D-472F-A294-063D6B36791A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31DD1BDC-0F3D-472F-A294-063D6B36791A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31DD1BDC-0F3D-472F-A294-063D6B36791A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
