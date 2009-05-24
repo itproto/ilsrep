@@ -15,10 +15,14 @@ Our tasks during progress in ILSG can be divided into 2 periods:
 
 The goal of Poll Application is passing, creating, editing, managing Poll Surveys(Poll Sessions); storing and analyzing results.
 
-Task was introduced with this XML document: (insert link)
+Task was introduced with this [http://code.google.com/p/ilsrep/wiki/FirstXML XML document]
 
 Poll Application can be divided into such subperiods:
-  * console
+  * console ([http://code.google.com/p/ilsrep/wiki/ConsolePollCleint details])
+   * first version was an offline console client that allowed to pick file with Poll Survey and pass it
+   * then server was introduced which stored Poll Surveys in files and was using Log4J logging, as well as Poll Editor, that allowed to edit surveys on server
+   * server was changed to store Poll Surveys and results in database(SQLite with Apache DB Pool)
+   * protocol was changed from plain text to xml-based
   * GUI
   * web
 
@@ -27,4 +31,3 @@ Poll Application can be divided into such subperiods:
 TabSender is a plugin to firefox that allows to store your tab sessions in your browser and share / restore on other PC(using TabSender server).
 
 [http://tabsender.appspot.com/home.html TabSender project homepage]
-http://tabsender.appspot.com/home.html
