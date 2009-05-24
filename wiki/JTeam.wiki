@@ -1,0 +1,30 @@
+#summary Progress of JTeam in InterLogic Scholarship Group
+
+= Introduction =
+
+JTeam constists of two people:
+  * Taras Kostiak <taraskostiak@gmail.com>
+  * Roman Tsiupa <draconyster@gmail.com>
+
+Our tasks during progress in ILSG can be divided into 2 periods:
+
+  # Poll Application
+  # Tab Sender
+
+= Poll Application =
+
+The goal of Poll Application is passing, creating, editing, managing Poll Surveys(Poll Sessions); storing and analyzing results.
+
+Task was introduced with this XML document: (insert link)
+
+Poll Application can be divided into such subperiods:
+  * console
+  * GUI
+  * web
+
+= TabSender =
+
+TabSender is a plugin to firefox that allows to store your tab sessions in your browser and share / restore on other PC(using TabSender server).
+
+[http://tabsender.appspot.com/home.html TabSender project homepage]
+http://tabsender.appspot.com/home.html
