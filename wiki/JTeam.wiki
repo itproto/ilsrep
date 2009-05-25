@@ -20,11 +20,11 @@ Task was introduced with this [http://code.google.com/p/ilsrep/wiki/FirstXML XML
 Poll Application can be divided into such subperiods:
   * console client and tcp server ([http://code.google.com/p/ilsrep/wiki/ConsolePollCleint details])
    * first version was an offline console client that allowed to pick file with Poll Survey and pass it
-   * then server was introduced which stored Poll Surveys in files and was using Log4J logging, as well as Poll Editor, that allowed to edit surveys on server
+   * then TCP server was introduced which stored Poll Surveys in files and was using Log4J logging, as well as Poll Editor, that allowed to edit surveys on server
    * server was changed to store Poll Surveys and results in database(SQLite with Apache DB Pool)
    * protocol was changed from plain text to xml-based
   * GUI client ([http://code.google.com/p/ilsrep/wiki/SwingPollCleint details])
-   GUI client, that was created using JFC/Swing GUI toolkit, combined features of console client and console editor together
+   GUI client, that was created using JFC/Swing GUI toolkit, combined features of console client and console editor together in convenient user-friendly GUI interface
   * web interface to Poll Survey features
 
 = TabSender =
