@@ -7,10 +7,12 @@
 The project at its final iteration consisted of:
 
   * Client that could handle both online and offline surveys.
+http://pic.ipicture.ru/uploads/090525/LoCxUBnglu.jpg
  
   * Editor(later merged with client) for editing and creating new surveys.
 
   * TCP Server, for storing data and providing a backend for first two components.
+http://img505.imageshack.us/img505/8649/server.jpg
 
 ----
 
