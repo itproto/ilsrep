@@ -20,4 +20,4 @@ TabSender consist of two parts:
   * *XUL* as GUI toolkit for Firefox plugin
   * *Javascript* as programming language for Firefox plugin
   * *Python 2.5* as programming language for server part
-  * *GoogleAppEngine* - library for creating application hosted on Google's AppSpot and accessing Google's features like: interfacing with Google Account, object-oriended database, image hosting
+  * *GoogleAppEngine* - library for creating application hosted on Google's AppSpot and accessing Google's features like: interfacing with Google Accounts, object-oriented database, image hosting
