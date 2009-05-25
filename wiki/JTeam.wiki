@@ -3,13 +3,13 @@
 = Introduction =
 
 JTeam constists of two people:
-  * Taras Kostiak <taraskostiak@gmail.com>
-  * Roman Tsiupa <draconyster@gmail.com>
+  * TKOST: Taras Kostiak <taraskostiak@gmail.com>
+  * DRC:   Roman Tsiupa <draconyster@gmail.com>
 
 Our tasks during progress in ILSG can be divided into 2 periods:
 
-  # Poll Application
-  # Tab Sender
+  * Poll Application
+  * Tab Sender
 
 = Poll Application =
 
@@ -18,13 +18,14 @@ The goal of Poll Application is passing, creating, editing, managing Poll Survey
 Task was introduced with this [http://code.google.com/p/ilsrep/wiki/FirstXML XML document]
 
 Poll Application can be divided into such subperiods:
-  * console ([http://code.google.com/p/ilsrep/wiki/ConsolePollCleint details])
+  * console client and tcp server ([http://code.google.com/p/ilsrep/wiki/ConsolePollCleint details])
    * first version was an offline console client that allowed to pick file with Poll Survey and pass it
    * then server was introduced which stored Poll Surveys in files and was using Log4J logging, as well as Poll Editor, that allowed to edit surveys on server
    * server was changed to store Poll Surveys and results in database(SQLite with Apache DB Pool)
    * protocol was changed from plain text to xml-based
-  * GUI
-  * web
+  * GUI client ([http://code.google.com/p/ilsrep/wiki/SwingPollCleint details])
+   GUI client, that was created using JFC/Swing GUI toolkit, combined features of console client and console editor together
+  * web interface to Poll Survey features
 
 = TabSender =
 
