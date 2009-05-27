@@ -23,7 +23,7 @@ During the session the user is similarly to the same process in Client asked ser
 Apache Tapestry version was designed to get a grip of this frameworks' technology. The functionality was the same as in the JSP version. This version was later discontinued.
 
 ===JSP/Javascript Editor===
-This part of the site allowed creation and edition of poll sessions that were stored. For better usability it was largely based on Jvascript, *XML for <SCRIPT>* library and JQuery framework. The interface created provided a quick and straightforward way for quick manipulation of data.
+This part of the site allowed creation and edition of poll sessions that were stored. For better usability it was largely based on Jvascript, *XML for `<`SCRIPT`>`* library and JQuery framework. The interface created provided a quick and straightforward way for quick manipulation of data.
 
 ===Web Service===
 The necessity of a Web Service in our solution was obvious: we wanted to make our sever as open to any clients as possible. We used *JAX-WS* technology which was the most popular and easiest to deploy. The methods created were so close to database methods that it made client-server communication much easier to operate, so all previous tasks (except for *Tapestry* version) were changed to use this technology.
@@ -42,6 +42,4 @@ Using our JSP/Javascript Editor the user could create a widget for his page and 
   * Ajax
   * Tapestry
   * JFreeChart
-
-
 
