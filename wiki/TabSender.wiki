@@ -10,6 +10,7 @@
 
 TabSender consist of two parts:
   * Firefox plugin to manage tab sessions on client side
+http://img24.imageshack.us/img24/4598/28247620.png
    Plugin was written using XUL and Javascript to created convenient and nice-looking interface on client side. You can load, save, delete your sessions on many PCs - you just need to login with Google account to get access to your data
   * TabSender Server - application to store user's tab sessions [http://tabsender.appspot.com/home.html homepage]
    TabSender Server is hosted on Google's AppSpot proving free hosting(limited though) for server applications created in Python 2.5 and GoogleAppEngine. This server provide storing user's sessions, as well as, managing and sharing sessions from user-friendly web interface. You can go to [http://tabsender.appspot.com/tabinfo.html your account], automatically created if you login with your Google account
