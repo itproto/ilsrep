@@ -36,10 +36,9 @@ The widget was not directly an expansion of the Poll solution, it was rather a s
 Using our JSP/Javascript Editor the user could create a widget for his page and receive a code to be inserted into his page. This was largely more of a design task, so again we used Javascript and Ajax technology.
 
 =Technologies and libraries used=
-  * XML for <Script>
+  * XML for `<`Script`>`
   * Jquery
   * JAX-WS
   * Ajax
   * Tapestry
   * JFreeChart
-
