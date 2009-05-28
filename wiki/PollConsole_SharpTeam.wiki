@@ -1,0 +1,15 @@
+#summary One-sentence summary of this page.
+
+= Description =
+
+_This project consists of:_
+ # *PollServer* - Receive queries and send answers to clients, work with DB
+ # *PollClient* - Interact with user, permit him to pass tests and surveys, and send results to server
+ # *PollEditor* - Permit to change, create and delete surveys and tests
+
+= Technologies used =
+
+ * _*SQLite*_ database
+ * _*log4net*_ logger
+ * _*Visual Studio 2008*_ as developpement environement
+ * _*C#*_ as developpement language
