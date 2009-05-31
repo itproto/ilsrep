@@ -3,10 +3,7 @@
 = Description =
 
 _This project consists of:_
- # *PollServer* - Receive queries and send answers to clients, work with DB
-
-http://pic.ipicture.ru/uploads/090528/9bixSs6l8D.jpg
-
+ # *PollServer* - Receive queries and send answers to clients, work with DB<br />http://pic.ipicture.ru/uploads/090528/9bixSs6l8D.jpg
  # *PollClient* - Interact with user, permit him to pass tests and surveys, and send results to server
  # *PollEditor* - Permit to change, create and delete surveys and tests
 
