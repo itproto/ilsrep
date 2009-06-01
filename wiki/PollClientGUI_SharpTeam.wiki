@@ -3,20 +3,20 @@
 = Description =
 
 Login form:<br />
-http://pic.ipicture.ru/uploads/090528/kZNQ0VHc91.jpg
+http://img200.imageshack.us/img200/116/25214526.jpg
 
 You also can modify connection settings:<br />
-http://pic.ipicture.ru/uploads/090528/RMoMXysrXj.jpg
+http://img268.imageshack.us/img268/3733/20113710.jpg
 
 Program has two tabs: client tab and editor tab.<br />
 In client tab you can pass an test or an survey:<br />
-http://ipicture.ru/uploads/090528/wQ0DgJc3P2.png
+http://img199.imageshack.us/img199/7105/56836741.jpg
 
 In editor tab you can add, update and delete surveys and tests<br />
-http://ipicture.ru/uploads/090528/tV41TgVPVo.png
+http://img198.imageshack.us/img198/9797/86122829.jpg
 
 For objects editing property grid has been used:<br />
-http://ipicture.ru/uploads/090528/L27mmB6ouF.png
+http://img269.imageshack.us/img269/7708/63685598.jpg
 
 PollClientGUI provides high usability and simple user friendly interface.
 
