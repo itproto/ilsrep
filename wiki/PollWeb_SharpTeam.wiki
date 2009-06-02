@@ -4,7 +4,7 @@
 
 Web site consist of several pages.
  # *Start poll* - here you can pass an survey
- # *Poll editor* - This is a page where you can edit(create, delete, update) surveys.<br />_*Notes:*_<br />_This page is based on jQuery technology_<br />_You must be authorized as admin for view this page_<br />http://img269.imageshack.us/img269/7254/93118302.jpg
+ # *Poll editor* - This is a page where you can edit(create, delete, update) surveys.<br />_*Notes:*_<br />_This page is based on jQuery technology_<br />_You must be authorized as admin for view this page_<br />http://www.skost.lviv.ua/files/i/0.jpg
  # *Widget* - You can create your own survey and make it in your site
  # *Statistics* - Here you can see poll statistics(only for tests). You may switch from test statistic to user statistic. You also can discover a statistics chart.
 
