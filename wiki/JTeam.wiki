@@ -7,7 +7,7 @@ JTeam constists of two people:
   * DRC:   Roman Tsiupa <draconyster@gmail.com>
 
 http://img15.imageshack.us/img15/9881/xd29acb34.jpg
-(presentaion on DE:CODED^09, from left to right: Taras Kostiak, Roman Tsiupa)
+(presentaion of Poll Application on DE:CODED^09, from left to right: Taras Kostiak, Roman Tsiupa)
 
 Our tasks during progress in ILSG can be divided into 2 periods:
 
@@ -29,6 +29,8 @@ Poll Application can be divided into such subperiods:
   * [http://code.google.com/p/ilsrep/wiki/SwingPollCleint GUI client]
    GUI client, that was created using JFC/Swing GUI toolkit, combined features of console client and console editor together in convenient user-friendly GUI interface
   * web interface to Poll Survey features
+
+Poll Application was presented on [http://code.google.com/p/ilsrep/wiki/Decoded DE:CODED^09].
 
 = TabSender =
 
